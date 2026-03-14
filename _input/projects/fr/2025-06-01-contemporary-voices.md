@@ -1,7 +1,7 @@
 ---
 title: "Contemporary Voices"
 collaborators: "Ensemble Modern"
-image: "/images/placeholder-project-2.jpg"
+image: ""
 layout: project.html
 tags: projects
 lang: fr

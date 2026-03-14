@@ -1,7 +1,7 @@
 ---
 title: "Duo Sonata Project"
 collaborators: "Jane Doe (viool)"
-image: "/images/placeholder-project-1.jpg"
+image: ""
 layout: project.html
 tags: projects
 lang: nl

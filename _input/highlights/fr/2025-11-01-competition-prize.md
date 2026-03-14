@@ -3,7 +3,7 @@ title: "Premier Prix — Concours International de Piano"
 slug: "competition-prize"
 date: 2025-11-01T00:00:00
 type: "Concours"
-image: "/images/placeholder-highlight.jpg"
+image: ""
 link: ""
 place: "Bruxelles, Belgique"
 collaborators: ""

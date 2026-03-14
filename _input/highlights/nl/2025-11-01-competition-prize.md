@@ -3,7 +3,7 @@ title: "Eerste Prijs — Internationale Pianowedstrijd"
 slug: "competition-prize"
 date: 2025-11-01T00:00:00
 type: "Wedstrijd"
-image: "/images/placeholder-highlight.jpg"
+image: ""
 link: ""
 place: "Brussel, België"
 collaborators: ""

@@ -14,6 +14,7 @@ module.exports = function (eleventyConfig) {
     eleventyConfig.addShortcode("image", async function(src, alt = "") {
         if (!src) return "";
         let inputPath = src.startsWith("/") ? `_input${src}` : src;
+        try {
         let metadata = await Image(inputPath, {
             widths: [600, 1200, 1800],
             formats: ["webp", "jpeg"],
@@ -34,6 +35,9 @@ module.exports = function (eleventyConfig) {
             style: "max-width: 100%; height: auto;",
         };
         return Image.generateHTML(metadata, imageAttributes);
+        } catch(e) {
+            return `<img src="${src}" alt="${alt}" style="max-width: 100%; height: auto;" loading="lazy">`;
+        }
     });
 
     // Filter for optimized image URL (for background-image etc.)

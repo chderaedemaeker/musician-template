@@ -3,7 +3,7 @@ title: "First Prize — International Piano Competition"
 slug: "competition-prize"
 date: 2025-11-01T00:00:00
 type: "Competition"
-image: "/images/placeholder-highlight.jpg"
+image: ""
 link: ""
 place: "Brussels, Belgium"
 collaborators: ""
