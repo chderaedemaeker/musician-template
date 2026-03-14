@@ -1,0 +1,84 @@
+backend:
+  name: git-gateway
+  branch: main
+local_backend: true
+
+media_folder: '_input/images'
+public_folder: '/images'
+locale: 'en'
+show_preview_links: true
+
+i18n:
+  structure: multiple_folders
+  locales: [en, nl, fr]
+  default_locale: en
+
+slug:
+  encoding: "ascii"
+  clean_accents: true
+  sanitize_replacement: "_"
+
+collections:
+
+  - label: "Concerts"
+    name: "concerts"
+    folder: "_input/en/concerts"
+    slug: '{{year}}-{{month}}-{{day}}-{{slug}}'
+    extension: md
+    create: true
+    editor:
+      preview: true
+    summary: '{{date}} — {{title}} - {{place}}'
+    sortable_fields: ['date', 'title']
+    sort: 'date:desc'
+    preview_path: "en/concerts/{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - {label: "Title", name: "title", widget: "string", required: true}
+      - {label: "Date", name: "date", widget: "datetime", required: true, default: "", format: "YYYY-MM-DDTHH:mm:ss", picker_utc: false}
+      - {label: "Place", name: "place", widget: "string", required: false}
+      - {label: "Composers", name: "composers", widget: "string", required: false}
+      - {label: "Collaborators", name: "collaborators", widget: "string", required: false}
+      - {label: "Link", name: "link", widget: "string", required: false}
+      - {label: "Additional information", name: "body", widget: "markdown", required: false}
+
+  - label: "Projects"
+    name: "projects"
+    folder: "_input/projects"
+    slug: '{{year}}-{{month}}-{{day}}-{{slug}}'
+    create: true
+    i18n: true
+    editor:
+      preview: false
+    fields:
+      - {label: "Title", name: "title", widget: "string", required: true, i18n: duplicate}
+      - {label: "Collaborators", name: "collaborators", widget: "string", required: false, i18n: true}
+      - {label: "Image", name: "image", widget: "image", required: true, i18n: duplicate}
+      - {label: "Additional information", name: "body", widget: "markdown", required: false, i18n: true}
+
+  - label: "Highlights"
+    name: "highlights"
+    folder: "_input/highlights"
+    slug: '{{year}}-{{month}}-{{day}}-{{slug}}'
+    create: true
+    i18n: true
+    fields:
+      - {label: "Title", name: "title", widget: "string", required: true, i18n: true}
+      - {label: "Slug", name: "slug", widget: "string", required: true, i18n: duplicate}
+      - {label: "Date", name: "date", widget: "datetime", required: false, format: "YYYY-MM-DDTHH:mm:ss", time_format: false, picker_utc: false, i18n: duplicate}
+      - {label: "Type", name: "type", widget: "string", required: false, i18n: duplicate}
+      - {label: "Thumbnail", name: "image", widget: "image", required: false, i18n: duplicate}
+      - {label: "Youtube ID", name: "link", widget: "string", required: false, i18n: duplicate}
+      - {label: "Place", name: "place", widget: "string", required: false, i18n: duplicate}
+      - {label: "Collaborators", name: "collaborators", widget: "string", required: false, i18n: duplicate}
+      - {label: "Additional information", name: "body", widget: "markdown", required: false, i18n: true}
+
+  - label: "About"
+    name: "about"
+    folder: "_input/about"
+    i18n:
+      structure: multiple_files
+    slug: 'about'
+    fields:
+      - {label: "Title", name: "title", widget: "string", required: true, i18n: true}
+      - {label: "Short Bio", name: "summaryabout", widget: "markdown", i18n: true}
+      - {label: "Bio", name: "body", widget: "markdown", i18n: true}

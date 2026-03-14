@@ -1,0 +1,29 @@
+---
+title: Projecten
+layout: default.html
+tags: pages
+---
+
+{% assign lang = page.lang %}
+
+<h1 class="section-title">{{ languages[lang].projects_title }}</h1>
+
+{% assign langProjects = 'projects_' | append: lang %}
+{% assign sortedProjects = collections[langProjects] | sort: 'date' | reverse %}
+
+<div class="card-grid">
+  {% if sortedProjects.size > 0 %}
+    {% for project in sortedProjects %}
+      <a href="{{ project.url }}">
+        <div class="image-card">
+          <div class="image-card-bg" style="background-image: url('{{ project.data.image }}')"></div>
+          <div class="image-card-overlay">
+            <h3>{{ project.data.title }}</h3>
+          </div>
+        </div>
+      </a>
+    {% endfor %}
+  {% else %}
+    <p>No projects found.</p>
+  {% endif %}
+</div>

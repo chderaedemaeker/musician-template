@@ -1,0 +1,21 @@
+{
+  "name": "musician-portfolio-template",
+  "version": "1.0.0",
+  "description": "Multilingual musician portfolio website built with Eleventy and Decap CMS",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx decap-server & npx @11ty/eleventy --serve --watch",
+    "build": "npx @11ty/eleventy",
+    "serve": "npx @11ty/eleventy --serve --watch"
+  },
+  "keywords": ["musician", "portfolio", "eleventy", "decap-cms", "i18n"],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@11ty/eleventy": "^2.0.1"
+  },
+  "dependencies": {
+    "@11ty/eleventy-img": "^3.1.8",
+    "luxon": "^3.4.4"
+  }
+}

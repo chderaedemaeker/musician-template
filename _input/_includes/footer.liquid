@@ -1,0 +1,21 @@
+{% assign lang = "" %}
+{% if page.url contains '/en/' %}
+  {% assign lang = "en" %}
+{% elsif page.url contains '/nl/' %}
+  {% assign lang = "nl" %}
+{% elsif page.url contains '/fr/' %}
+  {% assign lang = "fr" %}
+{% else %}
+  {% assign lang = "en" %}
+{% endif %}
+
+<footer class="footer">
+  <div class="footer-inner">
+    <p>&copy; {{ "now" | date: "%Y" }} {{ languages[lang].site_title }}. {{ languages[lang].copyright }}</p>
+    <div class="footer-links">
+      {% for item in navigation[lang] %}
+        <a href="{{ item.url }}">{{ item.text }}</a>
+      {% endfor %}
+    </div>
+  </div>
+</footer>

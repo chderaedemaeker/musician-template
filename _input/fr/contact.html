@@ -1,0 +1,48 @@
+---
+title: Contact
+layout: default.html
+tags: pages
+---
+
+{% assign lang = page.lang %}
+
+<div class="contact-page">
+  <h1>{{ languages[lang].contact_title }}</h1>
+
+  <h2>{{ languages[lang].send_message }}</h2>
+
+  <form name="contact" method="POST" data-netlify="true" action="/{{ lang }}/contact/success/">
+    <input type="hidden" name="form-name" value="contact">
+    <div class="form-group">
+      <label for="name">{{ languages[lang].your_name }}</label>
+      <input required type="text" id="name" name="name" placeholder="{{ languages[lang].your_name }}">
+    </div>
+    <div class="form-group">
+      <label for="email">{{ languages[lang].your_email }}</label>
+      <input required type="email" id="email" name="email" placeholder="{{ languages[lang].your_email }}">
+    </div>
+    <div class="form-group">
+      <label for="message">{{ languages[lang].message }}</label>
+      <textarea required id="message" name="message" placeholder="{{ languages[lang].message }}"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">{{ languages[lang].send_button }}</button>
+  </form>
+
+  <h2>{{ languages[lang].newsletter }}</h2>
+
+  <form name="newsletter" method="POST" data-netlify="true" action="/{{ lang }}/contact/success/">
+    <input type="hidden" name="form-name" value="newsletter">
+    <div class="form-group">
+      <label for="newsletter-email">{{ languages[lang].your_email }}</label>
+      <input required type="email" id="newsletter-email" name="email" placeholder="{{ languages[lang].your_email }}">
+    </div>
+    <button type="submit" class="btn btn-primary">{{ languages[lang].send_button }}</button>
+  </form>
+
+  <h2>{{ languages[lang].find_me }}</h2>
+  <div class="socials-list">
+    <a class="btn btn-sm" href="https://www.facebook.com/" target="_blank" rel="noopener">Facebook</a>
+    <a class="btn btn-sm" href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a>
+    <a class="btn btn-sm" href="https://www.youtube.com/" target="_blank" rel="noopener">YouTube</a>
+  </div>
+</div>

@@ -1,0 +1,73 @@
+{% assign lang = "" %}
+{% if page.url contains '/en/' %}
+  {% assign lang = "en" %}
+{% elsif page.url contains '/nl/' %}
+  {% assign lang = "nl" %}
+{% elsif page.url contains '/fr/' %}
+  {% assign lang = "fr" %}
+{% else %}
+  {% assign lang = "en" %}
+{% endif %}
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <a href="/{{ lang }}/">
+        {{ languages[lang].site_title }}
+        <span class="subtitle">{{ languages[lang].site_subtitle }}</span>
+      </a>
+    </div>
+
+    <div class="nav-links">
+      {% for item in navigation[lang] %}
+        <a href="{{ item.url }}"{% if page.url == item.url %} class="active"{% endif %}>{{ item.text }}</a>
+      {% endfor %}
+      <div class="lang-switcher">
+        <select onchange="switchLanguage(this.value)">
+          <option value="en" {% if lang == 'en' %}selected{% endif %}>EN</option>
+          <option value="nl" {% if lang == 'nl' %}selected{% endif %}>NL</option>
+          <option value="fr" {% if lang == 'fr' %}selected{% endif %}>FR</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="hamburger" aria-label="Menu" onclick="toggleMobileNav()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="mobile-nav" id="mobile-nav">
+  {% for item in navigation[lang] %}
+    <a href="{{ item.url }}" style="animation-delay: {{ forloop.index | times: 0.05 }}s">{{ item.text }}</a>
+  {% endfor %}
+  <div class="lang-switcher mt-md">
+    <select onchange="switchLanguage(this.value)">
+      <option value="en" {% if lang == 'en' %}selected{% endif %}>EN</option>
+      <option value="nl" {% if lang == 'nl' %}selected{% endif %}>NL</option>
+      <option value="fr" {% if lang == 'fr' %}selected{% endif %}>FR</option>
+    </select>
+  </div>
+</div>
+
+<script>
+function switchLanguage(lang) {
+  var path = window.location.pathname;
+  var newPath = path.replace(/^\/(en|nl|fr)/, '/' + lang);
+  window.location.href = newPath;
+}
+
+function toggleMobileNav() {
+  var hamburger = document.querySelector('.hamburger');
+  var mobileNav = document.getElementById('mobile-nav');
+  hamburger.classList.toggle('open');
+  mobileNav.classList.toggle('open');
+  if (mobileNav.classList.contains('open')) {
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = '';
+  }
+}
+</script>

@@ -1,0 +1,30 @@
+---
+title: Hoogtepunten
+layout: default.html
+tags: pages
+---
+
+{% assign lang = page.lang %}
+
+<h1 class="section-title">{{ languages[lang].highlights_title }}</h1>
+
+{% assign langHighlights = 'highlights_' | append: lang %}
+{% assign sortedHighlights = collections[langHighlights] | sort: 'date' | reverse %}
+
+<div class="card-grid">
+  {% if sortedHighlights.size > 0 %}
+    {% for highlight in sortedHighlights %}
+      <a href="{{ highlight.url }}">
+        <div class="image-card">
+          <div class="image-card-bg" style="background-image: url('{{ highlight.data.image }}')"></div>
+          <div class="image-card-overlay">
+            <h3>{{ highlight.data.title }}</h3>
+            {% if highlight.data.type %}<p>{{ highlight.data.type }}</p>{% endif %}
+          </div>
+        </div>
+      </a>
+    {% endfor %}
+  {% else %}
+    <p>{{ languages[lang].no_highlights }}</p>
+  {% endif %}
+</div>

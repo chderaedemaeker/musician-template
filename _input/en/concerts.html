@@ -1,0 +1,66 @@
+---
+title: Concerts
+layout: default.html
+tags: pages
+---
+
+{% assign lang = page.lang %}
+
+<h1 class="section-title">{{ languages[lang].concerts_title }}</h1>
+
+<div class="search-container">
+  <input type="text" id="search-input" placeholder="{{ languages[lang].search_placeholder }}">
+  <button id="search-button">{{ languages[lang].search_button }}</button>
+</div>
+
+<h2 class="mt-lg mb-md">{{ languages[lang].upcoming_concerts }}</h2>
+<div class="card-grid" id="upcoming-concerts"></div>
+
+<h2 class="mt-lg mb-md">{{ languages[lang].archive }}</h2>
+<div class="card-grid" id="archive-concerts"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var concerts = {% concertsJson collections.concerts %};
+  var lang = '{{ lang }}';
+  var now = new Date();
+
+  var langConcerts = concerts.filter(function(c) {
+    return c.link.indexOf('/' + lang + '/') !== -1;
+  });
+
+  var upcoming = langConcerts.filter(function(c) { return new Date(c.date) >= now; })
+    .sort(function(a, b) { return new Date(a.date) - new Date(b.date); });
+  var archive = langConcerts.filter(function(c) { return new Date(c.date) < now; })
+    .sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
+
+  function renderConcerts(list, containerId) {
+    var container = document.getElementById(containerId);
+    if (list.length === 0) {
+      container.innerHTML = '<p>{{ languages[lang].no_upcoming }}</p>';
+      return;
+    }
+    container.innerHTML = list.map(function(c) {
+      var d = new Date(c.date);
+      var dateStr = d.toLocaleDateString('{{ lang }}', { year: 'numeric', month: 'long', day: 'numeric' });
+      return '<a href="' + c.link + '" class="concert-card"><p class="date">' + dateStr + '</p><h3>' + c.title + '</h3><p class="place">' + (c.place || '') + '</p></a>';
+    }).join('');
+  }
+
+  renderConcerts(upcoming, 'upcoming-concerts');
+  renderConcerts(archive, 'archive-concerts');
+
+  document.getElementById('search-input').addEventListener('input', function() {
+    var query = this.value.toLowerCase();
+    var filtered = langConcerts.filter(function(c) {
+      return c.title.toLowerCase().indexOf(query) !== -1 || (c.place && c.place.toLowerCase().indexOf(query) !== -1);
+    });
+    var filteredUpcoming = filtered.filter(function(c) { return new Date(c.date) >= now; })
+      .sort(function(a, b) { return new Date(a.date) - new Date(b.date); });
+    var filteredArchive = filtered.filter(function(c) { return new Date(c.date) < now; })
+      .sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
+    renderConcerts(filteredUpcoming, 'upcoming-concerts');
+    renderConcerts(filteredArchive, 'archive-concerts');
+  });
+});
+</script>

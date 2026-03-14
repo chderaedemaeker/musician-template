@@ -1,0 +1,123 @@
+---
+layout: layout.html
+---
+
+{% include "navigation.liquid" %}
+
+<main>
+
+<div class="hero">
+  <h1>{{ languages[page.lang].site_title }}</h1>
+  <p>{{ languages[page.lang].site_subtitle }}</p>
+</div>
+
+{% assign lang = page.lang %}
+
+<!-- About Summary -->
+{% assign aboutItems = collections.about_en %}
+{% if aboutItems.size > 0 %}
+  {% assign aboutPage = aboutItems | first %}
+  <div class="narrow mb-lg">
+    <p>{{ aboutPage.data.summaryabout }}</p>
+    <a class="btn btn-sm" href="/{{ lang }}/about/">{{ languages[lang].biography }}</a>
+  </div>
+{% endif %}
+
+<!-- Upcoming Concerts Swiper -->
+<h2 class="section-title">{{ languages[lang].upcoming_concerts }}</h2>
+
+<div class="swiper mySwiper">
+  <div class="swiper-wrapper">
+  </div>
+  <div class="swiper-pagination"></div>
+</div>
+
+<div class="text-center mb-lg">
+  <a class="btn" href="/{{ lang }}/concerts/">{{ languages[lang].see_all_concerts }}</a>
+</div>
+
+<!-- Latest Highlight -->
+<h2 class="section-title">{{ languages[lang].most_recent_highlight }}</h2>
+
+{% assign langHighlights = 'highlights_' | append: lang %}
+{% assign sortedHighlights = collections[langHighlights] | sort: 'date' | reverse %}
+{% assign firstHighlight = sortedHighlights | slice: 0, 1 %}
+
+{% if firstHighlight.size > 0 %}
+  {% for highlight in firstHighlight %}
+    <a href="{{ highlight.url }}">
+      <div class="image-card" style="max-width: 600px;">
+        <div class="image-card-bg" style="background-image: url('{{ highlight.data.image }}')"></div>
+        <div class="image-card-overlay">
+          <h3>{{ highlight.data.title }}</h3>
+          {% if highlight.data.type %}<p>{{ highlight.data.type }}</p>{% endif %}
+        </div>
+      </div>
+    </a>
+  {% endfor %}
+{% else %}
+  <p>{{ languages[lang].no_highlights }}</p>
+{% endif %}
+
+<div class="mt-md mb-lg">
+  <a class="btn" href="/{{ lang }}/highlights/">{{ languages[lang].see_all_highlights }}</a>
+</div>
+
+<!-- Projects -->
+<h2 class="section-title">{{ languages[lang].projects_title }}</h2>
+
+{% assign langProjects = 'projects_' | append: lang %}
+{% assign sortedProjects = collections[langProjects] | sort: 'date' | reverse %}
+
+<div class="card-grid mb-lg">
+  {% for project in sortedProjects limit: 3 %}
+    <a href="{{ project.url }}">
+      <div class="image-card">
+        <div class="image-card-bg" style="background-image: url('{{ project.data.image }}')"></div>
+        <div class="image-card-overlay">
+          <h3>{{ project.data.title }}</h3>
+        </div>
+      </div>
+    </a>
+  {% endfor %}
+</div>
+
+<div class="text-center mb-lg">
+  <a class="btn" href="/{{ lang }}/projects/">{{ languages[lang].view_projects }}</a>
+</div>
+
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var concerts = {% concertsJson collections.concerts %};
+  var lang = '{{ lang }}';
+  var now = new Date();
+  var upcoming = concerts
+    .filter(function(c) { return new Date(c.date) >= now && c.link.indexOf('/' + lang + '/') !== -1; })
+    .sort(function(a, b) { return new Date(a.date) - new Date(b.date); });
+
+  var wrapper = document.querySelector('.swiper-wrapper');
+  if (upcoming.length === 0) {
+    wrapper.innerHTML = '<div class="swiper-slide"><p>{{ languages[lang].no_upcoming }}</p></div>';
+  } else {
+    upcoming.forEach(function(c) {
+      var d = new Date(c.date);
+      var dateStr = d.toLocaleDateString('{{ lang }}', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      wrapper.innerHTML += '<div class="swiper-slide"><a href="' + c.link + '"><p class="date">' + dateStr + '</p><h3>' + c.title + '</h3><p class="place">' + (c.place || '') + '</p></a></div>';
+    });
+  }
+
+  if (typeof Swiper !== 'undefined') {
+    new Swiper('.mySwiper', {
+      slidesPerView: 1,
+      spaceBetween: 16,
+      pagination: { el: '.swiper-pagination', clickable: true },
+      breakpoints: {
+        640: { slidesPerView: 2 },
+        1024: { slidesPerView: 3 }
+      }
+    });
+  }
+});
+</script>

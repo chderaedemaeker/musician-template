@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="{{ page.lang }}" dir="{{ languages[page.lang].dir | default: 'ltr' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ title }} — {{ place }}">
+    <title>{{ title }} — {{ languages[page.lang].site_title }}</title>
+    {% include "css.liquid" %}
+</head>
+<body>
+
+{% assign lang = "" %}
+{% if page.url contains '/en/' %}
+  {% assign lang = "en" %}
+{% elsif page.url contains '/nl/' %}
+  {% assign lang = "nl" %}
+{% elsif page.url contains '/fr/' %}
+  {% assign lang = "fr" %}
+{% else %}
+  {% assign lang = "en" %}
+{% endif %}
+
+{% include "navigation.liquid" %}
+
+<main>
+  <div class="concert-detail">
+    <p class="date">{{ date | readableDate }}</p>
+    <h1>{{ title }}</h1>
+
+    <div class="meta">
+      {% if place %}<span>{{ place }}</span>{% endif %}
+      {% if composers %}<span><em>{{ composers }}</em></span>{% endif %}
+      {% if collaborators %}<span>With {{ collaborators }}</span>{% endif %}
+    </div>
+
+    <div class="content">
+      {{ content }}
+    </div>
+
+    {% if link %}
+      <a class="btn" href="{{ link }}">Tickets &amp; Info</a>
+    {% endif %}
+
+    <div class="mt-lg">
+      <a class="btn btn-sm" href="/{{ lang }}/concerts/">{{ languages[lang].back_to_overview }}</a>
+    </div>
+  </div>
+</main>
+
+{% include "footer.liquid" %}
+</body>
+</html>
