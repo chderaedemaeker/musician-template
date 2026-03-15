@@ -1,8 +1,8 @@
 ---
 title: New highlight
-slug: ""
+slug: new concert
 date: "2026-03-25T13:35"
-type: ""
+type: video
 image: ""
 link: ""
 place: ""
