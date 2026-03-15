@@ -122,14 +122,21 @@ module.exports = function (eleventyConfig) {
     // Date filters
     eleventyConfig.addFilter("readableDate", dateObj => {
         if (!dateObj) return "";
-        const dt = DateTime.fromJSDate(dateObj, { zone: 'UTC' });
+        const dt = dateObj instanceof Date
+            ? DateTime.fromJSDate(dateObj, { zone: 'UTC' })
+            : DateTime.fromISO(String(dateObj), { zone: 'UTC' });
+        if (!dt.isValid) return "";
         const formatted = dt.toFormat("cccc LLLL d, y — HH:mm");
         return formatted.endsWith("00:00") ? formatted.replace(" — 00:00", "") : formatted;
     });
 
     eleventyConfig.addFilter("shortDate", dateObj => {
         if (!dateObj) return "";
-        return DateTime.fromJSDate(dateObj, { zone: 'UTC' }).toFormat("d LLL y");
+        const dt = dateObj instanceof Date
+            ? DateTime.fromJSDate(dateObj, { zone: 'UTC' })
+            : DateTime.fromISO(String(dateObj), { zone: 'UTC' });
+        if (!dt.isValid) return "";
+        return dt.toFormat("d LLL y");
     });
 
     eleventyConfig.addFilter("machineDate", dateObj => {
