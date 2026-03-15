@@ -6,46 +6,58 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  padding: 20px 30px;
+  width: 95%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--warm-grey);
+  background-color: var(--off-white);
 }
 
 .nav-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .nav-brand a {
-  font-size: var(--font-size-serif);
-  font-weight: 300;
   font-family: var(--font-serif);
+  font-size: 30px;
+  font-weight: 300;
+  line-height: 0.8;
   text-decoration: none;
+  color: var(--near-black);
 }
 
 .nav-links {
   display: flex;
   gap: 15px;
+  align-items: center;
 }
 
 .nav-links a {
-  font-size: var(--font-size-sans);
+  font-size: 0.8em;
   font-family: var(--font-sans);
   text-decoration: none;
+  color: var(--near-black);
 }
 
 .nav-links a.active {
   text-decoration: underline;
   text-underline-offset: 4px;
+  text-decoration-thickness: 0.5px;
 }
 
 .lang-switcher select {
   background: transparent;
-  border: 1px solid var(--warm-grey);
+  border: none;
   padding: 4px 8px;
-  font-size: var(--font-size-sans);
+  font-size: 0.8em;
   font-family: var(--font-sans);
   text-transform: uppercase;
   cursor: pointer;
+  color: var(--near-black);
 }
 
 /* Hamburger */
