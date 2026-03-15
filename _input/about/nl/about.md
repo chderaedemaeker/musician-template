@@ -1,29 +1,32 @@
 ---
 title: Over
-summaryabout: Een veelzijdig muzikant gevestigd in België, geprezen voor expressieve uitvoeringen en een diepe toewijding aan zowel klassiek repertoire als hedendaagse muziek.
+summaryabout: Belgische violiste woonachtig in Keulen, geprezen om haar rijkdom in klank en instinctief mooie frasering. Laureate van verscheidene internationale wedstrijden en bursaal van de Werner Richard Dr. Carl Dörken Stiftung.
 layout: about.html
 tags: about
 lang: nl
 permalink: nl/about/index.html
 ---
-## Biografie
 
-Geboren in België, begon Artiest Naam op zesjarige leeftijd met muziek studeren. Na een eerste opleiding aan de plaatselijke muziekacademie werden de studies voortgezet aan het Koninklijk Conservatorium waar een Masterdiploma met onderscheiding werd behaald.
+![Veronique De Raedemaeker](/images/veroniqueportrait.jpg)
 
-Sindsdien vonden optredens plaats in prestigieuze zalen zoals het Concertgebouw Brugge, AMUZ Antwerpen, BOZAR Brussel en het Muziekgebouw Amsterdam. Als solist en kamermuzikant vormen samenwerkingen met toonaangevende ensembles en orkesten een centraal onderdeel van een actief concertleven.
+Veronique De Raedemaeker (geboren 1996) is een Belgische violiste woonachtig in Keulen.
 
-## Prijzen
+Ze is laureate van verscheidene nationale en internationale viool- en kamermuziekwedstrijden, waaronder Young Belgian Talent, Internationaler Anton Rubinstein Wettbewerb, Concours Breughel, Belfius Classics, interner Kammermusikwettbewerb HfMT Köln, Internationaler Violinwettbewerb der Kulturstiftung Hohenlohe en Vieuxtemps Concours. Van 2020 tot 2022 was ze bursaal van de Werner Richard Dr. Carl Dörken Stiftung, die haar selecteerde voor de concerttournee "Best of NRW", en ze was artist in residence van SWUK in 2022–2023. Door de jaren heen is ze op verschillende gebieden ondersteund door YBT, waarvoor ze zeer dankbaar is.
 
-- Eerste Prijs, Internationale Pianowedstrijd, Brussel (2025)
-- Laureaat, Wedstrijd voor Jonge Muzikanten (2023)
-- Speciale Prijs voor Beste Kamermuziek Uitvoering (2022)
+Veronique begon haar vioolstudies bij Francis Reusens aan de Academie voor Muziek, Woord en Dans in Lier. Na haar studie Grieks-Wiskunde, die ze combineerde met "Jong Conservatorium," studeerde ze in 2016 af aan het Koninklijk Conservatorium van Antwerpen met een Bachelor of Music bij Alissa Margulis. Onder de leiding van Barnabás Kelemen behaalde ze de hoogste onderscheiding voor de masteropleiding Violin Solo en Neue Musik aan de Hochschule für Musik und Tanz Köln, waar ze in 2023, in de klas van Mikhail Ovrutsky, het Konzertexamen afsloot met "summa cum laude."
 
-## Opleiding
+Daarnaast leerde ze van gerenommeerde muzikanten zoals Philippe Graffin aan het Koninklijk Conservatorium van Brussel, Ivry Gitlis, Julia Fisher, Tatiana Samouil, David Quiggle, Frank Peter Zimmerman, Pavel Vernikov, Paulo Álvares, Görgyi Pauk, Kristóf Baráti, Jonian Ilias Kadesha en András Keller en nam ze deel aan masterclasses en concerten op het Verbier Festival, Lugano Festival, Luzerne Festival, Schiermonnikoog Young Talent Festival, Festival Académie Ravel, Budapest Festival Academy, Musica Mundi en andere.
 
-- Master in de Muziek, Koninklijk Conservatorium, Brussel
-- Bachelor in de Muziek, Koninklijk Conservatorium, Gent
-- Artist Diploma studies (lopend)
+De afgelopen jaren werd Veronique uitgenodigd om op te treden op het Klavierfestival Ruhr, Arte Amanti Festival, Festival Rencontres musicales internationales Enghien en Acht Brücken Festival Köln. Recente solouitvoeringen omvatten werken van Beethoven, Schubert, Mendelssohn en Brahms, concerten met de Köln Sinfonietta, het Gödölö Symfonieorkest, het Oost-Vlaams Symfonisch Orkest en de Russische Kamerfilharmonie St. Petersburg. Ze heeft opgetreden in concertzalen zoals Flagey & Bozar Brussel, Amuz Antwerpen, Miry & De Bijloke Gent, Philharmonie Keulen, WDR Funkhaus en Tonhalle Düsseldorf. In november 2023 speelde ze Beethovens Tripelconcert in de Elisabethzaal in Antwerpen.
 
-## Filosofie
+Als gepassioneerd kamermuzikante treedt ze regelmatig op met haar eigen ensembles — Trio Gilu, Oreneta Kammerensemble, ÉRMA Ensemble en in duo met pianist Alexander Declercq (Duo Altiler) en met harpiste Mathilde Wauters.
 
-Muziek is een universele taal die grenzen overstijgt. Elke uitvoering is een kans om contact te maken met het publiek en iets diep menselijks te delen. Het doel is altijd om de visie van de componist te dienen en tegelijkertijd een persoonlijke stem te brengen in elke interpretatie.
+Haar cd Malinconia met werken van Prokofiev en Ysaÿe werd geprezen om haar "rijkdom in klank en instinctief mooie frasering" en werd in 2020 bekroond door de Vlaamse klassieke radio met de Keuze van Klara.
+
+In 2022 bracht ze samen met haar Trio Gilu de cd "Garland — Songs for Soprano, Violin and Harp" uit en in 2023 publiceerde ze de single "Bach and Berio — a diptych". Al haar publicaties verschijnen bij Etcetera Records.
+
+Haar fascinatie voor nieuwe muziek heeft haar in staat gesteld samen te werken met hedendaagse componisten zoals Unsuk Chin, Helmut Lachenmann, Heinz Holliger en vele anderen. Ze is medeoprichter van het ÉRMA Ensemble, gesteund door de Deutscher Musikrat, dat gespecialiseerd is in het uitvoeren van nieuwe muziek.
+
+Veronique speelt op een viool van Stefan-Peter Greiner. In 2024 was ze te gast in het programma "De Twintigers" op Klara.
+
+[Perskit](https://drive.google.com/drive/folders/10JwfYTSOn1MJtgt9THW4HzrtER7Nq5Ye) · [Repertoire](https://drive.google.com/drive/folders/1-8P87yl21E9Urwilq09JQ_omojNFYXTy)

@@ -1,8 +1,8 @@
 module.exports = {
   en: {
     dir: '',
-    site_title: 'Artist Name',
-    site_subtitle: 'Musician',
+    site_title: 'Veronique De Raedemaeker',
+    site_subtitle: 'Violinist',
     availableText: 'This page is also available in:',
     biography: 'Read the full biography',
     concerts: 'All Concerts',
@@ -34,8 +34,8 @@ module.exports = {
   },
   nl: {
     dir: '',
-    site_title: 'Artiest Naam',
-    site_subtitle: 'Muzikant',
+    site_title: 'Veronique De Raedemaeker',
+    site_subtitle: 'Violiste',
     availableText: 'Deze pagina is ook beschikbaar in het:',
     biography: 'Lees de volledige biografie',
     concerts: 'Alle Concerten',
@@ -67,8 +67,8 @@ module.exports = {
   },
   fr: {
     dir: '',
-    site_title: 'Nom Artiste',
-    site_subtitle: 'Musicien',
+    site_title: 'Veronique De Raedemaeker',
+    site_subtitle: 'Violoniste',
     availableText: 'Cette page est aussi disponible en:',
     biography: 'Lire la biographie complète',
     concerts: 'Tous les Concerts',

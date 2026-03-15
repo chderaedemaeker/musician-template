@@ -6,9 +6,17 @@ layout: layout.html
 
 <main>
 
-<div class="hero">
-  <h1>{{ languages[page.lang].site_title }}</h1>
-  <p>{{ languages[page.lang].site_subtitle }}</p>
+<div class="hero-fullscreen" style="background-image: url('/images/veronique20d.jpg');">
+  <div class="hero-content">
+    <h1>{{ languages[page.lang].site_title }}</h1>
+    <div class="hero-links">
+      <a href="/fr/about/">À propos</a>
+      <a href="/fr/concerts/">Concerts</a>
+      <a href="/fr/highlights/">Highlights</a>
+      <a href="/fr/projects/">Projets</a>
+      <a href="/fr/contact/">Contact</a>
+    </div>
+  </div>
 </div>
 
 {% assign lang = page.lang %}
@@ -16,7 +24,7 @@ layout: layout.html
 {% assign aboutItems = collections.about_fr %}
 {% if aboutItems.size > 0 %}
   {% assign aboutPage = aboutItems | first %}
-  <div class="narrow mb-lg">
+  <div class="narrow mb-lg" style="padding-top: var(--space-xl);">
     <p>{{ aboutPage.data.summaryabout }}</p>
     <a class="btn btn-sm" href="/{{ lang }}/about/">{{ languages[lang].biography }}</a>
   </div>
@@ -123,6 +131,16 @@ document.addEventListener('DOMContentLoaded', function() {
         1024: { slidesPerView: 3 }
       }
     });
+  }
+});
+
+window.addEventListener('scroll', function() {
+  var nav = document.querySelector('.nav');
+  if (!nav) return;
+  if (window.pageYOffset >= 200) {
+    nav.style.transform = 'translateY(-120px)';
+  } else {
+    nav.style.transform = 'translateY(0)';
   }
 });
 </script>
