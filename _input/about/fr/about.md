@@ -1,10 +1,10 @@
 ---
-title: "À propos"
-summaryabout: "Un musicien polyvalent basé en Belgique, salué pour ses interprétations expressives et son engagement profond envers le répertoire classique et la musique contemporaine."
+title: À propos
+summaryabout: Un musicien polyvalent basé en Belgique, salué pour ses interprétations expressives et son engagement profond envers le répertoire classique et la musique contemporaine.
 layout: about.html
 tags: about
 lang: fr
-permalink: "fr/about/index.html"
+permalink: fr/about/index.html
 ---
 ## Biographie
 
