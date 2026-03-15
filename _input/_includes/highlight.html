@@ -38,12 +38,14 @@
 
     <h1>{{ title }}</h1>
 
+    {% if type or place or collaborators or date %}
     <div class="meta">
       {% if type %}<span>{{ type }}</span>{% endif %}
       {% if place %}<span>{{ place }}</span>{% endif %}
       {% if collaborators %}<span>{{ collaborators }}</span>{% endif %}
       {% if date %}<span>{{ date | shortDate }}</span>{% endif %}
     </div>
+    {% endif %}
 
     <div class="content">
       {{ content }}

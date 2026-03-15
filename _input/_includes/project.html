@@ -26,9 +26,11 @@
   <div class="detail-page">
     <h1>{{ title }}</h1>
 
+    {% if collaborators %}
     <div class="meta">
-      {% if collaborators %}<span>{{ collaborators }}</span>{% endif %}
+      <span>{{ collaborators }}</span>
     </div>
+    {% endif %}
 
     {% if image %}
       <div class="featured-image">

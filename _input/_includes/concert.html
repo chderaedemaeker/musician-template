@@ -24,14 +24,16 @@
 
 <main>
   <div class="concert-detail">
-    <p class="date">{{ date | readableDate }}</p>
+    {% if date %}<p class="date">{{ date | readableDate }}</p>{% endif %}
     <h1>{{ title }}</h1>
 
+    {% if place or composers or collaborators %}
     <div class="meta">
       {% if place %}<span>{{ place }}</span>{% endif %}
       {% if composers %}<span><em>{{ composers }}</em></span>{% endif %}
       {% if collaborators %}<span>With {{ collaborators }}</span>{% endif %}
     </div>
+    {% endif %}
 
     <div class="content">
       {{ content }}
