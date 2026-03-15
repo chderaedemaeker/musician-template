@@ -18,7 +18,7 @@ tags: pages
     {% for highlight in sortedHighlights %}
       <a href="{{ highlight.url }}">
         <div class="image-card">
-          <div class="image-card-bg" style="background-image: url('{{ highlight.data.image }}')"></div>
+          <img src="{{ highlight.data.image }}" alt="{{ highlight.data.title }}">
           <div class="image-card-overlay">
             <h3>{{ highlight.data.title }}</h3>
             {% if highlight.data.type %}<p>{{ highlight.data.type }}</p>{% endif %}

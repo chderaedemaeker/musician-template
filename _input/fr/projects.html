@@ -18,7 +18,7 @@ tags: pages
     {% for project in sortedProjects %}
       <a href="{{ project.url }}">
         <div class="image-card">
-          <div class="image-card-bg" style="background-image: url('{{ project.data.image }}')"></div>
+          <img src="{{ project.data.image }}" alt="{{ project.data.title }}">
           <div class="image-card-overlay">
             <h3>{{ project.data.title }}</h3>
           </div>
