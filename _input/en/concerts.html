@@ -24,13 +24,9 @@ document.addEventListener('DOMContentLoaded', function() {
   var lang = '{{ lang }}';
   var now = new Date();
 
-  var langConcerts = concerts.filter(function(c) {
-    return c.link.indexOf('/' + lang + '/') !== -1;
-  });
-
-  var upcoming = langConcerts.filter(function(c) { return new Date(c.date) >= now; })
+  var upcoming = concerts.filter(function(c) { return new Date(c.date) >= now; })
     .sort(function(a, b) { return new Date(a.date) - new Date(b.date); });
-  var archive = langConcerts.filter(function(c) { return new Date(c.date) < now; })
+  var archive = concerts.filter(function(c) { return new Date(c.date) < now; })
     .sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
 
   function renderConcerts(list, containerId) {

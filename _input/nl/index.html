@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
   var lang = '{{ lang }}';
   var now = new Date();
   var upcoming = concerts
-    .filter(function(c) { return new Date(c.date) >= now && c.link.indexOf('/' + lang + '/') !== -1; })
+    .filter(function(c) { return new Date(c.date) >= now; })
     .sort(function(a, b) { return new Date(a.date) - new Date(b.date); })
     .slice(0, 3);
 

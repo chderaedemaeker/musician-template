@@ -119,9 +119,9 @@ module.exports = function (eleventyConfig) {
         return collectionWithFallback(c, './_input/about/de/*.md', './_input/about/en/*.md');
     });
 
-    // Collection for concerts (all languages in their respective folders)
+    // Collection for concerts — single list (English as source of truth)
     eleventyConfig.addCollection("concerts", function(collectionApi) {
-        return collectionApi.getFilteredByGlob("./_input/*/concerts/*.md");
+        return collectionApi.getFilteredByGlob("./_input/en/concerts/*.md");
     });
 
     // Output concerts as JSON for Swiper
