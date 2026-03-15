@@ -73,7 +73,7 @@
 .footer {
   width: 95%;
   margin: 0 auto;
-  padding: var(--space-md) 0;
+  padding: var(--space-xl) 0 var(--space-md);
   border-top: 1px solid var(--warm-grey);
   font-family: var(--font-sans);
 }
