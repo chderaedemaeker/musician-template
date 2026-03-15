@@ -1,7 +1,7 @@
 ---
 title: New highlight
 slug: ""
-date: "2026-03-24T13:35"
+date: "2026-03-25T13:35"
 type: ""
 image: ""
 link: ""
