@@ -48,8 +48,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     container.innerHTML = list.map(function(c) {
       var d = new Date(c.date);
-      var dateStr = d.toLocaleDateString('{{ lang }}', { year: 'numeric', month: 'long', day: 'numeric' });
-      return '<a href="' + c.link + '" class="concert-card"><p class="date">' + dateStr + '</p><h3>' + c.title + '</h3><p class="place">' + (c.place || '') + '</p>' + (c.composers ? '<p class="composers">' + c.composers + '</p>' : '') + (c.collaborators ? '<p class="collaborators">' + c.collaborators + '</p>' : '') + '</a>';
+      var dateStr = d.toLocaleDateString('{{ lang }}', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      var right = '';
+      if (c.composers) right += '<p class="composers">' + c.composers + '</p>';
+      if (c.collaborators) right += '<p class="collaborators">' + c.collaborators + '</p>';
+      return '<a href="' + c.link + '" class="concert-card"><div class="concert-card-left"><p class="date">' + dateStr + '</p><h3>' + c.title + '</h3><p class="place">' + (c.place || '') + '</p></div>' + (right ? '<div class="concert-card-right">' + right + '</div>' : '') + '</a>';
     }).join('');
   }
 
