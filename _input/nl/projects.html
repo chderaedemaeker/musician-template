@@ -13,15 +13,16 @@ tags: pages
 {% assign langProjects = 'projects_' | append: lang %}
 {% assign sortedProjects = collections[langProjects] | sort: 'date' | reverse %}
 
-<div class="card-grid">
+<div class="text-list">
   {% if sortedProjects.size > 0 %}
     {% for project in sortedProjects %}
-      <a href="{{ project.url }}">
-        <div class="image-card">
-          <img src="{{ project.data.image }}" alt="{{ project.data.title }}">
-          <div class="image-card-overlay">
-            <h3>{{ project.data.title }}</h3>
-          </div>
+      <a href="{{ project.url }}" class="text-list-item">
+        <div class="text-list-left">
+          <h3 class="text-list-title">{{ project.data.title }}</h3>
+          {% if project.data.collaborators %}<p class="text-list-detail">{{ project.data.collaborators }}</p>{% endif %}
+        </div>
+        <div class="text-list-right">
+          <span class="text-list-arrow">&#8599;</span>
         </div>
       </a>
     {% endfor %}
