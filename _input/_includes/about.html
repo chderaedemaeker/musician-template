@@ -35,21 +35,23 @@
   {% assign sortedProjects = collections[langProjects] | sort: 'date' | reverse %}
 
   {% if sortedProjects.size > 0 %}
-    <div style="max-width: var(--content-width); margin: 0 auto; padding: var(--space-xl) var(--space-md) var(--space-sm);">
+    <div style="max-width: 800px; margin: 0 auto; padding: var(--space-xl) var(--space-md) var(--space-sm);">
       <h2 style="font-size: 0.7rem; font-family: var(--font-sans); text-transform: uppercase; letter-spacing: 0.15em; color: var(--dark-grey);">{{ languages[lang].projects_title }}</h2>
     </div>
 
-    <div class="highlights-grid">
+    <div class="highlights-grid" style="max-width: 800px;">
       {% for project in sortedProjects %}
         <a href="{{ project.url }}" class="highlight-card">
           {% if project.data.image %}
-            <div class="highlight-card-image">
-              <img src="{{ project.data.image }}" alt="{{ project.data.title }}">
-            </div>
+            <img src="{{ project.data.image }}" alt="{{ project.data.title }}">
           {% endif %}
-          <div class="highlight-card-info">
-            <h3 class="highlight-card-title">{{ project.data.title }}</h3>
-            {% if project.data.collaborators %}<p class="highlight-card-detail">{{ project.data.collaborators }}</p>{% endif %}
+          <div class="highlight-card-overlay">
+            <div class="highlight-card-top">
+              <h3 class="highlight-card-title">{{ project.data.title }}</h3>
+            </div>
+            <div class="highlight-card-bottom">
+              {% if project.data.collaborators %}<span class="highlight-card-link">{{ project.data.collaborators }}</span>{% endif %}
+            </div>
           </div>
         </a>
       {% endfor %}

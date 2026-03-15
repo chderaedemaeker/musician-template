@@ -33,6 +33,11 @@
   text-decoration: none;
 }
 
+.nav-links a.active {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
 .lang-switcher select {
   background: transparent;
   border: 1px solid var(--warm-grey);

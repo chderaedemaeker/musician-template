@@ -33,14 +33,19 @@ layout: layout.html
   {% assign langHighlights = 'highlights_' | append: lang %}
   {% assign sortedHighlights = collections[langHighlights] | sort: 'date' | reverse %}
 
-  <div class="card-grid">
+  <div class="highlights-grid">
     {% for highlight in sortedHighlights %}
-      <a href="{{ highlight.url }}">
-        <div class="image-card">
+      <a href="{{ highlight.url }}" class="highlight-card">
+        {% if highlight.data.image %}
           <img src="{{ highlight.data.image }}" alt="{{ highlight.data.title }}">
-          <div class="image-card-overlay">
-            <h3>{{ highlight.data.title }}</h3>
-            {% if highlight.data.type %}<p>{{ highlight.data.type }}</p>{% endif %}
+        {% endif %}
+        <div class="highlight-card-overlay">
+          <div class="highlight-card-top">
+            {% if highlight.data.type %}<p class="highlight-card-type">{{ highlight.data.type }}</p>{% endif %}
+            <h3 class="highlight-card-title">{{ highlight.data.title }}</h3>
+          </div>
+          <div class="highlight-card-bottom">
+            {% if highlight.data.collaborators %}<span class="highlight-card-link">{{ highlight.data.collaborators }}</span>{% endif %}
           </div>
         </div>
       </a>

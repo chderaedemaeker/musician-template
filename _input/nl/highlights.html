@@ -6,9 +6,7 @@ tags: pages
 
 {% assign lang = page.lang %}
 
-<div style="max-width: var(--content-width); margin: 0 auto; padding: var(--space-xl) var(--space-md) var(--space-lg); padding-top: 150px;">
-  <h1 style="font-size: 1.1em; font-weight: 500; font-family: var(--font-sans);">{{ languages[lang].highlights_title }}</h1>
-</div>
+<div style="padding-top: 120px;"></div>
 
 {% assign langHighlights = 'highlights_' | append: lang %}
 {% assign sortedHighlights = collections[langHighlights] | sort: 'date' | reverse %}
@@ -18,14 +16,16 @@ tags: pages
     {% for highlight in sortedHighlights %}
       <a href="{{ highlight.url }}" class="highlight-card">
         {% if highlight.data.image %}
-          <div class="highlight-card-image">
-            <img src="{{ highlight.data.image }}" alt="{{ highlight.data.title }}">
-          </div>
+          <img src="{{ highlight.data.image }}" alt="{{ highlight.data.title }}">
         {% endif %}
-        <div class="highlight-card-info">
-          {% if highlight.data.type %}<p class="highlight-card-type">{{ highlight.data.type }}</p>{% endif %}
-          <h3 class="highlight-card-title">{{ highlight.data.title }}</h3>
-          {% if highlight.data.collaborators %}<p class="highlight-card-detail">{{ highlight.data.collaborators }}</p>{% endif %}
+        <div class="highlight-card-overlay">
+          <div class="highlight-card-top">
+            {% if highlight.data.type %}<p class="highlight-card-type">{{ highlight.data.type }}</p>{% endif %}
+            <h3 class="highlight-card-title">{{ highlight.data.title }}</h3>
+          </div>
+          <div class="highlight-card-bottom">
+            {% if highlight.data.collaborators %}<span class="highlight-card-link">{{ highlight.data.collaborators }}</span>{% endif %}
+          </div>
         </div>
       </a>
     {% endfor %}
