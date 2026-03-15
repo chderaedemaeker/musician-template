@@ -69,35 +69,35 @@ module.exports = function (eleventyConfig) {
 
     // Collections for highlights per language
     eleventyConfig.addCollection('highlights_en', function(collection) {
-        return collection.getFilteredByGlob('_input/highlights/en/*.md');
+        return collection.getFilteredByGlob('./_input/highlights/en/*.md');
     });
     eleventyConfig.addCollection('highlights_nl', function(collection) {
-        return collection.getFilteredByGlob('_input/highlights/nl/*.md');
+        return collection.getFilteredByGlob('./_input/highlights/nl/*.md');
     });
     eleventyConfig.addCollection('highlights_fr', function(collection) {
-        return collection.getFilteredByGlob('_input/highlights/fr/*.md');
+        return collection.getFilteredByGlob('./_input/highlights/fr/*.md');
     });
 
     // Collections for projects per language
     eleventyConfig.addCollection('projects_en', function(collection) {
-        return collection.getFilteredByGlob('_input/projects/en/*.md');
+        return collection.getFilteredByGlob('./_input/projects/en/*.md');
     });
     eleventyConfig.addCollection('projects_nl', function(collection) {
-        return collection.getFilteredByGlob('_input/projects/nl/*.md');
+        return collection.getFilteredByGlob('./_input/projects/nl/*.md');
     });
     eleventyConfig.addCollection('projects_fr', function(collection) {
-        return collection.getFilteredByGlob('_input/projects/fr/*.md');
+        return collection.getFilteredByGlob('./_input/projects/fr/*.md');
     });
 
     // Collections for about per language
     eleventyConfig.addCollection('about_en', function(collection) {
-        return collection.getFilteredByGlob('_input/about/en/*.md');
+        return collection.getFilteredByGlob('./_input/about/en/*.md');
     });
     eleventyConfig.addCollection('about_nl', function(collection) {
-        return collection.getFilteredByGlob('_input/about/nl/*.md');
+        return collection.getFilteredByGlob('./_input/about/nl/*.md');
     });
     eleventyConfig.addCollection('about_fr', function(collection) {
-        return collection.getFilteredByGlob('_input/about/fr/*.md');
+        return collection.getFilteredByGlob('./_input/about/fr/*.md');
     });
 
     // Collection for concerts (all languages in their respective folders)

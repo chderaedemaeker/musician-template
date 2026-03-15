@@ -1,0 +1,164 @@
+/* ============================================
+   RESPONSIVE — All media queries
+   ============================================ */
+
+@media (max-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .hero h1 {
+    font-size: 3rem;
+  }
+
+  .hero {
+    padding: var(--space-xl) var(--space-md);
+  }
+
+  h1 { font-size: 2rem; }
+
+  .concert-detail h1,
+  .detail-page h1,
+  .about-page h1,
+  .contact-page h1 {
+    font-size: 1.5em;
+  }
+
+  .card-grid {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .section-title {
+    font-size: 0.65rem;
+  }
+
+  .footer {
+    max-width: 85%;
+    padding-top: 0;
+    padding-bottom: 20vh;
+  }
+
+  main {
+    padding: 0;
+  }
+
+  .concert-detail,
+  .detail-page,
+  .about-page,
+  .contact-page {
+    padding: var(--space-lg) var(--space-md);
+    padding-top: 40px;
+    width: 85%;
+  }
+
+  .about-page .content {
+    width: 100%;
+  }
+
+  .hero-fullscreen {
+    padding: 40px;
+  }
+
+  .hero-fullscreen .hero-content h1 {
+    font-size: 2em;
+  }
+}
+
+@media (max-width: 650px) {
+  .nav {
+    position: initial;
+    all: initial;
+    font-family: var(--font-serif);
+  }
+
+  .nav-inner {
+    width: initial;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    border: none;
+    height: fit-content;
+    padding-bottom: 20px;
+    gap: 5px;
+  }
+
+  .nav-brand {
+    position: absolute;
+    top: 7.5vw;
+    left: 7.5vw;
+    z-index: 2;
+  }
+
+  .nav-brand a {
+    font-size: 2em;
+    line-height: 0.8;
+  }
+
+  .nav-links {
+    position: fixed;
+    bottom: 0;
+    padding: 1.3rem 4px 1.7rem;
+    z-index: 4;
+    width: 100vw;
+    background-color: var(--white);
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    border-top: rgba(103, 103, 103, 0.1) solid 1px;
+  }
+
+  .nav-links a {
+    font-size: 1em;
+  }
+
+  .hamburger {
+    display: none;
+  }
+
+  .lang-switcher {
+    display: none;
+  }
+
+  .card-grid {
+    width: 98vw;
+    max-width: 98vw;
+    gap: 5vw;
+    padding: 0 2vw;
+  }
+
+  .image-card-overlay h3 {
+    font-size: 2.2em;
+  }
+
+  .contact-page {
+    max-width: 80%;
+    margin-top: 200px;
+    margin-bottom: 200px;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero h1 {
+    font-size: 2.4rem;
+  }
+
+  .image-card-overlay h3 {
+    font-size: 1.5em;
+  }
+
+  .concert-card h3 {
+    font-size: 1.2rem;
+  }
+}

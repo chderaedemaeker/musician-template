@@ -1,0 +1,240 @@
+/* ============================================
+   PAGES — Concert detail, Highlight/Project
+   detail, About page, Contact page
+   ============================================ */
+
+/* Concert Detail */
+.concert-detail {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-md);
+  padding-top: 150px;
+}
+
+.concert-detail .date {
+  color: var(--dark-grey);
+  font-size: 0.8em;
+  font-family: var(--font-sans);
+  margin-bottom: var(--space-sm);
+}
+
+.concert-detail h1 {
+  font-size: 2em;
+  font-weight: 300;
+  margin-bottom: var(--space-sm);
+  line-height: 0.9;
+}
+
+.concert-detail .meta {
+  color: var(--dark-grey);
+  margin-bottom: var(--space-lg);
+  font-size: 1rem;
+  font-style: italic;
+}
+
+.concert-detail .meta span {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.concert-detail .content {
+  max-width: var(--max-width-text);
+  margin-bottom: var(--space-lg);
+}
+
+.concert-detail .content p {
+  margin-bottom: var(--space-sm);
+  font-size: 0.8em;
+  line-height: 1.4;
+}
+
+/* Project / Highlight Detail */
+.detail-page {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-md);
+  padding-top: 150px;
+}
+
+.detail-page h1 {
+  font-size: 2em;
+  font-weight: 300;
+  margin-bottom: var(--space-sm);
+  line-height: 0.9;
+}
+
+.detail-page .meta {
+  color: var(--dark-grey);
+  margin-bottom: var(--space-md);
+  font-size: 0.8em;
+  font-family: var(--font-sans);
+}
+
+.detail-page .meta span {
+  display: inline-block;
+  margin-right: var(--space-sm);
+}
+
+.detail-page .meta span::after {
+  content: '\00B7';
+  margin-left: var(--space-sm);
+  color: var(--mid-grey);
+}
+
+.detail-page .meta span:last-child::after {
+  display: none;
+}
+
+.detail-page .featured-image {
+  margin-bottom: var(--space-lg);
+  overflow: hidden;
+  border-radius: var(--radius);
+}
+
+.detail-page .content {
+  max-width: var(--max-width-text);
+  margin-bottom: var(--space-lg);
+}
+
+.detail-page .content p {
+  margin-bottom: var(--space-sm);
+  font-size: 0.8em;
+  line-height: 1.4;
+}
+
+.detail-page .video-wrap {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  margin-bottom: var(--space-lg);
+  border-radius: var(--radius);
+}
+
+.detail-page .video-wrap iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* About Page */
+.about-page {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-md);
+  padding-top: 150px;
+  padding-bottom: 20vh;
+}
+
+.about-page h1 {
+  font-size: 1.1em;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  margin-bottom: 20px;
+  margin-top: 0;
+  padding-top: 40px;
+}
+
+.about-page .content {
+  max-width: var(--content-width);
+}
+
+.about-page .content p {
+  margin-bottom: var(--space-sm);
+  font-size: 0.8em;
+  line-height: 1.4;
+}
+
+.about-page .content img {
+  margin: var(--space-md) 0;
+  border-radius: var(--radius);
+  width: 100%;
+}
+
+/* Contact Page */
+.contact-page {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-md);
+  padding-top: 150px;
+  background-color: var(--white);
+  border-radius: var(--radius);
+}
+
+.contact-page h1 {
+  font-size: 1.1em;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  margin-bottom: var(--space-lg);
+}
+
+.contact-page h2 {
+  font-size: 0.8em;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  color: var(--dark-grey);
+  margin-top: var(--space-xl);
+  margin-bottom: var(--space-md);
+}
+
+/* Form */
+.form-group {
+  margin-bottom: var(--space-md);
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.65rem;
+  color: var(--dark-grey);
+  margin-bottom: 8px;
+  font-family: var(--font-sans);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 90%;
+  padding: 5px;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.376);
+  color: var(--near-black);
+  font-family: var(--font-sans);
+  font-size: 1em;
+  outline: none;
+  border-radius: 0;
+  transition: border-color var(--transition);
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-bottom-color: var(--near-black);
+}
+
+.form-group textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.socials-list {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+  margin-top: var(--space-sm);
+}
+
+/* 404 */
+.page-404 {
+  text-align: center;
+  padding: var(--space-2xl) var(--space-md);
+}
+
+.page-404 h1 {
+  font-size: 8rem;
+  font-weight: 300;
+  color: var(--warm-grey);
+}

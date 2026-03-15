@@ -1,0 +1,206 @@
+/* ============================================
+   COMPONENTS — Swiper, Search, Feature block,
+   Divider, Footer
+   ============================================ */
+
+/* Swiper (concert carousel) */
+.swiper {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto var(--space-lg);
+  padding: 0 var(--space-md);
+}
+
+.swiper-slide {
+  background-color: var(--white);
+  padding: var(--space-md);
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: var(--radius);
+  box-shadow: 0px 5px 30px rgba(0, 0, 0, 0.037);
+}
+
+.swiper-slide a {
+  display: block;
+  text-decoration: none;
+}
+
+.swiper-slide a:hover {
+  opacity: 1;
+  text-decoration: none;
+}
+
+.swiper-slide .date {
+  font-size: 0.8em;
+  color: var(--dark-grey);
+  font-family: var(--font-sans);
+  margin-bottom: var(--space-xs);
+}
+
+.swiper-slide h3 {
+  margin-bottom: 6px;
+  font-size: 1.3em;
+  font-weight: 300;
+  font-family: var(--font-serif);
+}
+
+.swiper-slide .place {
+  color: var(--dark-grey);
+  font-size: 0.85rem;
+  margin-bottom: 0;
+  font-style: italic;
+}
+
+.swiper-pagination-bullet {
+  background-color: var(--mid-grey);
+  opacity: 1;
+}
+
+.swiper-pagination-bullet-active {
+  background-color: var(--near-black);
+}
+
+/* Search */
+.search-container {
+  display: flex;
+  gap: 0;
+  margin-bottom: var(--space-lg);
+  max-width: var(--content-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 var(--space-md);
+}
+
+.search-container input {
+  flex: 1;
+  padding: 5px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.376);
+  color: var(--near-black);
+  font-family: var(--font-sans);
+  font-size: 1em;
+  outline: none;
+}
+
+.search-container input:focus {
+  border-bottom-color: var(--near-black);
+}
+
+.search-container input::placeholder {
+  color: var(--mid-grey);
+  font-style: italic;
+}
+
+.search-container button {
+  padding: 5px 16px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.376);
+  color: var(--dark-grey);
+  cursor: pointer;
+  font-size: 0.8em;
+  font-family: var(--font-sans);
+  transition: all var(--transition);
+}
+
+.search-container button:hover {
+  color: var(--near-black);
+  border-bottom-color: var(--near-black);
+}
+
+/* Feature Block — editorial section */
+.feature-block {
+  background-color: var(--off-white);
+  padding: var(--space-2xl) var(--space-md);
+  margin: var(--space-xl) 0;
+}
+
+.feature-block h2 {
+  font-size: 3.5rem;
+  font-weight: 300;
+  max-width: var(--max-width-narrow);
+  margin: 0 auto var(--space-md);
+  text-align: center;
+}
+
+.feature-block p {
+  max-width: var(--max-width-text);
+  margin: 0 auto;
+  text-align: center;
+  font-size: 1.1rem;
+  color: var(--charcoal);
+}
+
+/* Divider Block */
+.divider-block {
+  background-color: var(--near-black);
+  padding: var(--space-xl) var(--space-md);
+  text-align: center;
+}
+
+.divider-block h2 {
+  color: var(--white);
+  font-size: 2.5rem;
+  font-weight: 300;
+}
+
+.divider-block p {
+  color: var(--mid-grey);
+  font-size: 0.7rem;
+  font-family: var(--font-sans);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-top: var(--space-sm);
+}
+
+/* Footer */
+.footer {
+  position: relative;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 150px var(--space-md) 60px;
+  font-family: var(--font-sans);
+}
+
+.footer-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.footer p {
+  font-size: 0.8em;
+  color: var(--mid-grey);
+  margin-bottom: 0;
+  font-family: var(--font-sans);
+  font-weight: normal;
+}
+
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.footer-links a {
+  color: var(--mid-grey);
+  font-size: 0.8em;
+  font-family: var(--font-sans);
+}
+
+.footer-links a:hover {
+  color: var(--near-black);
+  opacity: 1;
+}
+
+/* Concerts overview page section titles */
+.card-grid + .mt-lg,
+h2.mt-lg.mb-md {
+  max-width: var(--content-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 var(--space-md);
+}

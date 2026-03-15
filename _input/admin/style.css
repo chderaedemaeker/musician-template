@@ -481,7 +481,6 @@ a:hover { opacity: 0.6; }
 .login-card .subtitle {
   color: var(--dark-grey); font-size: .85rem; margin-bottom: 2rem;
 }
-.login-card .form-group { margin-bottom: 1.25rem; }
 
 /* ===== Settings ===== */
 .settings-section {
@@ -583,6 +582,160 @@ a:hover { opacity: 0.6; }
 @media (max-width: 600px) {
   .design-section-grid { grid-template-columns: 1fr 1fr; }
   .design-section { padding: 1rem; }
+}
+
+/* ===== Notion-style Table ===== */
+.notion-table-wrap {
+  overflow-x: auto;
+  margin-bottom: 2rem;
+  border: 1px solid var(--warm-grey);
+}
+
+.notion-table {
+  display: grid;
+  min-width: 800px;
+  border-bottom: 1px solid var(--warm-grey);
+  background: var(--off-white);
+}
+
+.notion-th {
+  padding: .5rem .6rem;
+  font-size: 0.6rem;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--dark-grey);
+  border-bottom: 1px solid var(--warm-grey);
+  background: var(--off-white);
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  white-space: nowrap;
+  transition: color var(--transition);
+}
+
+.notion-th:hover { color: var(--near-black); }
+.notion-th-active { color: var(--near-black); font-weight: 700; }
+.notion-th-check { cursor: default; justify-content: center; }
+.sort-icon { font-size: .7rem; }
+
+#notion-body { min-width: 800px; }
+
+.notion-row {
+  display: grid;
+  border-bottom: 1px solid var(--warm-grey);
+  background: var(--white);
+  transition: background 0.15s ease;
+}
+
+.notion-row:hover { background: #fafaf8; }
+
+.notion-row-dirty {
+  background: #fffdf5;
+}
+.notion-row-dirty:hover { background: #fffbec; }
+
+.notion-row-saving {
+  background: #f9f8f0;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.notion-row-saved {
+  animation: row-saved-flash 1.5s ease;
+}
+
+@keyframes row-saved-flash {
+  0% { background: #e8f5e9; }
+  100% { background: var(--white); }
+}
+
+.notion-cell {
+  padding: .45rem .6rem;
+  font-size: .85rem;
+  font-family: var(--font-serif);
+  color: var(--near-black);
+  display: flex;
+  align-items: center;
+  min-height: 38px;
+  outline: none;
+  border-right: 1px solid transparent;
+  cursor: text;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: background 0.1s ease, box-shadow 0.1s ease;
+}
+
+.notion-cell[contenteditable]:hover {
+  background: var(--off-white);
+}
+
+.notion-cell-editing {
+  background: var(--white) !important;
+  box-shadow: inset 0 0 0 2px var(--near-black);
+  white-space: normal;
+  word-break: break-word;
+  z-index: 1;
+}
+
+.notion-cell-title {
+  font-weight: 500;
+}
+
+.notion-cell-check {
+  justify-content: center;
+  cursor: default;
+}
+
+.notion-cell-date {
+  padding: 0;
+  cursor: default;
+}
+
+.notion-date-input {
+  width: 100%;
+  height: 100%;
+  padding: .45rem .6rem;
+  border: none;
+  background: transparent;
+  font-size: .8rem;
+  font-family: var(--font-sans);
+  color: var(--near-black);
+  outline: none;
+  cursor: pointer;
+}
+
+.notion-date-input:hover { background: var(--off-white); }
+.notion-date-input:focus { background: var(--white); box-shadow: inset 0 0 0 2px var(--near-black); }
+
+.notion-cell-actions {
+  justify-content: center;
+  padding: 0;
+  cursor: default;
+}
+
+.notion-open-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--mid-grey);
+  transition: color var(--transition), background var(--transition);
+  border-radius: 4px;
+}
+
+.notion-open-btn:hover {
+  color: var(--near-black);
+  background: var(--off-white);
 }
 
 /* ===== Loading ===== */
@@ -696,4 +849,6 @@ a:hover { opacity: 0.6; }
   .md-preview { border-left: none; border-top: 1px solid var(--warm-grey); }
   #toast-container { left: 1rem; right: 1rem; max-width: none; }
   .list-header h2 { font-size: 1.6rem; }
+  .notion-table-wrap { margin: 0 -1rem; border-left: none; border-right: none; }
+  .notion-cell { font-size: .8rem; }
 }

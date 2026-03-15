@@ -1,0 +1,58 @@
+/* ============================================
+   BUTTONS — All button styles
+   ============================================ */
+
+.btn {
+  display: inline-block;
+  padding: 14px 24px;
+  color: var(--dark-grey);
+  font-size: 0.9em;
+  font-family: var(--font-sans);
+  background-color: var(--off-white);
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: background-color 0.2s ease-in-out;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
+}
+
+.btn:hover {
+  background-color: var(--dark-grey);
+  color: var(--off-white);
+  opacity: 1;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background-color: var(--near-black);
+  color: var(--white);
+}
+
+.btn-primary:hover {
+  background-color: var(--charcoal);
+  color: var(--white);
+  opacity: 1;
+}
+
+.btn-sm {
+  padding: 10px 18px;
+  font-size: 0.8em;
+}
+
+/* Glass button — for hero overlays */
+.btn-glass {
+  color: var(--off-white);
+  background-color: rgba(0, 0, 0, 0.41);
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
+}
+
+.btn-glass:hover {
+  background-color: rgba(0, 0, 0, 0.76);
+  color: var(--off-white);
+}

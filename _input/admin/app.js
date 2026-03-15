@@ -2,19 +2,18 @@
    Musician-Template – CMS Admin (Simplified + Trilingual)
    ============================================================ */
 
-// --------------- GitHub API Wrapper ---------------
-class GitHubAPI {
-  constructor(token, owner, repo, branch = 'main') {
-    this.token = token;
-    this.owner = owner;
-    this.repo = repo;
-    this.branch = branch;
-    this.base = 'https://api.github.com';
+// --------------- Git Gateway API (via Netlify Identity) ---------------
+class GitGatewayAPI {
+  constructor(tokenFn) {
+    this._tokenFn = tokenFn; // async function that returns a fresh JWT
+    this.base = '/.netlify/git/github';
+    this.branch = 'master';
   }
 
-  _headers() {
+  async _headers() {
+    const token = await this._tokenFn();
     return {
-      Authorization: `Bearer ${this.token}`,
+      Authorization: `Bearer ${token}`,
       Accept: 'application/vnd.github.v3+json',
       'Content-Type': 'application/json',
     };
@@ -22,23 +21,23 @@ class GitHubAPI {
 
   async _request(method, endpoint, body) {
     const url = `${this.base}${endpoint}`;
-    const opts = { method, headers: this._headers() };
+    const opts = { method, headers: await this._headers() };
     if (body) opts.body = JSON.stringify(body);
     const res = await fetch(url, opts);
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || `GitHub API ${res.status}`);
+      throw new Error(err.message || `Git Gateway ${res.status}`);
     }
     if (res.status === 204) return null;
     return res.json();
   }
 
   async getContents(path) {
-    return this._request('GET', `/repos/${this.owner}/${this.repo}/contents/${path}?ref=${this.branch}`);
+    return this._request('GET', `/contents/${path}?ref=${this.branch}`);
   }
 
   async getFile(path) {
-    const data = await this._request('GET', `/repos/${this.owner}/${this.repo}/contents/${path}?ref=${this.branch}`);
+    const data = await this._request('GET', `/contents/${path}?ref=${this.branch}`);
     return {
       content: decodeBase64UTF8(data.content),
       sha: data.sha,
@@ -48,17 +47,17 @@ class GitHubAPI {
   }
 
   async getFileInfo(path) {
-    return this._request('GET', `/repos/${this.owner}/${this.repo}/contents/${path}?ref=${this.branch}`);
+    return this._request('GET', `/contents/${path}?ref=${this.branch}`);
   }
 
   async createOrUpdateFile(path, content, message, sha) {
     const body = { message, content: encodeBase64UTF8(content), branch: this.branch };
     if (sha) body.sha = sha;
-    return this._request('PUT', `/repos/${this.owner}/${this.repo}/contents/${path}`, body);
+    return this._request('PUT', `/contents/${path}`, body);
   }
 
   async deleteFile(path, sha, message) {
-    return this._request('DELETE', `/repos/${this.owner}/${this.repo}/contents/${path}`, {
+    return this._request('DELETE', `/contents/${path}`, {
       message, sha, branch: this.branch,
     });
   }
@@ -66,16 +65,16 @@ class GitHubAPI {
   async uploadImage(path, base64content, message) {
     let sha;
     try {
-      const existing = await this._request('GET', `/repos/${this.owner}/${this.repo}/contents/${path}?ref=${this.branch}`);
+      const existing = await this._request('GET', `/contents/${path}?ref=${this.branch}`);
       sha = existing.sha;
     } catch (e) { /* new file */ }
     const body = { message, content: base64content, branch: this.branch };
     if (sha) body.sha = sha;
-    return this._request('PUT', `/repos/${this.owner}/${this.repo}/contents/${path}`, body);
+    return this._request('PUT', `/contents/${path}`, body);
   }
 
   async verify() {
-    return this._request('GET', `/repos/${this.owner}/${this.repo}`);
+    return this._request('GET', `/contents/?ref=${this.branch}`);
   }
 }
 
@@ -260,6 +259,7 @@ class App {
     this._editorState = null;
     this._previewTimer = null;
     this._imageCache = null;
+    this._identityUser = null;
 
     document.addEventListener('keydown', (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
@@ -282,30 +282,53 @@ class App {
 
   init() {
     window.addEventListener('hashchange', () => { this._unsavedChanges = false; this._editorState = null; this.route(); });
-    this.loadCredentials();
-    if (this.api) this.loadConfig().then(() => this.route());
-    else this.route();
+
+    // Netlify Identity event handlers
+    if (window.netlifyIdentity) {
+      netlifyIdentity.on('login', (user) => {
+        this._onIdentityLogin(user);
+      });
+      netlifyIdentity.on('logout', () => {
+        this._onIdentityLogout();
+      });
+
+      // Check if already logged in
+      const currentUser = netlifyIdentity.currentUser();
+      if (currentUser) {
+        this._onIdentityLogin(currentUser);
+      } else {
+        this.route();
+      }
+    } else {
+      this.route();
+    }
   }
 
-  loadCredentials() {
-    const token = localStorage.getItem('cms_token');
-    const owner = localStorage.getItem('cms_owner');
-    const repo = localStorage.getItem('cms_repo');
-    const branch = localStorage.getItem('cms_branch') || 'main';
-    if (token && owner && repo) this.api = new GitHubAPI(token, owner, repo, branch);
+  _onIdentityLogin(user) {
+    this._identityUser = user;
+    this.api = new GitGatewayAPI(() => {
+      return this._identityUser.jwt(true); // force refresh
+    });
+    netlifyIdentity.close();
+    this.loadConfig().then(() => this.route());
   }
 
-  saveCredentials(token, owner, repo, branch) {
-    localStorage.setItem('cms_token', token);
-    localStorage.setItem('cms_owner', owner);
-    localStorage.setItem('cms_repo', repo);
-    localStorage.setItem('cms_branch', branch || 'main');
-    this.api = new GitHubAPI(token, owner, repo, branch || 'main');
+  _onIdentityLogout() {
+    this._identityUser = null;
+    this.api = null;
+    this.config = null;
+    this.collections = [];
+    location.hash = '#/login';
   }
 
   logout() {
-    ['cms_token','cms_owner','cms_repo','cms_branch'].forEach(k => localStorage.removeItem(k));
-    this.api = null; this.config = null; this.collections = [];
+    if (window.netlifyIdentity) {
+      netlifyIdentity.logout();
+    }
+    this._identityUser = null;
+    this.api = null;
+    this.config = null;
+    this.collections = [];
     location.hash = '#/login';
   }
 
@@ -359,55 +382,21 @@ class App {
 
   // ---- Login ----
   renderLogin() {
-    const owner = localStorage.getItem('cms_owner') || '';
-    const repo = localStorage.getItem('cms_repo') || '';
-    const branch = localStorage.getItem('cms_branch') || 'main';
     this.el.innerHTML = `
       <div class="login-wrapper">
         <div class="login-card">
           <h1>Content Manager</h1>
-          <p class="subtitle">Sign in with your GitHub credentials.</p>
-          <div class="form-group">
-            <label class="form-label">Token</label>
-            <input id="login-token" type="password" class="form-input" placeholder="ghp_..." />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Owner</label>
-            <input id="login-owner" type="text" class="form-input" placeholder="username" value="${esc(owner)}" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Repository</label>
-            <input id="login-repo" type="text" class="form-input" placeholder="my-site" value="${esc(repo)}" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Branch</label>
-            <input id="login-branch" type="text" class="form-input" placeholder="main" value="${esc(branch)}" />
-          </div>
+          <p class="subtitle">Sign in to manage your content.</p>
           <button id="login-btn" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:.75rem;">Sign In</button>
-          <p id="login-error" style="color:var(--danger);font-size:.8rem;margin-top:.75rem;display:none;"></p>
         </div>
       </div>`;
-    document.getElementById('login-btn').addEventListener('click', () => this._handleLogin());
-    this.el.querySelectorAll('input').forEach(inp => inp.addEventListener('keydown', e => { if (e.key === 'Enter') this._handleLogin(); }));
-  }
-
-  async _handleLogin() {
-    const token = document.getElementById('login-token').value.trim();
-    const owner = document.getElementById('login-owner').value.trim();
-    const repo = document.getElementById('login-repo').value.trim();
-    const branch = document.getElementById('login-branch').value.trim() || 'main';
-    const errEl = document.getElementById('login-error');
-    const btn = document.getElementById('login-btn');
-    if (!token || !owner || !repo) { errEl.textContent = 'All fields are required.'; errEl.style.display = 'block'; return; }
-    btn.disabled = true; btn.textContent = 'Verifying...'; errEl.style.display = 'none';
-    try {
-      this.saveCredentials(token, owner, repo, branch);
-      await this.api.verify();
-      await this.loadConfig();
-      location.hash = '#/';
-    } catch (e) {
-      errEl.textContent = 'Failed: ' + e.message; errEl.style.display = 'block'; this.api = null;
-    } finally { btn.disabled = false; btn.textContent = 'Sign In'; }
+    document.getElementById('login-btn').addEventListener('click', () => {
+      if (window.netlifyIdentity) {
+        netlifyIdentity.open('login');
+      } else {
+        showStatus('error', 'Netlify Identity widget not loaded.');
+      }
+    });
   }
 
   // ---- Dashboard ----
@@ -457,31 +446,17 @@ class App {
 
   // ---- Settings ----
   renderSettings() {
-    const owner = localStorage.getItem('cms_owner') || '';
-    const repo = localStorage.getItem('cms_repo') || '';
-    const branch = localStorage.getItem('cms_branch') || 'main';
+    const user = this._identityUser;
+    const email = user ? (user.email || user.user_metadata?.full_name || 'Unknown') : 'Not signed in';
     this.el.innerHTML = `
       ${this._topbar()}
       <nav class="breadcrumb"><a href="#/">Dashboard</a><span class="sep">/</span><span>Settings</span></nav>
       <div class="settings-section">
-        <h3>Repository</h3>
-        <div class="form-group"><label class="form-label">Owner</label><input id="set-owner" type="text" class="form-input" value="${esc(owner)}" /></div>
-        <div class="form-group"><label class="form-label">Repository</label><input id="set-repo" type="text" class="form-input" value="${esc(repo)}" /></div>
-        <div class="form-group"><label class="form-label">Branch</label><input id="set-branch" type="text" class="form-input" value="${esc(branch)}" /></div>
-        <div class="form-group"><label class="form-label">New Token (leave blank to keep)</label><input id="set-token" type="password" class="form-input" placeholder="ghp_..." /></div>
-        <button id="set-save" class="btn btn-primary">Save</button>
-      </div>
-      <div class="settings-section">
         <h3>Account</h3>
+        <p style="font-size:.9rem;color:var(--dark-grey);margin-bottom:1.5rem;">Signed in as <strong>${esc(email)}</strong></p>
         <button id="set-logout" class="btn btn-danger">Logout</button>
       </div>`;
     this._bindTopbar();
-    document.getElementById('set-save').addEventListener('click', () => {
-      const token = document.getElementById('set-token').value.trim() || localStorage.getItem('cms_token');
-      this.saveCredentials(token, document.getElementById('set-owner').value.trim(), document.getElementById('set-repo').value.trim(), document.getElementById('set-branch').value.trim() || 'main');
-      this.config = null; this.collections = [];
-      this.loadConfig().then(() => showStatus('saved', 'Settings saved'));
-    });
     document.getElementById('set-logout').addEventListener('click', () => this.logout());
   }
 
@@ -489,6 +464,10 @@ class App {
   async renderCollection(name) {
     const col = this.collections.find(c => c.name === name);
     if (!col) { location.hash = '#/'; return; }
+
+    // Concerts get the Notion-style table view
+    if (name === 'concerts') return this.renderConcertTable(col);
+
     this.el.innerHTML = `
       ${this._topbar()}
       <nav class="breadcrumb"><a href="#/">Dashboard</a><span class="sep">/</span><span>${esc(col.label)}</span></nav>
@@ -547,6 +526,311 @@ class App {
       this._bindBulkOps(listEl, entries, col, name);
     } catch (e) {
       document.getElementById('entry-list').innerHTML = `<div class="empty-state" style="color:var(--danger);">${esc(e.message)}</div>`;
+    }
+  }
+
+  // ---- Notion-style Concert Table ----
+  async renderConcertTable(col) {
+    const columns = [
+      { key: 'title', label: 'Title', width: 'minmax(200px, 2fr)' },
+      { key: 'date', label: 'Date', width: 'minmax(140px, 1fr)', type: 'date' },
+      { key: 'place', label: 'Place', width: 'minmax(140px, 1fr)' },
+      { key: 'composers', label: 'Composers', width: 'minmax(120px, 1fr)' },
+      { key: 'collaborators', label: 'Collaborators', width: 'minmax(120px, 1fr)' },
+    ];
+    const gridCols = '36px ' + columns.map(c => c.width).join(' ') + ' 40px';
+
+    this.el.innerHTML = `
+      ${this._topbar()}
+      <nav class="breadcrumb"><a href="#/">Dashboard</a><span class="sep">/</span><span>${esc(col.label)}</span></nav>
+      <div class="list-header">
+        <h2>${esc(col.label)}</h2>
+        <div style="display:flex;gap:.5rem;">
+          <button class="btn btn-primary btn-sm" id="new-row-btn">+ New</button>
+        </div>
+      </div>
+      <div class="collection-filter"><input type="text" id="table-search" placeholder="Search concerts..." /></div>
+      <div id="bulk-bar" class="bulk-bar" style="display:none;"><span id="bulk-count">0</span><button class="btn btn-sm" id="bulk-delete-btn">Delete</button></div>
+      <div class="notion-table-wrap">
+        <div class="notion-table" id="notion-table" style="grid-template-columns: ${gridCols};">
+          <div class="notion-th notion-th-check"><input type="checkbox" id="select-all-checkbox" class="entry-checkbox" /></div>
+          ${columns.map(c => `<div class="notion-th" data-sort="${c.key}">${esc(c.label)}<span class="sort-icon"></span></div>`).join('')}
+          <div class="notion-th"></div>
+        </div>
+        <div id="notion-body"><div class="loading-state"><span class="spinner"></span> Loading concerts...</div></div>
+      </div>`;
+    this._bindTopbar();
+
+    this._concertTableState = { entries: [], col, columns, gridCols, sortKey: 'date', sortDir: 'desc', saveTimers: {} };
+
+    try {
+      const contents = await this.api.getContents(col.folder);
+      const files = contents.filter(f => f.name.endsWith('.md')).sort((a, b) => b.name.localeCompare(a.name));
+      const bodyEl = document.getElementById('notion-body');
+
+      if (!files.length) { bodyEl.innerHTML = '<div class="empty-state">No concerts yet.</div>'; return; }
+
+      const entries = await Promise.all(files.map(async f => {
+        try {
+          const fd = await this.api.getFile(f.path);
+          const parsed = FrontMatter.parse(fd.content);
+          return { name: f.name, data: parsed.data, body: parsed.body, path: f.path, sha: fd.sha, dirty: false };
+        } catch { return { name: f.name, data: { title: f.name }, body: '', path: f.path, sha: null, dirty: false }; }
+      }));
+
+      this._concertTableState.entries = entries;
+      this._renderTableRows();
+      this._bindTableEvents();
+    } catch (e) {
+      document.getElementById('notion-body').innerHTML = `<div class="empty-state" style="color:var(--danger);">${esc(e.message)}</div>`;
+    }
+  }
+
+  _renderTableRows() {
+    const state = this._concertTableState;
+    const { entries, columns, gridCols, sortKey, sortDir } = state;
+
+    const sorted = [...entries].sort((a, b) => {
+      const va = (a.data[sortKey] || '').toLowerCase();
+      const vb = (b.data[sortKey] || '').toLowerCase();
+      return sortDir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+    });
+
+    const bodyEl = document.getElementById('notion-body');
+    bodyEl.innerHTML = sorted.map((entry, i) => {
+      const idx = entries.indexOf(entry);
+      const dateVal = entry.data.date ? entry.data.date.substring(0, 10) : '';
+      return `<div class="notion-row${entry.dirty ? ' notion-row-dirty' : ''}" data-idx="${idx}" style="grid-template-columns: ${gridCols};">
+        <div class="notion-cell notion-cell-check"><input type="checkbox" class="entry-checkbox entry-select" data-idx="${idx}" data-file="${esc(entry.name)}" /></div>
+        <div class="notion-cell notion-cell-title" data-field="title" data-idx="${idx}" contenteditable="true">${esc(entry.data.title || '')}</div>
+        <div class="notion-cell notion-cell-date" data-field="date" data-idx="${idx}"><input type="date" class="notion-date-input" value="${esc(dateVal)}" data-idx="${idx}" /></div>
+        <div class="notion-cell" data-field="place" data-idx="${idx}" contenteditable="true">${esc(entry.data.place || '')}</div>
+        <div class="notion-cell" data-field="composers" data-idx="${idx}" contenteditable="true">${esc(entry.data.composers || '')}</div>
+        <div class="notion-cell" data-field="collaborators" data-idx="${idx}" contenteditable="true">${esc(entry.data.collaborators || '')}</div>
+        <div class="notion-cell notion-cell-actions"><button class="notion-open-btn" data-file="${esc(entry.name)}" title="Open full editor">&#8599;</button></div>
+      </div>`;
+    }).join('');
+
+    // Update sort indicators
+    document.querySelectorAll('.notion-th[data-sort]').forEach(th => {
+      const icon = th.querySelector('.sort-icon');
+      if (th.dataset.sort === sortKey) {
+        icon.textContent = sortDir === 'asc' ? ' \u2191' : ' \u2193';
+        th.classList.add('notion-th-active');
+      } else {
+        icon.textContent = '';
+        th.classList.remove('notion-th-active');
+      }
+    });
+  }
+
+  _bindTableEvents() {
+    const state = this._concertTableState;
+    const bodyEl = document.getElementById('notion-body');
+    const tableEl = document.getElementById('notion-table');
+
+    // Sort by clicking headers
+    tableEl.querySelectorAll('.notion-th[data-sort]').forEach(th => {
+      th.addEventListener('click', () => {
+        if (state.sortKey === th.dataset.sort) {
+          state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
+        } else {
+          state.sortKey = th.dataset.sort;
+          state.sortDir = th.dataset.sort === 'date' ? 'desc' : 'asc';
+        }
+        this._renderTableRows();
+        this._bindTableRowEvents();
+      });
+    });
+
+    this._bindTableRowEvents();
+
+    // Search
+    document.getElementById('table-search').addEventListener('input', function() {
+      const q = this.value.toLowerCase().trim();
+      bodyEl.querySelectorAll('.notion-row').forEach(row => {
+        if (!q) { row.style.display = ''; return; }
+        const idx = parseInt(row.dataset.idx);
+        const entry = state.entries[idx];
+        const match = Object.values(entry.data).some(v => (v || '').toString().toLowerCase().includes(q));
+        row.style.display = match ? '' : 'none';
+      });
+    });
+
+    // Select all
+    document.getElementById('select-all-checkbox').addEventListener('change', (e) => {
+      bodyEl.querySelectorAll('.entry-select').forEach(cb => {
+        if (cb.closest('.notion-row').style.display !== 'none') cb.checked = e.target.checked;
+      });
+      this._updateBulkBar();
+    });
+
+    // Bulk delete
+    document.getElementById('bulk-delete-btn').addEventListener('click', async () => {
+      const checked = bodyEl.querySelectorAll('.entry-select:checked');
+      if (!checked.length) return;
+      const ok = await showModal('Delete', `Delete ${checked.length} concert${checked.length > 1 ? 's' : ''}? This cannot be undone.`);
+      if (!ok) return;
+      showStatus('saving', 'Deleting...');
+      for (const cb of checked) {
+        const idx = parseInt(cb.dataset.idx);
+        const entry = state.entries[idx];
+        try {
+          if (entry.sha) await this.api.deleteFile(entry.path, entry.sha, `Delete ${entry.name}`);
+          state.entries[idx] = null;
+        } catch (e) { showStatus('error', `Failed: ${e.message}`); return; }
+      }
+      state.entries = state.entries.filter(e => e !== null);
+      this._renderTableRows();
+      this._bindTableRowEvents();
+      document.getElementById('bulk-bar').style.display = 'none';
+      document.getElementById('select-all-checkbox').checked = false;
+      showStatus('saved', 'Deleted');
+    });
+
+    // New row
+    document.getElementById('new-row-btn').addEventListener('click', () => {
+      location.hash = '#/concerts/new';
+    });
+  }
+
+  _bindTableRowEvents() {
+    const state = this._concertTableState;
+    const bodyEl = document.getElementById('notion-body');
+
+    // Inline editing — contenteditable cells
+    bodyEl.querySelectorAll('.notion-cell[contenteditable]').forEach(cell => {
+      cell.addEventListener('focus', () => { cell.classList.add('notion-cell-editing'); });
+
+      cell.addEventListener('blur', () => {
+        cell.classList.remove('notion-cell-editing');
+        const idx = parseInt(cell.dataset.idx);
+        const field = cell.dataset.field;
+        const newVal = cell.textContent.trim();
+        const entry = state.entries[idx];
+        if (entry && entry.data[field] !== newVal) {
+          entry.data[field] = newVal;
+          entry.dirty = true;
+          cell.closest('.notion-row').classList.add('notion-row-dirty');
+          this._debounceSaveRow(idx);
+        }
+      });
+
+      cell.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          cell.blur();
+        }
+        if (e.key === 'Escape') {
+          const idx = parseInt(cell.dataset.idx);
+          const field = cell.dataset.field;
+          cell.textContent = state.entries[idx].data[field] || '';
+          cell.blur();
+        }
+        if (e.key === 'Tab') {
+          e.preventDefault();
+          const row = cell.closest('.notion-row');
+          const cells = [...row.querySelectorAll('[contenteditable], .notion-date-input')];
+          const currentIdx = cells.indexOf(cell);
+          const nextIdx = e.shiftKey ? currentIdx - 1 : currentIdx + 1;
+          if (nextIdx >= 0 && nextIdx < cells.length) {
+            cell.blur();
+            const next = cells[nextIdx];
+            if (next.tagName === 'INPUT') next.focus();
+            else { next.focus(); const sel = window.getSelection(); sel.selectAllChildren(next); sel.collapseToEnd(); }
+          }
+        }
+      });
+
+      // Paste as plain text
+      cell.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+        document.execCommand('insertText', false, text);
+      });
+    });
+
+    // Date inputs
+    bodyEl.querySelectorAll('.notion-date-input').forEach(input => {
+      input.addEventListener('change', () => {
+        const idx = parseInt(input.dataset.idx);
+        const entry = state.entries[idx];
+        if (entry) {
+          entry.data.date = input.value ? input.value + 'T00:00:00' : '';
+          entry.dirty = true;
+          input.closest('.notion-row').classList.add('notion-row-dirty');
+          this._debounceSaveRow(idx);
+        }
+      });
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab') {
+          e.preventDefault();
+          const row = input.closest('.notion-row');
+          const cells = [...row.querySelectorAll('[contenteditable], .notion-date-input')];
+          const currentIdx = cells.indexOf(input);
+          const nextIdx = e.shiftKey ? currentIdx - 1 : currentIdx + 1;
+          if (nextIdx >= 0 && nextIdx < cells.length) {
+            const next = cells[nextIdx];
+            if (next.tagName === 'INPUT') next.focus();
+            else { next.focus(); const sel = window.getSelection(); sel.selectAllChildren(next); sel.collapseToEnd(); }
+          }
+        }
+      });
+    });
+
+    // Open button
+    bodyEl.querySelectorAll('.notion-open-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        location.hash = `#/concerts/edit/${encodeURIComponent(btn.dataset.file)}`;
+      });
+    });
+
+    // Checkbox change
+    bodyEl.querySelectorAll('.entry-select').forEach(cb => {
+      cb.addEventListener('change', () => this._updateBulkBar());
+    });
+  }
+
+  _updateBulkBar() {
+    const bodyEl = document.getElementById('notion-body');
+    const n = bodyEl.querySelectorAll('.entry-select:checked').length;
+    const bulkBar = document.getElementById('bulk-bar');
+    const bulkCount = document.getElementById('bulk-count');
+    bulkBar.style.display = n > 0 ? 'flex' : 'none';
+    bulkCount.textContent = `${n} selected`;
+  }
+
+  _debounceSaveRow(idx) {
+    const state = this._concertTableState;
+    if (state.saveTimers[idx]) clearTimeout(state.saveTimers[idx]);
+    state.saveTimers[idx] = setTimeout(() => this._saveTableRow(idx), 1200);
+  }
+
+  async _saveTableRow(idx) {
+    const state = this._concertTableState;
+    const entry = state.entries[idx];
+    if (!entry || !entry.dirty) return;
+
+    const row = document.querySelector(`.notion-row[data-idx="${idx}"]`);
+    if (row) row.classList.add('notion-row-saving');
+
+    try {
+      const data = { ...entry.data };
+      if (!data.layout) data.layout = 'concert.html';
+      const content = FrontMatter.serialize(data, entry.body || '');
+      const result = await this.api.createOrUpdateFile(entry.path, content, `Update concert: ${data.title || entry.name}`, entry.sha || undefined);
+      entry.sha = result.content.sha;
+      entry.dirty = false;
+      if (row) {
+        row.classList.remove('notion-row-dirty', 'notion-row-saving');
+        row.classList.add('notion-row-saved');
+        setTimeout(() => row.classList.remove('notion-row-saved'), 1500);
+      }
+    } catch (e) {
+      showStatus('error', `Save failed: ${e.message}`);
+      if (row) row.classList.remove('notion-row-saving');
     }
   }
 
@@ -774,7 +1058,7 @@ class App {
 
       case 'image':
         return `<div class="image-field">
-          ${value ? `<img class="image-preview" src="https://raw.githubusercontent.com/${this.api.owner}/${this.api.repo}/${this.api.branch}/_input${value.startsWith('/') ? value : '/images/' + value}" onerror="this.style.display='none'" />` : '<div class="image-placeholder">No image</div>'}
+          ${value ? `<img class="image-preview" src="${value.startsWith('/') ? value : '/images/' + value}" onerror="this.style.display='none'" />` : '<div class="image-placeholder">No image</div>'}
           <div class="image-controls">
             <input type="text" class="form-input" ${dataAttr} value="${escaped}" placeholder="/images/photo.jpg" />
             <div style="display:flex;gap:.25rem;margin-top:.25rem;">
@@ -903,7 +1187,7 @@ class App {
       <div class="media-filter" style="margin-bottom:1rem;"><input type="text" id="picker-search" placeholder="Search..." style="width:100%;padding:.5rem 0;border:none;border-bottom:1px solid var(--warm-grey);font-family:var(--font-serif);font-size:.9rem;color:var(--near-black);background:transparent;" /></div>
       <div class="image-picker-grid" id="picker-grid">
         ${this._imageCache.map(img => `<div class="image-picker-item" data-name="${esc(img.name)}" data-path="${esc(img.path)}">
-          <img src="https://raw.githubusercontent.com/${this.api.owner}/${this.api.repo}/${this.api.branch}/${img.path}" alt="${esc(img.name)}" loading="lazy" />
+          <img src="/images/${img.name}" alt="${esc(img.name)}" loading="lazy" />
           <div class="image-picker-item-name">${esc(img.name)}</div>
         </div>`).join('')}
       </div>
@@ -932,7 +1216,7 @@ class App {
         const container = input?.closest('.image-field');
         if (container) {
           const prev = container.querySelector('.image-preview, .image-placeholder');
-          if (prev) { const img = document.createElement('img'); img.className = 'image-preview'; img.src = `https://raw.githubusercontent.com/${this.api.owner}/${this.api.repo}/${this.api.branch}/${item.dataset.path}`; prev.replaceWith(img); }
+          if (prev) { const img = document.createElement('img'); img.className = 'image-preview'; img.src = `/images/${item.dataset.name}`; prev.replaceWith(img); }
         }
         overlay.remove();
         showStatus('saved', `Selected: ${item.dataset.name}`);
@@ -962,7 +1246,7 @@ class App {
       <div class="media-filter" style="margin-bottom:1rem;"><input type="text" id="picker-search" placeholder="Search..." style="width:100%;padding:.5rem 0;border:none;border-bottom:1px solid var(--warm-grey);font-family:var(--font-serif);font-size:.9rem;color:var(--near-black);background:transparent;" /></div>
       <div class="image-picker-grid" id="picker-grid">
         ${this._imageCache.map(img => `<div class="image-picker-item" data-name="${esc(img.name)}" data-path="${esc(img.path)}">
-          <img src="https://raw.githubusercontent.com/${this.api.owner}/${this.api.repo}/${this.api.branch}/${img.path}" alt="${esc(img.name)}" loading="lazy" />
+          <img src="/images/${img.name}" alt="${esc(img.name)}" loading="lazy" />
           <div class="image-picker-item-name">${esc(img.name)}</div>
         </div>`).join('')}
       </div>
@@ -1618,7 +1902,7 @@ class App {
       if (!images.length) { gridEl.innerHTML = '<div class="empty-state">No images yet.</div>'; return; }
 
       gridEl.innerHTML = images.map(img => `<div class="media-item" data-name="${esc(img.name)}" data-sha="${img.sha}" data-path="${esc(img.path)}">
-        <div class="media-thumb"><img src="https://raw.githubusercontent.com/${this.api.owner}/${this.api.repo}/${this.api.branch}/${img.path}" alt="${esc(img.name)}" loading="lazy" /></div>
+        <div class="media-thumb"><img src="/images/${img.name}" alt="${esc(img.name)}" loading="lazy" /></div>
         <div class="media-item-info">
           <div class="media-item-name" title="${esc(img.name)}">${esc(img.name)}</div>
           ${img.size ? `<div class="media-item-size">${formatFileSize(img.size)}</div>` : ''}
@@ -1685,7 +1969,7 @@ class App {
   _showLightbox(name, path) {
     const overlay = document.createElement('div');
     overlay.className = 'image-lightbox visible';
-    const imgUrl = `https://raw.githubusercontent.com/${this.api.owner}/${this.api.repo}/${this.api.branch}/${path}`;
+    const imgUrl = `/images/${name}`;
     overlay.innerHTML = `<div class="lightbox-content">
       <img src="${imgUrl}" alt="${esc(name)}" />
       <div class="lightbox-info">
