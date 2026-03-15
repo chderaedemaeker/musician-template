@@ -6,7 +6,9 @@ tags: pages
 
 {% assign lang = page.lang %}
 
-<h1 class="section-title">{{ languages[lang].projects_title }}</h1>
+<div style="max-width: var(--max-width); margin: 0 auto; padding: var(--space-xl) var(--space-md) var(--space-lg);">
+  <h1 style="font-size: 4rem; font-weight: 400;">{{ languages[lang].projects_title }}</h1>
+</div>
 
 {% assign langProjects = 'projects_' | append: lang %}
 {% assign sortedProjects = collections[langProjects] | sort: 'date' | reverse %}
@@ -24,6 +26,6 @@ tags: pages
       </a>
     {% endfor %}
   {% else %}
-    <p>No projects found.</p>
+    <p style="padding: var(--space-md); color: var(--mid-grey); font-style: italic;">No projects found.</p>
   {% endif %}
 </div>

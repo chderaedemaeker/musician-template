@@ -6,17 +6,24 @@ tags: pages
 
 {% assign lang = page.lang %}
 
-<h1 class="section-title">{{ languages[lang].concerts_title }}</h1>
+<div style="max-width: var(--max-width); margin: 0 auto; padding: var(--space-xl) var(--space-md) 0;">
+  <h1 style="font-size: 4rem; font-weight: 400; margin-bottom: var(--space-xs);">{{ languages[lang].concerts_title }}</h1>
+  <p style="font-size: 0.7rem; font-family: var(--font-sans); letter-spacing: 0.2em; text-transform: uppercase; color: var(--mid-grey);">All upcoming and past performances</p>
+</div>
 
-<div class="search-container">
+<div class="search-container" style="margin-top: var(--space-lg);">
   <input type="text" id="search-input" placeholder="{{ languages[lang].search_placeholder }}">
   <button id="search-button">{{ languages[lang].search_button }}</button>
 </div>
 
-<h2 class="mt-lg mb-md">{{ languages[lang].upcoming_concerts }}</h2>
+<div style="max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-md);">
+  <span class="section-title" style="margin-top: var(--space-lg);">{{ languages[lang].upcoming_concerts }}</span>
+</div>
 <div class="card-grid" id="upcoming-concerts"></div>
 
-<h2 class="mt-lg mb-md">{{ languages[lang].archive }}</h2>
+<div style="max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-md);">
+  <span class="section-title" style="margin-top: var(--space-lg);">{{ languages[lang].archive }}</span>
+</div>
 <div class="card-grid" id="archive-concerts"></div>
 
 <script>
@@ -37,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function renderConcerts(list, containerId) {
     var container = document.getElementById(containerId);
     if (list.length === 0) {
-      container.innerHTML = '<p>{{ languages[lang].no_upcoming }}</p>';
+      container.innerHTML = '<div style="padding: var(--space-md);"><p style="color: var(--mid-grey); font-style: italic;">{{ languages[lang].no_upcoming }}</p></div>';
       return;
     }
     container.innerHTML = list.map(function(c) {

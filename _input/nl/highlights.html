@@ -6,7 +6,9 @@ tags: pages
 
 {% assign lang = page.lang %}
 
-<h1 class="section-title">{{ languages[lang].highlights_title }}</h1>
+<div style="max-width: var(--max-width); margin: 0 auto; padding: var(--space-xl) var(--space-md) var(--space-lg);">
+  <h1 style="font-size: 4rem; font-weight: 400;">{{ languages[lang].highlights_title }}</h1>
+</div>
 
 {% assign langHighlights = 'highlights_' | append: lang %}
 {% assign sortedHighlights = collections[langHighlights] | sort: 'date' | reverse %}
@@ -25,6 +27,6 @@ tags: pages
       </a>
     {% endfor %}
   {% else %}
-    <p>{{ languages[lang].no_highlights }}</p>
+    <p style="padding: var(--space-md); color: var(--mid-grey); font-style: italic;">{{ languages[lang].no_highlights }}</p>
   {% endif %}
 </div>

@@ -23,8 +23,11 @@ layout: layout.html
   </div>
 {% endif %}
 
-<!-- Upcoming Concerts Swiper -->
-<h2 class="section-title">{{ languages[lang].upcoming_concerts }}</h2>
+<!-- Upcoming Concerts — dark divider block -->
+<div class="divider-block">
+  <p>{{ languages[lang].upcoming_concerts }}</p>
+  <h2>Concerts</h2>
+</div>
 
 <div class="swiper mySwiper">
   <div class="swiper-wrapper">
@@ -36,54 +39,60 @@ layout: layout.html
   <a class="btn" href="/{{ lang }}/concerts/">{{ languages[lang].see_all_concerts }}</a>
 </div>
 
-<!-- Latest Highlight -->
-<h2 class="section-title">{{ languages[lang].most_recent_highlight }}</h2>
+<!-- Latest Highlight — feature block -->
+<div class="feature-block">
+  <p style="font-size: 0.7rem; font-family: var(--font-sans); letter-spacing: 0.2em; text-transform: uppercase; color: var(--dark-grey); margin-bottom: var(--space-md);">{{ languages[lang].most_recent_highlight }}</p>
 
-{% assign langHighlights = 'highlights_' | append: lang %}
-{% assign sortedHighlights = collections[langHighlights] | sort: 'date' | reverse %}
-{% assign firstHighlight = sortedHighlights | slice: 0, 1 %}
+  {% assign langHighlights = 'highlights_' | append: lang %}
+  {% assign sortedHighlights = collections[langHighlights] | sort: 'date' | reverse %}
+  {% assign firstHighlight = sortedHighlights | slice: 0, 1 %}
 
-{% if firstHighlight.size > 0 %}
-  {% for highlight in firstHighlight %}
-    <a href="{{ highlight.url }}">
-      <div class="image-card" style="max-width: 600px;">
-        <div class="image-card-bg" style="background-image: url('{{ highlight.data.image }}')"></div>
-        <div class="image-card-overlay">
-          <h3>{{ highlight.data.title }}</h3>
-          {% if highlight.data.type %}<p>{{ highlight.data.type }}</p>{% endif %}
+  {% if firstHighlight.size > 0 %}
+    {% for highlight in firstHighlight %}
+      <a href="{{ highlight.url }}" style="display: block; max-width: 600px; margin: 0 auto;">
+        <div class="image-card" style="aspect-ratio: 3/4;">
+          <div class="image-card-bg" style="background-image: url('{{ highlight.data.image }}')"></div>
+          <div class="image-card-overlay">
+            <h3>{{ highlight.data.title }}</h3>
+            {% if highlight.data.type %}<p>{{ highlight.data.type }}</p>{% endif %}
+          </div>
         </div>
-      </div>
-    </a>
-  {% endfor %}
-{% else %}
-  <p>{{ languages[lang].no_highlights }}</p>
-{% endif %}
+      </a>
+    {% endfor %}
+  {% else %}
+    <p style="text-align: center;">{{ languages[lang].no_highlights }}</p>
+  {% endif %}
 
-<div class="mt-md mb-lg">
-  <a class="btn" href="/{{ lang }}/highlights/">{{ languages[lang].see_all_highlights }}</a>
+  <div style="text-align: center; margin-top: var(--space-lg);">
+    <a class="btn" href="/{{ lang }}/highlights/">{{ languages[lang].see_all_highlights }}</a>
+  </div>
 </div>
 
 <!-- Projects -->
-<h2 class="section-title">{{ languages[lang].projects_title }}</h2>
+<div style="padding: var(--space-xl) 0;">
+  <div style="max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-md);">
+    <span class="section-title">{{ languages[lang].projects_title }}</span>
+  </div>
 
-{% assign langProjects = 'projects_' | append: lang %}
-{% assign sortedProjects = collections[langProjects] | sort: 'date' | reverse %}
+  {% assign langProjects = 'projects_' | append: lang %}
+  {% assign sortedProjects = collections[langProjects] | sort: 'date' | reverse %}
 
-<div class="card-grid mb-lg">
-  {% for project in sortedProjects limit: 3 %}
-    <a href="{{ project.url }}">
-      <div class="image-card">
-        <div class="image-card-bg" style="background-image: url('{{ project.data.image }}')"></div>
-        <div class="image-card-overlay">
-          <h3>{{ project.data.title }}</h3>
+  <div class="card-grid">
+    {% for project in sortedProjects limit: 3 %}
+      <a href="{{ project.url }}">
+        <div class="image-card">
+          <div class="image-card-bg" style="background-image: url('{{ project.data.image }}')"></div>
+          <div class="image-card-overlay">
+            <h3>{{ project.data.title }}</h3>
+          </div>
         </div>
-      </div>
-    </a>
-  {% endfor %}
-</div>
+      </a>
+    {% endfor %}
+  </div>
 
-<div class="text-center mb-lg">
-  <a class="btn" href="/{{ lang }}/projects/">{{ languages[lang].view_projects }}</a>
+  <div class="text-center mb-lg">
+    <a class="btn" href="/{{ lang }}/projects/">{{ languages[lang].view_projects }}</a>
+  </div>
 </div>
 
 </main>
@@ -111,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
   if (typeof Swiper !== 'undefined') {
     new Swiper('.mySwiper', {
       slidesPerView: 1,
-      spaceBetween: 16,
+      spaceBetween: 2,
       pagination: { el: '.swiper-pagination', clickable: true },
       breakpoints: {
         640: { slidesPerView: 2 },
