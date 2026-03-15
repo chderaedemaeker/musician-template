@@ -1,9 +1,8 @@
 /* ============================================
-   LAYOUT — Containers, Grid, Utilities
+   LAYOUT — Containers, Utilities
    ============================================ */
 
 main {
-  flex: 1;
   width: 100%;
 }
 
@@ -13,57 +12,10 @@ main {
   padding: 0 var(--space-md);
 }
 
-.narrow {
-  max-width: var(--max-width-narrow);
-  margin: 0 auto;
-}
-
-/* Section Titles */
-.section-title {
-  font-size: 0.7rem;
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--dark-grey);
-  font-family: var(--font-sans);
-  margin-bottom: var(--space-lg);
-  padding-bottom: var(--space-xs);
-  border-bottom: 1px solid var(--warm-grey);
-  display: block;
-}
-
-/* About Summary Block (index page) */
-.narrow.mb-lg {
-  max-width: var(--content-width);
-  text-align: left;
-  padding: 0 var(--space-md) var(--space-xl);
-  margin: 0 auto;
-}
-
-.narrow.mb-lg p {
-  font-size: 1.2em;
-  line-height: 1.4;
-  color: var(--charcoal);
-  font-family: var(--font-serif);
-}
-
-/* Index page section layout */
-main > .section-title,
-main > .text-center,
-main > .mt-md {
-  max-width: var(--max-width);
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: var(--space-md);
-  padding-right: var(--space-md);
-}
-
-/* Utilities */
 .text-center { text-align: center; }
 .mt-sm { margin-top: var(--space-sm); }
 .mt-md { margin-top: var(--space-md); }
 .mt-lg { margin-top: var(--space-lg); }
-.mt-xl { margin-top: var(--space-xl); }
 .mb-sm { margin-bottom: var(--space-sm); }
 .mb-md { margin-bottom: var(--space-md); }
 .mb-lg { margin-bottom: var(--space-lg); }

@@ -2,7 +2,6 @@
    BASE — Variables, Reset, Typography
    ============================================ */
 
-/* Custom Font */
 @font-face {
   font-family: 'AGL';
   src: url('/images/AppleGaramond-Light.ttf') format('truetype');
@@ -11,9 +10,7 @@
   font-display: swap;
 }
 
-/* Variables */
 :root {
-  /* Colors */
   --white: #ffffff;
   --off-white: #f5f4f2;
   --warm-grey: #e8e6e1;
@@ -21,32 +18,22 @@
   --dark-grey: #6b665e;
   --charcoal: #3a3732;
   --near-black: #141413;
-  --pure-black: #0d0d0c;
 
-  /* Fonts */
-  --font-serif: 'AGL', 'Apple Garamond', 'EB Garamond', 'Georgia', 'Times New Roman', serif;
-  --font-sans: 'Helvetica Neue', Helvetica, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'AGL', Georgia, serif;
+  --font-sans: 'Helvetica Neue', Helvetica, sans-serif;
 
-  /* Widths */
   --max-width: 1400px;
-  --max-width-narrow: 820px;
-  --max-width-text: 640px;
-  --content-width: 500px;
+  --content-width: 600px;
 
-  /* Spacing */
   --space-xs: 0.5rem;
   --space-sm: 1rem;
   --space-md: 2rem;
   --space-lg: 4rem;
   --space-xl: 6rem;
-  --space-2xl: 10rem;
 
-  /* Other */
-  --radius: 16px;
-  --transition: 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+  --radius: 8px;
 }
 
-/* Reset */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -54,20 +41,15 @@
 }
 
 html {
-  font-size: 17px;
-  scroll-behavior: smooth;
-  -webkit-text-size-adjust: 100%;
+  font-size: 16px;
 }
 
 body {
   font-family: var(--font-serif);
   background-color: var(--off-white);
   color: var(--near-black);
-  line-height: 1.65;
+  line-height: 1.6;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  -webkit-font-smoothing: antialiased;
 }
 
 img {
@@ -79,7 +61,6 @@ img {
 a {
   color: var(--near-black);
   text-decoration: none;
-  transition: opacity var(--transition);
 }
 
 a:hover {
@@ -90,26 +71,18 @@ ul, ol {
   list-style: none;
 }
 
-/* Typography */
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3 {
   font-family: var(--font-serif);
   font-weight: 300;
   line-height: 1.1;
-  color: var(--near-black);
 }
 
 p {
   margin-bottom: var(--space-sm);
-  color: var(--charcoal);
 }
 
 hr {
   border: none;
   border-top: 1px solid var(--warm-grey);
   margin: var(--space-lg) 0;
-}
-
-::selection {
-  background: var(--near-black);
-  color: var(--white);
 }
