@@ -3,7 +3,7 @@ title: New highlight 4
 slug: new concert
 date: "2026-03-25T13:35"
 type: video
-image: ""
+image: /images/er_260306_1080x1350.jpg
 link: ""
 place: ""
 collaborators: ""
