@@ -1,10 +1,10 @@
 ---
-title: "About"
-summaryabout: "A versatile musician based in Belgium, praised for expressive performances and a deep commitment to both classical repertoire and contemporary music."
+title: About
+summaryabout: A versatile musician based in Belgium, praised for expressive performances and a deep commitment to both classical repertoire and contemporary music.
 layout: about.html
 tags: about
 lang: en
-permalink: "en/about/index.html"
+permalink: en/about/index.html
 ---
 ## Biography
 
@@ -27,3 +27,6 @@ Since then, performances have taken place at prestigious venues including the Co
 ## Philosophy
 
 Music is a universal language that transcends borders. Every performance is an opportunity to connect with the audience and share something deeply human. The goal is always to serve the composer's vision while bringing a personal voice to each interpretation.
+
+
+yoyo
