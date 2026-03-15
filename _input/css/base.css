@@ -25,13 +25,13 @@
   --font-sans: 'Helvetica Neue', Helvetica, sans-serif;
 
   /* ── Type scale — adjust these to resize everything ── */
-  --text-xs: 0.65rem;     /* footer, captions, meta labels */
-  --text-sm: 0.8rem;      /* nav links, tags, small labels */
+  --text-xs: 0.9rem;     /* footer, captions, meta labels */
+  --text-sm: 0.9rem;      /* nav links, tags, small labels */
   --text-base: 0.9rem;    /* body sans text, form labels */
-  --text-md: 1.1rem;      /* body serif text, paragraphs */
-  --text-lg: 1.4rem;      /* page titles, headings */
-  --text-xl: 1.8rem;      /* hero headings, large titles */
-  --text-2xl: 2.4rem;     /* display headings */
+  --text-md: 1.2rem;      /* body serif text, paragraphs */
+  --text-lg: 1.2rem;      /* page titles, headings */
+  --text-xl: 1.3rem;      /* hero headings, large titles */
+  --text-2xl: 1.3rem;     /* display headings */
 
   /* ── Line heights ── */
   --leading-tight: 0.95;  /* headings, brand */
