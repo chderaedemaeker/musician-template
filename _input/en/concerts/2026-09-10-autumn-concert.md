@@ -9,4 +9,9 @@ layout: concert.html
 ---
 An intimate evening of German Romantic chamber music. The programme pairs Brahms's Clarinet Trio with Schumann's Fantasiestücke for clarinet and piano.
 
-Part of the AMUZ Autumn Season.
+Part of the AMUZ A
+```
+```
+code
+```
+```utumn Season.
