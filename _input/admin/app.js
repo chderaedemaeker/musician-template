@@ -1313,7 +1313,7 @@ class App {
       const mediaFolder = this.config.getMediaFolder();
       const contents = await this.api.getContents(mediaFolder);
       this._imageCache = contents.filter(f => f.type === 'file' && /\.(jpg|jpeg|png|gif|webp|svg|avif)$/i.test(f.name)).sort((a, b) => a.name.localeCompare(b.name));
-    } catch (e) { this._imageCache = []; }
+    } catch (e) { console.error('Failed to load images:', e); this._imageCache = []; }
   }
 
   async _handleImageUpload(file, fieldName, locale, state) {
