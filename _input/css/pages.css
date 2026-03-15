@@ -3,13 +3,25 @@
    ============================================ */
 
 .concert-detail,
-.detail-page,
-.about-page,
-.contact-page {
+.detail-page {
   max-width: var(--content-width);
   margin: 0 auto;
   padding: var(--space-xl) var(--space-md);
   padding-top: 120px;
+}
+
+.about-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-md);
+  padding-top: 120px;
+}
+
+.contact-page {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-md);
+  padding-top: 150px;
 }
 
 .concert-detail h1,
@@ -58,41 +70,105 @@
   border: none;
 }
 
-.contact-page h1 {
-  font-size: var(--font-size-sans);
-  font-weight: 500;
-  font-family: var(--font-sans);
-  margin-bottom: var(--space-lg);
-}
-
 /* Form */
 .form-group {
-  margin-bottom: var(--space-md);
-}
-
-.form-group label {
-  display: block;
-  font-size: var(--font-size-sans);
-  color: var(--dark-grey);
-  font-family: var(--font-sans);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-bottom: 6px;
+  margin-bottom: var(--space-sm);
 }
 
 .form-group input,
 .form-group textarea {
   width: 100%;
-  padding: 6px;
+  padding: 10px 0;
   background: transparent;
   border: none;
   border-bottom: 1px solid var(--warm-grey);
-  font-family: var(--font-sans);
-  font-size: var(--font-size-sans);
+  font-family: var(--font-serif);
+  font-size: var(--font-size-serif);
+  color: var(--near-black);
   outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-bottom-color: var(--near-black);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: var(--mid-grey);
+  font-style: italic;
 }
 
 .form-group textarea {
-  min-height: 120px;
+  min-height: 150px;
   resize: vertical;
+  line-height: 1.5;
+}
+
+.contact-page form {
+  margin-bottom: var(--space-md);
+}
+
+.contact-page .btn {
+  margin-top: var(--space-sm);
+}
+
+/* Divider */
+.contact-divider {
+  border-top: 1px solid var(--warm-grey);
+  margin: var(--space-lg) 0;
+}
+
+/* Newsletter + Socials footer */
+.contact-footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.newsletter-form {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-xs);
+}
+
+.newsletter-form input {
+  flex: 1;
+  padding: 8px 0;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--warm-grey);
+  font-family: var(--font-serif);
+  font-size: var(--font-size-serif);
+  color: var(--near-black);
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.newsletter-form input:focus {
+  border-bottom-color: var(--near-black);
+}
+
+.newsletter-form input::placeholder {
+  color: var(--mid-grey);
+  font-style: italic;
+}
+
+.socials-list {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.socials-list a {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sans);
+  color: var(--dark-grey);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.socials-list a:hover {
+  color: var(--near-black);
+  text-decoration: none;
 }

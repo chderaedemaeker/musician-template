@@ -10,11 +10,6 @@ tags: pages
   <h1 style="font-size: 1.1em; font-weight: 500; font-family: var(--font-sans);">{{ languages[lang].concerts_title }}</h1>
 </div>
 
-<div class="search-container" style="margin-top: var(--space-lg);">
-  <input type="text" id="search-input" placeholder="{{ languages[lang].search_placeholder }}">
-  <button id="search-button">{{ languages[lang].search_button }}</button>
-</div>
-
 <div style="max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-md);">
   <span class="section-title" style="margin-top: var(--space-lg);">{{ languages[lang].upcoming_concerts }}</span>
 </div>
@@ -59,17 +54,5 @@ document.addEventListener('DOMContentLoaded', function() {
   renderConcerts(upcoming, 'upcoming-concerts');
   renderConcerts(archive, 'archive-concerts');
 
-  document.getElementById('search-input').addEventListener('input', function() {
-    var query = this.value.toLowerCase();
-    var filtered = langConcerts.filter(function(c) {
-      return c.title.toLowerCase().indexOf(query) !== -1 || (c.place && c.place.toLowerCase().indexOf(query) !== -1);
-    });
-    var filteredUpcoming = filtered.filter(function(c) { return new Date(c.date) >= now; })
-      .sort(function(a, b) { return new Date(a.date) - new Date(b.date); });
-    var filteredArchive = filtered.filter(function(c) { return new Date(c.date) < now; })
-      .sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
-    renderConcerts(filteredUpcoming, 'upcoming-concerts');
-    renderConcerts(filteredArchive, 'archive-concerts');
-  });
 });
 </script>
