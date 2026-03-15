@@ -25,10 +25,17 @@
   font-family: var(--font-serif);
   font-size: 30px;
   font-weight: 300;
-  line-height: 0.6;
   letter-spacing: -0.03em;
   text-decoration: none;
   color: var(--near-black);
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-line {
+  display: block;
+  line-height: 1;
+  margin-bottom: -4px;
 }
 
 .nav-links {
