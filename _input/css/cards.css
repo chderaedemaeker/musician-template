@@ -105,7 +105,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 40px 20px;
-  max-width: 650px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 0 var(--space-md);
 }
@@ -116,12 +116,12 @@
   position: relative;
   overflow: hidden;
   border-radius: 16px;
-  min-height: 450px;
+  min-height: 500px;
   width: 100%;
   flex-grow: 1;
-  flex-basis: 280px;
+  flex-basis: 400px;
   background-color: var(--charcoal);
-  box-shadow: 0px 5px 30px rgba(0, 0, 0, 0.037);
+  box-shadow: 0px 5px 30px rgba(0, 0, 0, 0.05);
 }
 
 .highlight-card:hover {
@@ -134,42 +134,29 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
 }
 
-/* Gradient overlay — matches reference */
+/* Gradient overlay */
 .highlight-card-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(rgba(52, 50, 49, 0.078), rgba(43, 36, 29, 0.409));
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.03) 40%,
+    rgba(0, 0, 0, 0.4) 75%,
+    rgba(0, 0, 0, 0.75) 100%
+  );
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   padding: 40px;
-  z-index: 1;
-}
-
-/* Bottom blur gradient */
-.highlight-card::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 200px;
-  background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8));
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-  -webkit-mask: linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,0));
-  mask: linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,0));
-  border-radius: 16px;
-  z-index: 1;
-  pointer-events: none;
+  z-index: 2;
 }
 
 .highlight-card-top {
-  position: relative;
-  z-index: 2;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .highlight-card-type {
@@ -190,8 +177,6 @@
 }
 
 .highlight-card-bottom {
-  position: relative;
-  z-index: 2;
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -200,23 +185,36 @@
 .highlight-card-link {
   display: inline-flex;
   align-items: center;
+  gap: 8px;
   width: max-content;
-  padding: 14px;
-  background-color: rgba(0, 0, 0, 0.41);
-  border-radius: 15px;
+  padding: 10px 20px;
+  background-color: rgba(0, 0, 0, 0.45);
+  border-radius: 12px;
   font-family: var(--font-sans);
-  font-size: 0.9em;
+  font-size: 0.85em;
   line-height: 1.3;
-  color: var(--off-white);
+  color: #fff;
   text-decoration: none;
   backdrop-filter: blur(9px);
   -webkit-backdrop-filter: blur(9px);
-  border: 1px solid rgba(255, 255, 255, 0.096);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   transition: background-color 0.2s ease-in-out;
+  cursor: pointer;
 }
 
 .highlight-card-link:hover {
-  background-color: rgba(0, 0, 0, 0.76);
+  background-color: rgba(0, 0, 0, 0.7);
+  text-decoration: none;
+}
+
+.highlight-card-link svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 @media (max-width: 600px) {
@@ -225,7 +223,7 @@
     gap: 5vw;
   }
   .highlight-card {
-    min-height: 350px;
+    min-height: 400px;
     flex-basis: 100%;
   }
   .highlight-card-title {
