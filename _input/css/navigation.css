@@ -38,7 +38,7 @@
 }
 
 .nav-links a {
-  font-size: 0.85em;
+  font-size: 0.6em;
   font-family: var(--font-sans);
   text-decoration: none;
 }
@@ -47,7 +47,7 @@
   background: transparent;
   border: 1px solid var(--warm-grey);
   padding: 4px 8px;
-  font-size: 0.65rem;
+  font-size: 0.5rem;
   font-family: var(--font-sans);
   text-transform: uppercase;
   cursor: pointer;

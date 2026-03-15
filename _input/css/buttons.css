@@ -5,7 +5,7 @@
 .btn {
   display: inline-block;
   padding: 10px 20px;
-  font-size: 0.9em;
+  font-size: 0.55em;
   font-family: var(--font-sans);
   background-color: var(--off-white);
   border: 1px solid var(--warm-grey);
@@ -28,5 +28,5 @@
 
 .btn-sm {
   padding: 8px 14px;
-  font-size: 0.8em;
+  font-size: 0.5em;
 }
