@@ -112,6 +112,8 @@ module.exports = function (eleventyConfig) {
                 title: concert.data.title,
                 date: concert.data.date,
                 place: concert.data.place,
+                composers: concert.data.composers,
+                collaborators: concert.data.collaborators,
                 link: concert.url
             };
         }));

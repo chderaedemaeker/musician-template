@@ -538,7 +538,7 @@ class App {
       { key: 'composers', label: 'Composers', width: 'minmax(120px, 1fr)' },
       { key: 'collaborators', label: 'Collaborators', width: 'minmax(120px, 1fr)' },
     ];
-    const gridCols = '36px ' + columns.map(c => c.width).join(' ') + ' 40px';
+    const gridCols = '36px ' + columns.map(c => c.width).join(' ') + ' 70px';
 
     this.el.innerHTML = `
       ${this._topbar()}
@@ -607,7 +607,7 @@ class App {
         <div class="notion-cell" data-field="place" data-idx="${idx}" contenteditable="true">${esc(entry.data.place || '')}</div>
         <div class="notion-cell" data-field="composers" data-idx="${idx}" contenteditable="true">${esc(entry.data.composers || '')}</div>
         <div class="notion-cell" data-field="collaborators" data-idx="${idx}" contenteditable="true">${esc(entry.data.collaborators || '')}</div>
-        <div class="notion-cell notion-cell-actions"><button class="notion-open-btn" data-file="${esc(entry.name)}" title="Open full editor">&#8599;</button></div>
+        <div class="notion-cell notion-cell-actions"><button class="notion-dup-btn" data-idx="${idx}" title="Duplicate">&#x2398;</button><button class="notion-open-btn" data-file="${esc(entry.name)}" title="Open full editor">&#8599;</button></div>
       </div>`;
     }).join('');
 
@@ -776,6 +776,32 @@ class App {
             else { next.focus(); const sel = window.getSelection(); sel.selectAllChildren(next); sel.collapseToEnd(); }
           }
         }
+      });
+    });
+
+    // Duplicate button
+    bodyEl.querySelectorAll('.notion-dup-btn').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const idx = parseInt(btn.dataset.idx);
+        const entry = state.entries[idx];
+        if (!entry) return;
+        const newData = { ...entry.data, title: (entry.data.title || '') + ' (copy)' };
+        const now = new Date();
+        const datePrefix = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+        const slug = (newData.title || 'untitled').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        const newName = `${datePrefix}-${slug}.md`;
+        const newPath = state.col.folder + '/' + newName;
+        if (!newData.layout) newData.layout = 'concert.html';
+        const content = FrontMatter.serialize(newData, entry.body || '');
+        try {
+          showStatus('saving', 'Duplicating...');
+          const result = await this.api.createOrUpdateFile(newPath, content, `Duplicate concert: ${newData.title}`);
+          state.entries.push({ name: newName, data: newData, body: entry.body || '', path: newPath, sha: result.content.sha, dirty: false });
+          this._renderTableRows();
+          this._bindTableRowEvents();
+          showStatus('saved', 'Duplicated');
+        } catch (err) { showStatus('error', `Duplicate failed: ${err.message}`); }
       });
     });
 

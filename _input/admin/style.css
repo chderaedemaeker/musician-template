@@ -713,11 +713,14 @@ a:hover { opacity: 0.6; }
 .notion-date-input:focus { background: var(--white); box-shadow: inset 0 0 0 2px var(--near-black); }
 
 .notion-cell-actions {
+  display: flex;
+  gap: 2px;
   justify-content: center;
   padding: 0;
   cursor: default;
 }
 
+.notion-dup-btn,
 .notion-open-btn {
   display: flex;
   align-items: center;
@@ -733,6 +736,7 @@ a:hover { opacity: 0.6; }
   border-radius: 4px;
 }
 
+.notion-dup-btn:hover,
 .notion-open-btn:hover {
   color: var(--near-black);
   background: var(--off-white);

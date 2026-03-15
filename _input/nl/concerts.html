@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
     container.innerHTML = list.map(function(c) {
       var d = new Date(c.date);
       var dateStr = d.toLocaleDateString('{{ lang }}', { year: 'numeric', month: 'long', day: 'numeric' });
-      return '<a href="' + c.link + '" class="concert-card"><p class="date">' + dateStr + '</p><h3>' + c.title + '</h3><p class="place">' + (c.place || '') + '</p></a>';
+      return '<a href="' + c.link + '" class="concert-card"><p class="date">' + dateStr + '</p><h3>' + c.title + '</h3><p class="place">' + (c.place || '') + '</p>' + (c.composers ? '<p class="composers">' + c.composers + '</p>' : '') + (c.collaborators ? '<p class="collaborators">' + c.collaborators + '</p>' : '') + '</a>';
     }).join('');
   }
 
