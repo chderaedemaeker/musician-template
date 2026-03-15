@@ -22,6 +22,9 @@
   --font-serif: 'AGL', Georgia, serif;
   --font-sans: 'Helvetica Neue', Helvetica, sans-serif;
 
+  --font-size-serif: 1.8rem;
+  --font-size-sans: 1rem;
+
   --max-width: 1400px;
   --content-width: 600px;
 
@@ -41,11 +44,12 @@
 }
 
 html {
-  font-size: 19px;
+  font-size: 16px;
 }
 
 body {
   font-family: var(--font-serif);
+  font-size: var(--font-size-serif);
   background-color: var(--off-white);
   color: var(--near-black);
   line-height: 1.6;
@@ -61,6 +65,7 @@ img {
 a {
   color: var(--near-black);
   text-decoration: none;
+  font-size: inherit;
 }
 
 a:hover {
@@ -73,6 +78,7 @@ ul, ol {
 
 h1, h2, h3 {
   font-family: var(--font-serif);
+  font-size: var(--font-size-serif);
   font-weight: 300;
   line-height: 1.1;
 }

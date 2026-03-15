@@ -16,20 +16,10 @@
 }
 
 .nav-brand a {
-  font-size: 24px;
+  font-size: var(--font-size-serif);
   font-weight: 300;
   font-family: var(--font-serif);
   text-decoration: none;
-}
-
-.nav-brand .subtitle {
-  font-size: 0.6rem;
-  color: var(--mid-grey);
-  font-family: var(--font-sans);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  display: block;
-  margin-top: 2px;
 }
 
 .nav-links {
@@ -38,7 +28,7 @@
 }
 
 .nav-links a {
-  font-size: 0.6em;
+  font-size: var(--font-size-sans);
   font-family: var(--font-sans);
   text-decoration: none;
 }
@@ -47,7 +37,7 @@
   background: transparent;
   border: 1px solid var(--warm-grey);
   padding: 4px 8px;
-  font-size: 0.5rem;
+  font-size: var(--font-size-sans);
   font-family: var(--font-sans);
   text-transform: uppercase;
   cursor: pointer;
@@ -88,7 +78,7 @@
 }
 
 .mobile-nav a {
-  font-size: 2rem;
+  font-size: var(--font-size-serif);
   font-family: var(--font-serif);
   font-weight: 300;
 }

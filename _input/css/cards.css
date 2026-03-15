@@ -24,21 +24,22 @@
 }
 
 .concert-card .date {
-  font-size: 0.55em;
+  font-size: var(--font-size-sans);
   color: var(--dark-grey);
   font-family: var(--font-sans);
 }
 
 .concert-card h3 {
-  font-size: 1.2em;
+  font-size: var(--font-size-serif);
   font-weight: 300;
   margin: 4px 0;
 }
 
 .concert-card .place {
-  font-size: 0.85em;
+  font-size: var(--font-size-sans);
   color: var(--dark-grey);
   font-style: italic;
+  font-family: var(--font-sans);
 }
 
 .image-card {
@@ -71,13 +72,13 @@
 
 .image-card-overlay h3 {
   color: var(--white);
-  font-size: 1.4em;
+  font-size: var(--font-size-serif);
   font-weight: 300;
 }
 
 .image-card-overlay p {
   color: rgba(255,255,255,0.8);
-  font-size: 0.55em;
+  font-size: var(--font-size-sans);
   font-family: var(--font-sans);
   margin: 0;
 }

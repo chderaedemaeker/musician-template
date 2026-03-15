@@ -21,20 +21,21 @@
 }
 
 .swiper-slide .date {
-  font-size: 0.55em;
+  font-size: var(--font-size-sans);
   color: var(--dark-grey);
   font-family: var(--font-sans);
 }
 
 .swiper-slide h3 {
-  font-size: 1.2em;
+  font-size: var(--font-size-serif);
   font-weight: 300;
 }
 
 .swiper-slide .place {
-  font-size: 0.85em;
+  font-size: var(--font-size-sans);
   color: var(--dark-grey);
   font-style: italic;
+  font-family: var(--font-sans);
 }
 
 /* Search */
@@ -54,6 +55,7 @@
   border-bottom: 1px solid var(--warm-grey);
   background: transparent;
   font-family: var(--font-sans);
+  font-size: var(--font-size-sans);
   outline: none;
 }
 
@@ -64,7 +66,7 @@
   background: transparent;
   cursor: pointer;
   font-family: var(--font-sans);
-  font-size: 0.55em;
+  font-size: var(--font-size-sans);
 }
 
 /* Footer */
@@ -73,6 +75,7 @@
   margin: 0 auto;
   padding: var(--space-xl) var(--space-md) var(--space-lg);
   font-family: var(--font-sans);
+  font-size: var(--font-size-sans);
 }
 
 .footer-inner {
@@ -82,7 +85,7 @@
 }
 
 .footer p {
-  font-size: 0.55em;
+  font-size: var(--font-size-sans);
   color: var(--mid-grey);
 }
 
@@ -94,5 +97,5 @@
 
 .footer-links a {
   color: var(--mid-grey);
-  font-size: 0.55em;
+  font-size: var(--font-size-sans);
 }

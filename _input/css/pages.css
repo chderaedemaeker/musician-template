@@ -15,21 +15,23 @@
 .concert-detail h1,
 .detail-page h1,
 .about-page h1 {
-  font-size: 2em;
+  font-size: var(--font-size-serif);
   font-weight: 300;
   margin-bottom: var(--space-sm);
 }
 
 .concert-detail .date,
 .detail-page .meta {
-  font-size: 0.55em;
+  font-size: var(--font-size-sans);
   color: var(--dark-grey);
   font-family: var(--font-sans);
   margin-bottom: var(--space-sm);
 }
 
 .concert-detail .meta {
+  font-size: var(--font-size-sans);
   color: var(--dark-grey);
+  font-family: var(--font-sans);
   font-style: italic;
   margin-bottom: var(--space-lg);
 }
@@ -57,7 +59,7 @@
 }
 
 .contact-page h1 {
-  font-size: 0.7em;
+  font-size: var(--font-size-sans);
   font-weight: 500;
   font-family: var(--font-sans);
   margin-bottom: var(--space-lg);
@@ -70,7 +72,7 @@
 
 .form-group label {
   display: block;
-  font-size: 0.5rem;
+  font-size: var(--font-size-sans);
   color: var(--dark-grey);
   font-family: var(--font-sans);
   text-transform: uppercase;
@@ -86,7 +88,7 @@
   border: none;
   border-bottom: 1px solid var(--warm-grey);
   font-family: var(--font-sans);
-  font-size: 0.7em;
+  font-size: var(--font-size-sans);
   outline: none;
 }
 
