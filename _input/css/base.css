@@ -11,19 +11,19 @@
 }
 
 :root {
-  --white: #ffffff;
+  --white: #f6f6f4;
   --off-white: #f5f4f2;
   --warm-grey: #e8e6e1;
   --mid-grey: #b5b0a8;
   --dark-grey: #6b665e;
   --charcoal: #3a3732;
-  --near-black: #141413;
+  --near-black: #1a1a19;
 
   --font-serif: 'AGL', Georgia, serif;
   --font-sans: 'Helvetica Neue', Helvetica, sans-serif;
 
-  --font-size-serif: 1.2rem;
-  --font-size-sans: 1rem;
+  --font-size-serif: 1.4rem;
+  --font-size-sans: 0.9rem;
 
   --max-width: 1400px;
   --content-width: 600px;

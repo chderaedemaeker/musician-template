@@ -941,7 +941,15 @@ class App {
           ${locales.map(l => `<button class="i18n-tab ${l === locales[0] ? 'active' : ''}" data-locale="${l}">${l.toUpperCase()}</button>`).join('')}
         </div>
       ` : ''}
-      <div id="editor-form"><div class="loading-state"><span class="spinner"></span> Loading...</div></div>`;
+      <div class="editor-split">
+        <div id="editor-form"><div class="loading-state"><span class="spinner"></span> Loading...</div></div>
+        <div class="live-preview-panel" id="live-preview">
+          <div class="live-preview-header">Preview</div>
+          <div class="live-preview-content" id="live-preview-content">
+            <div class="live-preview-empty">Start editing to see a preview</div>
+          </div>
+        </div>
+      </div>`;
     this._bindTopbar();
 
     const state = { locales, data: {}, body: {}, sha: {}, filePath: {}, activeLocale: locales[0], filename, isNew, col, trilingualMode: false };
@@ -1048,6 +1056,7 @@ class App {
 
     formEl.innerHTML = html;
     this._bindFormHandlers(formEl, state);
+    this._updateLivePreview(state);
   }
 
   _renderTrilingualForm(state, formEl) {
@@ -1083,6 +1092,7 @@ class App {
     html += '</div>';
     formEl.innerHTML = html;
     this._bindFormHandlers(formEl, state);
+    this._updateLivePreview(state);
   }
 
   _renderField(field, value, locale) {
@@ -1101,8 +1111,8 @@ class App {
           <div class="image-controls">
             <input type="text" class="form-input" ${dataAttr} value="${escaped}" placeholder="/images/photo.jpg" />
             <div style="display:flex;gap:.25rem;margin-top:.25rem;">
-              <button type="button" class="btn btn-ghost btn-sm image-browse-btn" data-field="${field.name}" data-locale="${locale}">Browse</button>
-              <button type="button" class="btn btn-ghost btn-sm image-upload-btn" data-field="${field.name}" data-locale="${locale}">Upload</button>
+              <button type="button" class="btn btn-ghost btn-sm image-browse-btn" data-img-field="${field.name}" data-img-locale="${locale}">Browse</button>
+              <button type="button" class="btn btn-ghost btn-sm image-upload-btn" data-img-field="${field.name}" data-img-locale="${locale}">Upload</button>
             </div>
           </div>
         </div>`;
@@ -1137,22 +1147,26 @@ class App {
   }
 
   _bindFormHandlers(formEl, state) {
-    // Track changes
-    formEl.querySelectorAll('input, textarea, select').forEach(el => el.addEventListener('input', () => this._markDirty()));
+    // Track changes + live preview
+    formEl.querySelectorAll('input, textarea, select').forEach(el => el.addEventListener('input', () => {
+      this._markDirty();
+      clearTimeout(this._livePreviewTimer);
+      this._livePreviewTimer = setTimeout(() => this._updateLivePreview(state), 200);
+    }));
 
     // Image upload buttons
     formEl.querySelectorAll('.image-upload-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const input = document.createElement('input');
         input.type = 'file'; input.accept = 'image/*';
-        input.addEventListener('change', () => this._handleImageUpload(input.files[0], btn.dataset.field, btn.dataset.locale, state));
+        input.addEventListener('change', () => this._handleImageUpload(input.files[0], btn.dataset.imgField, btn.dataset.imgLocale, state));
         input.click();
       });
     });
 
     // Image browse buttons (open picker)
     formEl.querySelectorAll('.image-browse-btn').forEach(btn => {
-      btn.addEventListener('click', () => this._showImagePicker(btn.dataset.field, btn.dataset.locale, state));
+      btn.addEventListener('click', () => this._showImagePicker(btn.dataset.imgField, btn.dataset.imgLocale, state));
     });
 
     // Markdown editors
@@ -1216,6 +1230,77 @@ class App {
     preview.innerHTML = md.trim() ? renderMarkdown(md) : '<div class="md-preview-empty">Nothing to preview</div>';
   }
 
+  _updateLivePreview(state) {
+    const el = document.getElementById('live-preview-content');
+    if (!el) return;
+    this._collectFormData(state);
+    const loc = state.activeLocale || state.locales[0];
+    const data = state.data[loc] || {};
+    const body = state.body[loc] || '';
+    const colName = state.col.name;
+
+    let html = '<div class="lp-page">';
+
+    if (colName === 'concerts') {
+      // Concert detail preview
+      if (data.date) {
+        try {
+          const d = new Date(data.date);
+          const dateStr = d.toLocaleDateString('en', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+          html += `<p class="lp-date">${esc(dateStr)}</p>`;
+        } catch(e) {}
+      }
+      html += `<h1 class="lp-title">${esc(data.title || 'Untitled')}</h1>`;
+      const meta = [];
+      if (data.place) meta.push(esc(data.place));
+      if (data.composers) meta.push(`<em>${esc(data.composers)}</em>`);
+      if (data.collaborators) meta.push(`With ${esc(data.collaborators)}`);
+      if (meta.length) html += `<div class="lp-meta">${meta.map(m => `<span>${m}</span>`).join('')}</div>`;
+      if (body.trim()) html += `<div class="lp-body">${renderMarkdown(body)}</div>`;
+      if (data.link) html += `<a class="lp-btn" href="#">Tickets & Info</a>`;
+    } else if (colName === 'highlights') {
+      // Highlight detail preview
+      if (data.link) {
+        html += `<div class="lp-video"><div class="lp-video-placeholder">YouTube: ${esc(data.link)}</div></div>`;
+      }
+      if (data.image) {
+        html += `<div class="lp-featured-image"><img src="${data.image.startsWith('/') ? data.image : '/images/' + data.image}" alt="${esc(data.title || '')}" onerror="this.parentElement.innerHTML='<div class=\\'lp-img-placeholder\\'>Image</div>'" /></div>`;
+      }
+      html += `<h1 class="lp-title">${esc(data.title || 'Untitled')}</h1>`;
+      const meta = [];
+      if (data.type) meta.push(esc(data.type));
+      if (data.place) meta.push(esc(data.place));
+      if (data.collaborators) meta.push(esc(data.collaborators));
+      if (data.date) {
+        try {
+          const d = new Date(data.date);
+          meta.push(d.toLocaleDateString('en', { year: 'numeric', month: 'short', day: 'numeric' }));
+        } catch(e) {}
+      }
+      if (meta.length) html += `<div class="lp-meta">${meta.map(m => `<span>${m}</span>`).join('')}</div>`;
+      if (body.trim()) html += `<div class="lp-body">${renderMarkdown(body)}</div>`;
+    } else if (colName === 'projects') {
+      // Project detail preview
+      html += `<h1 class="lp-title">${esc(data.title || 'Untitled')}</h1>`;
+      if (data.collaborators) html += `<div class="lp-meta"><span>${esc(data.collaborators)}</span></div>`;
+      if (data.image) {
+        html += `<div class="lp-featured-image"><img src="${data.image.startsWith('/') ? data.image : '/images/' + data.image}" alt="${esc(data.title || '')}" onerror="this.parentElement.innerHTML='<div class=\\'lp-img-placeholder\\'>Image</div>'" /></div>`;
+      }
+      if (body.trim()) html += `<div class="lp-body">${renderMarkdown(body)}</div>`;
+    } else if (colName === 'about') {
+      // About preview
+      html += `<h1 class="lp-title">${esc(data.title || 'About')}</h1>`;
+      if (data.summaryabout) html += `<div class="lp-summary">${renderMarkdown(data.summaryabout)}</div>`;
+      if (body.trim()) html += `<div class="lp-body">${renderMarkdown(body)}</div>`;
+    } else {
+      html += `<h1 class="lp-title">${esc(data.title || 'Untitled')}</h1>`;
+      if (body.trim()) html += `<div class="lp-body">${renderMarkdown(body)}</div>`;
+    }
+
+    html += '</div>';
+    el.innerHTML = html;
+  }
+
   // ---- Image Picker (browse existing images) ----
   async _showImagePicker(fieldName, locale, state) {
     await this._loadImageCache();
@@ -1259,6 +1344,7 @@ class App {
         }
         overlay.remove();
         showStatus('saved', `Selected: ${item.dataset.name}`);
+        this._updateLivePreview(state);
       });
     });
 
@@ -1383,6 +1469,7 @@ class App {
       }
       showStatus('saved', 'Uploaded');
       this._markDirty();
+      if (this._editorState) this._updateLivePreview(this._editorState);
     } catch (e) { showStatus('error', e.message); }
   }
 
