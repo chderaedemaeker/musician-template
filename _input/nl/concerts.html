@@ -8,15 +8,15 @@ tags: pages
 
 <div style="padding-top: 120px;"></div>
 
-<div style="max-width: 1100px; margin: 0 auto; padding: 0 var(--space-md);">
+<div style="max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-md);">
   <span class="section-title" style="margin-top: var(--space-lg);">{{ languages[lang].upcoming_concerts }}</span>
 </div>
-<div class="concert-grid" id="upcoming-concerts"></div>
+<div class="text-list" id="upcoming-concerts"></div>
 
-<div style="max-width: 1100px; margin: 0 auto; padding: 0 var(--space-md);">
+<div style="max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-md);">
   <span class="section-title" style="margin-top: var(--space-lg);">{{ languages[lang].archive }}</span>
 </div>
-<div class="concert-grid" id="archive-concerts"></div>
+<div class="text-list" id="archive-concerts"></div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -42,15 +42,10 @@ document.addEventListener('DOMContentLoaded', function() {
     container.innerHTML = list.map(function(c) {
       var d = new Date(c.date);
       var dateStr = d.toLocaleDateString('{{ lang }}', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-      var details = '';
-      if (c.place) details += '<p class="concert-card-detail">' + c.place + '</p>';
-      if (c.composers) details += '<p class="concert-card-detail">' + c.composers + '</p>';
-      if (c.collaborators) details += '<p class="concert-card-detail">' + c.collaborators + '</p>';
-      return '<a href="' + c.link + '" class="concert-card">' +
-        '<p class="concert-card-date">' + dateStr + '</p>' +
-        '<h3 class="concert-card-title">' + c.title + '</h3>' +
-        details +
-      '</a>';
+      var right = '';
+      if (c.composers) right += '<p class="text-list-detail">' + c.composers + '</p>';
+      if (c.collaborators) right += '<p class="text-list-detail">' + c.collaborators + '</p>';
+      return '<a href="' + c.link + '" class="text-list-item"><div class="text-list-left"><p class="text-list-type">' + dateStr + '</p><h3 class="text-list-title">' + c.title + '</h3><p class="text-list-detail">' + (c.place || '') + '</p></div>' + (right ? '<div class="text-list-right">' + right + '</div>' : '') + '</a>';
     }).join('');
   }
 

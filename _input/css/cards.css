@@ -18,73 +18,81 @@
 }
 
 /* ============================================
-   CONCERT CARDS — Visual cards with gradient
+   TEXT LIST — Concerts overview
    ============================================ */
 
-.concert-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  max-width: 1100px;
+.text-list {
+  max-width: var(--max-width);
   margin: 0 auto;
   padding: 0 var(--space-md);
 }
 
-.concert-card {
-  position: relative;
-  min-height: fit-content;
-  height: 300px;
-  padding: 40px;
-  flex-grow: 3;
-  flex-shrink: 0.9;
-  flex-basis: 300px;
+.text-list-item {
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  overflow: hidden;
-  border-radius: 16px;
-  box-shadow: 0px 5px 30px rgba(0, 0, 0, 0.037);
-  background: linear-gradient(rgba(52, 50, 49, 0.078), rgba(43, 36, 29, 0.409));
-  background-color: var(--charcoal);
-  background-size: cover;
-  background-position: top center;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-lg);
+  padding: var(--space-md) 0;
+  border-bottom: 1px solid var(--warm-grey);
   text-decoration: none;
-  color: #fff;
+  color: var(--near-black);
   transition: opacity 0.2s ease;
 }
 
-.concert-card:hover {
-  opacity: 0.85;
+.text-list-item:first-child {
+  border-top: 1px solid var(--warm-grey);
+}
+
+.text-list-item:hover {
+  opacity: 0.6;
   text-decoration: none;
 }
 
-.concert-card-date {
-  font-size: 0.8em;
-  font-family: var(--font-sans);
-  color: rgba(255, 255, 255, 0.75);
-  margin: 0 0 8px;
+.text-list-left {
+  flex: 1;
+  min-width: 0;
 }
 
-.concert-card-title {
-  font-family: var(--font-sans);
-  font-size: 22px;
-  font-weight: 500;
-  line-height: 1.1;
-  color: #fff;
-  margin: 0 0 10px;
+.text-list-right {
+  flex-shrink: 0;
+  text-align: right;
+  max-width: 45%;
 }
 
-.concert-card-detail {
-  font-size: 0.8em;
+.text-list-type {
+  font-size: var(--font-size-sans);
   font-family: var(--font-sans);
-  color: rgba(255, 255, 255, 0.7);
-  margin: 0 0 3px;
+  color: var(--dark-grey);
+  margin-bottom: 4px;
+}
+
+.text-list-title {
+  font-size: var(--font-size-serif);
+  font-weight: 300;
+  line-height: 1.2;
+  margin: 0 0 4px;
+}
+
+.text-list-detail {
+  font-size: var(--font-size-sans);
+  font-family: var(--font-sans);
+  color: var(--dark-grey);
+  margin: 0 0 2px;
+}
+
+.text-list-arrow {
+  font-size: 1.2rem;
+  color: var(--mid-grey);
 }
 
 @media (max-width: 600px) {
-  .concert-card {
-    flex-basis: 100%;
-    height: 250px;
+  .text-list-item {
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+  .text-list-right {
+    text-align: left;
+    max-width: 100%;
   }
 }
 
