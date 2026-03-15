@@ -1,6 +1,6 @@
 ---
-title: "Duo Sonata Project"
-collaborators: "Jane Doe (violon)"
+title: Duo Sonata Project
+collaborators: Jane Doe (violon)
 image: ""
 layout: project.html
 tags: projects
