@@ -73,6 +73,19 @@ class GitGatewayAPI {
     return this._request('PUT', `/contents/${path}`, body);
   }
 
+  async getTree(path) {
+    // Get the branch ref to find tree SHA
+    const branch = await this._request('GET', `/branches/${this.branch}`);
+    const treeSha = branch.commit.commit.tree.sha;
+    // Get full tree recursively
+    const tree = await this._request('GET', `/git/trees/${treeSha}?recursive=1`);
+    // Filter to files in the given path
+    const prefix = path.endsWith('/') ? path : path + '/';
+    return tree.tree
+      .filter(f => f.path.startsWith(prefix) && f.type === 'blob' && !f.path.substring(prefix.length).includes('/'))
+      .map(f => ({ name: f.path.substring(prefix.length), path: f.path, sha: f.sha, size: f.size, type: 'file' }));
+  }
+
   async verify() {
     return this._request('GET', `/contents/?ref=${this.branch}`);
   }
@@ -184,7 +197,7 @@ function showToast(type, msg, duration) {
 
 let _savingToast = null;
 function showStatus(type, msg) {
-  if (_savingToast) { try { _savingToast.classList.add('toast-out'); setTimeout(() => _savingToast.remove(), 300); } catch(e) {} _savingToast = null; }
+  if (_savingToast && _savingToast.parentNode) { try { _savingToast.classList.add('toast-out'); const t = _savingToast; setTimeout(() => { if (t.parentNode) t.remove(); }, 300); } catch(e) {} _savingToast = null; }
   const toast = showToast(type, msg);
   if (type === 'saving') _savingToast = toast;
 }
@@ -1335,11 +1348,21 @@ class App {
 
   async _loadImageCache() {
     if (this._imageCache) return;
+    const mediaFolder = this.config.getMediaFolder();
     try {
-      const mediaFolder = this.config.getMediaFolder();
       const contents = await this.api.getContents(mediaFolder);
       this._imageCache = contents.filter(f => f.type === 'file' && /\.(jpg|jpeg|png|gif|webp|svg|avif)$/i.test(f.name)).sort((a, b) => a.name.localeCompare(b.name));
-    } catch (e) { console.error('Failed to load images:', e); this._imageCache = []; }
+    } catch (e) {
+      console.warn('getContents failed for', mediaFolder, '- trying tree API:', e.message);
+      try {
+        const files = await this.api.getTree(mediaFolder);
+        this._imageCache = files.filter(f => /\.(jpg|jpeg|png|gif|webp|svg|avif)$/i.test(f.name)).sort((a, b) => a.name.localeCompare(b.name));
+      } catch (e2) {
+        console.error('Both methods failed to load images:', e2);
+        showToast('error', 'Could not load images: ' + e2.message);
+        this._imageCache = [];
+      }
+    }
   }
 
   async _handleImageUpload(file, fieldName, locale, state) {
@@ -1918,7 +1941,9 @@ class App {
     dropzone.addEventListener('drop', e => { e.preventDefault(); dropzone.classList.remove('dragover'); if (e.dataTransfer.files.length) this._uploadMediaFiles(e.dataTransfer.files, mediaFolder); });
 
     try {
-      const contents = await this.api.getContents(mediaFolder);
+      let contents;
+      try { contents = await this.api.getContents(mediaFolder); }
+      catch (e) { contents = await this.api.getTree(mediaFolder); }
       const images = contents.filter(f => f.type === 'file' && /\.(jpg|jpeg|png|gif|webp|svg|avif)$/i.test(f.name)).sort((a, b) => a.name.localeCompare(b.name));
       this._imageCache = images;
 
