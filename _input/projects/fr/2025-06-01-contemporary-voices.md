@@ -1,6 +1,6 @@
 ---
-title: "Contemporary Voices"
-collaborators: "Ensemble Modern"
+title: Contemporary Voices
+collaborators: Ensemble Modern
 image: ""
 layout: project.html
 tags: projects
