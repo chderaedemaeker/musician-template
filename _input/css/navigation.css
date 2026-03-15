@@ -37,7 +37,7 @@
 }
 
 .nav-links a {
-  font-size: 0.8em;
+  font-size: 0.75em;
   font-family: var(--font-sans);
   text-decoration: none;
   color: var(--near-black);
@@ -98,4 +98,21 @@
   font-size: var(--font-size-serif);
   font-family: var(--font-serif);
   font-weight: 300;
+}
+
+/* Transparent nav — used on index/home page */
+.nav-transparent {
+  position: absolute;
+  background-color: transparent;
+  border-bottom: none;
+}
+
+.nav-transparent .nav-brand a,
+.nav-transparent .nav-links a,
+.nav-transparent .lang-switcher select {
+  color: #fff;
+}
+
+.nav-transparent .hamburger span {
+  background-color: #fff;
 }

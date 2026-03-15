@@ -9,7 +9,7 @@
   {% assign lang = "en" %}
 {% endif %}
 
-<nav class="nav">
+<nav class="nav{% if navTransparent %} nav-transparent{% endif %}">
   <div class="nav-inner">
     <div class="nav-brand">
       <a href="/{{ lang }}/">
