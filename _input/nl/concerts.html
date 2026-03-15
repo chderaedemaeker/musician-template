@@ -18,12 +18,12 @@ tags: pages
 <div style="max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-md);">
   <span class="section-title" style="margin-top: var(--space-lg);">{{ languages[lang].upcoming_concerts }}</span>
 </div>
-<div class="card-grid" id="upcoming-concerts"></div>
+<div class="text-list" id="upcoming-concerts"></div>
 
 <div style="max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-md);">
   <span class="section-title" style="margin-top: var(--space-lg);">{{ languages[lang].archive }}</span>
 </div>
-<div class="card-grid" id="archive-concerts"></div>
+<div class="text-list" id="archive-concerts"></div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -50,9 +50,9 @@ document.addEventListener('DOMContentLoaded', function() {
       var d = new Date(c.date);
       var dateStr = d.toLocaleDateString('{{ lang }}', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
       var right = '';
-      if (c.composers) right += '<p class="composers">' + c.composers + '</p>';
-      if (c.collaborators) right += '<p class="collaborators">' + c.collaborators + '</p>';
-      return '<a href="' + c.link + '" class="concert-card"><div class="concert-card-left"><p class="date">' + dateStr + '</p><h3>' + c.title + '</h3><p class="place">' + (c.place || '') + '</p></div>' + (right ? '<div class="concert-card-right">' + right + '</div>' : '') + '</a>';
+      if (c.composers) right += '<p class="text-list-detail">' + c.composers + '</p>';
+      if (c.collaborators) right += '<p class="text-list-detail">' + c.collaborators + '</p>';
+      return '<a href="' + c.link + '" class="text-list-item"><div class="text-list-left"><p class="text-list-type">' + dateStr + '</p><h3 class="text-list-title">' + c.title + '</h3><p class="text-list-detail">' + (c.place || '') + '</p></div>' + (right ? '<div class="text-list-right">' + right + '</div>' : '') + '</a>';
     }).join('');
   }
 

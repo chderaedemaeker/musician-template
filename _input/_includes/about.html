@@ -11,6 +11,17 @@
 
 {% include "navigation.liquid" %}
 
+{% assign lang = "" %}
+{% if page.url contains '/en/' %}
+  {% assign lang = "en" %}
+{% elsif page.url contains '/nl/' %}
+  {% assign lang = "nl" %}
+{% elsif page.url contains '/fr/' %}
+  {% assign lang = "fr" %}
+{% else %}
+  {% assign lang = "en" %}
+{% endif %}
+
 <main>
   <div class="about-page">
     <h1>{{ title }}</h1>
@@ -18,6 +29,32 @@
       {{ content }}
     </div>
   </div>
+
+  <!-- Projects -->
+  {% assign langProjects = 'projects_' | append: lang %}
+  {% assign sortedProjects = collections[langProjects] | sort: 'date' | reverse %}
+
+  {% if sortedProjects.size > 0 %}
+    <div style="max-width: var(--content-width); margin: 0 auto; padding: var(--space-xl) var(--space-md) var(--space-sm);">
+      <h2 style="font-size: 0.7rem; font-family: var(--font-sans); text-transform: uppercase; letter-spacing: 0.15em; color: var(--dark-grey);">{{ languages[lang].projects_title }}</h2>
+    </div>
+
+    <div class="highlights-grid">
+      {% for project in sortedProjects %}
+        <a href="{{ project.url }}" class="highlight-card">
+          {% if project.data.image %}
+            <div class="highlight-card-image">
+              <img src="{{ project.data.image }}" alt="{{ project.data.title }}">
+            </div>
+          {% endif %}
+          <div class="highlight-card-info">
+            <h3 class="highlight-card-title">{{ project.data.title }}</h3>
+            {% if project.data.collaborators %}<p class="highlight-card-detail">{{ project.data.collaborators }}</p>{% endif %}
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  {% endif %}
 </main>
 
 {% include "footer.liquid" %}

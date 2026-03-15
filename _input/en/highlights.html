@@ -13,18 +13,19 @@ tags: pages
 {% assign langHighlights = 'highlights_' | append: lang %}
 {% assign sortedHighlights = collections[langHighlights] | sort: 'date' | reverse %}
 
-<div class="text-list">
+<div class="highlights-grid">
   {% if sortedHighlights.size > 0 %}
     {% for highlight in sortedHighlights %}
-      <a href="{{ highlight.url }}" class="text-list-item">
-        <div class="text-list-left">
-          {% if highlight.data.type %}<p class="text-list-type">{{ highlight.data.type }}</p>{% endif %}
-          <h3 class="text-list-title">{{ highlight.data.title }}</h3>
-          {% if highlight.data.place %}<p class="text-list-detail">{{ highlight.data.place }}</p>{% endif %}
-        </div>
-        <div class="text-list-right">
-          {% if highlight.data.collaborators %}<p class="text-list-detail">{{ highlight.data.collaborators }}</p>{% endif %}
-          {% if highlight.data.date %}<p class="text-list-detail">{{ highlight.data.date | shortDate }}</p>{% endif %}
+      <a href="{{ highlight.url }}" class="highlight-card">
+        {% if highlight.data.image %}
+          <div class="highlight-card-image">
+            <img src="{{ highlight.data.image }}" alt="{{ highlight.data.title }}">
+          </div>
+        {% endif %}
+        <div class="highlight-card-info">
+          {% if highlight.data.type %}<p class="highlight-card-type">{{ highlight.data.type }}</p>{% endif %}
+          <h3 class="highlight-card-title">{{ highlight.data.title }}</h3>
+          {% if highlight.data.collaborators %}<p class="highlight-card-detail">{{ highlight.data.collaborators }}</p>{% endif %}
         </div>
       </a>
     {% endfor %}
