@@ -1,10 +1,13 @@
 ---
 title: New concert 2 5
-date: "2026-03-27T00:00:00"
+date: "2026-03-27T00:00"
 place: Brussels
 composers: Bartok
-collaborators: CDR
+collaborators: ""
 link: ""
 layout: concert.html
 ---
-![klvero.png](/images/klvero.png)
+> hello
+
+- 1
+- 2
