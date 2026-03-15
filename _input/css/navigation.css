@@ -26,6 +26,7 @@
   font-size: 30px;
   font-weight: 300;
   line-height: 0.8;
+  letter-spacing: -0.03em;
   text-decoration: none;
   color: var(--near-black);
 }

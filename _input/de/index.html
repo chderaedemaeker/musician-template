@@ -1,0 +1,86 @@
+---
+layout: layout.html
+---
+
+{% assign navTransparent = true %}
+{% include "navigation.liquid" %}
+
+<main>
+
+<div class="hero-fullscreen">
+  <img src="/images/veronique20d.jpg" alt="{{ languages[page.lang].site_title }}">
+  <div class="hero-content">
+  </div>
+</div>
+
+{% assign lang = page.lang %}
+
+<!-- Upcoming Concerts -->
+<div style="max-width: var(--content-width); margin: 0 auto; padding: var(--space-xl) var(--space-md);">
+
+  <h2 style="font-size: 0.7rem; font-family: var(--font-sans); text-transform: uppercase; letter-spacing: 0.15em; color: var(--dark-grey); margin-bottom: var(--space-lg);">{{ languages[lang].upcoming_concerts }}</h2>
+
+  <div class="upcoming-concerts-list"></div>
+
+  <div style="margin-top: var(--space-lg);">
+    <a class="btn" href="/{{ lang }}/concerts/">{{ languages[lang].see_all_concerts }}</a>
+  </div>
+
+</div>
+
+<!-- Highlights -->
+<div style="padding: var(--space-xl) 0;">
+
+  {% assign langHighlights = 'highlights_' | append: lang %}
+  {% assign sortedHighlights = collections[langHighlights] | sort: 'date' | reverse %}
+
+  <div class="highlights-grid">
+    {% for highlight in sortedHighlights %}
+      <a href="{{ highlight.url }}" class="highlight-card">
+        {% if highlight.data.image %}
+          <img src="{{ highlight.data.image }}" alt="{{ highlight.data.title }}">
+        {% endif %}
+        <div class="highlight-card-overlay">
+          <div class="highlight-card-top">
+            {% if highlight.data.type %}<p class="highlight-card-type">{{ highlight.data.type }}</p>{% endif %}
+            <h3 class="highlight-card-title">{{ highlight.data.title }}</h3>
+          </div>
+          <div class="highlight-card-bottom">
+            <span class="highlight-card-link">{{ languages[lang].explore }} <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+          </div>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+
+</div>
+
+<!-- Contact -->
+<div style="text-align: center; padding: var(--space-xl) var(--space-md);">
+  <a class="btn" href="/{{ lang }}/contact/">{{ languages[lang].contact_title }}</a>
+</div>
+
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var concerts = {% concertsJson collections.concerts %};
+  var lang = '{{ lang }}';
+  var now = new Date();
+  var upcoming = concerts
+    .filter(function(c) { return new Date(c.date) >= now && c.link.indexOf('/' + lang + '/') !== -1; })
+    .sort(function(a, b) { return new Date(a.date) - new Date(b.date); })
+    .slice(0, 3);
+
+  var list = document.querySelector('.upcoming-concerts-list');
+  if (upcoming.length === 0) {
+    list.innerHTML = '<p style="color: var(--mid-grey); font-style: italic;">{{ languages[lang].no_upcoming }}</p>';
+  } else {
+    upcoming.forEach(function(c) {
+      var d = new Date(c.date);
+      var dateStr = d.toLocaleDateString('{{ lang }}', { year: 'numeric', month: 'long', day: 'numeric' });
+      list.innerHTML += '<a href="' + c.link + '" style="display: block; padding: var(--space-sm) 0; border-bottom: 1px solid var(--warm-grey); text-decoration: none;"><span style="font-size: 0.75em; color: var(--dark-grey); font-family: var(--font-sans);">' + dateStr + '</span><br><span style="font-weight: 300;">' + c.title + '</span>' + (c.place ? '<br><span style="font-size: 0.8em; color: var(--dark-grey); font-style: italic;">' + c.place + '</span>' : '') + '</a>';
+    });
+  }
+});
+</script>

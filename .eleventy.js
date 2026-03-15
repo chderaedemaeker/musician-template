@@ -71,37 +71,52 @@ module.exports = function (eleventyConfig) {
     eleventyConfig.addPassthroughCopy("_input/images");
     eleventyConfig.addPassthroughCopy("_input/css");
 
+    // Helper: get collection with English fallback
+    function collectionWithFallback(collection, langGlob, enGlob) {
+        const items = collection.getFilteredByGlob(langGlob);
+        return items.length > 0 ? items : collection.getFilteredByGlob(enGlob);
+    }
+
     // Collections for highlights per language
-    eleventyConfig.addCollection('highlights_en', function(collection) {
-        return collection.getFilteredByGlob('./_input/highlights/en/*.md');
+    eleventyConfig.addCollection('highlights_en', function(c) {
+        return c.getFilteredByGlob('./_input/highlights/en/*.md');
     });
-    eleventyConfig.addCollection('highlights_nl', function(collection) {
-        return collection.getFilteredByGlob('./_input/highlights/nl/*.md');
+    eleventyConfig.addCollection('highlights_nl', function(c) {
+        return collectionWithFallback(c, './_input/highlights/nl/*.md', './_input/highlights/en/*.md');
     });
-    eleventyConfig.addCollection('highlights_fr', function(collection) {
-        return collection.getFilteredByGlob('./_input/highlights/fr/*.md');
+    eleventyConfig.addCollection('highlights_fr', function(c) {
+        return collectionWithFallback(c, './_input/highlights/fr/*.md', './_input/highlights/en/*.md');
+    });
+    eleventyConfig.addCollection('highlights_de', function(c) {
+        return collectionWithFallback(c, './_input/highlights/de/*.md', './_input/highlights/en/*.md');
     });
 
     // Collections for projects per language
-    eleventyConfig.addCollection('projects_en', function(collection) {
-        return collection.getFilteredByGlob('./_input/projects/en/*.md');
+    eleventyConfig.addCollection('projects_en', function(c) {
+        return c.getFilteredByGlob('./_input/projects/en/*.md');
     });
-    eleventyConfig.addCollection('projects_nl', function(collection) {
-        return collection.getFilteredByGlob('./_input/projects/nl/*.md');
+    eleventyConfig.addCollection('projects_nl', function(c) {
+        return collectionWithFallback(c, './_input/projects/nl/*.md', './_input/projects/en/*.md');
     });
-    eleventyConfig.addCollection('projects_fr', function(collection) {
-        return collection.getFilteredByGlob('./_input/projects/fr/*.md');
+    eleventyConfig.addCollection('projects_fr', function(c) {
+        return collectionWithFallback(c, './_input/projects/fr/*.md', './_input/projects/en/*.md');
+    });
+    eleventyConfig.addCollection('projects_de', function(c) {
+        return collectionWithFallback(c, './_input/projects/de/*.md', './_input/projects/en/*.md');
     });
 
     // Collections for about per language
-    eleventyConfig.addCollection('about_en', function(collection) {
-        return collection.getFilteredByGlob('./_input/about/en/*.md');
+    eleventyConfig.addCollection('about_en', function(c) {
+        return c.getFilteredByGlob('./_input/about/en/*.md');
     });
-    eleventyConfig.addCollection('about_nl', function(collection) {
-        return collection.getFilteredByGlob('./_input/about/nl/*.md');
+    eleventyConfig.addCollection('about_nl', function(c) {
+        return collectionWithFallback(c, './_input/about/nl/*.md', './_input/about/en/*.md');
     });
-    eleventyConfig.addCollection('about_fr', function(collection) {
-        return collection.getFilteredByGlob('./_input/about/fr/*.md');
+    eleventyConfig.addCollection('about_fr', function(c) {
+        return collectionWithFallback(c, './_input/about/fr/*.md', './_input/about/en/*.md');
+    });
+    eleventyConfig.addCollection('about_de', function(c) {
+        return collectionWithFallback(c, './_input/about/de/*.md', './_input/about/en/*.md');
     });
 
     // Collection for concerts (all languages in their respective folders)

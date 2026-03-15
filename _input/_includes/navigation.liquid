@@ -5,6 +5,8 @@
   {% assign lang = "nl" %}
 {% elsif page.url contains '/fr/' %}
   {% assign lang = "fr" %}
+{% elsif page.url contains '/de/' %}
+  {% assign lang = "de" %}
 {% else %}
   {% assign lang = "en" %}
 {% endif %}
@@ -24,6 +26,7 @@
           <option value="en" {% if lang == 'en' %}selected{% endif %}>EN</option>
           <option value="nl" {% if lang == 'nl' %}selected{% endif %}>NL</option>
           <option value="fr" {% if lang == 'fr' %}selected{% endif %}>FR</option>
+          <option value="de" {% if lang == 'de' %}selected{% endif %}>DE</option>
         </select>
       </div>
     </div>
@@ -52,7 +55,7 @@
 <script>
 function switchLanguage(lang) {
   var path = window.location.pathname;
-  var newPath = path.replace(/^\/(en|nl|fr)/, '/' + lang);
+  var newPath = path.replace(/^\/(en|nl|fr|de)/, '/' + lang);
   window.location.href = newPath;
 }
 

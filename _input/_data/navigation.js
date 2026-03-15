@@ -16,5 +16,11 @@ module.exports = {
     { text: 'Concerts', url: '/fr/concerts/' },
     { text: 'Highlights', url: '/fr/highlights/' },
     { text: 'Contact', url: '/fr/contact/' }
+  ],
+  de: [
+    { text: 'Über', url: '/de/about/' },
+    { text: 'Konzerte', url: '/de/concerts/' },
+    { text: 'Highlights', url: '/de/highlights/' },
+    { text: 'Kontakt', url: '/de/contact/' }
   ]
 };

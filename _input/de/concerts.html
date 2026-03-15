@@ -1,0 +1,56 @@
+---
+title: Konzerte
+layout: default.html
+tags: pages
+---
+
+{% assign lang = page.lang %}
+
+<div style="padding-top: 120px;"></div>
+
+<div style="max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-md);">
+  <span class="section-title" style="margin-top: var(--space-lg);">{{ languages[lang].upcoming_concerts }}</span>
+</div>
+<div class="text-list" id="upcoming-concerts"></div>
+
+<div style="max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-md);">
+  <span class="section-title" style="margin-top: var(--space-lg);">{{ languages[lang].archive }}</span>
+</div>
+<div class="text-list" id="archive-concerts"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var concerts = {% concertsJson collections.concerts %};
+  var lang = '{{ lang }}';
+  var now = new Date();
+
+  var langConcerts = concerts.filter(function(c) {
+    return c.link.indexOf('/' + lang + '/') !== -1;
+  });
+
+  var upcoming = langConcerts.filter(function(c) { return new Date(c.date) >= now; })
+    .sort(function(a, b) { return new Date(a.date) - new Date(b.date); });
+  var archive = langConcerts.filter(function(c) { return new Date(c.date) < now; })
+    .sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
+
+  function renderConcerts(list, containerId) {
+    var container = document.getElementById(containerId);
+    if (list.length === 0) {
+      container.innerHTML = '<div style="padding: var(--space-md);"><p style="color: var(--mid-grey); font-style: italic;">{{ languages[lang].no_upcoming }}</p></div>';
+      return;
+    }
+    container.innerHTML = list.map(function(c) {
+      var d = new Date(c.date);
+      var dateStr = d.toLocaleDateString('{{ lang }}', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      var right = '';
+      if (c.composers) right += '<p class="text-list-detail">' + c.composers + '</p>';
+      if (c.collaborators) right += '<p class="text-list-detail">' + c.collaborators + '</p>';
+      return '<a href="' + c.link + '" class="text-list-item"><div class="text-list-left"><p class="text-list-type">' + dateStr + '</p><h3 class="text-list-title">' + c.title + '</h3><p class="text-list-detail">' + (c.place || '') + '</p></div>' + (right ? '<div class="text-list-right">' + right + '</div>' : '') + '</a>';
+    }).join('');
+  }
+
+  renderConcerts(upcoming, 'upcoming-concerts');
+  renderConcerts(archive, 'archive-concerts');
+
+});
+</script>

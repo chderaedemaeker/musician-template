@@ -16,6 +16,8 @@
   {% assign lang = "nl" %}
 {% elsif page.url contains '/fr/' %}
   {% assign lang = "fr" %}
+{% elsif page.url contains '/de/' %}
+  {% assign lang = "de" %}
 {% else %}
   {% assign lang = "en" %}
 {% endif %}
