@@ -37,7 +37,7 @@
 }
 
 .nav-links a {
-  font-size: 0.75em;
+  font-size: 0.6em;
   font-family: var(--font-sans);
   text-decoration: none;
   color: var(--near-black);
@@ -53,7 +53,7 @@
   background: transparent;
   border: none;
   padding: 4px 8px;
-  font-size: 0.8em;
+  font-size: 0.6em;
   font-family: var(--font-sans);
   text-transform: uppercase;
   cursor: pointer;
@@ -103,6 +103,10 @@
 /* Transparent nav — used on index/home page */
 .nav-transparent {
   position: absolute;
+  left: 0;
+  right: 0;
+  width: 100%;
+  padding: 30px 40px;
   background-color: transparent;
   border-bottom: none;
 }
