@@ -1,8 +1,8 @@
 ---
 title: ""
-slug: ""
+slug: new concert
 date: "2026-03-24T13:35"
-type: ""
+type: video
 image: ""
 link: ""
 place: ""
