@@ -1,6 +1,6 @@
 ---
-title: "Duo Sonata Project"
-collaborators: "Jane Doe (violin)"
+title: Duo Sonata Project
+collaborators: Jane Doe testing christpf
 image: ""
 layout: project.html
 tags: projects
