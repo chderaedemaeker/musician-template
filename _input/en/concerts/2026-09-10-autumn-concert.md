@@ -1,9 +1,9 @@
 ---
-title: "Autumn Chamber Concert"
-date: 2026-09-10T19:30:00
-place: "AMUZ, Antwerp, Belgium"
-composers: "Brahms, Schumann"
-collaborators: "John Smith (cello), Anna Lee (clarinet)"
+title: Autumn Chamber Concert
+date: "2026-09-10T19:30"
+place: AMUZ, Antwerp, Belgium
+composers: Brahms, Schumann
+collaborators: John Smith (cello), Anna Lee (clarinet)
 link: ""
 layout: concert.html
 ---
