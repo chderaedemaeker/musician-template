@@ -28,14 +28,12 @@
   letter-spacing: -0.03em;
   text-decoration: none;
   color: var(--near-black);
-  display: flex;
-  flex-direction: column;
+  display: block;
 }
 
 .brand-line {
   display: block;
-  line-height: 1;
-  margin-bottom: -4px;
+  line-height: 0.95;
 }
 
 .nav-links {
