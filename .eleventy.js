@@ -2,6 +2,31 @@ const { DateTime } = require("luxon");
 const Image = require("@11ty/eleventy-img");
 const { EleventyI18nPlugin } = require("@11ty/eleventy");
 const path = require("path");
+const crypto = require("crypto");
+
+// Generate a short hash for filenames (stable per source file, looks random)
+function randomHash(src, width, format) {
+    const hash = crypto.createHash('md5')
+        .update(src + width + format)
+        .digest('hex')
+        .slice(0, 12);
+    return `${hash}.${format}`;
+}
+
+// Shared image processing options — progressive JPEG, high quality
+function imageOptions(widths = [600, 1200, 1800]) {
+    return {
+        widths,
+        formats: ["webp", "jpeg"],
+        sharpWebpOptions: { quality: 92, nearLossless: true },
+        sharpJpegOptions: { quality: 92, progressive: true, mozjpeg: true },
+        outputDir: "./_site/images/optimized/",
+        urlPath: "/images/optimized/",
+        filenameFormat: function (id, src, width, format) {
+            return randomHash(src, width, format);
+        }
+    };
+}
 
 module.exports = function (eleventyConfig) {
     // Internationalization (i18n)
@@ -15,18 +40,7 @@ module.exports = function (eleventyConfig) {
         if (!src) return "";
         let inputPath = src.startsWith("/") ? `_input${src}` : src;
         try {
-        let metadata = await Image(inputPath, {
-            widths: [600, 1200, 1800],
-            formats: ["webp", "jpeg"],
-            sharpWebpOptions: { quality: 85 },
-            sharpJpegOptions: { quality: 85 },
-            outputDir: "./_site/images/optimized/",
-            urlPath: "/images/optimized/",
-            filenameFormat: function (id, src, width, format) {
-                const name = path.basename(src, path.extname(src));
-                return `${name}-${width}.${format}`;
-            }
-        });
+        let metadata = await Image(inputPath, imageOptions());
         let imageAttributes = {
             alt,
             sizes: "(min-width: 1200px) 1200px, (min-width: 600px) 600px, 100vw",
@@ -45,17 +59,7 @@ module.exports = function (eleventyConfig) {
         if (!src) return "";
         let inputPath = src.startsWith("/") ? `_input${src}` : src;
         try {
-            let metadata = await Image(inputPath, {
-                widths: [1200],
-                formats: ["webp"],
-                sharpWebpOptions: { quality: 85 },
-                outputDir: "./_site/images/optimized/",
-                urlPath: "/images/optimized/",
-                filenameFormat: function (id, src, width, format) {
-                    const name = path.basename(src, path.extname(src));
-                    return `${name}-${width}.${format}`;
-                }
-            });
+            let metadata = await Image(inputPath, imageOptions([1200]));
             return metadata.webp[0].url;
         } catch(e) {
             return src;
@@ -159,18 +163,7 @@ module.exports = function (eleventyConfig) {
             const [fullMatch, src, alt] = match;
             try {
                 let inputPath = `_input${src}`;
-                let metadata = await Image(inputPath, {
-                    widths: [600, 1200, 1800],
-                    formats: ["webp", "jpeg"],
-                    sharpWebpOptions: { quality: 85 },
-                    sharpJpegOptions: { quality: 85 },
-                    outputDir: "./_site/images/optimized/",
-                    urlPath: "/images/optimized/",
-                    filenameFormat: function (id, src, width, format) {
-                        const name = path.basename(src, path.extname(src));
-                        return `${name}-${width}.${format}`;
-                    }
-                });
+                let metadata = await Image(inputPath, imageOptions());
                 let optimizedHtml = Image.generateHTML(metadata, {
                     alt: alt || "",
                     sizes: "(min-width: 1200px) 1200px, (min-width: 600px) 600px, 100vw",
