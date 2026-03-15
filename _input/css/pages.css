@@ -27,21 +27,21 @@
 .concert-detail h1,
 .detail-page h1,
 .about-page h1 {
-  font-size: var(--font-size-serif);
+  font-size: var(--text-lg);
   font-weight: 300;
   margin-bottom: var(--space-sm);
 }
 
 .concert-detail .date,
 .detail-page .meta {
-  font-size: var(--font-size-sans);
+  font-size: var(--text-sm);
   color: var(--dark-grey);
   font-family: var(--font-sans);
   margin-bottom: var(--space-sm);
 }
 
 .concert-detail .meta {
-  font-size: var(--font-size-sans);
+  font-size: var(--text-sm);
   color: var(--dark-grey);
   font-family: var(--font-sans);
   font-style: italic;
@@ -83,7 +83,7 @@
   border: none;
   border-bottom: 1px solid var(--warm-grey);
   font-family: var(--font-serif);
-  font-size: var(--font-size-serif);
+  font-size: var(--text-md);
   color: var(--near-black);
   outline: none;
   transition: border-color 0.2s ease;
@@ -140,7 +140,7 @@
   border: none;
   border-bottom: 1px solid var(--warm-grey);
   font-family: var(--font-serif);
-  font-size: var(--font-size-serif);
+  font-size: var(--text-md);
   color: var(--near-black);
   outline: none;
   transition: border-color 0.2s ease;
@@ -162,7 +162,7 @@
 
 .socials-list a {
   font-family: var(--font-sans);
-  font-size: var(--font-size-sans);
+  font-size: var(--text-sm);
   color: var(--dark-grey);
   text-decoration: none;
   transition: color 0.2s ease;

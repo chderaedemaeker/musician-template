@@ -10,7 +10,7 @@
 }
 
 .hero h1 {
-  font-size: var(--font-size-serif);
+  font-size: var(--text-lg);
   font-weight: 300;
 }
 
@@ -43,7 +43,7 @@
 
 .hero-fullscreen .hero-content h1 {
   color: var(--white);
-  font-size: var(--font-size-serif);
+  font-size: var(--text-xl);
   font-weight: 300;
-  line-height: 1;
+  line-height: var(--leading-snug);
 }
