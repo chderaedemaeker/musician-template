@@ -1,10 +1,10 @@
 ---
-title: "Over"
-summaryabout: "Een veelzijdig muzikant gevestigd in België, geprezen voor expressieve uitvoeringen en een diepe toewijding aan zowel klassiek repertoire als hedendaagse muziek."
+title: Over
+summaryabout: Een veelzijdig muzikant gevestigd in België, geprezen voor expressieve uitvoeringen en een diepe toewijding aan zowel klassiek repertoire als hedendaagse muziek.
 layout: about.html
 tags: about
 lang: nl
-permalink: "nl/about/index.html"
+permalink: nl/about/index.html
 ---
 ## Biografie
 
