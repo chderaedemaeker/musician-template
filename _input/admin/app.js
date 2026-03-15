@@ -306,6 +306,7 @@ class App {
     if (hash === '#/login') return this.renderLogin();
     if (hash === '#/settings') return this.renderSettings();
     if (hash === '#/' || hash === '#') return this.renderDashboard();
+    if (hash === '#/media') return this.renderMedia();
 
     // #/concerts, #/projects, etc.
     const collectionMatch = hash.match(/^#\/([a-z]+)$/);
@@ -416,10 +417,15 @@ class App {
             <div class="card-count">${c.i18n ? 'i18n (en, nl, fr)' : 'Single language'}</div>
           </div>
         `).join('')}
+        <div class="card" id="media-card">
+          <div class="card-label">Media</div>
+          <div class="card-count">Images &amp; files</div>
+        </div>
       </div>`;
     this.el.querySelectorAll('.card[data-col]').forEach(card => {
       card.addEventListener('click', () => { location.hash = `#/${card.dataset.col}`; });
     });
+    document.getElementById('media-card').addEventListener('click', () => { location.hash = '#/media'; });
     this._bindTopbar();
   }
 
@@ -925,6 +931,198 @@ class App {
     } catch (e) {
       showStatus('error', 'Save failed: ' + e.message);
     }
+  }
+}
+
+  // ---- Render: Media Library ----
+  async renderMedia() {
+    const mediaFolder = this.config ? this.config.getMediaFolder() : '_input/images';
+
+    this.el.innerHTML = `
+      ${this._topbar()}
+      <nav class="breadcrumb">
+        <a href="#/">Dashboard</a><span class="sep">/</span><span>Media</span>
+      </nav>
+      <div class="list-header">
+        <h2>Media Library</h2>
+        <div class="media-actions">
+          <button class="btn btn-primary btn-sm" id="upload-media-btn">Upload Images</button>
+        </div>
+      </div>
+      <div class="media-dropzone" id="media-dropzone">
+        <p>Drag &amp; drop images here or click "Upload Images"</p>
+      </div>
+      <div class="media-info" id="media-info"></div>
+      <div class="media-grid" id="media-grid">
+        <div class="loading-state"><span class="spinner"></span> Loading media...</div>
+      </div>`;
+    this._bindTopbar();
+
+    // Hidden file input for multi-upload
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.multiple = true;
+    fileInput.style.display = 'none';
+    this.el.appendChild(fileInput);
+
+    document.getElementById('upload-media-btn').addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length) this._uploadMediaFiles(fileInput.files, mediaFolder);
+    });
+
+    // Drag & drop
+    const dropzone = document.getElementById('media-dropzone');
+    dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+    dropzone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropzone.classList.remove('dragover');
+      if (e.dataTransfer.files.length) this._uploadMediaFiles(e.dataTransfer.files, mediaFolder);
+    });
+
+    // Load existing images
+    try {
+      const contents = await this.api.getContents(mediaFolder);
+      const images = contents.filter(f =>
+        f.type === 'file' && /\.(jpg|jpeg|png|gif|webp|svg|avif)$/i.test(f.name)
+      );
+
+      const gridEl = document.getElementById('media-grid');
+      const infoEl = document.getElementById('media-info');
+      infoEl.textContent = `${images.length} image${images.length !== 1 ? 's' : ''} in ${mediaFolder}`;
+
+      if (!images.length) {
+        gridEl.innerHTML = '<div class="empty-state">No images yet. Upload some!</div>';
+        return;
+      }
+
+      // Sort alphabetically
+      images.sort((a, b) => a.name.localeCompare(b.name));
+
+      gridEl.innerHTML = images.map(img => {
+        const publicPath = `/images/${img.name}`;
+        return `<div class="media-item" data-name="${esc(img.name)}" data-sha="${img.sha}" data-path="${esc(img.path)}">
+          <div class="media-thumb">
+            <img src="https://raw.githubusercontent.com/${this.api.owner}/${this.api.repo}/${this.api.branch}/${img.path}" alt="${esc(img.name)}" loading="lazy" />
+          </div>
+          <div class="media-item-info">
+            <div class="media-item-name" title="${esc(img.name)}">${esc(img.name)}</div>
+            <div class="media-item-actions">
+              <button class="btn btn-ghost btn-sm media-copy-btn" title="Copy path">Copy Path</button>
+              <button class="btn btn-danger btn-sm media-delete-btn" title="Delete">Delete</button>
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+
+      // Copy path buttons
+      gridEl.querySelectorAll('.media-copy-btn').forEach(btn => {
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          const item = btn.closest('.media-item');
+          const name = item.dataset.name;
+          const publicPath = `/images/${name}`;
+          navigator.clipboard.writeText(publicPath).then(() => {
+            showStatus('saved', `Copied: ${publicPath}`);
+          }).catch(() => {
+            // Fallback
+            prompt('Copy this path:', publicPath);
+          });
+        });
+      });
+
+      // Delete buttons
+      gridEl.querySelectorAll('.media-delete-btn').forEach(btn => {
+        btn.addEventListener('click', async e => {
+          e.stopPropagation();
+          const item = btn.closest('.media-item');
+          const name = item.dataset.name;
+          const sha = item.dataset.sha;
+          const path = item.dataset.path;
+          const ok = await showModal('Delete Image', `Are you sure you want to delete "${name}"? This cannot be undone.`);
+          if (!ok) return;
+          try {
+            showStatus('saving', 'Deleting...');
+            await this.api.deleteFile(path, sha, `Delete image ${name}`);
+            item.remove();
+            const remaining = gridEl.querySelectorAll('.media-item').length;
+            infoEl.textContent = `${remaining} image${remaining !== 1 ? 's' : ''} in ${mediaFolder}`;
+            showStatus('saved', `Deleted ${name}`);
+          } catch (err) {
+            showStatus('error', 'Delete failed: ' + err.message);
+          }
+        });
+      });
+
+      // Click to preview
+      gridEl.querySelectorAll('.media-item').forEach(item => {
+        item.addEventListener('click', e => {
+          if (e.target.closest('button')) return;
+          const name = item.dataset.name;
+          const imgUrl = `https://raw.githubusercontent.com/${this.api.owner}/${this.api.repo}/${this.api.branch}/${item.dataset.path}`;
+          this._showImagePreview(imgUrl, name, `/images/${name}`);
+        });
+      });
+
+    } catch (e) {
+      document.getElementById('media-grid').innerHTML = `<div class="empty-state" style="color:var(--c-danger);">Error loading media: ${esc(e.message)}</div>`;
+    }
+  }
+
+  async _uploadMediaFiles(files, mediaFolder) {
+    const total = files.length;
+    let uploaded = 0;
+    showStatus('saving', `Uploading 0/${total}...`);
+
+    for (const file of files) {
+      try {
+        const b64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result.split(',')[1]);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+        const path = `${mediaFolder}/${file.name}`;
+        await this.api.uploadImage(path, b64, `Upload ${file.name}`);
+        uploaded++;
+        showStatus('saving', `Uploading ${uploaded}/${total}...`);
+      } catch (e) {
+        showStatus('error', `Failed to upload ${file.name}: ${e.message}`);
+        return;
+      }
+    }
+
+    showStatus('saved', `Uploaded ${uploaded} image${uploaded !== 1 ? 's' : ''}`);
+    // Refresh the media view
+    this.renderMedia();
+  }
+
+  _showImagePreview(imgUrl, name, publicPath) {
+    const overlay = document.createElement('div');
+    overlay.className = 'image-lightbox visible';
+    overlay.innerHTML = `
+      <div class="lightbox-content">
+        <img src="${imgUrl}" alt="${esc(name)}" />
+        <div class="lightbox-info">
+          <strong>${esc(name)}</strong>
+          <code>${esc(publicPath)}</code>
+          <div class="lightbox-actions">
+            <button class="btn btn-primary btn-sm lightbox-copy">Copy Path</button>
+            <button class="btn btn-ghost btn-sm lightbox-close">Close</button>
+          </div>
+        </div>
+      </div>`;
+    document.body.appendChild(overlay);
+
+    overlay.querySelector('.lightbox-copy').addEventListener('click', () => {
+      navigator.clipboard.writeText(publicPath).then(() => showStatus('saved', `Copied: ${publicPath}`));
+    });
+    overlay.querySelector('.lightbox-close').addEventListener('click', () => overlay.remove());
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+    document.addEventListener('keydown', function handler(e) {
+      if (e.key === 'Escape') { overlay.remove(); document.removeEventListener('keydown', handler); }
+    });
   }
 }
 
