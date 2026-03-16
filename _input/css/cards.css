@@ -60,21 +60,21 @@
 }
 
 .text-list-type {
-  font-size: var(--size-label);
+  font-size: var(--sans-label);
   font-family: var(--font-sans);
   color: var(--dark-grey);
   margin-bottom: 4px;
 }
 
 .text-list-title {
-  font-size: var(--size-body);
+  font-size: var(--serif-body);
   font-weight: 300;
   line-height: 1.2;
   margin: 0 0 4px;
 }
 
 .text-list-detail {
-  font-size: var(--size-label);
+  font-size: var(--sans-label);
   font-family: var(--font-sans);
   color: var(--dark-grey);
   margin: 0 0 2px;

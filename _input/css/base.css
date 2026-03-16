@@ -24,14 +24,16 @@
   --font-serif: 'AGL', Georgia, serif;
   --font-sans: 'Helvetica Neue', Helvetica, sans-serif;
 
-  /* ── Type scale — adjust these to resize everything ── */
-  --size-caption: 0.9rem;     /* nav links, lang switcher, section labels */
-  --size-label: 0.9rem;       /* meta dates, tags, footer, card details */
-  --size-body-sans: 0.9rem;   /* h3, form labels, body sans text */
-  --size-body: 1.2rem;        /* paragraphs, card titles, forms */
-  --size-heading: 1.2rem;     /* h1, h2, page titles, mobile nav */
-  --size-hero: 1.3rem;        /* hero fullscreen heading */
-  --size-brand: 1.3rem;       /* nav brand name */
+  /* ── Sans-serif sizes ── */
+  --sans-caption: 0.9rem;     /* nav links, lang switcher, section labels */
+  --sans-label: 0.9rem;       /* meta dates, tags, footer, card details */
+  --sans-body: 0.9rem;        /* h3, form labels, body sans text */
+
+  /* ── Serif sizes ── */
+  --serif-body: 1.2rem;       /* paragraphs, card titles, forms */
+  --serif-heading: 1.2rem;    /* h1, h2, page titles, mobile nav */
+  --serif-hero: 1.3rem;       /* hero fullscreen heading */
+  --serif-brand: 1.3rem;      /* nav brand name */
 
   /* ── Line heights ── */
   --leading-tight: 0.95;  /* headings, brand */
@@ -58,8 +60,8 @@
   --radius: 8px;
 
   /* ── Legacy aliases (for backward compat) ── */
-  --font-size-serif: var(--size-body);
-  --font-size-sans: var(--size-body-sans);
+  --font-size-serif: var(--serif-body);
+  --font-size-sans: var(--sans-body);
 }
 
 *, *::before, *::after {
@@ -74,7 +76,7 @@ html {
 
 body {
   font-family: var(--font-serif);
-  font-size: var(--size-body);
+  font-size: var(--serif-body);
   background-color: var(--off-white);
   color: var(--near-black);
   line-height: var(--leading-normal);
@@ -103,7 +105,7 @@ ul, ol {
 
 h1 {
   font-family: var(--font-serif);
-  font-size: var(--size-heading);
+  font-size: var(--serif-heading);
   font-weight: 300;
   line-height: var(--leading-snug);
   letter-spacing: var(--tracking-normal);
@@ -111,14 +113,14 @@ h1 {
 
 h2 {
   font-family: var(--font-serif);
-  font-size: var(--size-body);
+  font-size: var(--serif-body);
   font-weight: 300;
   line-height: var(--leading-snug);
 }
 
 h3 {
   font-family: var(--font-serif);
-  font-size: var(--size-body-sans);
+  font-size: var(--sans-body);
   font-weight: 300;
   line-height: var(--leading-snug);
 }
@@ -134,13 +136,13 @@ hr {
 }
 
 /* ── Typography utilities ── */
-.size-caption   { font-size: var(--size-caption); }
-.size-label     { font-size: var(--size-label); }
-.size-body-sans { font-size: var(--size-body-sans); }
-.size-body      { font-size: var(--size-body); }
-.size-heading   { font-size: var(--size-heading); }
-.size-hero      { font-size: var(--size-hero); }
-.size-brand     { font-size: var(--size-brand); }
+.sans-caption   { font-size: var(--sans-caption); }
+.sans-label     { font-size: var(--sans-label); }
+.sans-body      { font-size: var(--sans-body); }
+.serif-body     { font-size: var(--serif-body); }
+.serif-heading  { font-size: var(--serif-heading); }
+.serif-hero     { font-size: var(--serif-hero); }
+.serif-brand    { font-size: var(--serif-brand); }
 
 .font-serif { font-family: var(--font-serif); }
 .font-sans  { font-family: var(--font-sans); }
@@ -168,7 +170,7 @@ hr {
 /* ── Section title — reusable label style ── */
 .section-title {
   display: block;
-  font-size: var(--size-caption);
+  font-size: var(--sans-caption);
   font-family: var(--font-sans);
   text-transform: uppercase;
   letter-spacing: var(--tracking-wider);

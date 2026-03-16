@@ -21,18 +21,18 @@
 }
 
 .swiper-slide .date {
-  font-size: var(--size-label);
+  font-size: var(--sans-label);
   color: var(--dark-grey);
   font-family: var(--font-sans);
 }
 
 .swiper-slide h3 {
-  font-size: var(--size-body);
+  font-size: var(--serif-body);
   font-weight: 300;
 }
 
 .swiper-slide .place {
-  font-size: var(--size-label);
+  font-size: var(--sans-label);
   color: var(--dark-grey);
   font-style: italic;
   font-family: var(--font-sans);
@@ -55,7 +55,7 @@
   border-bottom: 1px solid var(--warm-grey);
   background: transparent;
   font-family: var(--font-sans);
-  font-size: var(--size-label);
+  font-size: var(--sans-label);
   outline: none;
 }
 
@@ -66,7 +66,7 @@
   background: transparent;
   cursor: pointer;
   font-family: var(--font-sans);
-  font-size: var(--size-label);
+  font-size: var(--sans-label);
 }
 
 /* Footer */
