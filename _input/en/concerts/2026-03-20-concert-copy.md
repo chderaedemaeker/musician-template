@@ -1,5 +1,5 @@
 ---
-title: Concert (copy)
+title: Concert
 date: "2026-03-22T19:30"
 place: Keerbergen
 composers: Vivaldi
