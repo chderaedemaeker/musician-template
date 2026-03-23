@@ -16,7 +16,8 @@
 
 .hero-fullscreen {
   position: relative;
-  height: 100vh;
+  height: 100vh;          /* fallback */
+  height: 100dvh;         /* accounts for iOS browser chrome */
   width: 100%;
   overflow: hidden;
   display: flex;

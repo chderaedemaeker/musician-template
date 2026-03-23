@@ -26,10 +26,22 @@
       if ('IntersectionObserver' in window) {
         var io = new IntersectionObserver(function (entries) {
           entries.forEach(function (e) {
-            if (e.isIntersecting) { loadFull(e.target); io.unobserve(e.target); }
+            if (!e.isIntersecting) return;
+            /* target may be the wrapper div or the img itself */
+            var img = e.target.tagName === 'IMG'
+              ? e.target
+              : e.target.querySelector('img.prog-img[data-src]');
+            if (img) loadFull(img);
+            io.unobserve(e.target);
           });
         }, { rootMargin: '200px' });
-        imgs.forEach(function (img) { io.observe(img); });
+        imgs.forEach(function (img) {
+          /* Observe the wrapper (no transform applied) instead of the img.
+             iOS Safari IntersectionObserver misfires on transformed elements
+             inside overflow:hidden containers. */
+          var target = img.closest('.prog-img-wrap') || img;
+          io.observe(target);
+        });
       } else {
         imgs.forEach(loadFull);
       }
