@@ -363,7 +363,7 @@ class App {
   route() {
     const hash = location.hash || '#/';
     if (!this.api && !hash.startsWith('#/login')) { location.hash = '#/login'; return; }
-    if (hash === '#/login') return this.renderLogin();
+    if (hash === '#/login') { if (this.api) { location.hash = '#/'; return; } return this.renderLogin(); }
     if (hash === '#/settings') return this.renderSettings();
     if (hash === '#/hero') return this.renderHero();
     if (hash === '#/' || hash === '#') return this.renderDashboard();
