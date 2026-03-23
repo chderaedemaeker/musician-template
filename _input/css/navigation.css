@@ -126,3 +126,12 @@
 .nav-transparent .hamburger span {
   background-color: #fff;
 }
+
+/* On mobile, keep the transparent nav fixed so it stays over the reel */
+@media (max-width: 768px) {
+  .nav-transparent {
+    position: fixed;
+    padding: 20px 24px;
+    z-index: 100;
+  }
+}
