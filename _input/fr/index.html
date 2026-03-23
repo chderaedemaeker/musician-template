@@ -29,7 +29,7 @@ layout: layout.html
 </div>
 
 <!-- Highlights -->
-<div class="highlights-section">
+<div style="padding: var(--space-xl) 0;">
 
   {% assign langHighlights = 'highlights_' | append: lang %}
   {% assign sortedHighlights = collections[langHighlights] | sort: 'date' | reverse %}
