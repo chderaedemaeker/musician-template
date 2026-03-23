@@ -365,7 +365,7 @@ class App {
     if (!this.api && !hash.startsWith('#/login')) { location.hash = '#/login'; return; }
     if (hash === '#/login') return this.renderLogin();
     if (hash === '#/settings') return this.renderSettings();
-    if (hash === '#/design') return this.renderDesign();
+    if (hash === '#/hero') return this.renderHero();
     if (hash === '#/' || hash === '#') return this.renderDashboard();
     if (hash === '#/media') return this.renderMedia();
     const colMatch = hash.match(/^#\/([a-z]+)$/);
@@ -435,14 +435,14 @@ class App {
           <div class="card-label">Media</div>
           <div class="card-count">Images & files</div>
         </div>
-        <div class="card" id="design-card">
-          <div class="card-label">Design</div>
-          <div class="card-count">Colors, fonts & layout</div>
+        <div class="card" id="hero-card">
+          <div class="card-label">Hero Image</div>
+          <div class="card-count">Homepage photo</div>
         </div>
       </div>`;
     this.el.querySelectorAll('.card[data-col]').forEach(card => card.addEventListener('click', () => { location.hash = `#/${card.dataset.col}`; }));
     document.getElementById('media-card').addEventListener('click', () => { location.hash = '#/media'; });
-    document.getElementById('design-card').addEventListener('click', () => { location.hash = '#/design'; });
+    document.getElementById('hero-card').addEventListener('click', () => { location.hash = '#/hero'; });
     this._bindTopbar();
     for (const col of this.collections) this._fetchEntryCount(col);
   }
@@ -1737,466 +1737,130 @@ class App {
     overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
   }
 
-  // ---- Design Settings ----
-  async renderDesign() {
+  // ---- Hero Image ----
+  async renderHero() {
     this.el.innerHTML = `
       ${this._topbar()}
-      <nav class="breadcrumb"><a href="#/">Dashboard</a><span class="sep">/</span><span>Design</span></nav>
+      <nav class="breadcrumb"><a href="#/">Dashboard</a><span class="sep">/</span><span>Hero Image</span></nav>
       <div class="editor-header">
-        <h2>Design Settings</h2>
+        <h2>Hero Image</h2>
         <div class="editor-actions">
-          <button class="btn btn-ghost btn-sm" id="design-reset">Reset to defaults</button>
-          <button class="btn btn-primary" id="design-save">Save & Publish</button>
+          <button class="btn btn-primary" id="hero-save-btn">Save</button>
         </div>
       </div>
-      <div id="design-form"><div class="loading-state"><span class="spinner"></span> Loading theme...</div></div>`;
+      <div id="hero-form"><div class="loading-state"><span class="spinner"></span> Loading...</div></div>`;
     this._bindTopbar();
 
-    // Load current theme.css
-    let currentVars = {};
-    let themeSha = null;
+    const siteDataPath = '_input/_data/site.json';
+    let siteData = { hero_image: '/images/veronique20d.jpg' };
+    let siteSha = null;
+
     try {
-      const file = await this.api.getFile('_input/css/theme.css');
-      themeSha = file.sha;
-      currentVars = this._parseThemeCss(file.content);
-    } catch (e) { /* no theme.css yet */ }
+      const file = await this.api.getFile(siteDataPath);
+      siteSha = file.sha;
+      try { siteData = JSON.parse(file.content); } catch (e) {}
+    } catch (e) { /* file doesn't exist yet, will be created on save */ }
 
-    const sections = this._getDesignSections();
-    const formEl = document.getElementById('design-form');
+    const currentImage = siteData.hero_image || '/images/veronique20d.jpg';
 
-    let html = '<div class="design-sections">';
-    for (const section of sections) {
-      html += `<div class="design-section">
-        <div class="design-section-header">${esc(section.label)}</div>
-        <div class="design-section-grid">`;
-      for (const opt of section.options) {
-        const val = currentVars[opt.variable] || opt.default;
-        html += this._renderDesignOption(opt, val);
-      }
-      html += '</div></div>';
-    }
-    html += '</div>';
-
-    // Live preview
-    html += `<div class="design-preview-section">
-      <div class="design-section-header">Preview</div>
-      <div id="design-preview" class="design-preview">
-        <div class="dp-nav">Artist Name <span style="font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;opacity:.5;">· Concerts · Projects · About</span></div>
-        <div class="dp-hero"><div class="dp-hero-title">Artist Name</div><div class="dp-hero-sub">MUSICIAN · PERFORMER</div></div>
-        <div class="dp-section"><div class="dp-section-label">UPCOMING CONCERTS</div></div>
-        <div class="dp-card"><div class="dp-card-date">15 MARCH 2026</div><div class="dp-card-title">Concert Title</div><div class="dp-card-place">Venue, City</div></div>
-        <div class="dp-body"><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p></div>
-        <div class="dp-btn">View All</div>
-      </div>
-    </div>`;
-
-    formEl.innerHTML = html;
-
-    // Bind color pickers & inputs
-    formEl.querySelectorAll('.design-opt-input').forEach(input => {
-      input.addEventListener('input', () => this._updateDesignPreview(sections));
-    });
-    formEl.querySelectorAll('.design-opt-color').forEach(picker => {
-      picker.addEventListener('input', (e) => {
-        const textInput = picker.parentElement.querySelector('.design-opt-input');
-        if (textInput) textInput.value = e.target.value;
-        this._updateDesignPreview(sections);
-      });
-    });
-    formEl.querySelectorAll('.design-opt-select').forEach(sel => {
-      sel.addEventListener('change', () => this._updateDesignPreview(sections));
-    });
-
-    // Initial preview
-    this._updateDesignPreview(sections);
-
-    // Save
-    document.getElementById('design-save').addEventListener('click', async () => {
-      const css = this._collectDesignCss(sections);
-      showStatus('saving', 'Saving theme...');
-      try {
-        const result = await this.api.createOrUpdateFile('_input/css/theme.css', css, 'Update design settings', themeSha || undefined);
-        themeSha = result.content.sha;
-        showStatus('saved', 'Design saved — site will rebuild');
-      } catch (e) { showStatus('error', e.message); }
-    });
-
-    // Reset
-    document.getElementById('design-reset').addEventListener('click', () => {
-      for (const section of sections) {
-        for (const opt of section.options) {
-          const input = formEl.querySelector(`[data-var="${opt.variable}"]`);
-          if (input) input.value = opt.default;
-          const picker = formEl.querySelector(`[data-var-picker="${opt.variable}"]`);
-          if (picker) picker.value = opt.default;
-        }
-      }
-      this._updateDesignPreview(sections);
-      showStatus('info', 'Reset to defaults — save to publish');
-    });
-  }
-
-  _getDesignSections() {
-    return [
-      {
-        label: 'Colors',
-        options: [
-          { variable: '--white', label: 'Background', type: 'color', default: '#fdfdfc' },
-          { variable: '--off-white', label: 'Surface / Cards', type: 'color', default: '#f5f4f0' },
-          { variable: '--warm-grey', label: 'Borders', type: 'color', default: '#e8e6e1' },
-          { variable: '--mid-grey', label: 'Muted Text', type: 'color', default: '#b5b0a8' },
-          { variable: '--dark-grey', label: 'Secondary Text', type: 'color', default: '#6b665e' },
-          { variable: '--charcoal', label: 'Body Text', type: 'color', default: '#3a3732' },
-          { variable: '--near-black', label: 'Headings / Primary', type: 'color', default: '#1a1917' },
-          { variable: '--pure-black', label: 'Darkest', type: 'color', default: '#0d0d0c' },
-        ]
-      },
-      {
-        label: 'Typography — Fonts',
-        options: [
-          { variable: '--font-serif', label: 'Heading Font', type: 'font', default: "'EB Garamond', Georgia, serif",
-            choices: [
-              "'EB Garamond', Georgia, serif",
-              "'Playfair Display', Georgia, serif",
-              "'Cormorant Garamond', Garamond, serif",
-              "'Libre Baskerville', Baskerville, serif",
-              "'Lora', Georgia, serif",
-              "'DM Serif Display', Georgia, serif",
-              "'Merriweather', Georgia, serif",
-              "Georgia, 'Times New Roman', serif",
-            ]
-          },
-          { variable: '--font-sans', label: 'UI / Label Font', type: 'font', default: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-            choices: [
-              "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-              "'Inter', sans-serif",
-              "'DM Sans', sans-serif",
-              "'Work Sans', sans-serif",
-              "'Outfit', sans-serif",
-              "'Plus Jakarta Sans', sans-serif",
-              "'Manrope', sans-serif",
-            ]
-          },
-        ]
-      },
-      {
-        label: 'Typography — Sizes',
-        options: [
-          { variable: '--font-size-base', label: 'Base Font Size', type: 'size', default: '17px', choices: ['14px','15px','16px','17px','18px','19px','20px'] },
-          { variable: '--hero-size', label: 'Hero Title', type: 'size', default: '5.5rem', choices: ['3rem','3.5rem','4rem','4.5rem','5rem','5.5rem','6rem','7rem','8rem'] },
-          { variable: '--h1-size', label: 'Page Titles (H1)', type: 'size', default: '3.5rem', choices: ['2rem','2.5rem','3rem','3.5rem','4rem','4.5rem','5rem'] },
-          { variable: '--h2-size', label: 'Section Titles (H2)', type: 'size', default: '2.2rem', choices: ['1.2rem','1.5rem','1.8rem','2rem','2.2rem','2.5rem','3rem'] },
-          { variable: '--h3-size', label: 'Card Titles (H3)', type: 'size', default: '1.8rem', choices: ['1rem','1.2rem','1.4rem','1.6rem','1.8rem','2rem','2.2rem'] },
-          { variable: '--body-size', label: 'Body Text', type: 'size', default: '1.05rem', choices: ['0.85rem','0.9rem','0.95rem','1rem','1.05rem','1.1rem','1.15rem','1.2rem'] },
-          { variable: '--label-size', label: 'Labels / Small Text', type: 'size', default: '0.7rem', choices: ['0.55rem','0.6rem','0.65rem','0.7rem','0.75rem','0.8rem','0.85rem'] },
-        ]
-      },
-      {
-        label: 'Typography — Style',
-        options: [
-          { variable: '--heading-weight', label: 'Heading Weight', type: 'select', default: '400', choices: ['300','400','500','600','700'] },
-          { variable: '--body-line-height', label: 'Body Line Height', type: 'select', default: '1.65', choices: ['1.4','1.5','1.55','1.6','1.65','1.7','1.75','1.8','1.9'] },
-          { variable: '--letter-spacing-labels', label: 'Label Letter Spacing', type: 'size', default: '0.12em', choices: ['0.05em','0.08em','0.1em','0.12em','0.15em','0.2em','0.25em'] },
-          { variable: '--heading-letter-spacing', label: 'Heading Letter Spacing', type: 'size', default: '-0.02em', choices: ['-0.05em','-0.04em','-0.03em','-0.02em','-0.01em','0em','0.01em','0.02em'] },
-        ]
-      },
-      {
-        label: 'Layout',
-        options: [
-          { variable: '--max-width', label: 'Max Page Width', type: 'size', default: '1400px', choices: ['960px','1100px','1200px','1400px','1600px','1800px'] },
-          { variable: '--max-width-narrow', label: 'Content Width (articles)', type: 'size', default: '820px', choices: ['640px','720px','780px','820px','900px','960px'] },
-          { variable: '--max-width-text', label: 'Text Width (body text)', type: 'size', default: '640px', choices: ['520px','560px','600px','640px','700px','760px'] },
-        ]
-      },
-      {
-        label: 'Spacing',
-        options: [
-          { variable: '--space-xs', label: 'Extra Small', type: 'size', default: '0.5rem', choices: ['0.25rem','0.5rem','0.75rem','1rem'] },
-          { variable: '--space-sm', label: 'Small', type: 'size', default: '1rem', choices: ['0.5rem','0.75rem','1rem','1.25rem','1.5rem'] },
-          { variable: '--space-md', label: 'Medium', type: 'size', default: '2rem', choices: ['1rem','1.5rem','2rem','2.5rem','3rem'] },
-          { variable: '--space-lg', label: 'Large', type: 'size', default: '4rem', choices: ['2rem','3rem','4rem','5rem','6rem'] },
-          { variable: '--space-xl', label: 'Extra Large', type: 'size', default: '6rem', choices: ['3rem','4rem','5rem','6rem','8rem','10rem'] },
-          { variable: '--space-2xl', label: 'Hero Padding', type: 'size', default: '10rem', choices: ['4rem','6rem','8rem','10rem','12rem','14rem'] },
-        ]
-      },
-      {
-        label: 'Cards & Images',
-        options: [
-          { variable: '--card-ratio', label: 'Image Card Ratio', type: 'select', default: '4 / 5', choices: ['1 / 1','4 / 5','3 / 4','2 / 3','16 / 10','16 / 9'] },
-          { variable: '--card-grid-min', label: 'Card Minimum Width', type: 'size', default: '360px', choices: ['240px','280px','320px','360px','400px','480px'] },
-          { variable: '--card-gap', label: 'Card Gap', type: 'size', default: '2px', choices: ['0px','1px','2px','4px','8px','12px','16px','24px'] },
-          { variable: '--card-filter', label: 'Image Filter', type: 'select', default: 'grayscale(30%)', choices: ['none','grayscale(10%)','grayscale(20%)','grayscale(30%)','grayscale(50%)','grayscale(100%)','sepia(20%)','sepia(40%)','brightness(0.9)','contrast(1.1)'] },
-          { variable: '--card-hover-filter', label: 'Image Hover Filter', type: 'select', default: 'grayscale(0%)', choices: ['none','grayscale(0%)','grayscale(10%)','sepia(0%)','brightness(1)','contrast(1)'] },
-          { variable: '--card-hover-scale', label: 'Image Hover Zoom', type: 'select', default: '1.05', choices: ['1','1.02','1.03','1.05','1.08','1.1'] },
-        ]
-      },
-      {
-        label: 'Navigation',
-        options: [
-          { variable: '--nav-height', label: 'Navbar Height', type: 'size', default: '72px', choices: ['56px','64px','72px','80px','88px'] },
-          { variable: '--nav-bg', label: 'Navbar Background', type: 'color', default: '#fdfdfc' },
-          { variable: '--nav-border', label: 'Navbar Border', type: 'color', default: '#e8e6e1' },
-        ]
-      },
-      {
-        label: 'Buttons',
-        options: [
-          { variable: '--btn-padding-v', label: 'Button Padding (vertical)', type: 'size', default: '12px', choices: ['8px','10px','12px','14px','16px'] },
-          { variable: '--btn-padding-h', label: 'Button Padding (horizontal)', type: 'size', default: '32px', choices: ['16px','20px','24px','28px','32px','40px'] },
-          { variable: '--btn-font-size', label: 'Button Font Size', type: 'size', default: '0.65rem', choices: ['0.55rem','0.6rem','0.65rem','0.7rem','0.75rem','0.8rem'] },
-          { variable: '--btn-letter-spacing', label: 'Button Letter Spacing', type: 'size', default: '0.15em', choices: ['0.05em','0.08em','0.1em','0.12em','0.15em','0.2em'] },
-          { variable: '--btn-border-width', label: 'Button Border Width', type: 'size', default: '1px', choices: ['0px','1px','2px'] },
-        ]
-      },
-      {
-        label: 'Effects',
-        options: [
-          { variable: '--transition', label: 'Transition Speed', type: 'select', default: '0.3s cubic-bezier(0.25, 0.1, 0.25, 1)', choices: ['0.15s ease','0.2s ease','0.3s cubic-bezier(0.25, 0.1, 0.25, 1)','0.4s ease','0.5s ease','none'] },
-          { variable: '--overlay-gradient', label: 'Image Card Overlay', type: 'select', default: 'rgba(13, 13, 12, 0.75)', choices: ['rgba(13,13,12,0.75)','rgba(13,13,12,0.6)','rgba(13,13,12,0.5)','rgba(13,13,12,0.85)','rgba(0,0,0,0.5)','rgba(0,0,0,0.7)'] },
-        ]
-      },
-    ];
-  }
-
-  _renderDesignOption(opt, value) {
-    const id = opt.variable.replace(/[^a-z0-9]/g, '');
-    if (opt.type === 'color') {
-      return `<div class="design-opt">
-        <label class="design-opt-label">${esc(opt.label)}</label>
-        <div class="design-opt-row">
-          <input type="color" class="design-opt-color" data-var-picker="${opt.variable}" value="${esc(value)}" />
-          <input type="text" class="design-opt-input" data-var="${opt.variable}" value="${esc(value)}" />
+    document.getElementById('hero-form').innerHTML = `
+      <div class="settings-section">
+        <h3>Homepage hero photo</h3>
+        <p style="font-size:.9rem;color:var(--dark-grey);margin-bottom:1.5rem;">This image appears full-screen at the top of every language version of the homepage.</p>
+        <div class="image-field">
+          <img id="hero-preview" class="image-preview" src="${esc(currentImage)}" style="max-height:320px;width:100%;object-fit:cover;border-radius:8px;margin-bottom:1rem;" onerror="this.style.display='none'" />
+          <div class="image-controls">
+            <input type="text" class="form-input" id="hero-image-path" value="${esc(currentImage)}" placeholder="/images/photo.jpg" />
+            <div style="display:flex;gap:.25rem;margin-top:.5rem;">
+              <button type="button" class="btn btn-ghost btn-sm" id="hero-browse-btn">Browse</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="hero-upload-btn">Upload</button>
+            </div>
+          </div>
         </div>
       </div>`;
-    }
-    if (opt.type === 'font' || opt.type === 'select') {
-      const choices = opt.choices || [];
-      return `<div class="design-opt">
-        <label class="design-opt-label">${esc(opt.label)}</label>
-        <select class="design-opt-select design-opt-input" data-var="${opt.variable}">
-          ${choices.map(c => `<option value="${esc(c)}" ${c === value ? 'selected' : ''}>${esc(opt.type === 'font' ? c.split("'")[1] || c.split(',')[0].trim() : c)}</option>`).join('')}
-        </select>
+
+    const pathInput = document.getElementById('hero-image-path');
+    const preview = document.getElementById('hero-preview');
+
+    pathInput.addEventListener('input', () => {
+      preview.src = pathInput.value;
+      preview.style.display = '';
+    });
+
+    document.getElementById('hero-browse-btn').addEventListener('click', async () => {
+      await this._loadImageCache();
+      const overlay = document.createElement('div');
+      overlay.className = 'image-picker-overlay visible';
+      overlay.innerHTML = `<div class="image-picker">
+        <h3>Choose hero image</h3>
+        <div class="media-filter" style="margin-bottom:1rem;"><input type="text" id="hero-picker-search" placeholder="Search..." style="width:100%;padding:.5rem 0;border:none;border-bottom:1px solid var(--warm-grey);font-family:var(--font-serif);font-size:.9rem;color:var(--near-black);background:transparent;" /></div>
+        <div class="image-picker-grid">
+          ${this._imageCache.map(img => `<div class="image-picker-item" data-name="${esc(img.name)}">
+            <img src="/images/${esc(img.name)}" alt="${esc(img.name)}" loading="lazy" />
+            <div class="image-picker-item-name">${esc(img.name)}</div>
+          </div>`).join('')}
+        </div>
+        <div class="image-picker-actions">
+          <button class="btn btn-ghost btn-sm" id="hero-picker-cancel">Cancel</button>
+        </div>
       </div>`;
-    }
-    if (opt.type === 'size') {
-      const choices = opt.choices || [];
-      return `<div class="design-opt">
-        <label class="design-opt-label">${esc(opt.label)}</label>
-        <select class="design-opt-select design-opt-input" data-var="${opt.variable}">
-          ${choices.map(c => `<option value="${esc(c)}" ${c === value ? 'selected' : ''}>${esc(c)}</option>`).join('')}
-        </select>
-      </div>`;
-    }
-    return '';
-  }
+      document.body.appendChild(overlay);
 
-  _parseThemeCss(css) {
-    const vars = {};
-    const regex = /--([\w-]+)\s*:\s*([^;]+);/g;
-    let m;
-    while ((m = regex.exec(css)) !== null) {
-      vars['--' + m[1]] = m[2].trim();
-    }
-    return vars;
-  }
+      overlay.querySelector('#hero-picker-search').addEventListener('input', function() {
+        const q = this.value.toLowerCase().trim();
+        overlay.querySelectorAll('.image-picker-item').forEach(item => {
+          item.style.display = (!q || item.dataset.name.toLowerCase().includes(q)) ? '' : 'none';
+        });
+      });
 
-  _collectDesignCss(sections) {
-    let css = '/* Theme overrides — managed by CMS Design Settings */\n';
+      overlay.querySelectorAll('.image-picker-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const path = `/images/${item.dataset.name}`;
+          pathInput.value = path;
+          preview.src = path;
+          preview.style.display = '';
+          overlay.remove();
+        });
+      });
 
-    // Collect Google Fonts imports
-    const fontVar = document.querySelector('[data-var="--font-serif"]');
-    const fontSansVar = document.querySelector('[data-var="--font-sans"]');
-    const googleFonts = new Set();
-    if (fontVar) {
-      const match = fontVar.value.match(/'([^']+)'/);
-      if (match && match[1] !== 'Georgia' && match[1] !== 'Times New Roman' && match[1] !== 'Segoe UI') {
-        googleFonts.add(match[1].replace(/ /g, '+'));
-      }
-    }
-    if (fontSansVar) {
-      const match = fontSansVar.value.match(/'([^']+)'/);
-      if (match && match[1] !== 'Segoe UI') {
-        googleFonts.add(match[1].replace(/ /g, '+'));
-      }
-    }
-    for (const font of googleFonts) {
-      css += `@import url('https://fonts.googleapis.com/css2?family=${font}:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap');\n`;
-    }
+      overlay.querySelector('#hero-picker-cancel').addEventListener('click', () => overlay.remove());
+      overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+    });
 
-    css += '\n:root {\n';
-    let hasVars = false;
-    for (const section of sections) {
-      for (const opt of section.options) {
-        const input = document.querySelector(`[data-var="${opt.variable}"]`);
-        if (input) {
-          const val = input.value;
-          if (val !== opt.default) {
-            css += `  ${opt.variable}: ${val};\n`;
-            hasVars = true;
-          }
-        }
-      }
-    }
-    if (!hasVars) css += '  /* Using defaults */\n';
-    css += '}\n';
+    document.getElementById('hero-upload-btn').addEventListener('click', () => {
+      const input = document.createElement('input');
+      input.type = 'file'; input.accept = 'image/*';
+      input.addEventListener('change', async () => {
+        if (!input.files[0]) return;
+        const file = input.files[0];
+        showStatus('saving', 'Uploading...');
+        try {
+          const reader = new FileReader();
+          const b64 = await new Promise((res, rej) => { reader.onload = () => res(reader.result.split(',')[1]); reader.onerror = rej; reader.readAsDataURL(file); });
+          await this.api.uploadImage(`${this.config.getMediaFolder()}/${file.name}`, b64, `Upload ${file.name}`);
+          this._imageCache = null;
+          const path = `/images/${file.name}`;
+          pathInput.value = path;
+          preview.src = URL.createObjectURL(file);
+          preview.style.display = '';
+          showStatus('saved', 'Uploaded');
+        } catch (e) { showStatus('error', e.message); }
+      });
+      input.click();
+    });
 
-    // Add mapped CSS overrides for variables that don't directly map to existing CSS vars
-    const mappedCss = this._collectMappedCss(sections);
-    if (mappedCss) css += '\n' + mappedCss;
-
-    return css;
-  }
-
-  _collectMappedCss(sections) {
-    let css = '';
-    const getVal = (varName) => {
-      const el = document.querySelector(`[data-var="${varName}"]`);
-      return el ? el.value : null;
-    };
-
-    const fontSize = getVal('--font-size-base');
-    if (fontSize && fontSize !== '17px') css += `html { font-size: ${fontSize}; }\n`;
-
-    const heroSize = getVal('--hero-size');
-    if (heroSize && heroSize !== '5.5rem') css += `.hero h1 { font-size: ${heroSize}; }\n`;
-
-    const h1Size = getVal('--h1-size');
-    if (h1Size && h1Size !== '3.5rem') css += `.concert-detail h1, .detail-page h1, .about-page h1, .contact-page h1 { font-size: ${h1Size}; }\n`;
-
-    const h2Size = getVal('--h2-size');
-    if (h2Size && h2Size !== '2.2rem') css += `.divider-block h2, .feature-block h2 { font-size: ${h2Size}; }\n`;
-
-    const h3Size = getVal('--h3-size');
-    if (h3Size && h3Size !== '1.8rem') css += `.image-card-overlay h3 { font-size: ${h3Size}; }\n.concert-card h3 { font-size: ${h3Size}; }\n`;
-
-    const bodySize = getVal('--body-size');
-    if (bodySize && bodySize !== '1.05rem') css += `.detail-page .content p, .about-page .content p { font-size: ${bodySize}; }\n`;
-
-    const labelSize = getVal('--label-size');
-    if (labelSize && labelSize !== '0.7rem') css += `.section-title, .nav-links a { font-size: ${labelSize}; }\n`;
-
-    const headingWeight = getVal('--heading-weight');
-    if (headingWeight && headingWeight !== '400') css += `h1, h2, h3, h4, h5, h6 { font-weight: ${headingWeight}; }\n`;
-
-    const bodyLH = getVal('--body-line-height');
-    if (bodyLH && bodyLH !== '1.65') css += `body { line-height: ${bodyLH}; }\n`;
-
-    const letterLabels = getVal('--letter-spacing-labels');
-    if (letterLabels && letterLabels !== '0.12em') css += `.section-title, .nav-links a, .btn { letter-spacing: ${letterLabels}; }\n`;
-
-    const letterHeadings = getVal('--heading-letter-spacing');
-    if (letterHeadings && letterHeadings !== '-0.02em') css += `h1, h2, h3 { letter-spacing: ${letterHeadings}; }\n`;
-
-    const cardRatio = getVal('--card-ratio');
-    if (cardRatio && cardRatio !== '4 / 5') css += `.image-card { aspect-ratio: ${cardRatio}; }\n`;
-
-    const cardMin = getVal('--card-grid-min');
-    if (cardMin && cardMin !== '360px') css += `.card-grid { grid-template-columns: repeat(auto-fill, minmax(${cardMin}, 1fr)); }\n`;
-
-    const cardGap = getVal('--card-gap');
-    if (cardGap && cardGap !== '2px') css += `.card-grid { gap: ${cardGap}; }\n`;
-
-    const cardFilter = getVal('--card-filter');
-    if (cardFilter && cardFilter !== 'grayscale(30%)') css += `.image-card-bg { filter: ${cardFilter}; }\n`;
-
-    const cardHoverFilter = getVal('--card-hover-filter');
-    if (cardHoverFilter && cardHoverFilter !== 'grayscale(0%)') css += `.image-card:hover .image-card-bg { filter: ${cardHoverFilter}; }\n`;
-
-    const cardHoverScale = getVal('--card-hover-scale');
-    if (cardHoverScale && cardHoverScale !== '1.05') css += `.image-card:hover .image-card-bg { transform: scale(${cardHoverScale}); }\n`;
-
-    const navHeight = getVal('--nav-height');
-    if (navHeight && navHeight !== '72px') css += `.nav-inner { height: ${navHeight}; }\n.mobile-nav { top: ${navHeight}; }\n`;
-
-    const navBg = getVal('--nav-bg');
-    if (navBg && navBg !== '#fdfdfc') css += `.nav { background-color: ${navBg}; }\n`;
-
-    const navBorder = getVal('--nav-border');
-    if (navBorder && navBorder !== '#e8e6e1') css += `.nav { border-bottom-color: ${navBorder}; }\n`;
-
-    const btnPV = getVal('--btn-padding-v');
-    const btnPH = getVal('--btn-padding-h');
-    if ((btnPV && btnPV !== '12px') || (btnPH && btnPH !== '32px')) css += `.btn { padding: ${btnPV || '12px'} ${btnPH || '32px'}; }\n`;
-
-    const btnFS = getVal('--btn-font-size');
-    if (btnFS && btnFS !== '0.65rem') css += `.btn { font-size: ${btnFS}; }\n`;
-
-    const btnLS = getVal('--btn-letter-spacing');
-    if (btnLS && btnLS !== '0.15em') css += `.btn { letter-spacing: ${btnLS}; }\n`;
-
-    const btnBW = getVal('--btn-border-width');
-    if (btnBW && btnBW !== '1px') css += `.btn { border-width: ${btnBW}; }\n`;
-
-    const overlay = getVal('--overlay-gradient');
-    if (overlay && overlay !== 'rgba(13, 13, 12, 0.75)') css += `.image-card-overlay { background: linear-gradient(to top, ${overlay} 0%, transparent 100%); }\n`;
-
-    return css;
-  }
-
-  _updateDesignPreview(sections) {
-    const preview = document.getElementById('design-preview');
-    if (!preview) return;
-
-    const getVal = (varName) => {
-      const el = document.querySelector(`[data-var="${varName}"]`);
-      return el ? el.value : null;
-    };
-
-    const bg = getVal('--white') || '#fdfdfc';
-    const offWhite = getVal('--off-white') || '#f5f4f0';
-    const warmGrey = getVal('--warm-grey') || '#e8e6e1';
-    const midGrey = getVal('--mid-grey') || '#b5b0a8';
-    const darkGrey = getVal('--dark-grey') || '#6b665e';
-    const charcoal = getVal('--charcoal') || '#3a3732';
-    const nearBlack = getVal('--near-black') || '#1a1917';
-    const fontSerif = getVal('--font-serif') || "'EB Garamond', Georgia, serif";
-    const heroSize = getVal('--hero-size') || '5.5rem';
-    const headingWeight = getVal('--heading-weight') || '400';
-    const labelSize = getVal('--label-size') || '0.7rem';
-    const bodySize = getVal('--body-size') || '1.05rem';
-
-    // Load font if needed
-    const fontMatch = fontSerif.match(/'([^']+)'/);
-    if (fontMatch) {
-      const fontName = fontMatch[1].replace(/ /g, '+');
-      if (!document.querySelector(`link[href*="${fontName}"]`)) {
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = `https://fonts.googleapis.com/css2?family=${fontName}:wght@400;500;600;700&display=swap`;
-        document.head.appendChild(link);
-      }
-    }
-
-    preview.style.background = bg;
-    preview.style.color = nearBlack;
-    preview.style.fontFamily = fontSerif;
-
-    const nav = preview.querySelector('.dp-nav');
-    if (nav) { nav.style.borderBottomColor = warmGrey; nav.style.color = nearBlack; nav.style.fontFamily = fontSerif; }
-
-    const heroTitle = preview.querySelector('.dp-hero-title');
-    if (heroTitle) { heroTitle.style.fontFamily = fontSerif; heroTitle.style.fontWeight = headingWeight; heroTitle.style.color = nearBlack; heroTitle.style.fontSize = `calc(${heroSize} * 0.4)`; }
-
-    const heroSub = preview.querySelector('.dp-hero-sub');
-    if (heroSub) { heroSub.style.color = midGrey; heroSub.style.fontSize = labelSize; }
-
-    const sectionLabel = preview.querySelector('.dp-section-label');
-    if (sectionLabel) { sectionLabel.style.color = darkGrey; sectionLabel.style.borderBottomColor = warmGrey; sectionLabel.style.fontSize = labelSize; }
-
-    const card = preview.querySelector('.dp-card');
-    if (card) { card.style.background = offWhite; }
-    const cardDate = preview.querySelector('.dp-card-date');
-    if (cardDate) { cardDate.style.color = darkGrey; cardDate.style.fontSize = labelSize; }
-    const cardTitle = preview.querySelector('.dp-card-title');
-    if (cardTitle) { cardTitle.style.fontFamily = fontSerif; cardTitle.style.fontWeight = headingWeight; cardTitle.style.color = nearBlack; }
-    const cardPlace = preview.querySelector('.dp-card-place');
-    if (cardPlace) { cardPlace.style.color = darkGrey; }
-
-    const body = preview.querySelector('.dp-body p');
-    if (body) { body.style.color = charcoal; body.style.fontSize = bodySize; body.style.fontFamily = fontSerif; }
-
-    const btn = preview.querySelector('.dp-btn');
-    if (btn) { btn.style.borderColor = nearBlack; btn.style.color = nearBlack; }
+    document.getElementById('hero-save-btn').addEventListener('click', async () => {
+      const newPath = pathInput.value.trim();
+      if (!newPath) { showStatus('error', 'Image path cannot be empty'); return; }
+      siteData.hero_image = newPath;
+      const content = JSON.stringify(siteData, null, 2) + '\n';
+      showStatus('saving', 'Saving...');
+      try {
+        const result = await this.api.createOrUpdateFile(siteDataPath, content, 'Update hero image', siteSha || undefined);
+        siteSha = result.content.sha;
+        showStatus('saved', 'Saved — site will rebuild');
+      } catch (e) { showStatus('error', e.message); }
+    });
   }
 
   // ---- Media Library ----
