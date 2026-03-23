@@ -170,10 +170,11 @@ hr {
 /* ── Section title — reusable label style ── */
 .section-title {
   display: block;
-  font-size: var(--sans-caption);
+  font-size: 0.6rem;
   font-family: var(--font-sans);
   text-transform: uppercase;
-  letter-spacing: var(--tracking-wider);
+  letter-spacing: 0.08em;
   color: var(--dark-grey);
   margin-bottom: var(--space-md);
+  text-align: center;
 }
