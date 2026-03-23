@@ -10,7 +10,6 @@ collaborators: Duo Altiler (Alexander Declercq - Piano)
 layout: highlight.html
 tags: highlights
 lang: fr
-status: archived
 ---
 
 Duo Altiler (Veronique De Raedemaeker & Alexander Declercq) a atteint la finale du concours Supernova au De Singel à Anvers, avec des œuvres de Boulanger, Debussy, Grieg, Janáček et Bartók.
