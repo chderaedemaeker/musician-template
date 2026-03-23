@@ -1,11 +1,25 @@
 <script>
   (function () {
     function loadFull(img) {
+      /* Step 1: fade in the blurry placeholder (white → blurry) */
+      img.classList.add('prog-reveal');
+
+      /* Step 2: start loading the full image */
+      var src = img.dataset.src;
       if (img.dataset.srcset) img.srcset = img.dataset.srcset;
-      img.src = img.dataset.src;
       img.removeAttribute('data-src');
       img.removeAttribute('data-srcset');
+      img.src = src;
+
+      /* Step 3: when full image is decoded, blur transitions to crisp */
+      function onLoaded() { img.classList.add('prog-loaded'); }
+      if (img.complete && img.naturalWidth) {
+        onLoaded();
+      } else {
+        img.addEventListener('load', onLoaded, { once: true });
+      }
     }
+
     function init() {
       var imgs = document.querySelectorAll('img.prog-img[data-src]');
       if (!imgs.length) return;
@@ -20,6 +34,7 @@
         imgs.forEach(loadFull);
       }
     }
+
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', init);
     } else {
