@@ -1,15 +1,10 @@
 /* ============================================
    PROGRESSIVE IMAGE LOADING
-   Tiny blurry placeholder → full quality
+   Tiny placeholder → progressive JPEG scan passes → full quality
+   Native JPEG interlacing handles the pixelated→crisp transition.
    ============================================ */
 
 img.prog-img {
-  filter: blur(20px);
-  transform: scale(1.05);
-  transition: filter 0.6s ease, transform 0.6s ease;
-}
-
-img.prog-img.prog-loaded {
-  filter: none;
-  transform: scale(1);
+  /* Upscaled tiny placeholder looks pixelated — same visual as first JPEG scan */
+  image-rendering: pixelated;
 }
