@@ -40,11 +40,11 @@ async function buildProgressiveImg(inputPath, alt) {
 }
 
 // Shared image processing options — progressive JPEG, high quality
-function imageOptions(widths = [600, 1200, 1800]) {
+function imageOptions(widths = [600, 1200, 1800, 2400, 3200]) {
     return {
         widths,
         formats: ["jpeg"],
-        sharpJpegOptions: { quality: 100, progressive: true, mozjpeg: false },
+        sharpJpegOptions: { quality: 99, progressive: true, mozjpeg: true },
         outputDir: "./_site/images/optimized/",
         urlPath: "/images/optimized/",
         filenameFormat: function (id, src, width, format) {
