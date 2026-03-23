@@ -1,0 +1,9 @@
+---
+title: Concert
+date: "2026-03-22T19:30"
+place: Keerbergen
+composers: Vivaldi
+collaborators: Luc Tooten, Luk Callens
+link: ""
+layout: concert.html
+---

@@ -67,7 +67,7 @@
 }
 
 .text-list-title {
-  font-size: var(--serif-body);
+  font-size: calc(var(--size-body) * 2);
   font-weight: 300;
   line-height: 1.2;
   margin: 0 0 4px;
