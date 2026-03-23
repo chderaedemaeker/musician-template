@@ -1,0 +1,29 @@
+<script>
+  (function () {
+    function loadFull(img) {
+      if (img.dataset.srcset) img.srcset = img.dataset.srcset;
+      img.src = img.dataset.src;
+      img.removeAttribute('data-src');
+      img.removeAttribute('data-srcset');
+    }
+    function init() {
+      var imgs = document.querySelectorAll('img.prog-img[data-src]');
+      if (!imgs.length) return;
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) { loadFull(e.target); io.unobserve(e.target); }
+          });
+        }, { rootMargin: '200px' });
+        imgs.forEach(function (img) { io.observe(img); });
+      } else {
+        imgs.forEach(loadFull);
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>

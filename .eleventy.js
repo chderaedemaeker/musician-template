@@ -36,7 +36,7 @@ async function buildProgressiveImg(inputPath, alt) {
     const fullSrc = fullMeta.jpeg[fullMeta.jpeg.length - 1].url;
 
     const altEsc = (alt || '').replace(/"/g, '&quot;');
-    return `<img class="prog-img" src="${placeholder}" data-src="${fullSrc}" data-srcset="${webpSrcset}" alt="${altEsc}" />`;
+    return `<div class="prog-img-wrap"><img class="prog-img" src="${placeholder}" data-src="${fullSrc}" data-srcset="${webpSrcset}" alt="${altEsc}" /></div>`;
 }
 
 // Shared image processing options — progressive JPEG, high quality
@@ -44,8 +44,8 @@ function imageOptions(widths = [600, 1200, 1800]) {
     return {
         widths,
         formats: ["webp", "jpeg"],
-        sharpWebpOptions: { quality: 92, nearLossless: true },
-        sharpJpegOptions: { quality: 92, progressive: true, mozjpeg: true },
+        sharpWebpOptions: { quality: 95, nearLossless: true },
+        sharpJpegOptions: { quality: 95, progressive: true, mozjpeg: true },
         outputDir: "./_site/images/optimized/",
         urlPath: "/images/optimized/",
         filenameFormat: function (id, src, width, format) {

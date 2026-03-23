@@ -7,4 +7,26 @@
 img.prog-img {
   /* Upscaled tiny placeholder looks pixelated — same visual as first JPEG scan */
   image-rendering: pixelated;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.prog-img-wrap {
+  position: relative;
+  display: block;
+  overflow: hidden;
+}
+
+/* Texture overlay — multiply blend */
+.prog-img-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('/images/Texture.jpg') repeat;
+  background-size: 600px auto;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  z-index: 1;
 }
