@@ -11,9 +11,9 @@ img.prog-img {
   object-fit: cover;
   /* Start invisible and blurred — white wrapper shows behind */
   opacity: 0;
-  filter: blur(16px);
-  transform: scale(1.06); /* hide blur edge fringing */
-  transition: opacity 0.5s ease, filter 0.9s ease, transform 0.9s ease;
+  filter: blur(30px);
+  transform: scale(1.03); /* hide blur edge fringing */
+  transition: opacity 1s ease, filter 2.9s ease, transform 1.9s ease;
 }
 
 /* Step 1 — fade in the blurry placeholder (white → blurry) */
