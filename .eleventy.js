@@ -3,6 +3,7 @@ const Image = require("@11ty/eleventy-img");
 const { EleventyI18nPlugin } = require("@11ty/eleventy");
 const path = require("path");
 const crypto = require("crypto");
+const fs = require("fs");
 
 // Generate a short hash for filenames (stable per source file, looks random)
 function randomHash(src, width, format) {
@@ -11,6 +12,31 @@ function randomHash(src, width, format) {
         .digest('hex')
         .slice(0, 12);
     return `${hash}.${format}`;
+}
+
+// Tiny placeholder options (20px wide, very low quality — used as inline data URI)
+function placeholderOptions() {
+    return {
+        widths: [20],
+        formats: ["jpeg"],
+        sharpJpegOptions: { quality: 20 },
+        outputDir: "./_site/images/optimized/",
+        urlPath: "/images/optimized/",
+        filenameFormat: (id, src, width, format) => randomHash(src + '_thumb', width, format),
+    };
+}
+
+async function buildProgressiveImg(inputPath, alt) {
+    const thumbMeta = await Image(inputPath, placeholderOptions());
+    const thumbB64 = fs.readFileSync(thumbMeta.jpeg[0].outputPath).toString('base64');
+    const placeholder = `data:image/jpeg;base64,${thumbB64}`;
+
+    const fullMeta = await Image(inputPath, imageOptions());
+    const webpSrcset = fullMeta.webp.map(i => `${i.url} ${i.width}w`).join(', ');
+    const fullSrc = fullMeta.jpeg[fullMeta.jpeg.length - 1].url;
+
+    const altEsc = (alt || '').replace(/"/g, '&quot;');
+    return `<img class="prog-img" src="${placeholder}" data-src="${fullSrc}" data-srcset="${webpSrcset}" alt="${altEsc}" />`;
 }
 
 // Shared image processing options — progressive JPEG, high quality
@@ -35,7 +61,7 @@ module.exports = function (eleventyConfig) {
         errorMode: "allow-fallback"
     });
 
-    // Image optimization shortcode
+    // Image optimization shortcode (standard, non-progressive)
     eleventyConfig.addShortcode("image", async function(src, alt = "") {
         if (!src) return "";
         let inputPath = src.startsWith("/") ? `_input${src}` : src;
@@ -51,6 +77,17 @@ module.exports = function (eleventyConfig) {
         return Image.generateHTML(metadata, imageAttributes);
         } catch(e) {
             return `<img src="${src}" alt="${alt}" style="max-width: 100%; height: auto;" loading="lazy">`;
+        }
+    });
+
+    // Progressive image shortcode — blurry placeholder → full quality crossfade
+    eleventyConfig.addShortcode("progressiveImage", async function(src, alt = "") {
+        if (!src) return "";
+        const inputPath = src.startsWith("/") ? `_input${src}` : src;
+        try {
+            return await buildProgressiveImg(inputPath, alt);
+        } catch(e) {
+            return `<img src="${src}" alt="${alt}" style="max-width:100%;height:auto;" loading="lazy">`;
         }
     });
 
@@ -168,7 +205,7 @@ module.exports = function (eleventyConfig) {
         return DateTime.fromJSDate(dateObj).toUTC().toISO();
     });
 
-    // Transform markdown images to optimized versions
+    // Transform: replace plain <img src="/images/..."> with progressive loading version
     eleventyConfig.addTransform("optimizeMarkdownImages", async function(content) {
         if (!this.outputPath || !this.outputPath.endsWith(".html")) return content;
         const imgRegex = /<img\s+[^>]*src="(\/images\/[^"]+)"[^>]*alt="([^"]*)"[^>]*>/g;
@@ -176,17 +213,10 @@ module.exports = function (eleventyConfig) {
         const replacements = [];
         while ((match = imgRegex.exec(content)) !== null) {
             const [fullMatch, src, alt] = match;
+            if (fullMatch.includes('prog-img')) continue; // already progressive
             try {
-                let inputPath = `_input${src}`;
-                let metadata = await Image(inputPath, imageOptions());
-                let optimizedHtml = Image.generateHTML(metadata, {
-                    alt: alt || "",
-                    sizes: "(min-width: 1200px) 1200px, (min-width: 600px) 600px, 100vw",
-                    loading: "lazy",
-                    decoding: "async",
-                    style: "max-width: 100%; height: auto;",
-                });
-                replacements.push({ original: fullMatch, replacement: optimizedHtml });
+                const replacement = await buildProgressiveImg(`_input${src}`, alt);
+                replacements.push({ original: fullMatch, replacement });
             } catch(e) {
                 // Keep original if optimization fails
             }

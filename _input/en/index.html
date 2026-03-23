@@ -8,7 +8,7 @@ layout: layout.html
 <main>
 
 <div class="hero-fullscreen">
-  <img src="{{ site.hero_image }}" alt="{{ languages[page.lang].site_title }}">
+  {% assign heroAlt = languages[page.lang].site_title %}{% progressiveImage site.hero_image, heroAlt %}
   <div class="hero-content">
   </div>
 </div>
