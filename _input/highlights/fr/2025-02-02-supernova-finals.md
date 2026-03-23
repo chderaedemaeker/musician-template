@@ -1,15 +1,16 @@
 ---
-title: "Supernova Finals — De Singel"
-slug: "supernova-finals"
-date: 2025-02-02T00:00:00
-type: "Competition"
-image: "/images/veronique-25copy.jpeg"
+title: Supernova Finals — De Singel
+slug: supernova-finals
+date: "2025-02-02T00:00:00"
+type: Competition
+image: /images/veronique-25copy.jpeg
 link: ""
-place: "Antwerp, Belgium"
-collaborators: "Duo Altiler (Alexander Declercq - Piano)"
+place: Antwerp, Belgium
+collaborators: Duo Altiler (Alexander Declercq - Piano)
 layout: highlight.html
 tags: highlights
 lang: fr
+status: archived
 ---
 
 Duo Altiler (Veronique De Raedemaeker & Alexander Declercq) a atteint la finale du concours Supernova au De Singel à Anvers, avec des œuvres de Boulanger, Debussy, Grieg, Janáček et Bartók.
