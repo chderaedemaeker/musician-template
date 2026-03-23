@@ -207,23 +207,24 @@
 
 /* ── Mobile reels — highlights snap-scroll on phones ── */
 @media (max-width: 768px) {
-  /* Outer wrapper: exactly one screen tall, clips the inner scroller */
+  /* Outer wrapper: one screen tall. NO overflow:hidden — that blocks
+     touch-scroll on child elements in iOS Safari. */
   .highlights-section {
     height: 100dvh;
-    overflow: hidden;
     padding: 0;
   }
 
-  /* Inner scroll container: snaps vertically */
+  /* Inner scroll container: fills the section and snaps vertically */
   .highlights-section .highlights-grid {
     display: block;
-    height: 100%;
+    height: 100dvh;
     overflow-y: scroll;
     scroll-snap-type: y mandatory;
     -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain; /* don't leak scroll to page */
+    overscroll-behavior-y: contain;
     gap: 0;
     max-width: 100%;
+    margin: 0;
     padding: 0;
     scrollbar-width: none;
   }
