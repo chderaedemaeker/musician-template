@@ -26,7 +26,7 @@ img.prog-img {
   inset: 0;
   background: url('/images/Texture.jpg') repeat;
   background-size: 600px auto;
-  mix-blend-mode: multiply;
+  mix-blend-mode: overlay;
   pointer-events: none;
   z-index: 1;
 }

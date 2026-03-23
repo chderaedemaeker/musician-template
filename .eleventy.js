@@ -32,20 +32,19 @@ async function buildProgressiveImg(inputPath, alt) {
     const placeholder = `data:image/jpeg;base64,${thumbB64}`;
 
     const fullMeta = await Image(inputPath, imageOptions());
-    const webpSrcset = fullMeta.webp.map(i => `${i.url} ${i.width}w`).join(', ');
+    const jpegSrcset = fullMeta.jpeg.map(i => `${i.url} ${i.width}w`).join(', ');
     const fullSrc = fullMeta.jpeg[fullMeta.jpeg.length - 1].url;
 
     const altEsc = (alt || '').replace(/"/g, '&quot;');
-    return `<div class="prog-img-wrap"><img class="prog-img" src="${placeholder}" data-src="${fullSrc}" data-srcset="${webpSrcset}" alt="${altEsc}" /></div>`;
+    return `<div class="prog-img-wrap"><img class="prog-img" src="${placeholder}" data-src="${fullSrc}" data-srcset="${jpegSrcset}" alt="${altEsc}" /></div>`;
 }
 
 // Shared image processing options — progressive JPEG, high quality
 function imageOptions(widths = [600, 1200, 1800]) {
     return {
         widths,
-        formats: ["webp", "jpeg"],
-        sharpWebpOptions: { quality: 95, nearLossless: true },
-        sharpJpegOptions: { quality: 95, progressive: true, mozjpeg: true },
+        formats: ["jpeg"],
+        sharpJpegOptions: { quality: 100, progressive: true, mozjpeg: false },
         outputDir: "./_site/images/optimized/",
         urlPath: "/images/optimized/",
         filenameFormat: function (id, src, width, format) {
@@ -97,7 +96,7 @@ module.exports = function (eleventyConfig) {
         let inputPath = src.startsWith("/") ? `_input${src}` : src;
         try {
             let metadata = await Image(inputPath, imageOptions([1200]));
-            return metadata.webp[0].url;
+            return metadata.jpeg[0].url;
         } catch(e) {
             return src;
         }
