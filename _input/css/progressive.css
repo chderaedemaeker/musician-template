@@ -11,10 +11,10 @@ img.prog-img {
   object-fit: cover;
   /* Start invisible, blurred, and desaturated — white wrapper shows behind */
   opacity: 0;
-  filter: blur(20px) saturate(0%);
+  filter: blur(10px) saturate(40%);
   /* Scale up enough to push blurred edges outside the overflow:hidden clip */
-  transform: scale(1.12);
-  transition: opacity 2.5s ease, filter 1.3s ease, transform 1.3s ease;
+  transform: scale(1.07);
+  transition: opacity 3.5s ease, filter 1.3s ease, transform 1.3s ease;
 }
 
 /* Step 1 — fade in the blurry desaturated placeholder (white → blurry grey) */
