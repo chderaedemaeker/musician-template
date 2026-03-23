@@ -114,32 +114,37 @@ module.exports = function (eleventyConfig) {
         return items.length > 0 ? items : collection.getFilteredByGlob(enGlob);
     }
 
+    // Filter helper: exclude draft and archived items from public site
+    function notHidden(item) {
+        return item.data.status !== 'draft' && item.data.status !== 'archived';
+    }
+
     // Collections for highlights per language
     eleventyConfig.addCollection('highlights_en', function(c) {
-        return c.getFilteredByGlob('./_input/highlights/en/*.md');
+        return c.getFilteredByGlob('./_input/highlights/en/*.md').filter(notHidden);
     });
     eleventyConfig.addCollection('highlights_nl', function(c) {
-        return collectionWithFallback(c, './_input/highlights/nl/*.md', './_input/highlights/en/*.md');
+        return collectionWithFallback(c, './_input/highlights/nl/*.md', './_input/highlights/en/*.md').filter(notHidden);
     });
     eleventyConfig.addCollection('highlights_fr', function(c) {
-        return collectionWithFallback(c, './_input/highlights/fr/*.md', './_input/highlights/en/*.md');
+        return collectionWithFallback(c, './_input/highlights/fr/*.md', './_input/highlights/en/*.md').filter(notHidden);
     });
     eleventyConfig.addCollection('highlights_de', function(c) {
-        return collectionWithFallback(c, './_input/highlights/de/*.md', './_input/highlights/en/*.md');
+        return collectionWithFallback(c, './_input/highlights/de/*.md', './_input/highlights/en/*.md').filter(notHidden);
     });
 
     // Collections for projects per language
     eleventyConfig.addCollection('projects_en', function(c) {
-        return c.getFilteredByGlob('./_input/projects/en/*.md');
+        return c.getFilteredByGlob('./_input/projects/en/*.md').filter(notHidden);
     });
     eleventyConfig.addCollection('projects_nl', function(c) {
-        return collectionWithFallback(c, './_input/projects/nl/*.md', './_input/projects/en/*.md');
+        return collectionWithFallback(c, './_input/projects/nl/*.md', './_input/projects/en/*.md').filter(notHidden);
     });
     eleventyConfig.addCollection('projects_fr', function(c) {
-        return collectionWithFallback(c, './_input/projects/fr/*.md', './_input/projects/en/*.md');
+        return collectionWithFallback(c, './_input/projects/fr/*.md', './_input/projects/en/*.md').filter(notHidden);
     });
     eleventyConfig.addCollection('projects_de', function(c) {
-        return collectionWithFallback(c, './_input/projects/de/*.md', './_input/projects/en/*.md');
+        return collectionWithFallback(c, './_input/projects/de/*.md', './_input/projects/en/*.md').filter(notHidden);
     });
 
     // Collections for about per language

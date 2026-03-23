@@ -124,6 +124,7 @@ class ConfigParser {
         label: f.label, name: f.name, widget: f.widget || 'string',
         required: f.required !== false, i18n: f.i18n || false,
         default: f.default ?? '', format: f.format || '',
+        autocomplete: f.autocomplete || false,
       })),
       summary: c.summary || '{{title}}', sort: c.sort || '',
     }));
@@ -553,10 +554,16 @@ class App {
         entries.map(e => {
           const title = e.data.title || e.name;
           const date = e.data.date ? e.data.date.replace('T', ' ').substring(0, 16) : '';
+          const status = e.data.status || '';
+          const badgeHtml = status === 'draft'
+            ? '<span class="entry-status-badge status-draft">Draft</span>'
+            : status === 'archived'
+            ? '<span class="entry-status-badge status-archived">Archived</span>'
+            : '';
           return `<div class="entry-row" data-file="${esc(e.name)}" data-title="${esc(title)}" data-sha="${esc(e.sha||'')}" data-path="${esc(e.path)}">
             <div class="entry-row-left">
               <input type="checkbox" class="entry-checkbox entry-select" data-file="${esc(e.name)}" />
-              <div style="min-width:0;"><div class="entry-title">${esc(title)}</div>${date ? `<div class="entry-meta">${esc(date)}</div>` : ''}</div>
+              <div style="min-width:0;"><div class="entry-title">${esc(title)}${badgeHtml}</div>${date ? `<div class="entry-meta">${esc(date)}</div>` : ''}</div>
             </div>
           </div>`;
         }).join('');
@@ -750,17 +757,35 @@ class App {
     const bodyEl = document.getElementById('notion-body');
 
     // Inline editing — contenteditable cells
+    const autocompleteFields = ['place', 'composers', 'collaborators'];
     bodyEl.querySelectorAll('.notion-cell[contenteditable]').forEach(cell => {
-      cell.addEventListener('focus', () => { cell.classList.add('notion-cell-editing'); });
+      const field = cell.dataset.field;
+      const hasAC = autocompleteFields.includes(field);
+
+      cell.addEventListener('focus', () => {
+        cell.classList.add('notion-cell-editing');
+        if (hasAC) {
+          const suggestions = this._getConcertSuggestions(field);
+          this._showAutocomplete(cell, suggestions, cell.textContent.trim());
+        }
+      });
+
+      cell.addEventListener('input', () => {
+        if (hasAC) {
+          const suggestions = this._getConcertSuggestions(field);
+          this._showAutocomplete(cell, suggestions, cell.textContent.trim());
+        }
+      });
 
       cell.addEventListener('blur', () => {
         cell.classList.remove('notion-cell-editing');
+        setTimeout(() => this._hideAutocomplete(), 150);
         const idx = parseInt(cell.dataset.idx);
-        const field = cell.dataset.field;
+        const fieldName = cell.dataset.field;
         const newVal = cell.textContent.trim();
         const entry = state.entries[idx];
-        if (entry && entry.data[field] !== newVal) {
-          entry.data[field] = newVal;
+        if (entry && entry.data[fieldName] !== newVal) {
+          entry.data[fieldName] = newVal;
           entry.dirty = true;
           cell.closest('.notion-row').classList.add('notion-row-dirty');
           this._debounceSaveRow(idx);
@@ -774,8 +799,9 @@ class App {
         }
         if (e.key === 'Escape') {
           const idx = parseInt(cell.dataset.idx);
-          const field = cell.dataset.field;
-          cell.textContent = state.entries[idx].data[field] || '';
+          const fieldName = cell.dataset.field;
+          cell.textContent = state.entries[idx].data[fieldName] || '';
+          this._hideAutocomplete();
           cell.blur();
         }
         if (e.key === 'Tab') {
@@ -972,6 +998,14 @@ class App {
           ${!isNew ? '<button class="btn btn-danger" id="delete-btn">Delete</button>' : ''}
         </div>
       </div>
+      ${(isI18n && !isNew && (col.name === 'projects' || col.name === 'highlights')) ? `
+        <div class="editor-status-bar" id="status-bar">
+          <span>Status:</span>
+          <span class="status-label status-online" id="status-label">Online</span>
+          <button class="btn btn-ghost btn-sm" id="set-draft-btn">Set Draft</button>
+          <button class="btn btn-ghost btn-sm" id="set-archived-btn">Archive</button>
+          <button class="btn btn-ghost btn-sm" id="set-online-btn" style="display:none;">Publish</button>
+        </div>` : ''}
       ${isI18n ? `
         <div class="trilingual-toggle">
           <label><input type="checkbox" id="trilingual-mode" /> Show all languages side by side</label>
@@ -1050,6 +1084,15 @@ class App {
     // Save
     document.getElementById('save-btn').addEventListener('click', () => this._saveEntry(state));
 
+    // Status bar (projects / highlights only)
+    if (!isNew && isI18n && (col.name === 'projects' || col.name === 'highlights')) {
+      const initialStatus = state.data[locales[0]].status || '';
+      this._updateStatusBar(initialStatus);
+      document.getElementById('set-draft-btn').addEventListener('click', () => this._setStatus(state, 'draft'));
+      document.getElementById('set-archived-btn').addEventListener('click', () => this._setStatus(state, 'archived'));
+      document.getElementById('set-online-btn').addEventListener('click', () => this._setStatus(state, ''));
+    }
+
     // Delete
     const delBtn = document.getElementById('delete-btn');
     if (delBtn) {
@@ -1099,6 +1142,7 @@ class App {
 
     formEl.innerHTML = html;
     this._bindFormHandlers(formEl, state);
+    this._fillConcertDataLists(formEl, state.col);
     this._updateLivePreview(state);
   }
 
@@ -1135,7 +1179,39 @@ class App {
     html += '</div>';
     formEl.innerHTML = html;
     this._bindFormHandlers(formEl, state);
+    this._fillConcertDataLists(formEl, state.col);
     this._updateLivePreview(state);
+  }
+
+  _fillConcertDataLists(formEl, col) {
+    if (col.name !== 'concerts') return;
+    const acFields = ['place', 'composers', 'collaborators'];
+    const fill = () => {
+      formEl.querySelectorAll('datalist[id^="ac-"]').forEach(dl => {
+        const fieldName = acFields.find(f => dl.id.startsWith(`ac-${f}-`));
+        if (!fieldName) return;
+        const suggestions = this._getConcertSuggestions(fieldName);
+        dl.innerHTML = suggestions.map(s => `<option value="${esc(s)}"></option>`).join('');
+      });
+    };
+    // If concert table data is already loaded, fill immediately; otherwise fetch in background
+    if (this._concertTableState && this._concertTableState.entries && this._concertTableState.entries.length) {
+      fill();
+    } else {
+      // Load concert list in background for datalist population
+      const concertCol = this.collections.find(c => c.name === 'concerts');
+      if (!concertCol) return;
+      this.api.getContents(concertCol.folder).then(async contents => {
+        const files = contents.filter(f => f.name.endsWith('.md'));
+        const entries = await Promise.all(files.map(async f => {
+          try { const fd = await this.api.getFile(f.path); return { name: f.name, data: FrontMatter.parse(fd.content).data }; }
+          catch { return { name: f.name, data: {} }; }
+        }));
+        if (!this._concertTableState) this._concertTableState = { entries: [] };
+        if (!this._concertTableState.entries.length) this._concertTableState.entries = entries;
+        fill();
+      }).catch(() => {});
+    }
   }
 
   _renderField(field, value, locale) {
@@ -1163,8 +1239,12 @@ class App {
       case 'markdown':
         return this._renderMarkdownEditor(field.name, value, locale);
 
-      default:
-        return `<input type="text" class="form-input" ${dataAttr} value="${escaped}" />`;
+      default: {
+        const listId = field.autocomplete ? `ac-${field.name}-${locale}` : '';
+        const listAttr = listId ? ` list="${listId}"` : '';
+        const datalist = listId ? `<datalist id="${listId}"></datalist>` : '';
+        return `<input type="text" class="form-input" ${dataAttr} value="${escaped}"${listAttr} autocomplete="off" />${datalist}`;
+      }
     }
   }
 
@@ -1579,6 +1659,78 @@ class App {
         state.isNew = false;
       }
     } catch (e) { showStatus('error', 'Save failed: ' + e.message); }
+  }
+
+  // ---- Status (draft / archived / online) ----
+  _updateStatusBar(status) {
+    const label = document.getElementById('status-label');
+    const draftBtn = document.getElementById('set-draft-btn');
+    const archiveBtn = document.getElementById('set-archived-btn');
+    const publishBtn = document.getElementById('set-online-btn');
+    if (!label) return;
+    label.className = 'status-label';
+    if (status === 'draft') {
+      label.classList.add('status-draft'); label.textContent = 'Draft';
+      draftBtn.style.display = 'none'; archiveBtn.style.display = ''; publishBtn.style.display = '';
+    } else if (status === 'archived') {
+      label.classList.add('status-archived'); label.textContent = 'Archived';
+      draftBtn.style.display = ''; archiveBtn.style.display = 'none'; publishBtn.style.display = '';
+    } else {
+      label.classList.add('status-online'); label.textContent = 'Online';
+      draftBtn.style.display = ''; archiveBtn.style.display = ''; publishBtn.style.display = 'none';
+    }
+  }
+
+  async _setStatus(state, newStatus) {
+    this._collectFormData(state);
+    for (const loc of state.locales) {
+      state.data[loc].status = newStatus || undefined;
+      if (!newStatus) delete state.data[loc].status;
+    }
+    await this._saveEntry(state);
+    this._updateStatusBar(newStatus);
+  }
+
+  // ---- Concert Autocomplete ----
+  _getConcertSuggestions(field) {
+    const state = this._concertTableState;
+    if (!state || !state.entries) return [];
+    const seen = new Set();
+    for (const entry of state.entries) {
+      const val = (entry.data[field] || '').trim();
+      if (val) seen.add(val);
+    }
+    return [...seen].sort((a, b) => a.localeCompare(b));
+  }
+
+  _showAutocomplete(cell, suggestions, filter) {
+    this._hideAutocomplete();
+    const filtered = filter ? suggestions.filter(s => s.toLowerCase().includes(filter.toLowerCase()) && s.toLowerCase() !== filter.toLowerCase()) : suggestions;
+    if (!filtered.length) return;
+
+    const rect = cell.getBoundingClientRect();
+    const drop = document.createElement('div');
+    drop.className = 'autocomplete-dropdown';
+    drop.id = 'autocomplete-dropdown';
+    drop.style.top = (rect.bottom + window.scrollY) + 'px';
+    drop.style.left = (rect.left + window.scrollX) + 'px';
+    drop.style.width = Math.max(rect.width, 160) + 'px';
+    drop.innerHTML = filtered.map(s => `<div class="autocomplete-item" data-value="${esc(s)}">${esc(s)}</div>`).join('');
+    document.body.appendChild(drop);
+
+    drop.querySelectorAll('.autocomplete-item').forEach(item => {
+      item.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        cell.textContent = item.dataset.value;
+        this._hideAutocomplete();
+        cell.dispatchEvent(new Event('blur'));
+      });
+    });
+  }
+
+  _hideAutocomplete() {
+    const existing = document.getElementById('autocomplete-dropdown');
+    if (existing) existing.remove();
   }
 
   // ---- Translation ----
