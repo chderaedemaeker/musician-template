@@ -15,6 +15,15 @@ layout: layout.html
 
 {% assign lang = page.lang %}
 
+<!-- Short Bio -->
+{% assign aboutPage = collections.about | where: "data.lang", lang | first %}
+{% if aboutPage and aboutPage.data.summaryabout %}
+<div style="max-width: var(--content-width); margin: 0 auto; padding: var(--space-xl) var(--space-md); text-align: center;">
+  <p style="font-size: var(--serif-body); font-family: var(--font-serif); font-weight: 300; line-height: 1.6; color: var(--near-black); margin: 0 0 var(--space-lg);">{{ aboutPage.data.summaryabout }}</p>
+  <a class="btn" href="/{{ lang }}/about/">{{ languages[lang].biography }}</a>
+</div>
+{% endif %}
+
 <!-- Upcoming Concerts -->
 <div id="upcoming-section" style="max-width: var(--content-width); margin: 0 auto; padding: var(--space-xl) var(--space-md);">
 
@@ -28,29 +37,34 @@ layout: layout.html
 
 </div>
 
-<!-- Highlights -->
+<!-- Latest Highlight -->
+{% assign langHighlights = 'highlights_' | append: lang %}
+{% assign latestHighlight = collections[langHighlights] | sort: 'date' | reverse | first %}
+{% if latestHighlight %}
 <div style="padding: var(--space-xl) 0;">
 
-  {% assign langHighlights = 'highlights_' | append: lang %}
-  {% assign sortedHighlights = collections[langHighlights] | sort: 'date' | reverse %}
+  <h2 class="section-title" style="margin-bottom: var(--space-lg);">{{ languages[lang].most_recent_highlight }}</h2>
 
   <div class="highlights-grid">
-    {% for highlight in sortedHighlights %}
-      <a href="{{ highlight.url }}" class="highlight-card">
-        {% if highlight.data.image %}
-          <img src="{{ highlight.data.image }}" alt="{{ highlight.data.title }}">
-        {% endif %}
-        <div class="highlight-card-overlay">
-          <div class="highlight-card-top">
-            {% if highlight.data.type %}<p class="highlight-card-type">{{ highlight.data.type }}</p>{% endif %}
-            <h3 class="highlight-card-title">{{ highlight.data.title }}</h3>
-          </div>
+    <a href="{{ latestHighlight.url }}" class="highlight-card">
+      {% if latestHighlight.data.image %}
+        <img src="{{ latestHighlight.data.image }}" alt="{{ latestHighlight.data.title }}">
+      {% endif %}
+      <div class="highlight-card-overlay">
+        <div class="highlight-card-top">
+          {% if latestHighlight.data.type %}<p class="highlight-card-type">{{ latestHighlight.data.type }}</p>{% endif %}
+          <h3 class="highlight-card-title">{{ latestHighlight.data.title }}</h3>
         </div>
-      </a>
-    {% endfor %}
+      </div>
+    </a>
+  </div>
+
+  <div style="text-align: center; margin-top: var(--space-lg);">
+    <a class="btn" href="/{{ lang }}/highlights/">{{ languages[lang].see_all_highlights }}</a>
   </div>
 
 </div>
+{% endif %}
 
 <!-- Contact -->
 <div style="text-align: center; padding: var(--space-xl) var(--space-md);">
