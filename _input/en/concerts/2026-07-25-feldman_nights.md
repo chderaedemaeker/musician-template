@@ -1,5 +1,5 @@
 ---
-title: Feldman nights
+title: Feldman Nights
 date: "2026-09-04T21:00"
 place: Sankt Peter Kunststation Cologne
 composers: M. Feldman
