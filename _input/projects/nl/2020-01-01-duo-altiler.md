@@ -1,7 +1,7 @@
 ---
 title: Duo Altiler
 collaborators: Alexander Declercq - Piano
-image: "/images/duo-altiler.jpeg"
+image: /images/duo-altiler.jpeg
 layout: project.html
 tags: projects
 lang: nl
