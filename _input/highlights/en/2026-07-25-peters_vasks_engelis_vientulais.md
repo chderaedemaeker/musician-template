@@ -1,5 +1,5 @@
 ---
-title: Peters vasks Engelis Vientulais
+title: Peteris Vasks Engelis Vientulais
 slug: ""
 date: ""
 type: ""
