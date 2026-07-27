@@ -67,7 +67,7 @@
 }
 
 .text-list-title {
-  font-size: calc(var(--size-body) * 2);
+  font-size: 1.7rem;
   font-weight: 300;
   line-height: 1.2;
   margin: 0 0 4px;
@@ -101,6 +101,11 @@
    (matching veronique reference site)
    ============================================ */
 
+/* Desktop: clear the sticky nav; the mobile reel below resets this to 0 */
+.highlights-section {
+  padding-top: 120px;
+}
+
 .highlights-grid {
   display: flex;
   flex-wrap: wrap;
@@ -123,7 +128,6 @@
   flex-basis: 45%;
   background-color: var(--warm-grey);
   box-shadow: 0px 5px 30px rgba(0, 0, 0, 0.037);
-  transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 /* aspect-ratio fallback for iOS 14 and older */
@@ -135,9 +139,18 @@
   }
 }
 
+/* Hover: scale the image inside, never the card itself — transforming the
+   card breaks border-radius clipping in Safari (overflow:hidden + transform) */
 .highlight-card:hover {
-  transform: scale(1.02);
   text-decoration: none;
+}
+
+.highlight-card img {
+  transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.highlight-card:hover img {
+  transform: scale(1.03);
 }
 
 .highlight-card img,

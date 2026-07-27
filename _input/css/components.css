@@ -69,6 +69,116 @@
   font-size: var(--sans-label);
 }
 
+/* ============================================
+   CONCERT MODAL — full concert info popup
+   ============================================ */
+
+.concert-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md);
+}
+
+.concert-modal[hidden] {
+  display: none;
+}
+
+.concert-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(26, 26, 25, 0.45);
+}
+
+.concert-modal-panel {
+  position: relative;
+  background: var(--off-white);
+  border-radius: var(--radius);
+  max-width: 640px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: var(--space-lg);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+.concert-modal-close {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  background: none;
+  border: none;
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--dark-grey);
+  padding: 4px 8px;
+}
+
+.concert-modal-close:hover {
+  color: var(--near-black);
+}
+
+.concert-modal-date {
+  font-size: var(--sans-label);
+  color: var(--dark-grey);
+  font-family: var(--font-sans);
+  margin-bottom: var(--space-xs);
+}
+
+.concert-modal-title {
+  margin-bottom: var(--space-sm);
+}
+
+.concert-modal-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--sans-label);
+  color: var(--dark-grey);
+  font-family: var(--font-sans);
+  font-style: italic;
+  margin-bottom: var(--space-md);
+}
+
+.concert-modal-body {
+  margin-bottom: var(--space-sm);
+}
+
+.concert-modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
+/* Concert list rows open the modal; the ticket link inside stays a plain link */
+.concert-row {
+  cursor: pointer;
+}
+
+.text-list-ticket {
+  display: inline-block;
+  margin-top: 6px;
+  font-family: var(--font-sans);
+  font-size: var(--sans-label);
+  color: var(--dark-grey);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.text-list-ticket:hover {
+  color: var(--near-black);
+}
+
 /* Footer */
 .footer {
   width: 95%;

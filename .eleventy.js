@@ -44,7 +44,7 @@ function imageOptions(widths = [600, 1200, 1800, 2400, 3200]) {
     return {
         widths,
         formats: ["jpeg"],
-        sharpJpegOptions: { quality: 99, progressive: true, mozjpeg: true },
+        sharpJpegOptions: { quality: 82, progressive: true, mozjpeg: true },
         outputDir: "./_site/images/optimized/",
         urlPath: "/images/optimized/",
         filenameFormat: function (id, src, width, format) {
@@ -165,18 +165,47 @@ module.exports = function (eleventyConfig) {
         return collectionApi.getFilteredByGlob("./_input/en/concerts/*.md");
     });
 
-    // Output concerts as JSON for Swiper
+    // Output concerts as JSON for the client-side lists and the detail popup
     eleventyConfig.addShortcode("concertsJson", function(collection) {
-        return JSON.stringify(collection.map(concert => {
+        const json = JSON.stringify(collection.map(concert => {
+            let body = "";
+            try { body = concert.templateContent || ""; } catch (e) { /* not rendered yet — popup falls back to no body */ }
             return {
                 title: concert.data.title,
                 date: concert.data.date,
+                dateEnd: concert.data.date_end || null,
+                monthOnly: !!concert.data.month_only,
                 place: concert.data.place,
                 composers: concert.data.composers,
                 collaborators: concert.data.collaborators,
+                ticket: concert.data.link || null,
+                body: body,
                 link: concert.url
             };
         }));
+        // "</" would end the surrounding <script> block
+        return json.replace(/<\//g, '<\\/');
+    });
+
+    // Full concert date display: month-only → "August 2026"; range → "12 – 16 August 2026"
+    eleventyConfig.addFilter("concertDate", (dateObj, dateEnd, monthOnly) => {
+        if (!dateObj) return "";
+        const toDt = d => d instanceof Date
+            ? DateTime.fromJSDate(d, { zone: 'UTC' })
+            : DateTime.fromISO(String(d), { zone: 'UTC' });
+        const dt = toDt(dateObj);
+        if (!dt.isValid) return "";
+        if (monthOnly) return dt.toFormat("LLLL y");
+        if (dateEnd) {
+            const end = toDt(dateEnd);
+            if (end.isValid) {
+                if (dt.hasSame(end, 'month')) return `${dt.toFormat("d")} – ${end.toFormat("d LLLL y")}`;
+                if (dt.hasSame(end, 'year')) return `${dt.toFormat("d LLLL")} – ${end.toFormat("d LLLL y")}`;
+                return `${dt.toFormat("d LLLL y")} – ${end.toFormat("d LLLL y")}`;
+            }
+        }
+        const formatted = dt.toFormat("cccc LLLL d, y — HH:mm");
+        return formatted.endsWith("00:00") ? formatted.replace(" — 00:00", "") : formatted;
     });
 
     // Date filters

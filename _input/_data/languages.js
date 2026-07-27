@@ -32,6 +32,11 @@ module.exports = {
     newsletter: 'Newsletter',
     find_me: 'Find me on',
     copyright: 'All rights reserved.',
+    tickets: 'Tickets & Info',
+    full_page: 'Full page',
+    success_title: 'Thank you',
+    success_message: 'Your message has been received.',
+    back_home: 'Back to home',
   },
   nl: {
     dir: '',
@@ -66,6 +71,11 @@ module.exports = {
     newsletter: 'Nieuwsbrief',
     find_me: 'Vind me op',
     copyright: 'Alle rechten voorbehouden.',
+    tickets: 'Tickets & info',
+    full_page: 'Volledige pagina',
+    success_title: 'Bedankt',
+    success_message: 'Uw bericht is goed ontvangen.',
+    back_home: 'Terug naar home',
   },
   fr: {
     dir: '',
@@ -100,6 +110,11 @@ module.exports = {
     newsletter: 'Newsletter',
     find_me: 'Retrouvez-moi sur',
     copyright: 'Tous droits réservés.',
+    tickets: 'Billets & infos',
+    full_page: 'Page complète',
+    success_title: 'Merci',
+    success_message: 'Votre message a bien été reçu.',
+    back_home: 'Retour à l\'accueil',
   },
   de: {
     dir: '',
@@ -134,5 +149,10 @@ module.exports = {
     newsletter: 'Newsletter',
     find_me: 'Finden Sie mich auf',
     copyright: 'Alle Rechte vorbehalten.',
+    tickets: 'Tickets & Infos',
+    full_page: 'Ganze Seite',
+    success_title: 'Danke',
+    success_message: 'Ihre Nachricht ist gut angekommen.',
+    back_home: 'Zurück zur Startseite',
   }
 };

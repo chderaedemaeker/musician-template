@@ -1,0 +1,78 @@
+{% assign lang = page.lang %}
+
+<div style="padding-top: 120px;"></div>
+
+<div style="max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-md);">
+  <span class="section-title" style="margin-top: var(--space-lg);">{{ languages[lang].upcoming_concerts }}</span>
+</div>
+<div class="text-list" id="upcoming-concerts"></div>
+
+<div style="max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-md);">
+  <span class="section-title" style="margin-top: var(--space-lg);">{{ languages[lang].archive }}</span>
+</div>
+<div class="text-list" id="archive-concerts"></div>
+
+{% include "concert-modal.liquid" %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var concerts = {% concertsJson collections.concerts %};
+  var lang = '{{ lang }}';
+
+  /* A concert counts as upcoming until its last day has fully passed:
+     end date for multi-day, end of month for month-only, end of day otherwise. */
+  function endOf(c) {
+    var d = new Date(c.dateEnd || c.date);
+    if (c.monthOnly && !c.dateEnd) return new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59);
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59);
+  }
+
+  function dateStr(c, opts) {
+    var d = new Date(c.date);
+    if (c.monthOnly) return d.toLocaleDateString(lang, { month: 'long', year: 'numeric' });
+    if (c.dateEnd) {
+      var e = new Date(c.dateEnd);
+      if (d.getFullYear() === e.getFullYear() && d.getMonth() === e.getMonth()) {
+        return d.getDate() + ' – ' + e.toLocaleDateString(lang, { day: 'numeric', month: 'long', year: 'numeric' });
+      }
+      var startOpts = d.getFullYear() === e.getFullYear() ? { day: 'numeric', month: 'long' } : opts;
+      return d.toLocaleDateString(lang, startOpts) + ' – ' + e.toLocaleDateString(lang, opts);
+    }
+    return d.toLocaleDateString(lang, opts);
+  }
+  window.concertDateStr = dateStr; /* reused by the modal */
+
+  var now = new Date();
+  var upcoming = concerts.filter(function(c) { return endOf(c) >= now; })
+    .sort(function(a, b) { return new Date(a.date) - new Date(b.date); });
+  var archive = concerts.filter(function(c) { return endOf(c) < now; })
+    .sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
+
+  function renderConcerts(list, containerId) {
+    var container = document.getElementById(containerId);
+    if (list.length === 0) {
+      container.innerHTML = '<div style="padding: var(--space-md);"><p style="color: var(--mid-grey); font-style: italic;">{{ languages[lang].no_upcoming }}</p></div>';
+      return;
+    }
+    container.innerHTML = list.map(function(c) {
+      var d = dateStr(c, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      var right = '';
+      if (c.composers) right += '<p class="text-list-detail">' + c.composers + '</p>';
+      if (c.collaborators) right += '<p class="text-list-detail">' + c.collaborators + '</p>';
+      if (c.ticket) right += '<a class="text-list-ticket" href="' + c.ticket + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">{{ languages[lang].tickets }} &#8599;</a>';
+      return '<div class="text-list-item concert-row" data-ci="' + concerts.indexOf(c) + '">' +
+        '<div class="text-list-left"><p class="text-list-type">' + d + '</p><h3 class="text-list-title">' + c.title + '</h3><p class="text-list-detail">' + (c.place || '') + '</p></div>' +
+        (right ? '<div class="text-list-right">' + right + '</div>' : '') +
+        '</div>';
+    }).join('');
+    container.querySelectorAll('.concert-row').forEach(function(row) {
+      row.addEventListener('click', function() {
+        openConcertModal(concerts[parseInt(this.dataset.ci, 10)]);
+      });
+    });
+  }
+
+  renderConcerts(upcoming, 'upcoming-concerts');
+  renderConcerts(archive, 'archive-concerts');
+});
+</script>

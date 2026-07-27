@@ -26,7 +26,7 @@
 
 <main>
   <div class="concert-detail">
-    {% if date %}<p class="date">{{ date | readableDate }}</p>{% endif %}
+    {% if date %}<p class="date">{{ date | concertDate: date_end, month_only }}</p>{% endif %}
     <h1>{{ title }}</h1>
 
     {% if place or composers or collaborators %}
@@ -42,7 +42,7 @@
     </div>
 
     {% if link and link != "" %}
-      <a class="btn" href="{{ link }}">Tickets &amp; Info</a>
+      <a class="btn" href="{{ link }}">{{ languages[lang].tickets }}</a>
     {% endif %}
 
     <div class="mt-lg">

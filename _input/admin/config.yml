@@ -10,7 +10,7 @@ show_preview_links: true
 
 i18n:
   structure: multiple_folders
-  locales: [en, nl, fr]
+  locales: [en, nl, fr, de]
   default_locale: en
 
 slug:
@@ -34,7 +34,9 @@ collections:
     preview_path: "en/concerts/{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
       - {label: "Title", name: "title", widget: "string", required: true}
-      - {label: "Date", name: "date", widget: "datetime", required: true, default: "", format: "YYYY-MM-DDTHH:mm:ss", picker_utc: false}
+      - {label: "Date", name: "date", widget: "datetime", required: true, default: "", format: "YYYY-MM-DDTHH:mm:ss", picker_utc: false, hint: "Leave the time at 00:00 if the concert has no specific hour — it will be hidden on the site."}
+      - {label: "End date (optional)", name: "date_end", widget: "datetime", required: false, default: "", format: "YYYY-MM-DDTHH:mm:ss", picker_utc: false, hint: "Only for concerts spanning multiple days, e.g. 12–16 August."}
+      - {label: "Month and year only", name: "month_only", widget: "boolean", required: false, default: false, hint: "Turn on when the exact day isn't known yet — the site shows only \"August 2026\". Set the date to any day in that month."}
       - {label: "Place", name: "place", widget: "string", required: false, autocomplete: true}
       - {label: "Composers", name: "composers", widget: "string", required: false, autocomplete: true}
       - {label: "Collaborators", name: "collaborators", widget: "string", required: false, autocomplete: true}

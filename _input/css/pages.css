@@ -70,6 +70,16 @@
   border: none;
 }
 
+/* 404 + form-success pages */
+.page-404,
+.page-success {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-md);
+  padding-top: 180px;
+  text-align: center;
+}
+
 /* Form */
 .form-group {
   margin-bottom: var(--space-sm);

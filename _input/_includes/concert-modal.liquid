@@ -1,0 +1,63 @@
+{% assign lang = page.lang %}
+<div class="concert-modal" id="concert-modal" hidden>
+  <div class="concert-modal-backdrop" onclick="closeConcertModal()"></div>
+  <div class="concert-modal-panel" role="dialog" aria-modal="true" aria-labelledby="cm-title">
+    <button class="concert-modal-close" aria-label="Close" onclick="closeConcertModal()">&#215;</button>
+    <p class="concert-modal-date" id="cm-date"></p>
+    <h2 class="concert-modal-title" id="cm-title"></h2>
+    <div class="concert-modal-meta" id="cm-meta"></div>
+    <div class="concert-modal-body" id="cm-body"></div>
+    <div class="concert-modal-actions">
+      <a class="btn" id="cm-ticket" target="_blank" rel="noopener" hidden>{{ languages[lang].tickets }}</a>
+      <a class="btn btn-sm" id="cm-page" hidden>{{ languages[lang].full_page }} &#8599;</a>
+    </div>
+  </div>
+</div>
+
+<script>
+function openConcertModal(c) {
+  var dateText = window.concertDateStr
+    ? window.concertDateStr(c, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+    : '';
+  /* Single-day concerts with a real hour also show the time */
+  if (!c.monthOnly && !c.dateEnd) {
+    var d = new Date(c.date);
+    if (d.getHours() !== 0 || d.getMinutes() !== 0) {
+      dateText += ' — ' + d.toLocaleTimeString(document.documentElement.lang || 'en', { hour: '2-digit', minute: '2-digit' });
+    }
+  }
+  document.getElementById('cm-date').textContent = dateText;
+  document.getElementById('cm-title').textContent = c.title || '';
+
+  var meta = document.getElementById('cm-meta');
+  meta.innerHTML = '';
+  [c.place, c.composers, c.collaborators].forEach(function(value) {
+    if (!value) return;
+    var span = document.createElement('span');
+    span.textContent = value;
+    meta.appendChild(span);
+  });
+
+  document.getElementById('cm-body').innerHTML = c.body || '';
+
+  var ticket = document.getElementById('cm-ticket');
+  ticket.hidden = !c.ticket;
+  if (c.ticket) ticket.href = c.ticket;
+
+  var page = document.getElementById('cm-page');
+  page.hidden = !c.link;
+  if (c.link) page.href = c.link;
+
+  document.getElementById('concert-modal').hidden = false;
+  document.body.classList.add('modal-open');
+}
+
+function closeConcertModal() {
+  document.getElementById('concert-modal').hidden = true;
+  document.body.classList.remove('modal-open');
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeConcertModal();
+});
+</script>

@@ -13,8 +13,8 @@ img.prog-img {
   opacity: 0;
   filter: blur(10px) saturate(40%);
   /* Scale up enough to push blurred edges outside the overflow:hidden clip */
-  transform: scale(1.07);
-  transition: opacity 3.5s ease, filter 1.3s ease, transform 1.3s ease;
+  transform: scale(1.05);
+  transition: opacity 0.8s ease, filter 0.9s ease, transform 0.9s ease;
 }
 
 /* Step 1 — fade in the blurry desaturated placeholder (white → blurry grey) */

@@ -31,9 +31,10 @@
 
   /* ── Serif sizes ── */
   --serif-body: 1.2rem;       /* paragraphs, card titles, forms */
-  --serif-heading: 1.2rem;    /* h1, h2, page titles, mobile nav */
-  --serif-hero: 1.3rem;       /* hero fullscreen heading */
-  --serif-brand: 1.3rem;      /* nav brand name */
+  --serif-heading: 2.2rem;    /* h1, page titles, mobile nav */
+  --serif-subheading: 1.5rem; /* h2 */
+  --serif-hero: 2.6rem;       /* hero fullscreen heading */
+  --serif-brand: 1.7rem;      /* nav brand name */
 
   /* ── Line heights ── */
   --leading-tight: 0.95;  /* headings, brand */
@@ -113,7 +114,7 @@ h1 {
 
 h2 {
   font-family: var(--font-serif);
-  font-size: var(--serif-body);
+  font-size: var(--serif-subheading);
   font-weight: 300;
   line-height: var(--leading-snug);
 }
