@@ -1,5 +1,5 @@
 ---
-title: Four Seasons recomposed
+title: Four Seasons changed
 date: "2026-10-11T16:00"
 place: Rome, Italy
 composers: Richter
