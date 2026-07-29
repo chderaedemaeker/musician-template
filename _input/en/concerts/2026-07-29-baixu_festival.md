@@ -1,5 +1,5 @@
 ---
-title: Baixu Festival
+title: Baixu Festival Piano Quintet
 date: "2026-10-17T20:00"
 place: Brussels, Belgium
 composers: Franck
