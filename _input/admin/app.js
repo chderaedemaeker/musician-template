@@ -1373,6 +1373,14 @@ class App {
           </div>
         </div>`;
 
+      case 'boolean': {
+        const isOn = value === true || value === 'true';
+        return `<select class="form-input" ${dataAttr}>
+          <option value="false"${isOn ? '' : ' selected'}>No</option>
+          <option value="true"${isOn ? ' selected' : ''}>Yes</option>
+        </select>`;
+      }
+
       case 'markdown':
         return this._renderMarkdownEditor(field.name, value, locale);
 

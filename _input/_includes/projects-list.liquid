@@ -12,7 +12,7 @@
   {% if sortedProjects.size > 0 %}
     <div class="highlights-grid highlights-grid--compact reveal-group">
       {% for project in sortedProjects %}
-        <a href="{{ project.url }}" class="highlight-card reveal{% unless project.data.image and project.data.image != '' %} highlight-card--noimg{% endunless %}" {% unless project.data.image and project.data.image != '' %}data-initial="{{ project.data.title | strip | slice: 0, 1 | upcase }}"{% endunless %}>
+        <a href="{{ project.url }}" class="highlight-card reveal{% if project.data.featured %} highlight-card--featured{% endif %}{% unless project.data.image and project.data.image != '' %} highlight-card--noimg{% endunless %}" {% unless project.data.image and project.data.image != '' %}data-initial="{{ project.data.title | strip | slice: 0, 1 | upcase }}"{% endunless %}>
           {% if project.data.image and project.data.image != '' %}
             <img src="{{ project.data.image }}" alt="{{ project.data.title }}">
           {% endif %}

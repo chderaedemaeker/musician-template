@@ -1266,3 +1266,13 @@ html { font-size: 16px; }
 
 /* Inter kerns tighter */
 body { letter-spacing: -0.01em; }
+
+/* Hints stay hidden until the ? is clicked, and never inherit the
+   label's uppercase styling */
+.field-hint[hidden] { display: none; }
+.field-hint {
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 400;
+  font-size: 0.85rem;
+}

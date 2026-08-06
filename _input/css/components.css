@@ -449,6 +449,45 @@
   color: var(--near-black);
 }
 
+/* ── Featured cards — flagged in the CMS: double width, blue ground ── */
+.highlight-card--featured {
+  grid-column: span 2;
+  aspect-ratio: 16 / 10;
+}
+
+.highlight-card--featured.highlight-card--noimg {
+  background: linear-gradient(160deg, var(--accent), var(--accent-deep));
+}
+
+.highlight-card--featured.highlight-card--noimg::before {
+  color: rgba(246, 246, 244, 0.08);
+}
+
+.highlight-card--featured.highlight-card--noimg .highlight-card-type {
+  color: rgba(246, 246, 244, 0.8);
+}
+
+.highlight-card--featured.highlight-card--noimg .highlight-card-title {
+  color: var(--white);
+}
+
+.highlight-card--featured.highlight-card--noimg .card-cta {
+  color: var(--white);
+}
+
+.highlight-card--featured.highlight-card--noimg:hover .card-cta-arrow,
+.highlight-card--featured.highlight-card--noimg:focus-visible .card-cta-arrow {
+  background-color: rgba(246, 246, 244, 0.92);
+  color: var(--accent-deep);
+}
+
+@media (max-width: 700px) {
+  .highlight-card--featured {
+    grid-column: auto;
+    aspect-ratio: 4 / 5;
+  }
+}
+
 /* ── Card call-to-action — faint arrow bottom-right, label fades in
       at the bottom-left of the whole card on hover ── */
 .card-cta {
