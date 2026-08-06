@@ -313,7 +313,7 @@ main {
   width: 100%;
   margin-top: var(--space-2xl);
   padding: var(--space-xl) 0 var(--space-md);
-  background-color: var(--accent-deep);
+  background-color: #e7ebf1; /* soft light blue — gentle step from the cream body */
   font-family: var(--font-sans);
   overflow: hidden;
 }
@@ -334,19 +334,19 @@ main {
   font-size: 1.5rem;
   font-weight: 300;
   letter-spacing: 0.01em;
-  color: var(--white);
+  color: var(--near-black);
   margin: 0 0 var(--space-2xs);
 }
 
 .footer-sub {
   font-size: var(--text-label);
-  color: #a8b7cf;
+  color: #5c6b84;
   margin: 0;
 }
 
 .footer-heading {
   font-size: var(--text-label);
-  color: #8fa2c0;
+  color: #5c6b84;
   margin: 0 0 var(--space-sm);
 }
 
@@ -360,7 +360,7 @@ main {
 
 .footer-col a {
   font-size: var(--text-sans);
-  color: #ccd6e6;
+  color: #33415c;
   text-decoration: underline;
   text-decoration-color: transparent;
   text-decoration-thickness: 1px;
@@ -369,8 +369,8 @@ main {
 }
 
 .footer-col a:hover {
-  color: var(--white);
-  text-decoration-color: var(--white);
+  color: var(--near-black);
+  text-decoration-color: var(--near-black);
 }
 
 .footer-watermark {
@@ -381,20 +381,20 @@ main {
   letter-spacing: 0.01em;
   white-space: nowrap;
   text-align: center;
-  color: rgba(246, 246, 244, 0.06);
+  color: rgba(36, 58, 92, 0.14);
   margin: var(--space-lg) 0 var(--space-md);
   user-select: none;
   pointer-events: none;
 }
 
 .footer-bottom {
-  border-top: 1px solid rgba(246, 246, 244, 0.15);
+  border-top: 1px solid rgba(36, 58, 92, 0.15);
   padding-top: var(--space-sm);
 }
 
 .footer-bottom p {
   font-size: var(--text-caption);
-  color: #8fa2c0;
+  color: #5c6b84;
   margin: 0;
 }
 
