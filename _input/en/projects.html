@@ -4,29 +4,4 @@ layout: default.html
 tags: pages
 ---
 
-{% assign lang = page.lang %}
-
-<div style="max-width: var(--content-width); margin: 0 auto; padding: var(--space-xl) var(--space-md) var(--space-lg); padding-top: 150px;">
-  <h1 style="font-size: 1.1em; font-weight: 500; font-family: var(--font-sans);">{{ languages[lang].projects_title }}</h1>
-</div>
-
-{% assign langProjects = 'projects_' | append: lang %}
-{% assign sortedProjects = collections[langProjects] | sort: 'date' | reverse %}
-
-<div class="text-list">
-  {% if sortedProjects.size > 0 %}
-    {% for project in sortedProjects %}
-      <a href="{{ project.url }}" class="text-list-item">
-        <div class="text-list-left">
-          <h3 class="text-list-title">{{ project.data.title }}</h3>
-          {% if project.data.collaborators %}<p class="text-list-detail">{{ project.data.collaborators }}</p>{% endif %}
-        </div>
-        <div class="text-list-right">
-          <span class="text-list-arrow">&#8599;</span>
-        </div>
-      </a>
-    {% endfor %}
-  {% else %}
-    <p style="padding: var(--space-md); color: var(--mid-grey); font-style: italic;">No projects found.</p>
-  {% endif %}
-</div>
+{% include "projects-list.liquid" %}

@@ -5,29 +5,4 @@ tags: pages
 navTransparent: true
 ---
 
-{% assign lang = page.lang %}
-
-{% assign langHighlights = 'highlights_' | append: lang %}
-{% assign sortedHighlights = collections[langHighlights] | sort: 'date' | reverse %}
-
-<div class="highlights-section">
-  <div class="highlights-grid">
-    {% if sortedHighlights.size > 0 %}
-      {% for highlight in sortedHighlights %}
-        <a href="{{ highlight.url }}" class="highlight-card">
-          {% if highlight.data.image %}
-            <img src="{{ highlight.data.image }}" alt="{{ highlight.data.title }}">
-          {% endif %}
-          <div class="highlight-card-overlay">
-            <div class="highlight-card-top">
-              {% if highlight.data.type %}<p class="highlight-card-type">{{ highlight.data.type }}</p>{% endif %}
-              <h3 class="highlight-card-title">{{ highlight.data.title }}</h3>
-            </div>
-          </div>
-        </a>
-      {% endfor %}
-    {% else %}
-      <p style="padding: var(--space-md); color: var(--mid-grey); font-style: italic;">{{ languages[lang].no_highlights }}</p>
-    {% endif %}
-  </div>
-</div>
+{% include "highlights-list.liquid" %}

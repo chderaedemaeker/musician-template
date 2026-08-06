@@ -1,0 +1,35 @@
+{% assign lang = page.lang %}
+
+<div class="contact-page">
+
+  <form name="contact" method="POST" data-netlify="true" action="/{{ lang }}/contact/success/">
+    <input type="hidden" name="form-name" value="contact">
+    <div class="form-group">
+      <input required type="text" id="name" name="name" placeholder="{{ languages[lang].your_name }}">
+    </div>
+    <div class="form-group">
+      <input required type="email" id="email" name="email" placeholder="{{ languages[lang].your_email }}">
+    </div>
+    <div class="form-group">
+      <textarea required id="message" name="message" placeholder="{{ languages[lang].message }}"></textarea>
+    </div>
+    <button type="submit" class="btn">{{ languages[lang].send_button }}</button>
+  </form>
+
+  <div class="contact-divider"></div>
+
+  <div class="contact-footer">
+    <form name="newsletter" method="POST" data-netlify="true" action="/{{ lang }}/contact/success/" class="newsletter-form">
+      <input type="hidden" name="form-name" value="newsletter">
+      <input required type="email" id="newsletter-email" name="email" placeholder="{{ languages[lang].newsletter }}">
+      <button type="submit" class="btn btn-sm">&#8599;</button>
+    </form>
+
+    <div class="socials-list">
+      <a href="https://www.facebook.com/" target="_blank" rel="noopener">Facebook</a>
+      <a href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.youtube.com/" target="_blank" rel="noopener">YouTube</a>
+    </div>
+  </div>
+
+</div>
