@@ -74,14 +74,17 @@ main {
   backdrop-filter: blur(10px);
 }
 
-/* Scrolling down: bar and menu fade out — only the name stays */
+/* Scrolling down: bar and menu fade out — only the name stays,
+   backed by a soft fade of the page color */
 .nav--quiet {
   background-color: transparent;
+  background-image: linear-gradient(rgba(245, 244, 242, 0.92), rgba(245, 244, 242, 0));
   border-color: transparent;
 }
 
 .nav.is-scrolled.nav--quiet {
   background-color: transparent;
+  background-image: linear-gradient(rgba(245, 244, 242, 0.92), rgba(245, 244, 242, 0));
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
 }

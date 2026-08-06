@@ -193,6 +193,12 @@
   align-self: stretch;
 }
 
+/* Inside the card, rows (tint and hairlines) run flush to its edges */
+.bento-concerts .upcoming-item {
+  margin-inline: calc(-1 * var(--space-md));
+  padding-inline: var(--space-md);
+}
+
 .bento-projects {
   grid-column: 1 / 4;
 }
