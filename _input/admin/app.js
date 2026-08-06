@@ -145,6 +145,7 @@ class ConfigParser {
         required: f.required !== false, i18n: f.i18n || false,
         default: f.default ?? '', format: f.format || '',
         autocomplete: f.autocomplete || false,
+        hint: f.hint || '',
       })),
       summary: c.summary || '{{title}}', sort: c.sort || '',
     }));
@@ -157,24 +158,58 @@ const FrontMatter = {
     const match = text.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
     if (!match) return { data: {}, body: text };
     const data = {};
-    for (const line of match[1].split('\n')) {
+    const unquote = v => {
+      v = v.trim();
+      if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'")))
+        v = v.slice(1, -1).replace(/\\"/g, '"');
+      return v;
+    };
+    const lines = match[1].split('\n');
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      // A key with no value followed by "  - " lines is a list of objects
+      const listKey = line.match(/^([A-Za-z0-9_]+):\s*$/);
+      if (listKey && i + 1 < lines.length && lines[i + 1].trim().startsWith('- ')) {
+        const arr = [];
+        let cur = null;
+        while (i + 1 < lines.length && /^\s+(-\s|[A-Za-z0-9_]+:)/.test(lines[i + 1])) {
+          i++;
+          let l = lines[i].trim();
+          if (l.startsWith('- ')) { cur = {}; arr.push(cur); l = l.slice(2); }
+          const ci = l.indexOf(':');
+          if (ci !== -1 && cur) cur[l.slice(0, ci).trim()] = unquote(l.slice(ci + 1));
+        }
+        data[listKey[1]] = arr;
+        continue;
+      }
       const idx = line.indexOf(':');
       if (idx === -1) continue;
       const key = line.slice(0, idx).trim();
-      let val = line.slice(idx + 1).trim();
-      if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'")))
-        val = val.slice(1, -1);
-      data[key] = val;
+      data[key] = unquote(line.slice(idx + 1));
     }
     return { data, body: match[2] };
   },
   serialize(data, body) {
-    let out = '---\n';
-    for (const [k, v] of Object.entries(data)) {
+    const quote = v => {
       const val = v == null ? '' : String(v);
       if (val === '' || val.includes(':') || val.includes('#') || val.includes('{') || val.includes('}') || val.includes('[') || val.includes(']'))
-        out += `${k}: "${val.replace(/"/g, '\\"')}"\n`;
-      else out += `${k}: ${val}\n`;
+        return `"${val.replace(/"/g, '\\"')}"`;
+      return val;
+    };
+    let out = '---\n';
+    for (const [k, v] of Object.entries(data)) {
+      if (Array.isArray(v)) {
+        const items = v.filter(item => item && Object.values(item).some(x => x && String(x).trim()));
+        if (!items.length) continue;
+        out += `${k}:\n`;
+        for (const item of items) {
+          Object.entries(item).forEach(([ik, iv], idx) => {
+            out += (idx === 0 ? '  - ' : '    ') + `${ik}: ${quote(iv)}\n`;
+          });
+        }
+        continue;
+      }
+      out += `${k}: ${quote(v)}\n`;
     }
     out += '---\n';
     if (body) out += body;
@@ -1205,7 +1240,7 @@ class App {
       if (field.name === 'body') continue;
       const value = data[field.name] || '';
       html += `<div class="form-group">
-        <label class="form-label">${esc(field.label)}${field.required ? '' : ' <span class="optional">(optional)</span>'}</label>
+        ${this._renderLabel(field)}
         ${this._renderField(field, value, state.activeLocale)}
       </div>`;
     }
@@ -1213,7 +1248,7 @@ class App {
     const bodyField = col.fields.find(f => f.name === 'body');
     if (bodyField) {
       html += `<div class="form-group">
-        <label class="form-label">${esc(bodyField.label)}</label>
+        ${this._renderLabel(bodyField)}
         ${this._renderMarkdownEditor('body', body, state.activeLocale)}
       </div>`;
     }
@@ -1238,7 +1273,7 @@ class App {
         if (field.name === 'body') continue;
         const value = data[field.name] || '';
         html += `<div class="form-group">
-          <label class="form-label">${esc(field.label)}</label>
+          ${this._renderLabel(field)}
           ${this._renderField(field, value, loc)}
         </div>`;
       }
@@ -1292,25 +1327,49 @@ class App {
     }
   }
 
+  _renderLabel(field) {
+    const optional = field.required ? '' : ' <span class="optional">(optional)</span>';
+    const hint = field.hint
+      ? `<button type="button" class="hint-toggle" aria-label="What is this?" title="${esc(field.hint)}">?</button>
+         <span class="field-hint" hidden>${esc(field.hint)}</span>`
+      : '';
+    return `<label class="form-label">${esc(field.label)}${optional}${hint}</label>`;
+  }
+
   _renderField(field, value, locale) {
     const escaped = esc(value);
     const dataAttr = `data-field="${field.name}" data-locale="${locale}"`;
 
     switch (field.widget) {
+      case 'links': {
+        const items = Array.isArray(value) ? value : [];
+        const rows = items.map((l, i) => `
+          <div class="links-row">
+            <input type="text" class="form-input link-label" value="${esc(l.label || '')}" placeholder="Name shown on the button, e.g. Website" />
+            <input type="url" class="form-input link-url" value="${esc(l.url || '')}" placeholder="https://…" />
+            <button type="button" class="btn btn-ghost btn-sm links-remove" aria-label="Remove link">&#215;</button>
+          </div>`).join('');
+        return `<div class="links-editor" data-links-field="${field.name}" data-locale="${locale}">
+          <div class="links-rows">${rows}</div>
+          <button type="button" class="btn btn-ghost btn-sm links-add">+ Add a link</button>
+        </div>`;
+      }
+
       case 'datetime':
         let dtVal = value;
         if (dtVal && dtVal.length > 16) dtVal = dtVal.substring(0, 16);
         return `<input type="datetime-local" class="form-input" ${dataAttr} value="${esc(dtVal)}" />`;
 
       case 'image':
-        return `<div class="image-field">
-          ${value ? `<img class="image-preview" src="${value.startsWith('/') ? value : '/images/' + value}" onerror="this.style.display='none'" />` : '<div class="image-placeholder">No image</div>'}
+        return `<div class="image-field image-dropzone" data-img-field="${field.name}" data-img-locale="${locale}">
+          ${value ? `<img class="image-preview" src="${value.startsWith('/') ? value : '/images/' + value}" onerror="this.style.display='none'" />` : ''}
           <div class="image-controls">
-            <input type="text" class="form-input" ${dataAttr} value="${escaped}" placeholder="/images/photo.jpg" />
-            <div style="display:flex;gap:.25rem;margin-top:.25rem;">
-              <button type="button" class="btn btn-ghost btn-sm image-browse-btn" data-img-field="${field.name}" data-img-locale="${locale}">Browse</button>
-              <button type="button" class="btn btn-ghost btn-sm image-upload-btn" data-img-field="${field.name}" data-img-locale="${locale}">Upload</button>
+            <p class="dropzone-text">${value ? 'Drop a new photo here to replace it' : 'Drop a photo here'} &mdash; or</p>
+            <div style="display:flex;gap:.4rem;flex-wrap:wrap;">
+              <button type="button" class="btn btn-sm image-upload-btn" data-img-field="${field.name}" data-img-locale="${locale}">Choose a file</button>
+              <button type="button" class="btn btn-ghost btn-sm image-browse-btn" data-img-field="${field.name}" data-img-locale="${locale}">Pick from the site</button>
             </div>
+            <input type="text" class="form-input image-path-input" ${dataAttr} value="${escaped}" placeholder="/images/photo.jpg" />
           </div>
         </div>`;
 
@@ -1368,6 +1427,52 @@ class App {
     // Image browse buttons (open picker)
     formEl.querySelectorAll('.image-browse-btn').forEach(btn => {
       btn.addEventListener('click', () => this._showImagePicker(btn.dataset.imgField, btn.dataset.imgLocale, state));
+    });
+
+    // Hint toggles — click the ? to show/hide the explanation
+    formEl.querySelectorAll('.hint-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const hint = btn.parentElement.querySelector('.field-hint');
+        if (hint) hint.hidden = !hint.hidden;
+      });
+    });
+
+    // Links editor — add and remove rows
+    formEl.querySelectorAll('.links-editor').forEach(editor => {
+      const rowsEl = editor.querySelector('.links-rows');
+      const addRow = () => {
+        const row = document.createElement('div');
+        row.className = 'links-row';
+        row.innerHTML = '<input type="text" class="form-input link-label" placeholder="Name shown on the button, e.g. Website" />' +
+          '<input type="url" class="form-input link-url" placeholder="https://…" />' +
+          '<button type="button" class="btn btn-ghost btn-sm links-remove" aria-label="Remove link">&#215;</button>';
+        rowsEl.appendChild(row);
+        row.querySelector('.link-label').focus();
+      };
+      editor.querySelector('.links-add').addEventListener('click', () => { addRow(); this._markDirty(); });
+      editor.addEventListener('click', e => {
+        const rm = e.target.closest('.links-remove');
+        if (rm) { rm.closest('.links-row').remove(); this._markDirty(); }
+      });
+      editor.addEventListener('input', () => this._markDirty());
+    });
+
+    // Image drop zones — drag a photo straight onto the field
+    formEl.querySelectorAll('.image-dropzone').forEach(zone => {
+      ['dragover', 'dragenter'].forEach(ev => zone.addEventListener(ev, e => {
+        e.preventDefault();
+        zone.classList.add('dropzone-active');
+      }));
+      ['dragleave', 'drop'].forEach(ev => zone.addEventListener(ev, e => {
+        e.preventDefault();
+        zone.classList.remove('dropzone-active');
+      }));
+      zone.addEventListener('drop', e => {
+        const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+          this._handleImageUpload(file, zone.dataset.imgField, zone.dataset.imgLocale, state);
+        }
+      });
     });
 
     // Markdown editors
@@ -1455,9 +1560,10 @@ class App {
       const meta = [];
       if (data.place) meta.push(esc(data.place));
       if (data.composers) meta.push(`<em>${esc(data.composers)}</em>`);
-      if (data.collaborators) meta.push(`With ${esc(data.collaborators)}`);
+      if (data.collaborators) meta.push(esc(data.collaborators));
       if (meta.length) html += `<div class="lp-meta">${meta.map(m => `<span>${m}</span>`).join('')}</div>`;
       if (body.trim()) html += `<div class="lp-body">${renderMarkdown(body)}</div>`;
+      if (Array.isArray(data.links) && data.links.length) html += `<div class="lp-actions">${data.links.filter(l => l.label || l.url).map(l => `<span class="lp-btn">${esc(l.label || 'Link')}</span>`).join(' ')}</div>`;
       if (data.link) html += `<a class="lp-btn" href="#">Tickets & Info</a>`;
     } else if (colName === 'highlights') {
       // Highlight detail preview
@@ -1480,6 +1586,7 @@ class App {
       }
       if (meta.length) html += `<div class="lp-meta">${meta.map(m => `<span>${m}</span>`).join('')}</div>`;
       if (body.trim()) html += `<div class="lp-body">${renderMarkdown(body)}</div>`;
+      if (Array.isArray(data.links) && data.links.length) html += `<div class="lp-actions">${data.links.filter(l => l.label || l.url).map(l => `<span class="lp-btn">${esc(l.label || 'Link')}</span>`).join(' ')}</div>`;
     } else if (colName === 'projects') {
       // Project detail preview
       html += `<h1 class="lp-title">${esc(data.title || 'Untitled')}</h1>`;
@@ -1488,14 +1595,17 @@ class App {
         html += `<div class="lp-featured-image"><img src="${data.image.startsWith('/') ? data.image : '/images/' + data.image}" alt="${esc(data.title || '')}" onerror="this.parentElement.innerHTML='<div class=\\'lp-img-placeholder\\'>Image</div>'" /></div>`;
       }
       if (body.trim()) html += `<div class="lp-body">${renderMarkdown(body)}</div>`;
+      if (Array.isArray(data.links) && data.links.length) html += `<div class="lp-actions">${data.links.filter(l => l.label || l.url).map(l => `<span class="lp-btn">${esc(l.label || 'Link')}</span>`).join(' ')}</div>`;
     } else if (colName === 'about') {
       // About preview
       html += `<h1 class="lp-title">${esc(data.title || 'About')}</h1>`;
       if (data.summaryabout) html += `<div class="lp-summary">${renderMarkdown(data.summaryabout)}</div>`;
       if (body.trim()) html += `<div class="lp-body">${renderMarkdown(body)}</div>`;
+      if (Array.isArray(data.links) && data.links.length) html += `<div class="lp-actions">${data.links.filter(l => l.label || l.url).map(l => `<span class="lp-btn">${esc(l.label || 'Link')}</span>`).join(' ')}</div>`;
     } else {
       html += `<h1 class="lp-title">${esc(data.title || 'Untitled')}</h1>`;
       if (body.trim()) html += `<div class="lp-body">${renderMarkdown(body)}</div>`;
+      if (Array.isArray(data.links) && data.links.length) html += `<div class="lp-actions">${data.links.filter(l => l.label || l.url).map(l => `<span class="lp-btn">${esc(l.label || 'Link')}</span>`).join(' ')}</div>`;
     }
 
     html += '</div>';
@@ -1693,6 +1803,16 @@ class App {
         else state.data[loc][el.dataset.field] = el.value;
       });
     }
+    // Links editors serialize to arrays of {label, url}
+    formEl.querySelectorAll('.links-editor').forEach(editor => {
+      const loc = editor.dataset.locale;
+      const name = editor.dataset.linksField;
+      if (!state.data[loc]) return;
+      state.data[loc][name] = Array.from(editor.querySelectorAll('.links-row')).map(row => ({
+        label: row.querySelector('.link-label').value.trim(),
+        url: row.querySelector('.link-url').value.trim(),
+      })).filter(l => l.label || l.url);
+    });
   }
 
   async _saveEntry(state) {

@@ -46,6 +46,12 @@
       {{ content }}
     </div>
 
+    {% if links and links.size > 0 %}
+      <div class="content-actions">
+        {% for l in links %}<a class="btn" href="{{ l.url }}" target="_blank" rel="noopener">{{ l.label }}</a>{% endfor %}
+      </div>
+    {% endif %}
+
     {% assign langProjects = 'projects_' | append: lang %}
     {% assign detailItems = collections[langProjects] | sort: 'date' | reverse %}
     {% include "detail-nav.liquid" %}

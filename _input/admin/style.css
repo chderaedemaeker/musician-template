@@ -1107,3 +1107,159 @@ a:hover { opacity: 0.6; }
 .autocomplete-item:hover, .autocomplete-item.autocomplete-active {
   background: var(--off-white);
 }
+
+/* ============================================
+   USABILITY PASS — readability, hints, links
+   editor, drop zone, realistic preview
+   ============================================ */
+
+/* Bigger base text for readability */
+html { font-size: 16px; }
+
+/* ── Field hints — the ? next to a label ── */
+.hint-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-left: 0.4rem;
+  border: 1px solid var(--mid-grey);
+  border-radius: 50%;
+  background: none;
+  color: var(--dark-grey);
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.hint-toggle:hover {
+  border-color: var(--near-black);
+  color: var(--near-black);
+}
+
+.field-hint {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--dark-grey);
+  background: var(--off-white);
+  border-left: 2px solid var(--warm-grey);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0 6px 6px 0;
+}
+
+/* ── Links editor — repeatable name + address rows ── */
+.links-row {
+  display: grid;
+  grid-template-columns: minmax(8rem, 1fr) minmax(10rem, 1.4fr) auto;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
+  align-items: center;
+}
+
+.links-add {
+  margin-top: 0.25rem;
+}
+
+/* ── Image field as a drop zone ── */
+.image-dropzone {
+  border: 2px dashed var(--warm-grey);
+  border-radius: 10px;
+  padding: 1rem;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.image-dropzone.dropzone-active {
+  border-color: var(--near-black);
+  background: #fff;
+}
+
+.dropzone-text {
+  font-size: 0.9rem;
+  color: var(--dark-grey);
+  margin: 0 0 0.5rem;
+}
+
+.image-dropzone .image-path-input {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--dark-grey);
+}
+
+/* ── Live preview — closer to the real site ── */
+@font-face {
+  font-family: 'AGL';
+  src: url('/images/AppleGaramond-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+.live-preview-content {
+  background: #f5f4f2;
+}
+
+.live-preview-content .lp-page {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  color: #121211;
+}
+
+.live-preview-content .lp-title {
+  font-family: 'AGL', Georgia, serif;
+  font-weight: 300;
+  font-size: 2.2rem;
+  line-height: 1.1;
+  margin: 0 0 0.75rem;
+}
+
+.live-preview-content .lp-date {
+  font-size: 0.8rem;
+  color: #7a746b;
+  margin: 0 0 0.75rem;
+}
+
+.live-preview-content .lp-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.9rem;
+  color: #7a746b;
+  margin-bottom: 1.25rem;
+}
+
+.live-preview-content .lp-meta em { font-style: normal; }
+
+.live-preview-content .lp-body {
+  font-family: 'AGL', Georgia, serif;
+  font-size: 1.15rem;
+  line-height: 1.6;
+}
+
+.live-preview-content .lp-body img {
+  border-radius: 12px;
+  margin: 0.75rem 0;
+}
+
+.live-preview-content .lp-featured-image img {
+  border-radius: 12px;
+}
+
+.live-preview-content .lp-btn,
+.live-preview-content .lp-actions .lp-btn {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  padding: 0.7em 1.4em;
+  border: 1px solid #121211;
+  border-radius: 6px;
+  color: #121211;
+  background: transparent;
+  margin-top: 0.75rem;
+  margin-right: 0.4rem;
+}

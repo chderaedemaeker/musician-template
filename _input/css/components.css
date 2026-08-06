@@ -33,9 +33,10 @@
   border-color: var(--dark-grey);
 }
 
+/* One button size everywhere — .btn-sm kept only for old markup */
 .btn-sm {
-  padding: 0.7em 1.2em;
-  font-size: var(--text-label);
+  padding: 0.8em 1.6em;
+  font-size: var(--text-sans);
 }
 
 /* ── Back link — quiet return action ── */

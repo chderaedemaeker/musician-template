@@ -33,15 +33,16 @@ collections:
     sort: 'date:desc'
     preview_path: "en/concerts/{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
-      - {label: "Title", name: "title", widget: "string", required: true}
+      - {label: "Title", name: "title", widget: "string", required: true, hint: "The name of the concert as shown on the site, e.g. \"Recital\" or \"Four Seasons\"."}
       - {label: "Date", name: "date", widget: "datetime", required: true, default: "", format: "YYYY-MM-DDTHH:mm:ss", picker_utc: false, hint: "Leave the time at 00:00 if the concert has no specific hour — it will be hidden on the site."}
       - {label: "End date (optional)", name: "date_end", widget: "datetime", required: false, default: "", format: "YYYY-MM-DDTHH:mm:ss", picker_utc: false, hint: "Only for concerts spanning multiple days, e.g. 12–16 August."}
       - {label: "Month and year only", name: "month_only", widget: "boolean", required: false, default: false, hint: "Turn on when the exact day isn't known yet — the site shows only \"August 2026\". Set the date to any day in that month."}
-      - {label: "Place", name: "place", widget: "string", required: false, autocomplete: true}
-      - {label: "Composers", name: "composers", widget: "string", required: false, autocomplete: true}
-      - {label: "Collaborators", name: "collaborators", widget: "string", required: false, autocomplete: true}
-      - {label: "Link", name: "link", widget: "string", required: false}
-      - {label: "Additional information", name: "body", widget: "markdown", required: false}
+      - {label: "Place", name: "place", widget: "string", required: false, autocomplete: true, hint: "City and country, e.g. \"Ghent, Belgium\". Start typing to reuse a place from earlier concerts."}
+      - {label: "Composers", name: "composers", widget: "string", required: false, autocomplete: true, hint: "Composers on the programme, separated by commas, e.g. \"Bach, Ysaÿe\"."}
+      - {label: "Collaborators", name: "collaborators", widget: "string", required: false, autocomplete: true, hint: "Who plays with you, e.g. \"Duo Altiler (Alexander Declercq - Piano)\"."}
+      - {label: "Link", name: "link", widget: "string", required: false, hint: "Web address for tickets or more information. Shown as a \"Tickets & Info\" button."}
+      - {label: "Extra links", name: "links", widget: "links", required: false, hint: "Optional extra buttons at the bottom of the concert page. Give each one a short name (what visitors will read) and the full web address."}
+      - {label: "Additional information", name: "body", widget: "markdown", required: false, hint: "Free text shown on the concert page: programme, background, anything visitors should know."}
 
   - label: "Projects"
     name: "projects"
@@ -52,10 +53,11 @@ collections:
     editor:
       preview: false
     fields:
-      - {label: "Title", name: "title", widget: "string", required: true, i18n: duplicate}
-      - {label: "Collaborators", name: "collaborators", widget: "string", required: false, i18n: true}
-      - {label: "Image", name: "image", widget: "image", required: true, i18n: duplicate}
-      - {label: "Additional information", name: "body", widget: "markdown", required: false, i18n: true}
+      - {label: "Title", name: "title", widget: "string", required: true, i18n: duplicate, hint: "The name of the ensemble or project."}
+      - {label: "Collaborators", name: "collaborators", widget: "string", required: false, i18n: true, hint: "The members or partners, e.g. \"Alexander Declercq - Piano\"."}
+      - {label: "Image", name: "image", widget: "image", required: true, i18n: duplicate, hint: "A photo for the project. It appears on the project cards and at the top of the page."}
+      - {label: "Extra links", name: "links", widget: "links", required: false, hint: "Buttons at the bottom of the project page, e.g. the ensemble's website or Instagram."}
+      - {label: "Additional information", name: "body", widget: "markdown", required: false, i18n: true, hint: "The story of the project: who, what, since when."}
 
   - label: "Highlights"
     name: "highlights"
@@ -64,14 +66,15 @@ collections:
     create: true
     i18n: true
     fields:
-      - {label: "Title", name: "title", widget: "string", required: true, i18n: true}
+      - {label: "Title", name: "title", widget: "string", required: true, i18n: true, hint: "The name of the highlight, e.g. a recording, video or special concert."}
       - {label: "Slug", name: "slug", widget: "string", required: true, i18n: duplicate}
       - {label: "Date", name: "date", widget: "datetime", required: false, format: "YYYY-MM-DDTHH:mm:ss", time_format: false, picker_utc: false, i18n: duplicate}
-      - {label: "Type", name: "type", widget: "string", required: false, i18n: duplicate}
-      - {label: "Thumbnail", name: "image", widget: "image", required: true, i18n: duplicate}
-      - {label: "Youtube ID", name: "link", widget: "string", required: false, i18n: duplicate}
+      - {label: "Type", name: "type", widget: "string", required: false, i18n: duplicate, hint: "A short word for what this is: \"Video\", \"Recording\", \"CD release\"…"}
+      - {label: "Thumbnail", name: "image", widget: "image", required: true, i18n: duplicate, hint: "The photo on the highlight card. Required — highlights without a photo look empty."}
+      - {label: "Youtube ID", name: "link", widget: "string", required: false, i18n: duplicate, hint: "Only the code after watch?v= in a YouTube address, e.g. \"XSOi7_MJnqI\". The video then replaces the photo on the page."}
       - {label: "Place", name: "place", widget: "string", required: false, i18n: duplicate}
       - {label: "Collaborators", name: "collaborators", widget: "string", required: false, i18n: duplicate}
+      - {label: "Extra links", name: "links", widget: "links", required: false, hint: "Buttons at the bottom of the page, e.g. \"Listen on SoundCloud\" with the web address."}
       - {label: "Additional information", name: "body", widget: "markdown", required: false, i18n: true}
 
   - label: "About"

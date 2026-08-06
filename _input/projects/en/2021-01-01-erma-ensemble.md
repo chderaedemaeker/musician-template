@@ -5,6 +5,13 @@ image: /images/ÉRMA (c) Anna Tena-2.2.jpeg
 layout: project.html
 tags: projects
 lang: en
+links:
+  - label: "erma-ensemble.com"
+    url: "https://erma-ensemble.com"
+  - label: "Newsletter"
+    url: "https://substack.com/@ermaensemble"
+  - label: "Instagram"
+    url: "https://www.instagram.com/erma.ensemble"
 ---
 The ÉRMA Ensemble is a young, Cologne-based ensemble that has come together to explore the music of the second half of the 20th century and the 21st century in all its virtuosity and timbres. A diverse range of instruments, including the mandolin, guitar, and harp, offers ÉRMA unique sonic possibilities.
 
@@ -16,6 +23,3 @@ The ensemble has performed several times at the Achtbrücken Festival in Cologne
 From 2023 to 2025, ÉRMA was part of the InSzene funding program run by the Podium Gegenwart of the Deutscher Musikrat.
 
 image by Anna Tena
-
-<div class="content-actions"><a class="btn btn-sm" href="https://erma-ensemble.com" target="_blank" rel="noopener">erma-ensemble.com</a> <a class="btn btn-sm" href="https://substack.com/@ermaensemble" target="_blank" rel="noopener">Newsletter</a> <a class="btn btn-sm" href="https://www.instagram.com/erma.ensemble" target="_blank" rel="noopener">Instagram</a></div>
-

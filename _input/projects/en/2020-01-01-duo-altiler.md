@@ -5,6 +5,9 @@ image: /images/duo-altiler.jpeg
 layout: project.html
 tags: projects
 lang: en
+links:
+  - label: "duoaltiler.com"
+    url: "https://www.duoaltiler.com"
 ---
 Duo Altiler is a Belgian violin-piano duo featuring Veronique De Raedemaeker and Alexander Declercq.
 
@@ -20,5 +23,4 @@ Their repertoire spans from classical to contemporary, featuring works by Beetho
 
 Currently Duo Altiler follows the chamber music course at the Orpheus Institute. They worked on repertoire with Robert Kulek, Alasdair Beatson, Paulo Álvares, David Quiggle, José Luis Estelles, Piet Kuijken, Abdel Rahman El Bacha & Amy Norrington.
 
-<div class="content-actions"><a class="btn btn-sm" href="https://www.duoaltiler.com" target="_blank" rel="noopener">duoaltiler.com</a></div>
 image by Anna Tena

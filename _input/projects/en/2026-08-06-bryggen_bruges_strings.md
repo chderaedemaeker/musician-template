@@ -1,9 +1,15 @@
 ---
 title: BRYGGEN Bruges Strings
-collaborators: ""
-image: ""
+collaborators: "Artistic direction: Jolente De Maeyer"
+image: "/images/bryggen-bruges-strings.jpg"
 layout: project.html
 tags: projects
 lang: en
+links:
+  - label: "bryggen.be"
+    url: "https://bryggen.be"
 ---
-<div class="content-actions"><a class="btn btn-sm" href="https://bryggen.be" target="_blank" rel="noopener">bryggen.be</a></div>
+
+BRYGGEN – Bruges Strings is a string orchestra that charts a course northward from its home port of Bruges, following the old Hanseatic network towards Scandinavia and the Baltic in search of new sounds. Under the artistic direction of violinist Jolente De Maeyer, the ensemble pairs contemporary repertoire — Max Richter's recomposed Four Seasons, Arvo Pärt, Caroline Shaw, Thomas Adès — with adventurous concert formats, often in collaboration with choreographers and other art forms.
+
+Veronique performs regularly with BRYGGEN, among others as soloist in Richter's *The Four Seasons Recomposed*.

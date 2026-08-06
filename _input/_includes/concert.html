@@ -47,6 +47,12 @@
       <a class="btn" href="{{ link }}" target="_blank" rel="noopener">{{ languages[lang].tickets }}</a>
     {% endif %}
 
+    {% if links and links.size > 0 %}
+      <div class="content-actions">
+        {% for l in links %}<a class="btn" href="{{ l.url }}" target="_blank" rel="noopener">{{ l.label }}</a>{% endfor %}
+      </div>
+    {% endif %}
+
     {% assign detailItems = collections.concerts | sort: 'date' | reverse %}
     {% include "detail-nav.liquid" %}
   </div>
