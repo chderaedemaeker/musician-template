@@ -18,6 +18,19 @@
     <header class="page-header">
       <h1>{{ title }}</h1>
     </header>
+    <div class="about-gallery">
+      <div class="about-gallery-track">
+        <div class="gallery-slide is-active" style="background-image: url('/images/veroniqueportrait.jpg')" role="img" aria-label="{{ languages[lang].site_title }}"></div>
+        <div class="gallery-slide" style="background-image: url('/images/veronique-18.jpeg')" role="img" aria-label="{{ languages[lang].site_title }}"></div>
+        <div class="gallery-slide" style="background-image: url('/images/veronique20b.jpg')" role="img" aria-label="{{ languages[lang].site_title }}"></div>
+        <div class="gallery-slide" style="background-image: url('/images/veronique-21.jpg')" role="img" aria-label="{{ languages[lang].site_title }}"></div>
+      </div>
+      <div class="gallery-nav">
+        <button type="button" class="gallery-btn gallery-prev" aria-label="Previous image"><span aria-hidden="true">&#8592;</span></button>
+        <button type="button" class="gallery-btn gallery-next" aria-label="Next image"><span aria-hidden="true">&#8594;</span></button>
+      </div>
+    </div>
+
     <div class="content">
       {{ content }}
     </div>

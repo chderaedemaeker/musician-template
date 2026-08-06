@@ -6,8 +6,6 @@ tags: about
 lang: en
 permalink: en/about/index.html
 ---
-![Veronique De Raedemaeker](/images/veroniqueportrait.jpg)
-
 Veronique De Raedemaeker (born 1996) is a Belgian violinist living in Cologne.
 
 ## Prizes & support

@@ -46,6 +46,14 @@
       var vh = window.innerHeight;
       var startScale = window.matchMedia('(max-width: 768px)').matches ? 1.9 : 3;
       var p = Math.min(1, Math.max(0, y / (vh * 0.6)));
+      if (p >= 1) {
+        /* journey done — hand back to the stylesheet so the name sits
+           exactly where the bar's own rules put it */
+        brand.style.transition = '';
+        brand.style.top = '';
+        brand.style.transform = '';
+        return p;
+      }
       var startY = vh * 0.5;
       var endY = nav.offsetHeight / 2;
       brand.style.transition = 'none';
@@ -140,6 +148,30 @@
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') setOpen(false);
     });
+  });
+
+  /* About gallery: cross-fade carousel with auto-advance */
+  document.addEventListener('DOMContentLoaded', function () {
+    var gallery = document.querySelector('.about-gallery');
+    if (!gallery) return;
+    var imgs = Array.prototype.slice.call(gallery.querySelectorAll('.gallery-slide'));
+    if (imgs.length < 2) return;
+    var index = 0;
+    var timer = null;
+    function show(i) {
+      index = (i + imgs.length) % imgs.length;
+      imgs.forEach(function (img, j) { img.classList.toggle('is-active', j === index); });
+    }
+    function schedule() {
+      if (reducedMotion) return;
+      clearInterval(timer);
+      timer = setInterval(function () { show(index + 1); }, 5000);
+    }
+    gallery.querySelector('.gallery-prev').addEventListener('click', function () { show(index - 1); schedule(); });
+    gallery.querySelector('.gallery-next').addEventListener('click', function () { show(index + 1); schedule(); });
+    gallery.addEventListener('mouseenter', function () { clearInterval(timer); });
+    gallery.addEventListener('mouseleave', schedule);
+    schedule();
   });
 
   /* Keep Tab inside a dialog. Call from a keydown handler when e.key === 'Tab'. */

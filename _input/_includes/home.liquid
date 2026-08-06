@@ -13,6 +13,20 @@
 <section class="section container">
   <div class="bento reveal-group">
 
+    <!-- Latest note — first cell -->
+    {% assign latestNote = collections.notes | sort: 'date' | reverse | first %}
+    {% if latestNote %}
+    <div class="bento-cell bento-notes reveal">
+      <h2 class="label">{{ languages[lang].notes_title }}</h2>
+      <a class="bento-note-link" href="{{ latestNote.url }}">
+        <span class="upcoming-item-date">{{ latestNote.date | shortDate }}</span>
+        <span class="bento-note-title">{{ latestNote.data.title }}</span>
+        <span class="bento-note-excerpt">{{ latestNote.templateContent | strip_html | truncate: 150 }}</span>
+      </a>
+      <a class="bento-cell-link" href="/en/notes/">{{ languages[lang].notes_title }} <span aria-hidden="true">&#8594;</span></a>
+    </div>
+    {% endif %}
+
     <!-- Latest highlight — newest entry that has a real date -->
     {% assign langHighlights = 'highlights_en' %}
     {% assign sortedHighlightsHome = collections[langHighlights] | sort: 'date' | reverse %}

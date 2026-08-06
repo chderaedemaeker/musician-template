@@ -163,6 +163,10 @@ module.exports = function (eleventyConfig) {
     });
 
     // Collection for concerts — single list (English as source of truth)
+    eleventyConfig.addCollection("notes", collection =>
+        collection.getFilteredByGlob("./_input/en/notes/*.md").filter(notHidden)
+    );
+
     eleventyConfig.addCollection("concerts", function(collectionApi) {
         return collectionApi.getFilteredByGlob("./_input/en/concerts/*.md");
     });

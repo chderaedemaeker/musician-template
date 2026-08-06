@@ -4,6 +4,7 @@ module.exports = {
   en: [
     { text: 'About', url: '/en/about/' },
     { text: 'Concerts', url: '/en/concerts/' },
+    { text: 'Notes', url: '/en/notes/' },
     { text: 'Projects', url: '/en/projects/' },
     { text: 'Highlights', url: '/en/highlights/' },
     { text: 'Contact', url: '/en/contact/' }
@@ -11,6 +12,7 @@ module.exports = {
   nl: [
     { text: 'Over', url: '/nl/about/' },
     { text: 'Concerts', url: '/en/concerts/' },
+    { text: 'Notes', url: '/en/notes/' },
     { text: 'Projects', url: '/en/projects/' },
     { text: 'Highlights', url: '/en/highlights/' },
     { text: 'Contact', url: '/en/contact/' }
@@ -18,6 +20,7 @@ module.exports = {
   fr: [
     { text: 'À propos', url: '/fr/about/' },
     { text: 'Concerts', url: '/en/concerts/' },
+    { text: 'Notes', url: '/en/notes/' },
     { text: 'Projects', url: '/en/projects/' },
     { text: 'Highlights', url: '/en/highlights/' },
     { text: 'Contact', url: '/en/contact/' }
@@ -26,6 +29,7 @@ module.exports = {
     // No German biography yet — point to the English one
     { text: 'About', url: '/en/about/' },
     { text: 'Concerts', url: '/en/concerts/' },
+    { text: 'Notes', url: '/en/notes/' },
     { text: 'Projects', url: '/en/projects/' },
     { text: 'Highlights', url: '/en/highlights/' },
     { text: 'Contact', url: '/en/contact/' }

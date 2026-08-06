@@ -1,0 +1,21 @@
+{% assign lang = page.lang %}
+
+<div class="container-content">
+
+  <header class="page-header">
+    <h1>{{ languages[lang].notes_title }}</h1>
+  </header>
+
+  {% assign sortedNotes = collections.notes | sort: 'date' | reverse %}
+
+  <ul class="upcoming-list notes-list">
+    {% for note in sortedNotes %}
+    <li><a class="upcoming-item" href="{{ note.url }}">
+      <span class="upcoming-item-date">{{ note.date | shortDate }}</span>
+      <span class="upcoming-item-title">{{ note.data.title }}</span>
+      <span class="upcoming-item-place">{{ note.templateContent | strip_html | truncate: 140 }}</span>
+    </a></li>
+    {% endfor %}
+  </ul>
+
+</div>

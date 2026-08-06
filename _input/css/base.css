@@ -18,7 +18,7 @@
   --mid-grey: #b5b0a8;   /* decoration only — fails contrast as text */
   --dark-grey: #8a847a;  /* secondary text — light, for quiet meta */
   --charcoal: #4d4841;   /* soft ink — long-form reading text */
-  --near-black: #0d0d0c; /* primary text — near pure black */
+  --near-black: #33322f; /* primary ink — a warm 80% grey, never pure black */
 
   /* Secondary colors — her blues: steel blue ground, dark navy ink */
   --accent: #5c8ca3;

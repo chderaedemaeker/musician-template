@@ -1,5 +1,6 @@
 module.exports = {
   en: {
+    notes_title: "Notes",
     footer_based: "Based in Cologne, Germany",
     footer_navigate: "Navigate",
     footer_follow: "Follow",
@@ -39,10 +40,11 @@ module.exports = {
     show_earlier: "Show earlier concerts",
     contact_intro: "For bookings, programmes, press, or anything else — write a message below.",
     subscribe: "Subscribe",
-    newsletter_hint: "Occasional news about concerts and recordings. No more than a few times a year.",
+    newsletter_hint: "Stay up to date with the latest concerts, recordings and highlights — straight from Veronique.",
     no_projects: "No projects found."
   },
   nl: {
+    notes_title: "Notities",
     footer_based: "Gevestigd in Keulen, Duitsland",
     footer_navigate: "Navigatie",
     footer_follow: "Volg",
@@ -82,10 +84,11 @@ module.exports = {
     show_earlier: "Eerdere concerten tonen",
     contact_intro: "Voor boekingen, programma’s, pers of iets anders — stuur hieronder een bericht.",
     subscribe: "Inschrijven",
-    newsletter_hint: "Af en toe nieuws over concerten en opnames. Hooguit enkele keren per jaar.",
+    newsletter_hint: "Blijf op de hoogte van de nieuwste concerten, opnames en hoogtepunten — rechtstreeks van Veronique.",
     no_projects: "Geen projecten gevonden."
   },
   fr: {
+    notes_title: "Notes",
     footer_based: "Basée à Cologne, Allemagne",
     footer_navigate: "Navigation",
     footer_follow: "Suivre",
@@ -125,10 +128,11 @@ module.exports = {
     show_earlier: "Afficher les concerts précédents",
     contact_intro: "Pour les réservations, programmes, presse ou toute autre demande — écrivez un message ci-dessous.",
     subscribe: "S’abonner",
-    newsletter_hint: "Des nouvelles occasionnelles sur les concerts et les enregistrements. Quelques fois par an tout au plus.",
+    newsletter_hint: "Restez au courant des derniers concerts, enregistrements et moments forts — directement de Veronique.",
     no_projects: "Aucun projet trouvé."
   },
   de: {
+    notes_title: "Notizen",
     footer_based: "Ansässig in Köln, Deutschland",
     footer_navigate: "Navigation",
     footer_follow: "Folgen",
@@ -168,7 +172,7 @@ module.exports = {
     show_earlier: "Frühere Konzerte anzeigen",
     contact_intro: "Für Buchungen, Programme, Presse oder anderes — schreiben Sie unten eine Nachricht.",
     subscribe: "Abonnieren",
-    newsletter_hint: "Gelegentliche Neuigkeiten zu Konzerten und Aufnahmen. Höchstens ein paar Mal im Jahr.",
+    newsletter_hint: "Bleiben Sie auf dem Laufenden über die neuesten Konzerte, Aufnahmen und Highlights — direkt von Veronique.",
     no_projects: "Keine Projekte gefunden.",
   }
 };

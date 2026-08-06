@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="{{ page.lang }}" dir="{{ languages[page.lang].dir | default: 'ltr' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ title }}">
+    <title>{{ title }} — {{ languages[page.lang].site_title }}</title>
+    {% include "css.liquid" %}
+</head>
+<body>
+
+{% assign lang = "en" %}
+
+{% include "navigation.liquid" %}
+
+<main>
+  <div class="detail-page">
+    <a class="btn btn--back" href="/en/notes/"><span aria-hidden="true">&#8592;</span> {{ languages[lang].back_to_overview }}</a>
+
+    {% if date %}<p class="date note-date">{{ date | shortDate }}</p>{% endif %}
+    <h1>{{ title }}</h1>
+
+    <div class="content">
+      {{ content }}
+    </div>
+
+    {% if links and links.size > 0 %}
+      <div class="content-actions">
+        {% for l in links %}<a class="btn" href="{{ l.url }}" target="_blank" rel="noopener">{{ l.label }}</a>{% endfor %}
+      </div>
+    {% endif %}
+
+    {% assign detailItems = collections.notes | sort: 'date' | reverse %}
+    {% include "detail-nav.liquid" %}
+  </div>
+</main>
+
+{% include "footer.liquid" %}
+{% include "progressive-loader.liquid" %}
+</body>
+</html>

@@ -167,7 +167,7 @@
 }
 
 .concert-search:focus {
-  border-color: var(--near-black);
+  border-color: var(--mid-grey);
 }
 
 .concert-search::placeholder {
@@ -228,13 +228,31 @@
 }
 
 .concert-row-day {
+  display: block;
   opacity: 0.75;
   font-size: var(--text-label);
+  margin-bottom: var(--space-2xs);
+}
+
+.concert-row-datemain {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.concert-row-monthyear {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+  color: var(--charcoal);
 }
 
 .concert-row-daynum {
   font-family: var(--font-serif);
-  font-size: 1.75rem;
+  font-size: 2.1rem;
   font-weight: 300;
   line-height: 1;
   letter-spacing: 0.01em;
@@ -838,7 +856,7 @@ body.modal-open {
 
 .form-group input:focus,
 .form-group textarea:focus {
-  border-color: var(--near-black);
+  border-color: var(--mid-grey);
 }
 
 .form-group input::placeholder,
@@ -882,7 +900,7 @@ body.modal-open {
 }
 
 .newsletter-row input:focus {
-  border-color: var(--near-black);
+  border-color: var(--mid-grey);
 }
 
 .newsletter-row .btn {

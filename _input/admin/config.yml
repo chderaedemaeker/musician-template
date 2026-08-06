@@ -45,6 +45,23 @@ collections:
       - {label: "Extra links", name: "links", widget: "links", required: false, hint: "Optional extra buttons at the bottom of the concert page. Give each one a short name (what visitors will read) and the full web address."}
       - {label: "Additional information", name: "body", widget: "markdown", required: false, hint: "Free text shown on the concert page: programme, background, anything visitors should know."}
 
+  - label: "Notes"
+    name: "notes"
+    folder: "_input/en/notes"
+    slug: '{{year}}-{{month}}-{{day}}-{{slug}}'
+    extension: md
+    create: true
+    editor:
+      preview: true
+    summary: '{{date}} — {{title}}'
+    sortable_fields: ['date', 'title']
+    sort: 'date:desc'
+    fields:
+      - {label: "Title", name: "title", widget: "string", required: true, hint: "The title of your note."}
+      - {label: "Date", name: "date", widget: "datetime", required: true, default: "", format: "YYYY-MM-DDTHH:mm:ss", picker_utc: false, hint: "When you wrote it — notes are shown newest first."}
+      - {label: "Text", name: "body", widget: "markdown", required: true, hint: "Your note — as short or long as you like. Personal, in your own words."}
+      - {label: "Extra links", name: "links", widget: "links", required: false, hint: "Optional buttons at the bottom of the note."}
+
   - label: "Projects"
     name: "projects"
     folder: "_input/projects"

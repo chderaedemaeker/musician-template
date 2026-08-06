@@ -84,9 +84,12 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!isArchive && !c.monthOnly && !c.dateEnd) {
       var dd = new Date(c.date);
       var weekday = dd.toLocaleDateString(lang, { weekday: 'long' });
-      var monthYear = dd.toLocaleDateString(lang, { month: 'long', year: 'numeric' });
-      dateHtml = '<span class="concert-row-day">' + weekday + '</span><br>' +
-        '<span class="concert-row-daynum">' + dd.getDate() + '</span> ' + monthYear;
+      var month = dd.toLocaleDateString(lang, { month: 'long' });
+      dateHtml = '<span class="concert-row-day">' + weekday + '</span>' +
+        '<span class="concert-row-datemain">' +
+          '<span class="concert-row-daynum">' + dd.getDate() + '</span>' +
+          '<span class="concert-row-monthyear"><span>' + month + '</span><span>' + dd.getFullYear() + '</span></span>' +
+        '</span>';
       d = weekday + ' ' + d;
     }
     var aside = '';

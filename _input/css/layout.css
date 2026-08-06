@@ -78,13 +78,13 @@ main {
    backed by a soft fade of the page color */
 .nav--quiet {
   background-color: transparent;
-  background-image: linear-gradient(rgba(245, 244, 242, 0.92), rgba(245, 244, 242, 0));
+  background-image: linear-gradient(rgba(245, 244, 242, 0.55), rgba(245, 244, 242, 0));
   border-color: transparent;
 }
 
 .nav.is-scrolled.nav--quiet {
   background-color: transparent;
-  background-image: linear-gradient(rgba(245, 244, 242, 0.92), rgba(245, 244, 242, 0));
+  background-image: linear-gradient(rgba(245, 244, 242, 0.55), rgba(245, 244, 242, 0));
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
 }
@@ -167,13 +167,17 @@ main {
 }
 
 .lang-picker-btn {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.3em;
   background: none;
   border: none;
   cursor: pointer;
   font-family: var(--font-sans);
   font-size: var(--text-label);
+  line-height: inherit;
   color: var(--dark-grey);
-  padding: 0.35em 0.2em;
+  padding: 0;
   transition: color var(--dur-fast) var(--ease);
 }
 
@@ -379,7 +383,7 @@ main {
   border-color: transparent;
 }
 
-@media (max-width: 1020px) {
+@media (max-width: 1180px) {
   .nav-links,
   .nav-inner > .lang-picker {
     display: none;
@@ -549,4 +553,10 @@ main {
   .footer-watermark {
     font-size: clamp(2rem, 9vw, 3rem);
   }
+}
+
+/* Quiet nav never shows a border line, on any page */
+.nav.nav--quiet,
+.nav-transparent.is-scrolled.nav--quiet {
+  border-color: transparent;
 }
