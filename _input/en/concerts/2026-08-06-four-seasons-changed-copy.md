@@ -1,9 +1,9 @@
 ---
-title: Four Seasons changed (copy)
-date: "2026-10-11T21:00"
-place: Rome, Italy
+title: Four Seasons changed 
+date: "2026-11-27T20:00"
+place: Ghent, Italy
 composers: Richter
 collaborators: Bryggen Bruges Strings
-link: "https://romaeuropa.net/festival-2026/four-seasons-changed/"
+link: "https://bryggen.be/concerten/"
 layout: concert.html
 ---
