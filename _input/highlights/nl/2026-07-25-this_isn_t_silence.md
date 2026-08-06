@@ -1,12 +1,13 @@
 ---
-title: "This isn't Silence"
-slug: "this-isnt-silence"
-date: 2021-07-16T00:00:00
-type: "Live-opname"
-image: "/images/silence.jpeg"
+title: This isn't Silence
+slug: this-isnt-silence
+date: "2021-07-16T00:00:00"
+type: Live-opname
+image: /images/silence.jpeg
 link: ""
-place: "HfMT Keulen, Duitsland"
+place: HfMT Keulen, Duitsland
 collaborators: ""
+featured: true
 layout: highlight.html
 tags: highlights
 lang: nl
