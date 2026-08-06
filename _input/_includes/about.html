@@ -16,7 +16,6 @@
 <main>
   <div class="about-page">
     <header class="page-header">
-      <p class="label">{{ languages[lang].site_subtitle }}</p>
       <h1>{{ languages[lang].site_title }}</h1>
     </header>
     <div class="content">
@@ -34,8 +33,8 @@
 
       <div class="highlights-grid">
         {% for project in sortedProjects %}
-          <a href="{{ project.url }}" class="highlight-card">
-            {% if project.data.image %}
+          <a href="{{ project.url }}" class="highlight-card{% unless project.data.image and project.data.image != '' %} highlight-card--noimg{% endunless %}" {% unless project.data.image and project.data.image != '' %}data-initial="{{ project.data.title | strip | slice: 0, 1 | upcase }}"{% endunless %}>
+            {% if project.data.image and project.data.image != '' %}
               <img src="{{ project.data.image }}" alt="{{ project.data.title }}">
             {% endif %}
             <div class="highlight-card-overlay">

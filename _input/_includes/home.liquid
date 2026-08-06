@@ -36,8 +36,8 @@
   </div>
 
   <div class="highlights-grid">
-    <a href="{{ latestHighlight.url }}" class="highlight-card highlight-card--solo">
-      {% if latestHighlight.data.image %}
+    <a href="{{ latestHighlight.url }}" class="highlight-card highlight-card--solo{% unless latestHighlight.data.image and latestHighlight.data.image != '' %} highlight-card--noimg{% endunless %}" {% unless latestHighlight.data.image and latestHighlight.data.image != '' %}data-initial="{{ latestHighlight.data.title | strip | slice: 0, 1 | upcase }}"{% endunless %}>
+      {% if latestHighlight.data.image and latestHighlight.data.image != '' %}
         <img src="{{ latestHighlight.data.image }}" alt="{{ latestHighlight.data.title }}">
       {% endif %}
       <div class="highlight-card-overlay">

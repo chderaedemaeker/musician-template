@@ -3,7 +3,6 @@
 <div class="container-content">
 
   <header class="page-header">
-    <p class="label">{{ languages[lang].site_subtitle }}</p>
     <h1>{{ languages[lang].projects_title }}</h1>
   </header>
 
@@ -14,7 +13,10 @@
     {% if sortedProjects.size > 0 %}
       {% for project in sortedProjects %}
         <li>
-          <a href="{{ project.url }}" class="text-list-item">
+          <a href="{{ project.url }}" class="text-list-item{% if project.data.image and project.data.image != '' %} text-list-item--thumb{% endif %}">
+            {% if project.data.image and project.data.image != '' %}
+              <div class="text-list-thumb"><img src="{{ project.data.image }}" alt=""></div>
+            {% endif %}
             <div class="text-list-left">
               <h3 class="text-list-title">{{ project.data.title }}</h3>
               {% if project.data.collaborators %}<p class="text-list-detail">{{ project.data.collaborators }}</p>{% endif %}

@@ -150,13 +150,17 @@
   display: none;
 }
 
-/* Portrait: editorial float beside the opening text */
+/* Portrait: calm full-width banner between the header and the text */
 .about-page .content > .prog-img-wrap {
-  float: right;
-  width: min(340px, 45%);
-  margin: 0.4rem 0 var(--space-md) var(--space-md);
+  aspect-ratio: 3 / 2;
+  width: 100%;
   border-radius: var(--radius-lg);
   overflow: hidden;
+  margin-bottom: var(--space-lg);
+}
+
+.about-page .content > .prog-img-wrap img {
+  object-position: 50% 22%;
 }
 
 /* First text paragraph reads as a lede */
@@ -167,7 +171,6 @@
 }
 
 .about-page .content h2 {
-  clear: left;
   margin-top: var(--space-lg);
   margin-bottom: var(--space-sm);
 }
@@ -186,9 +189,8 @@
 
 @media (max-width: 700px) {
   .about-page .content > .prog-img-wrap {
-    float: none;
-    width: 100%;
-    margin: 0 0 var(--space-md);
+    aspect-ratio: 4 / 5;
+    margin-bottom: var(--space-md);
   }
 }
 
@@ -307,7 +309,7 @@
 
 /* ── Highlights listing ── */
 .highlights-section {
-  padding-top: calc(var(--nav-height) + var(--space-md));
+  padding-top: var(--space-lg);
   padding-bottom: var(--space-xl);
 }
 

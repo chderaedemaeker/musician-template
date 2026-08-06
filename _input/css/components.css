@@ -82,10 +82,41 @@
   margin: var(--space-lg2) 0 var(--space-xs);
 }
 
+/* ── Upcoming / archive switcher ── */
+.concert-tabs {
+  display: flex;
+  gap: var(--space-md);
+  border-bottom: 1px solid var(--warm-grey);
+  margin-bottom: var(--space-md);
+}
+
+.concert-tab {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: var(--text-sans);
+  letter-spacing: var(--tracking-label);
+  color: var(--dark-grey);
+  padding: 0 0 var(--space-sm);
+  margin-bottom: -1px;
+  border-bottom: 1px solid transparent;
+  transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+}
+
+.concert-tab:hover {
+  color: var(--near-black);
+}
+
+.concert-tab.active {
+  color: var(--near-black);
+  border-bottom-color: var(--near-black);
+}
+
 .concert-row {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(8.5rem, 11rem) 1fr minmax(0, 18rem);
+  grid-template-columns: minmax(10rem, 13rem) 1fr minmax(0, 18rem);
   gap: var(--space-sm) var(--space-md);
   padding-block: var(--space-md2);
   border-bottom: 1px solid var(--warm-grey);
@@ -103,10 +134,10 @@
 
 .concert-row-date {
   font-family: var(--font-sans);
-  font-size: var(--text-label);
-  color: var(--dark-grey);
+  font-size: var(--text-sans);
+  color: var(--near-black);
   font-variant-numeric: tabular-nums;
-  padding-top: 0.4rem;
+  padding-top: 0.55rem;
   margin: 0;
 }
 
@@ -118,7 +149,7 @@
   border: none;
   cursor: pointer;
   font-family: var(--font-serif);
-  font-size: var(--text-h3);
+  font-size: 1.75rem;
   font-weight: 300;
   line-height: var(--leading-snug);
   color: inherit;
@@ -198,6 +229,13 @@
 
 .concert-row--archive .concert-row-trigger {
   color: var(--dark-grey);
+  font-size: var(--text-h3);
+}
+
+.concert-row--archive .concert-row-date {
+  color: var(--dark-grey);
+  font-size: var(--text-label);
+  padding-top: 0.45rem;
 }
 
 @media (max-width: 700px) {
@@ -227,6 +265,26 @@
   padding: var(--space-md2) 0;
   border-bottom: 1px solid var(--warm-grey);
   color: var(--near-black);
+}
+
+/* Rows with a thumbnail image (projects) */
+.text-list-item--thumb {
+  grid-template-columns: auto 1fr auto;
+}
+
+.text-list-thumb {
+  width: 5.5rem;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--warm-grey);
+}
+
+.text-list-thumb img,
+.text-list-thumb .prog-img-wrap {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .text-list-item:first-child {
@@ -332,6 +390,37 @@
   z-index: 2;
 }
 
+/* Cards without an image stay considered: tonal ground, dark text,
+   a large quiet initial as ornament */
+.highlight-card--noimg {
+  background: linear-gradient(160deg, #f0efeb, var(--warm-grey));
+}
+
+.highlight-card--noimg::before {
+  content: attr(data-initial);
+  position: absolute;
+  top: -0.12em;
+  right: 0.02em;
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: 14rem;
+  line-height: 1;
+  color: rgba(26, 26, 25, 0.06);
+  pointer-events: none;
+}
+
+.highlight-card--noimg .highlight-card-overlay {
+  background: none;
+}
+
+.highlight-card--noimg .highlight-card-type {
+  color: var(--dark-grey);
+}
+
+.highlight-card--noimg .highlight-card-title {
+  color: var(--near-black);
+}
+
 .highlight-card-type {
   font-size: var(--text-label);
   font-family: var(--font-sans);
@@ -354,13 +443,13 @@
   /* Outer wrapper: one screen tall. NO overflow:hidden — that blocks
      touch-scroll on child elements in iOS Safari. */
   .highlights-section {
-    height: 100dvh;
+    height: calc(100dvh - var(--nav-height));
     padding: 0;
   }
 
   .highlights-section .highlights-grid {
     display: block;
-    height: 100dvh;
+    height: calc(100dvh - var(--nav-height));
     overflow-y: scroll;
     scroll-snap-type: y mandatory;
     -webkit-overflow-scrolling: touch;
@@ -378,7 +467,7 @@
   .highlights-section .highlight-card {
     display: block;
     scroll-snap-align: start;
-    height: 100dvh;
+    height: calc(100dvh - var(--nav-height));
     width: 100%;
     border-radius: 0;
     aspect-ratio: unset;
@@ -517,22 +606,20 @@ body.modal-open {
 .form-group input,
 .form-group textarea {
   width: 100%;
-  padding: 10px 0;
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid var(--warm-grey);
-  border-radius: 0;
+  padding: 0.7em 0.85em;
+  background: #fff;
+  border: 1px solid var(--warm-grey);
+  border-radius: var(--radius-sm);
   font-family: var(--font-serif);
   font-size: var(--text-body);
   color: var(--near-black);
   outline: none;
-  transition: border-color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+  transition: border-color var(--dur-fast) var(--ease);
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
-  border-bottom-color: var(--near-black);
-  box-shadow: 0 1px 0 0 var(--near-black);
+  border-color: var(--near-black);
 }
 
 .form-group input::placeholder,

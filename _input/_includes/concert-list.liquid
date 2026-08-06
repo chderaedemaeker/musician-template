@@ -3,17 +3,19 @@
 <div class="concerts-page">
 
   <header class="page-header">
-    <p class="label">{{ languages[lang].site_subtitle }}</p>
     <h1>{{ languages[lang].concerts_title }}</h1>
   </header>
 
-  <section class="concert-list-section">
-    <h2>{{ languages[lang].upcoming_concerts }}</h2>
+  <div class="concert-tabs">
+    <button type="button" class="concert-tab active" id="tab-upcoming" aria-pressed="true" aria-controls="section-upcoming">{{ languages[lang].upcoming_concerts }}</button>
+    <button type="button" class="concert-tab" id="tab-archive" aria-pressed="false" aria-controls="section-archive">{{ languages[lang].archive }}</button>
+  </div>
+
+  <section class="concert-list-section" id="section-upcoming" aria-labelledby="tab-upcoming">
     <ul class="concert-list" id="upcoming-concerts"></ul>
   </section>
 
-  <section class="concert-list-section">
-    <h2>{{ languages[lang].archive }}</h2>
+  <section class="concert-list-section" id="section-archive" aria-labelledby="tab-archive" hidden>
     <ul class="concert-list" id="archive-concerts"></ul>
     <div class="mt-md">
       <button type="button" class="btn" id="archive-more" hidden>{{ languages[lang].show_earlier }}</button>
@@ -133,5 +135,21 @@ document.addEventListener('DOMContentLoaded', function() {
       moreBtn.hidden = true;
     });
   }
+
+  /* Upcoming ↔ archive switcher */
+  var tabs = [
+    { tab: document.getElementById('tab-upcoming'), section: document.getElementById('section-upcoming') },
+    { tab: document.getElementById('tab-archive'), section: document.getElementById('section-archive') }
+  ];
+  tabs.forEach(function(current) {
+    current.tab.addEventListener('click', function() {
+      tabs.forEach(function(other) {
+        var active = other === current;
+        other.tab.classList.toggle('active', active);
+        other.tab.setAttribute('aria-pressed', active ? 'true' : 'false');
+        other.section.hidden = !active;
+      });
+    });
+  });
 });
 </script>

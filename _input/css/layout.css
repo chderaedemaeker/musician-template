@@ -115,14 +115,35 @@ main {
   text-decoration-color: var(--near-black);
 }
 
-.lang-switcher select {
-  background: transparent;
-  border: none;
-  padding: 4px 8px;
-  font-size: var(--text-sans);
+/* ── Language switcher — plain lowercase links, current one marked ── */
+.lang-switcher {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-left: var(--space-xs);
+  padding-left: var(--space-md2);
+  border-left: 1px solid var(--warm-grey);
+}
+
+.lang-switcher a {
   font-family: var(--font-sans);
-  cursor: pointer;
+  font-size: var(--text-label);
+  letter-spacing: var(--tracking-label);
+  color: var(--dark-grey);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
+  transition: color var(--dur-fast) var(--ease), text-decoration-color var(--dur-fast) var(--ease);
+}
+
+.lang-switcher a:hover {
   color: var(--near-black);
+}
+
+.lang-switcher a.active {
+  color: var(--near-black);
+  text-decoration-color: var(--near-black);
 }
 
 /* ── Hamburger ── */
@@ -177,13 +198,20 @@ main {
   transition: opacity var(--dur-med) var(--ease);
 }
 
-.mobile-nav a {
+.mobile-nav > a {
   font-size: 2rem;
   font-family: var(--font-serif);
   font-weight: 300;
   opacity: 0;
   transform: translateY(8px);
   transition: opacity var(--dur-med) var(--ease), transform var(--dur-med) var(--ease);
+}
+
+.mobile-nav .lang-switcher {
+  border-left: none;
+  padding-left: 0;
+  margin-left: 0;
+  gap: var(--space-sm);
 }
 
 .mobile-nav.open a {
@@ -202,9 +230,25 @@ main {
 }
 
 .nav-transparent .nav-brand a,
-.nav-transparent .nav-links a,
-.nav-transparent .lang-switcher select {
+.nav-transparent .nav-links a {
   color: var(--white);
+}
+
+.nav-transparent .lang-switcher {
+  border-left-color: rgba(246, 246, 244, 0.35);
+}
+
+.nav-transparent .lang-switcher a {
+  color: rgba(246, 246, 244, 0.75);
+}
+
+.nav-transparent .lang-switcher a:hover,
+.nav-transparent .lang-switcher a.active {
+  color: var(--white);
+}
+
+.nav-transparent .lang-switcher a.active {
+  text-decoration-color: var(--white);
 }
 
 .nav-transparent .nav-links a:hover {
