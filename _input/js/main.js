@@ -28,29 +28,41 @@
 
   var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* Scroll reveal — one observer, section-level elements only.
-     Stagger applies within a .reveal-group, capped at 300ms. */
+  /* Reveal animations. Elements in a .reveal-group (card grids) flow in
+     on load with a tiny stagger — waiting for scroll would hide that
+     there is more below the fold. Standalone .reveal elements still
+     appear as they scroll into view. */
   document.addEventListener('DOMContentLoaded', function () {
-    var els = document.querySelectorAll('.reveal');
+    var els = Array.prototype.slice.call(document.querySelectorAll('.reveal'));
     if (!els.length) return;
     if (reducedMotion || !('IntersectionObserver' in window)) {
       els.forEach(function (el) { el.classList.add('is-visible'); });
       return;
     }
+
+    var grouped = els.filter(function (el) { return el.closest('.reveal-group'); });
+    var solo = els.filter(function (el) { return !el.closest('.reveal-group'); });
+
+    document.querySelectorAll('.reveal-group').forEach(function (group) {
+      Array.prototype.forEach.call(group.querySelectorAll('.reveal'), function (el, i) {
+        el.style.transitionDelay = Math.min(i * 70, 700) + 'ms';
+      });
+    });
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        grouped.forEach(function (el) { el.classList.add('is-visible'); });
+      });
+    });
+
+    if (!solo.length) return;
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
-        var el = entry.target;
-        var group = el.closest('.reveal-group');
-        if (group) {
-          var members = Array.prototype.slice.call(group.querySelectorAll('.reveal'));
-          el.style.transitionDelay = Math.min(members.indexOf(el) * 60, 300) + 'ms';
-        }
-        el.classList.add('is-visible');
-        io.unobserve(el);
+        entry.target.classList.add('is-visible');
+        io.unobserve(entry.target);
       });
     }, { threshold: 0.1, rootMargin: '0px 0px -10% 0px' });
-    els.forEach(function (el) { io.observe(el); });
+    solo.forEach(function (el) { io.observe(el); });
   });
 
   /* Keep Tab inside a dialog. Call from a keydown handler when e.key === 'Tab'. */
