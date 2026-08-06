@@ -34,15 +34,38 @@
   document.addEventListener('DOMContentLoaded', function () {
     var nav = document.querySelector('.nav');
     if (!nav) return;
+    var brand = nav.querySelector('.nav-brand');
+    var isHero = nav.classList.contains('nav-transparent');
     var lastY = window.scrollY;
     var ticking = false;
+
+    /* On the home page the name travels with the scroll, pixel for
+       pixel, from the middle of the hero up into the bar. */
+    function moveBrand(y) {
+      if (!brand) return;
+      var vh = window.innerHeight;
+      var startScale = window.matchMedia('(max-width: 768px)').matches ? 1.5 : 2.1;
+      var p = Math.min(1, Math.max(0, y / (vh * 0.6)));
+      var startY = vh * 0.5;
+      var endY = nav.offsetHeight / 2;
+      brand.style.transition = 'none';
+      brand.style.top = (startY + (endY - startY) * p) + 'px';
+      brand.style.transform = 'translate(-50%, -50%) scale(' + (startScale + (1 - startScale) * p) + ')';
+      return p;
+    }
+
     function apply() {
       ticking = false;
       var y = window.scrollY;
-      /* hysteresis: switch on past 90, only switch off back under 40 —
-         no flickering around a single threshold */
-      if (y > 90) nav.classList.add('is-scrolled');
-      else if (y < 40) nav.classList.remove('is-scrolled');
+      if (isHero && !reducedMotion) {
+        var p = moveBrand(y);
+        if (p >= 1) nav.classList.add('is-scrolled');
+        else if (p < 0.95) nav.classList.remove('is-scrolled');
+      } else {
+        /* hysteresis: no flickering around a single threshold */
+        if (y > 90) nav.classList.add('is-scrolled');
+        else if (y < 40) nav.classList.remove('is-scrolled');
+      }
       var delta = y - lastY;
       if (Math.abs(delta) > 8) {
         if (delta > 0 && y > 280) nav.classList.add('nav--quiet');
@@ -54,6 +77,9 @@
     window.addEventListener('scroll', function () {
       if (!ticking) { ticking = true; requestAnimationFrame(apply); }
     }, { passive: true });
+    window.addEventListener('resize', function () {
+      if (!ticking) { ticking = true; requestAnimationFrame(apply); }
+    });
     apply();
   });
 
