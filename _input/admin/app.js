@@ -1090,6 +1090,7 @@ class App {
     const isNew = !filename;
     const isI18n = !!(col.i18n || col.i18nStructure);
     const locales = isI18n ? this.config.getLocales() : ['en'];
+    const siteUrl = isNew ? null : this._siteUrlFor(col, filename);
 
     this.el.innerHTML = `
       ${this._topbar()}
@@ -1101,6 +1102,7 @@ class App {
       <div class="editor-header">
         <h2>${isNew ? `New ${esc(col.label.replace(/s$/, ''))}` : 'Edit'}</h2>
         <div class="editor-actions">
+          ${siteUrl ? `<a class="btn btn-ghost" href="${siteUrl}" target="_blank" rel="noopener" title="Opens the live page — recent saves can take a minute to appear">View on site</a>` : ''}
           ${isI18n ? '<button class="btn btn-ghost btn-sm" id="translate-btn">Translate</button>' : ''}
           <button class="btn btn-ghost" id="cancel-btn">Cancel edits</button>
           <button class="btn btn-primary" id="save-btn">Save</button>
@@ -1355,6 +1357,17 @@ class App {
         fill();
       }).catch(() => {});
     }
+  }
+
+  // Public page for an entry — used by the "View on site" button
+  _siteUrlFor(col, filename) {
+    if (!filename) return null;
+    const base = filename.replace(/\.md$/, '');
+    if (col.name === 'concerts') return `/en/concerts/${base}/`;
+    if (col.name === 'projects') return `/projects/en/${base}/`;
+    if (col.name === 'highlights') return `/highlights/en/${base}/`;
+    if (col.name === 'about') return `/en/about/`;
+    return null;
   }
 
   _renderLabel(field) {
