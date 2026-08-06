@@ -462,14 +462,16 @@ main {
   white-space: nowrap;
   text-align: center;
   color: #2a4b5a; /* deep teal, plainly visible like the reference */
-  margin: var(--space-md) 0 var(--space-sm);
+  margin: var(--space-lg) 0 var(--space-lg);
   user-select: none;
   pointer-events: none;
 }
 
 .footer-bottom {
-  border-top: 1px solid rgba(29, 36, 64, 0.3);
-  padding-top: var(--space-xs);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-xs) var(--space-md);
 }
 
 .footer-bottom p {

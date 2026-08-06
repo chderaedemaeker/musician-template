@@ -58,6 +58,15 @@
 
 .btn--back {
   margin-bottom: var(--space-md);
+  border-color: transparent;
+  background-color: rgba(255, 255, 255, 0.5);
+  color: var(--near-black);
+}
+
+.btn--back:hover {
+  background-color: rgba(255, 255, 255, 0.85);
+  border-color: transparent;
+  color: var(--near-black);
 }
 
 /* ── Previous / next between detail pages ── */
@@ -148,7 +157,7 @@
   padding: 0.55em 1.1em;
   border-radius: 999px;
   background: #fff;
-  border: 1px solid var(--warm-grey);
+  border: 1px solid transparent;
   border-radius: var(--radius-sm);
   font-family: var(--font-sans);
   font-size: var(--text-sans);
@@ -193,7 +202,7 @@
   gap: var(--space-sm) var(--space-md2);
   /* the hover tint bleeds past the text edges, never past the page gutter */
   --row-bleed: min(var(--space-md), var(--gutter));
-  padding: var(--space-md2) var(--row-bleed);
+  padding: 2.5rem var(--row-bleed);
   margin-inline: calc(-1 * var(--row-bleed));
   border-bottom: 1px solid var(--warm-grey);
   transition: background-color var(--dur-fast) var(--ease);

@@ -1,5 +1,6 @@
 module.exports = {
   en: {
+    footer_based: "Based in Cologne, Germany",
     footer_navigate: "Navigate",
     footer_follow: "Follow",
     view: "View",
@@ -42,6 +43,7 @@ module.exports = {
     no_projects: "No projects found."
   },
   nl: {
+    footer_based: "Gevestigd in Keulen, Duitsland",
     footer_navigate: "Navigatie",
     footer_follow: "Volg",
     view: "Bekijk",
@@ -84,6 +86,7 @@ module.exports = {
     no_projects: "Geen projecten gevonden."
   },
   fr: {
+    footer_based: "Basée à Cologne, Allemagne",
     footer_navigate: "Navigation",
     footer_follow: "Suivre",
     view: "Voir",
@@ -126,6 +129,7 @@ module.exports = {
     no_projects: "Aucun projet trouvé."
   },
   de: {
+    footer_based: "Ansässig in Köln, Deutschland",
     footer_navigate: "Navigation",
     footer_follow: "Folgen",
     view: "Ansehen",
