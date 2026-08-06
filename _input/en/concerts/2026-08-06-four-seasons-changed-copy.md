@@ -1,5 +1,5 @@
 ---
-title: Four Seasons changed 
+title: Four Seasons changed
 date: "2026-11-27T20:00"
 place: Ghent, Italy
 composers: Richter

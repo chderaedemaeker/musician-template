@@ -1,5 +1,5 @@
 ---
-title: Concert 
+title: Concert
 date: "2026-08-11T20:00"
 place: Brüneck, Italy
 composers: J.S. Bach, Honneger, Martin

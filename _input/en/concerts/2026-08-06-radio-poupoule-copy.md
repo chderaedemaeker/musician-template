@@ -1,5 +1,5 @@
 ---
-title: Radio Poupoule 
+title: Radio Poupoule
 date: "2026-10-29T20:00"
 place: Hasselt, Belgium
 composers: Poulenc

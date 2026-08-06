@@ -6,4 +6,4 @@ layout: project.html
 tags: projects
 lang: en
 ---
-[https://bryggen.be(url)
+[bryggen.be](https://bryggen.be)
