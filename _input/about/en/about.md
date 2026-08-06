@@ -1,12 +1,11 @@
 ---
 title: About
-summaryabout: Belgian violinist based in Cologne, praised for her richness in sound and instinctively beautiful phrasing. Laureate of several international competitions and scholarship holder of the Werner Richard Dr. Carl Dörken Stiftung.
+summaryabout: Belgian violinist based in Cologne, praised for her richness in sound and instinctively beautiful phrasing. 
 layout: about.html
 tags: about
 lang: en
 permalink: en/about/index.html
 ---
-
 ![Veronique De Raedemaeker](/images/veroniqueportrait.jpg)
 
 Veronique De Raedemaeker (born 1996) is a Belgian violinist living in Cologne.
