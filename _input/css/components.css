@@ -153,6 +153,8 @@
 }
 
 .concert-search {
+  -webkit-appearance: none;
+  appearance: none;
   width: min(18rem, 100%);
   padding: 0.55em 1.1em;
   border-radius: 999px;
@@ -243,10 +245,10 @@
 .concert-row-monthyear {
   display: flex;
   flex-direction: column;
-  font-family: var(--font-serif);
-  font-size: 1.0625rem;
-  line-height: 1.15;
-  letter-spacing: 0.01em;
+  font-family: var(--font-sans);
+  font-size: var(--text-sans);
+  line-height: 1.25;
+  letter-spacing: -0.015em;
   color: var(--charcoal);
 }
 
@@ -269,7 +271,7 @@
   font-size: var(--text-label);
   color: var(--dark-grey);
   letter-spacing: -0.015em;
-  margin: var(--space-2xs) 0 0;
+  margin: var(--space-xs) 0 0;
 }
 
 .concert-row-trigger {
