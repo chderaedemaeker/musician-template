@@ -511,7 +511,10 @@ class App {
           <div class="card-count">Homepage photo</div>
         </div>
       </div>`;
-    this.el.querySelectorAll('.card[data-col]').forEach(card => card.addEventListener('click', () => { location.hash = `#/${card.dataset.col}`; }));
+    this.el.querySelectorAll('.card[data-col]').forEach(card => card.addEventListener('click', () => {
+      // About is a single page — skip the list and open the editor directly
+      location.hash = card.dataset.col === 'about' ? '#/about/edit/about.md' : `#/${card.dataset.col}`;
+    }));
     document.getElementById('media-card').addEventListener('click', () => { location.hash = '#/media'; });
     document.getElementById('hero-card').addEventListener('click', () => { location.hash = '#/hero'; });
     this._bindTopbar();
@@ -532,7 +535,6 @@ class App {
   renderSettings() {
     const user = this._identityUser;
     const email = user ? (user.email || user.user_metadata?.full_name || 'Unknown') : 'Not signed in';
-    const ts = this._getTranslationSettings();
     this.el.innerHTML = `
       ${this._topbar()}
       <nav class="breadcrumb"><a href="#/">Dashboard</a><span class="sep">/</span><span>Settings</span></nav>
@@ -540,46 +542,9 @@ class App {
         <h3>Account</h3>
         <p style="font-size:.9rem;color:var(--dark-grey);margin-bottom:1.5rem;">Signed in as <strong>${esc(email)}</strong></p>
         <button id="set-logout" class="btn btn-danger">Logout</button>
-      </div>
-      <div class="settings-section">
-        <h3>Translation</h3>
-        <p style="font-size:.9rem;color:var(--dark-grey);margin-bottom:1.5rem;">Configure a provider to enable the Translate button in the content editor. API keys are stored in your browser only.</p>
-        <div class="form-group">
-          <label class="form-label">Provider</label>
-          <select class="form-input" id="trans-provider">
-            <option value="" ${!ts.provider ? 'selected' : ''}>— disabled —</option>
-            <option value="mymemory" ${ts.provider === 'mymemory' ? 'selected' : ''}>MyMemory (free, no key needed)</option>
-            <option value="deepl" ${ts.provider === 'deepl' ? 'selected' : ''}>DeepL (API key required)</option>
-            <option value="google" ${ts.provider === 'google' ? 'selected' : ''}>Google Translate (API key required)</option>
-            <option value="libretranslate" ${ts.provider === 'libretranslate' ? 'selected' : ''}>LibreTranslate (open source)</option>
-          </select>
-        </div>
-        <div class="form-group" id="trans-key-group" style="display:${ts.provider && ts.provider !== 'mymemory' ? '' : 'none'};">
-          <label class="form-label">API Key</label>
-          <input type="password" class="form-input" id="trans-api-key" value="${esc(ts.apiKey)}" placeholder="Paste your API key" autocomplete="off" />
-        </div>
-        <div class="form-group" id="trans-url-group" style="display:${ts.provider === 'libretranslate' ? '' : 'none'};">
-          <label class="form-label">API URL</label>
-          <input type="text" class="form-input" id="trans-api-url" value="${esc(ts.apiUrl)}" placeholder="https://libretranslate.com" />
-        </div>
-        <button class="btn btn-primary btn-sm" id="trans-save-btn">Save</button>
       </div>`;
     this._bindTopbar();
     document.getElementById('set-logout').addEventListener('click', () => this.logout());
-
-    const providerSel = document.getElementById('trans-provider');
-    const keyGroup = document.getElementById('trans-key-group');
-    const urlGroup = document.getElementById('trans-url-group');
-    providerSel.addEventListener('change', () => {
-      keyGroup.style.display = (providerSel.value && providerSel.value !== 'mymemory') ? '' : 'none';
-      urlGroup.style.display = providerSel.value === 'libretranslate' ? '' : 'none';
-    });
-    document.getElementById('trans-save-btn').addEventListener('click', () => {
-      localStorage.setItem('cms_trans_provider', providerSel.value);
-      localStorage.setItem('cms_trans_key', document.getElementById('trans-api-key').value);
-      localStorage.setItem('cms_trans_url', document.getElementById('trans-api-url').value);
-      showStatus('saved', 'Translation settings saved');
-    });
   }
 
   // ---- Collection List ----
@@ -1103,7 +1068,6 @@ class App {
         <h2>${isNew ? `New ${esc(col.label.replace(/s$/, ''))}` : 'Edit'}</h2>
         <div class="editor-actions">
           ${siteUrl ? `<a class="btn btn-ghost" href="${siteUrl}" target="_blank" rel="noopener" title="Opens the live page — recent saves can take a minute to appear">View on site</a>` : ''}
-          ${isI18n ? '<button class="btn btn-ghost btn-sm" id="translate-btn">Translate</button>' : ''}
           <button class="btn btn-ghost" id="cancel-btn">Cancel edits</button>
           <button class="btn btn-primary" id="save-btn">Save</button>
           ${!isNew ? '<button class="btn btn-danger" id="delete-btn">Delete</button>' : ''}
@@ -1192,10 +1156,6 @@ class App {
         });
       }
     }
-
-    // Translate
-    const transBtn = document.getElementById('translate-btn');
-    if (transBtn) transBtn.addEventListener('click', () => this._showTranslateModal(state));
 
     // Save
     document.getElementById('save-btn').addEventListener('click', () => this._saveEntry(state));
@@ -2059,162 +2019,6 @@ class App {
   _hideAutocomplete() {
     const existing = document.getElementById('autocomplete-dropdown');
     if (existing) existing.remove();
-  }
-
-  // ---- Translation ----
-  _getTranslationSettings() {
-    return {
-      provider: localStorage.getItem('cms_trans_provider') || '',
-      apiKey: localStorage.getItem('cms_trans_key') || '',
-      apiUrl: localStorage.getItem('cms_trans_url') || 'https://libretranslate.com',
-    };
-  }
-
-  async _translateText(text, sourceLang, targetLang, settings) {
-    if (!text || !text.trim()) return text;
-    const { provider, apiKey, apiUrl } = settings;
-
-    if (provider === 'mymemory') {
-      const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${sourceLang}|${targetLang}`);
-      if (!res.ok) throw new Error(`MyMemory error: ${res.status}`);
-      const data = await res.json();
-      if (data.responseStatus !== 200) throw new Error(data.responseDetails || 'Translation failed');
-      return data.responseData.translatedText;
-    }
-
-    if (provider === 'deepl') {
-      const base = apiKey.endsWith(':fx') ? 'https://api-free.deepl.com' : 'https://api.deepl.com';
-      const res = await fetch(`${base}/v2/translate`, {
-        method: 'POST',
-        headers: { 'Authorization': `DeepL-Auth-Key ${apiKey}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: [text], source_lang: sourceLang.toUpperCase(), target_lang: targetLang.toUpperCase() }),
-      });
-      if (!res.ok) throw new Error(`DeepL error: ${res.status}`);
-      const data = await res.json();
-      return data.translations[0].text;
-    }
-
-    if (provider === 'google') {
-      const res = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${encodeURIComponent(apiKey)}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ q: text, source: sourceLang, target: targetLang, format: 'text' }),
-      });
-      if (!res.ok) throw new Error(`Google Translate error: ${res.status}`);
-      const data = await res.json();
-      return data.data.translations[0].translatedText;
-    }
-
-    if (provider === 'libretranslate') {
-      const base = (apiUrl || 'https://libretranslate.com').replace(/\/$/, '');
-      const body = { q: text, source: sourceLang, target: targetLang, format: 'text' };
-      if (apiKey) body.api_key = apiKey;
-      const res = await fetch(`${base}/translate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-      if (!res.ok) throw new Error(`LibreTranslate error: ${res.status}`);
-      const data = await res.json();
-      return data.translatedText;
-    }
-
-    throw new Error('No translation provider configured');
-  }
-
-  async _doTranslate(state, sourceLang, targetLangs, overlay) {
-    this._collectFormData(state);
-    const settings = this._getTranslationSettings();
-    const { col } = state;
-    let translated = 0;
-    let errors = 0;
-
-    for (const targetLang of targetLangs) {
-      if (targetLang === sourceLang) continue;
-      for (const field of col.fields) {
-        if (field.widget === 'image' || field.widget === 'datetime') continue;
-        const isBody = field.name === 'body';
-        const value = isBody ? state.body[sourceLang] : state.data[sourceLang][field.name];
-        if (!value || !value.trim()) continue;
-        try {
-          const result = await this._translateText(value, sourceLang, targetLang, settings);
-          if (isBody) state.body[targetLang] = result;
-          else state.data[targetLang][field.name] = result;
-          translated++;
-        } catch (e) {
-          errors++;
-          console.error(`Translation failed for ${field.name} (${sourceLang}→${targetLang}):`, e);
-        }
-      }
-    }
-
-    overlay.remove();
-    this._renderEditorForm(state);
-    this._markDirty();
-    if (errors > 0) showStatus('error', `Translated ${translated} fields, ${errors} failed — check console`);
-    else showStatus('saved', `Translated ${translated} fields`);
-  }
-
-  _showTranslateModal(state) {
-    const settings = this._getTranslationSettings();
-    if (!settings.provider) {
-      showStatus('error', 'No provider configured — go to Settings → Translation');
-      return;
-    }
-
-    const { locales } = state;
-    const overlay = document.createElement('div');
-    overlay.className = 'image-picker-overlay visible';
-    overlay.innerHTML = `<div class="image-picker" style="max-width:400px;">
-      <h3 style="margin-bottom:1.25rem;">Translate Content</h3>
-      <div class="form-group">
-        <label class="form-label">Translate from</label>
-        <select class="form-input" id="trans-modal-source">
-          ${locales.map(l => `<option value="${l}" ${l === state.activeLocale ? 'selected' : ''}>${l.toUpperCase()}</option>`).join('')}
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Translate to</label>
-        <div id="trans-modal-targets">
-          ${locales.map(l => `<label style="display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem;font-size:.9rem;">
-            <input type="checkbox" class="trans-target-cb" value="${l}" ${l !== state.activeLocale ? 'checked' : 'disabled'} />
-            ${l.toUpperCase()}
-          </label>`).join('')}
-        </div>
-      </div>
-      <p style="font-size:.8rem;color:var(--dark-grey);margin-bottom:1.25rem;">Provider: <strong>${esc(settings.provider)}</strong>. Target language fields will be overwritten.</p>
-      <div class="image-picker-actions">
-        <button class="btn btn-primary btn-sm" id="trans-modal-run">Translate</button>
-        <button class="btn btn-ghost btn-sm" id="trans-modal-cancel">Cancel</button>
-      </div>
-    </div>`;
-    document.body.appendChild(overlay);
-
-    overlay.querySelector('#trans-modal-source').addEventListener('change', (e) => {
-      overlay.querySelectorAll('.trans-target-cb').forEach(cb => {
-        cb.disabled = cb.value === e.target.value;
-        if (cb.value === e.target.value) cb.checked = false;
-        else cb.checked = true;
-      });
-    });
-
-    overlay.querySelector('#trans-modal-run').addEventListener('click', async () => {
-      const sourceLang = overlay.querySelector('#trans-modal-source').value;
-      const targetLangs = [...overlay.querySelectorAll('.trans-target-cb:checked')].map(cb => cb.value);
-      if (!targetLangs.length) { showStatus('error', 'Select at least one target language'); return; }
-      const runBtn = overlay.querySelector('#trans-modal-run');
-      runBtn.disabled = true;
-      runBtn.textContent = 'Translating…';
-      try {
-        await this._doTranslate(state, sourceLang, targetLangs, overlay);
-      } catch (e) {
-        showStatus('error', e.message);
-        overlay.remove();
-      }
-    });
-
-    overlay.querySelector('#trans-modal-cancel').addEventListener('click', () => overlay.remove());
-    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
   }
 
   // ---- Hero Image ----
