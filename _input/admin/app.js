@@ -1385,10 +1385,18 @@ class App {
         </div>`;
       }
 
-      case 'datetime':
+      case 'datetime': {
         let dtVal = value;
         if (dtVal && dtVal.length > 16) dtVal = dtVal.substring(0, 16);
+        if (field.name === 'date_end') {
+          // Hidden behind a checkbox so nobody sets an end date by accident
+          return `<div class="date-end-field">
+            <label class="checkbox-row"><input type="checkbox" class="date-end-toggle"${dtVal ? ' checked' : ''} /> <span>This concert runs for several days</span></label>
+            <input type="datetime-local" class="form-input date-end-input" ${dataAttr} value="${esc(dtVal)}"${dtVal ? '' : ' hidden'} />
+          </div>`;
+        }
         return `<input type="datetime-local" class="form-input" ${dataAttr} value="${esc(dtVal)}" />`;
+      }
 
       case 'image':
         return `<div class="image-field image-dropzone" data-img-field="${field.name}" data-img-locale="${locale}">
@@ -1500,6 +1508,22 @@ class App {
       matchInput.addEventListener('input', () => { clearTimeout(matchTimer); matchTimer = setTimeout(update, 400); });
       update();
     }
+
+    // End-date checkbox: reveal the field only when it applies
+    formEl.querySelectorAll('.date-end-field').forEach(wrap => {
+      const toggle = wrap.querySelector('.date-end-toggle');
+      const input = wrap.querySelector('.date-end-input');
+      toggle.addEventListener('change', () => {
+        if (toggle.checked) {
+          input.hidden = false;
+          input.focus();
+        } else {
+          input.value = '';
+          input.hidden = true;
+        }
+        this._markDirty();
+      });
+    });
 
     // Hint toggles — click the ? to show/hide the explanation
     formEl.querySelectorAll('.hint-toggle').forEach(btn => {

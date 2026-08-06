@@ -1288,3 +1288,25 @@ body { letter-spacing: -0.01em; }
   padding: 0.5rem 0.75rem;
   border-radius: 0 6px 6px 0;
 }
+
+/* Checkbox rows (e.g. the multi-day toggle) */
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--near-black);
+  text-transform: none;
+  letter-spacing: normal;
+  cursor: pointer;
+  margin-bottom: 0.4rem;
+}
+
+.checkbox-row input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--near-black);
+  cursor: pointer;
+}
+
+.date-end-input[hidden] { display: none; }
