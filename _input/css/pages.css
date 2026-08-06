@@ -76,7 +76,7 @@
 
 .bento-cell {
   background: #fff;
-  border: 1px solid var(--warm-grey);
+  border: none;
   border-radius: var(--radius-lg);
   padding: var(--space-md);
   display: flex;

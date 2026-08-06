@@ -13,9 +13,10 @@
 <section class="section container">
   <div class="bento reveal-group">
 
-    <!-- Latest note — first cell -->
+    <!-- Latest note — first cell (hidden for now; set showNotes to true to bring back) -->
+    {% assign showNotes = false %}
     {% assign latestNote = collections.notes | sort: 'date' | reverse | first %}
-    {% if latestNote %}
+    {% if latestNote and showNotes %}
     <div class="bento-cell bento-notes reveal">
       <h2 class="label">{{ languages[lang].notes_title }}</h2>
       <a class="bento-note-link" href="{{ latestNote.url }}">

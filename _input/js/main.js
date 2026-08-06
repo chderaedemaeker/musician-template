@@ -48,15 +48,23 @@
       var p = Math.min(1, Math.max(0, y / (vh * 0.6)));
       if (p >= 1) {
         /* journey done — hand back to the stylesheet so the name sits
-           exactly where the bar's own rules put it */
+           exactly where the bar's own rules put it (left, in flow) */
         brand.style.transition = '';
+        brand.style.position = '';
+        brand.style.left = '';
         brand.style.top = '';
         brand.style.transform = '';
         return p;
       }
+      var inner = nav.querySelector('.nav-inner');
+      var gutter = inner ? parseFloat(getComputedStyle(inner).paddingLeft) || 24 : 24;
       var startY = vh * 0.5;
       var endY = nav.offsetHeight / 2;
+      var startX = window.innerWidth / 2;
+      var endX = gutter + brand.offsetWidth / 2;
       brand.style.transition = 'none';
+      brand.style.position = 'fixed';
+      brand.style.left = (startX + (endX - startX) * p) + 'px';
       brand.style.top = (startY + (endY - startY) * p) + 'px';
       brand.style.transform = 'translate(-50%, -50%) scale(' + (startScale + (1 - startScale) * p) + ')';
       return p;
@@ -106,15 +114,20 @@
     var grouped = els.filter(function (el) { return el.closest('.reveal-group'); });
     var solo = els.filter(function (el) { return !el.closest('.reveal-group'); });
 
+    /* Each group reveals its members with a stagger the moment the
+       group scrolls into view */
+    var groupIo = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        Array.prototype.forEach.call(entry.target.querySelectorAll('.reveal'), function (el, i) {
+          el.style.transitionDelay = Math.min(i * 90, 700) + 'ms';
+          el.classList.add('is-visible');
+        });
+        groupIo.unobserve(entry.target);
+      });
+    }, { threshold: 0.08 });
     document.querySelectorAll('.reveal-group').forEach(function (group) {
-      Array.prototype.forEach.call(group.querySelectorAll('.reveal'), function (el, i) {
-        el.style.transitionDelay = Math.min(i * 70, 700) + 'ms';
-      });
-    });
-    requestAnimationFrame(function () {
-      requestAnimationFrame(function () {
-        grouped.forEach(function (el) { el.classList.add('is-visible'); });
-      });
+      groupIo.observe(group);
     });
 
     if (!solo.length) return;

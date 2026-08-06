@@ -200,8 +200,8 @@
 .concert-row {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(8rem, 9.5rem) minmax(0, 1.5fr) minmax(0, 1fr);
-  gap: var(--space-sm) var(--space-md2);
+  grid-template-columns: minmax(8rem, 10.5rem) minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: var(--space-sm) var(--space-lg);
   /* the hover tint bleeds past the text edges, never past the page gutter */
   --row-bleed: min(var(--space-md), var(--gutter));
   padding: 2.5rem var(--row-bleed);
@@ -303,6 +303,13 @@
   margin: var(--space-2xs) 0 0;
 }
 
+/* The big day number and the title share a baseline — the title column
+   drops by the height of the weekday line above the number */
+.concert-row:not(.concert-row--archive) .concert-row-main,
+.concert-row:not(.concert-row--archive) .concert-row-aside {
+  padding-top: 1.75rem;
+}
+
 .concert-row-aside {
   display: flex;
   flex-direction: column;
@@ -342,8 +349,7 @@
    extra breathing room */
 .concert-row--featured {
   background: #fff;
-  border: 1px solid var(--warm-grey);
-  border-bottom: 1px solid var(--warm-grey);
+  border: none;
   padding-block: var(--space-lg);
   margin-block: var(--space-xs);
 }
@@ -397,7 +403,9 @@
     gap: var(--space-2xs);
   }
   .concert-row-date,
-  .concert-row-aside {
+  .concert-row-aside,
+  .concert-row:not(.concert-row--archive) .concert-row-main,
+  .concert-row:not(.concert-row--archive) .concert-row-aside {
     padding-top: 0;
   }
 }
@@ -847,7 +855,7 @@ body.modal-open {
   width: 100%;
   padding: 0.7em 1.1em;
   background: #fff;
-  border: 1px solid var(--warm-grey);
+  border: 1px solid transparent;
   border-radius: 999px;
   font-family: var(--font-serif);
   font-size: var(--text-body);

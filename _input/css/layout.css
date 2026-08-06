@@ -114,14 +114,10 @@ main {
   gap: var(--space-md2);
 }
 
-/* The name sits in the exact middle of the bar */
+/* The name sits on the left of the bar */
 .nav-brand {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
   white-space: nowrap;
-  transition: transform var(--dur-med) var(--ease), top var(--dur-med) var(--ease);
+  margin-right: auto;
 }
 
 .nav-brand a {
@@ -338,6 +334,8 @@ main {
 }
 
 .nav-transparent:not(.is-scrolled) .nav-brand {
+  position: fixed;
+  left: 50%;
   top: 50vh;
   transform: translate(-50%, -50%) scale(3);
 }
@@ -400,8 +398,10 @@ main {
 
 @media (max-width: 768px) {
   .nav-transparent:not(.is-scrolled) .nav-brand {
+    position: fixed;
+    left: 50%;
     top: 50vh;
-    transform: translate(-50%, -50%) scale(1.5);
+    transform: translate(-50%, -50%) scale(1.9);
   }
 
   .nav-transparent .hamburger.open span {

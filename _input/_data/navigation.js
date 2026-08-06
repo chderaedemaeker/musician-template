@@ -3,35 +3,31 @@
 module.exports = {
   en: [
     { text: 'About', url: '/en/about/' },
-    { text: 'Concerts', url: '/en/concerts/' },
-    { text: 'Notes', url: '/en/notes/' },
-    { text: 'Projects', url: '/en/projects/' },
     { text: 'Highlights', url: '/en/highlights/' },
+    { text: 'Projects', url: '/en/projects/' },
+    { text: 'Concerts', url: '/en/concerts/' },
     { text: 'Contact', url: '/en/contact/' }
   ],
   nl: [
     { text: 'Over', url: '/nl/about/' },
-    { text: 'Concerts', url: '/en/concerts/' },
-    { text: 'Notes', url: '/en/notes/' },
-    { text: 'Projects', url: '/en/projects/' },
     { text: 'Highlights', url: '/en/highlights/' },
+    { text: 'Projects', url: '/en/projects/' },
+    { text: 'Concerts', url: '/en/concerts/' },
     { text: 'Contact', url: '/en/contact/' }
   ],
   fr: [
     { text: 'À propos', url: '/fr/about/' },
-    { text: 'Concerts', url: '/en/concerts/' },
-    { text: 'Notes', url: '/en/notes/' },
-    { text: 'Projects', url: '/en/projects/' },
     { text: 'Highlights', url: '/en/highlights/' },
+    { text: 'Projects', url: '/en/projects/' },
+    { text: 'Concerts', url: '/en/concerts/' },
     { text: 'Contact', url: '/en/contact/' }
   ],
   de: [
     // No German biography yet — point to the English one
     { text: 'About', url: '/en/about/' },
-    { text: 'Concerts', url: '/en/concerts/' },
-    { text: 'Notes', url: '/en/notes/' },
-    { text: 'Projects', url: '/en/projects/' },
     { text: 'Highlights', url: '/en/highlights/' },
+    { text: 'Projects', url: '/en/projects/' },
+    { text: 'Concerts', url: '/en/concerts/' },
     { text: 'Contact', url: '/en/contact/' }
   ]
 };
