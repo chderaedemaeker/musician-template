@@ -2,17 +2,25 @@
    BASE — Tokens, Reset, Typography
    ============================================ */
 
+@font-face {
+  font-family: 'AGL';
+  src: url('/images/AppleGaramond-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   /* ── Colors ── */
   --white: #f6f6f4;
   --off-white: #f5f4f2;
   --warm-grey: #e8e6e1;
   --mid-grey: #b5b0a8;   /* decoration only — fails contrast as text */
-  --dark-grey: #6b665e;
-  --near-black: #1a1a19;
+  --dark-grey: #7a746b;  /* secondary text — lighter for hierarchy, still AA */
+  --near-black: #121211; /* primary text — darker for contrast */
 
   /* ── Fonts ── */
-  --font-serif: 'EB Garamond', Georgia, serif;
+  --font-serif: 'AGL', Georgia, serif;
   --font-sans: 'Helvetica Neue', Helvetica, sans-serif;
   --font-inter: 'Inter', 'Helvetica Neue', Helvetica, sans-serif;
 
@@ -21,11 +29,11 @@
   --text-label: 0.8125rem;    /* 13px — labels, eyebrows, dates */
   --text-sans: 0.9375rem;     /* 15px — nav, buttons, form labels, meta */
   --text-body: 1.3125rem;     /* 21px — serif paragraphs */
-  --text-lede: 1.625rem;      /* 26px — intro paragraphs, pull-quotes */
-  --text-h3: 1.625rem;        /* 26px — list and card titles */
-  --text-h2: 2.25rem;         /* 36px — section headings */
-  --text-h1: clamp(2.5rem, 4.5vw, 3.375rem);  /* page titles */
-  --text-display: clamp(3rem, 7.5vw, 5rem);    /* hero name only */
+  --text-lede: 1.75rem;       /* 28px — intro paragraphs, pull-quotes */
+  --text-h3: 1.75rem;         /* 28px — list and card titles */
+  --text-h2: 2.5rem;          /* 40px — section headings */
+  --text-h1: clamp(2.75rem, 5vw, 3.75rem);     /* page titles */
+  --text-display: clamp(3.25rem, 8vw, 5.5rem); /* hero name only */
 
 
 

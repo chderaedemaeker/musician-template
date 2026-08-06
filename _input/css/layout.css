@@ -78,16 +78,12 @@ main {
 
 .nav-brand a {
   font-family: var(--font-serif);
-  font-size: 1.5rem;
+  font-size: 1.875rem;
   font-weight: 300;
   letter-spacing: -0.03em;
+  line-height: 1.05;
   color: var(--near-black);
   display: block;
-}
-
-.brand-line {
-  display: block;
-  line-height: 1.05;
 }
 
 .nav-links {
@@ -99,19 +95,21 @@ main {
 .nav-links a {
   font-size: var(--text-sans);
   font-family: var(--font-sans);
-  color: var(--near-black);
+  color: var(--dark-grey);
   text-decoration: underline;
   text-decoration-color: transparent;
   text-decoration-thickness: 1px;
   text-underline-offset: 5px;
-  transition: text-decoration-color var(--dur-fast) var(--ease);
+  transition: color var(--dur-fast) var(--ease), text-decoration-color var(--dur-fast) var(--ease);
 }
 
 .nav-links a:hover {
+  color: var(--near-black);
   text-decoration-color: var(--mid-grey);
 }
 
 .nav-links a.active {
+  color: var(--near-black);
   text-decoration-color: var(--near-black);
 }
 
@@ -228,8 +226,16 @@ main {
   border-bottom: none;
 }
 
-.nav-transparent .nav-brand a,
+.nav-transparent .nav-brand a {
+  color: var(--white);
+}
+
 .nav-transparent .nav-links a {
+  color: rgba(246, 246, 244, 0.75);
+}
+
+.nav-transparent .nav-links a:hover,
+.nav-transparent .nav-links a.active {
   color: var(--white);
 }
 

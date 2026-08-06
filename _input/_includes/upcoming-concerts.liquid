@@ -11,19 +11,18 @@ document.addEventListener('DOMContentLoaded', function() {
     return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59);
   }
 
+  function dmy(x) { return x.getDate() + ' ' + x.toLocaleDateString(lang, { month: 'long', year: 'numeric' }); }
+  function dm(x) { return x.getDate() + ' ' + x.toLocaleDateString(lang, { month: 'long' }); }
   function dateStr(c) {
-    var opts = { year: 'numeric', month: 'long', day: 'numeric' };
     var d = new Date(c.date);
     if (c.monthOnly) return d.toLocaleDateString(lang, { month: 'long', year: 'numeric' });
     if (c.dateEnd) {
       var e = new Date(c.dateEnd);
-      if (d.getFullYear() === e.getFullYear() && d.getMonth() === e.getMonth()) {
-        return d.getDate() + ' – ' + e.toLocaleDateString(lang, opts);
-      }
-      var startOpts = d.getFullYear() === e.getFullYear() ? { day: 'numeric', month: 'long' } : opts;
-      return d.toLocaleDateString(lang, startOpts) + ' – ' + e.toLocaleDateString(lang, opts);
+      if (d.getFullYear() === e.getFullYear() && d.getMonth() === e.getMonth()) return d.getDate() + ' – ' + dmy(e);
+      if (d.getFullYear() === e.getFullYear()) return dm(d) + ' – ' + dmy(e);
+      return dmy(d) + ' – ' + dmy(e);
     }
-    return d.toLocaleDateString(lang, opts);
+    return dmy(d);
   }
 
   var now = new Date();

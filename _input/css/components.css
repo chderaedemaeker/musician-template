@@ -130,7 +130,6 @@
   align-items: center;
   gap: var(--space-sm) var(--space-md);
   flex-wrap: wrap;
-  border-bottom: 1px solid var(--warm-grey);
   margin-bottom: var(--space-md);
 }
 
@@ -142,7 +141,6 @@
 .concert-search {
   width: min(18rem, 100%);
   padding: 0.55em 0.85em;
-  margin-bottom: var(--space-xs);
   background: #fff;
   border: 1px solid var(--warm-grey);
   border-radius: var(--radius-sm);
@@ -168,8 +166,7 @@
   font-family: var(--font-sans);
   font-size: var(--text-sans);
   color: var(--dark-grey);
-  padding: 0 0 var(--space-sm);
-  margin-bottom: -1px;
+  padding: 0 0 var(--space-xs);
   border-bottom: 1px solid transparent;
   transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
 }
@@ -208,7 +205,7 @@
 .concert-row-date {
   font-family: var(--font-sans);
   font-size: var(--text-sans);
-  color: var(--near-black);
+  color: var(--dark-grey);
   font-variant-numeric: tabular-nums;
   padding-top: 0.55rem;
   margin: 0;
@@ -216,7 +213,7 @@
 }
 
 .concert-row-day {
-  color: var(--dark-grey);
+  opacity: 0.75;
 }
 
 .concert-row-trigger {
@@ -227,7 +224,7 @@
   border: none;
   cursor: pointer;
   font-family: var(--font-serif);
-  font-size: 1.75rem;
+  font-size: 2rem;
   font-weight: 300;
   line-height: var(--leading-snug);
   color: inherit;
@@ -262,23 +259,25 @@
   margin: 0;
 }
 
-/* A visible promise of what a click does */
+/* A quiet arrow promises the row opens */
 .concert-row-more {
+  position: absolute;
+  right: var(--space-2xs);
+  top: 50%;
   font-family: var(--font-sans);
-  font-size: var(--text-label);
+  font-size: 1.2rem;
   color: var(--dark-grey);
-  margin-top: var(--space-2xs);
-  text-decoration: underline;
-  text-decoration-color: transparent;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
-  transition: text-decoration-color var(--dur-fast) var(--ease);
+  opacity: 0.5;
+  transform: translateY(-50%);
+  transition: opacity var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
   pointer-events: none;
 }
 
 .concert-row:hover .concert-row-more,
 .concert-row:focus-within .concert-row-more {
-  text-decoration-color: var(--dark-grey);
+  opacity: 1;
+  color: var(--near-black);
+  transform: translateY(-50%) translateX(4px);
 }
 
 /* Ticket link floats above the row-wide trigger */

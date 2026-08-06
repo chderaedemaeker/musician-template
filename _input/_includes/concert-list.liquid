@@ -34,7 +34,6 @@
 document.addEventListener('DOMContentLoaded', function() {
   var concerts = {% concertsJson collections.concerts %};
   var lang = '{{ lang }}';
-  var detailsLabel = '{{ languages[lang].details }}';
   var ticketsLabel = '{{ languages[lang].tickets }}';
 
   /* A concert counts as upcoming until its last day has fully passed:
@@ -45,18 +44,21 @@ document.addEventListener('DOMContentLoaded', function() {
     return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59);
   }
 
-  function dateStr(c, opts) {
+  /* Dates read day-first everywhere: "11 August 2026", "7 – 10 August 2026" */
+  function dmy(x) { return x.getDate() + ' ' + x.toLocaleDateString(lang, { month: 'long', year: 'numeric' }); }
+  function dm(x) { return x.getDate() + ' ' + x.toLocaleDateString(lang, { month: 'long' }); }
+  function dateStr(c, withWeekday) {
     var d = new Date(c.date);
     if (c.monthOnly) return d.toLocaleDateString(lang, { month: 'long', year: 'numeric' });
     if (c.dateEnd) {
       var e = new Date(c.dateEnd);
-      if (d.getFullYear() === e.getFullYear() && d.getMonth() === e.getMonth()) {
-        return d.getDate() + ' – ' + e.toLocaleDateString(lang, { day: 'numeric', month: 'long', year: 'numeric' });
-      }
-      var startOpts = d.getFullYear() === e.getFullYear() ? { day: 'numeric', month: 'long' } : opts;
-      return d.toLocaleDateString(lang, startOpts) + ' – ' + e.toLocaleDateString(lang, opts);
+      if (d.getFullYear() === e.getFullYear() && d.getMonth() === e.getMonth()) return d.getDate() + ' – ' + dmy(e);
+      if (d.getFullYear() === e.getFullYear()) return dm(d) + ' – ' + dmy(e);
+      return dmy(d) + ' – ' + dmy(e);
     }
-    return d.toLocaleDateString(lang, opts);
+    var out = dmy(d);
+    if (withWeekday) out = d.toLocaleDateString(lang, { weekday: 'long' }) + ' ' + out;
+    return out;
   }
   window.concertDateStr = dateStr; /* reused by the modal */
 
@@ -69,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
   window.concertNavOrder = upcoming.concat(archive);
 
   function rowHtml(c, isArchive) {
-    var d = dateStr(c, { day: 'numeric', month: 'long', year: 'numeric' });
+    var d = dateStr(c);
     /* Upcoming single-day concerts show the weekday on its own, lighter line */
     var dateHtml = d;
     if (!isArchive && !c.monthOnly && !c.dateEnd) {
@@ -84,7 +86,6 @@ document.addEventListener('DOMContentLoaded', function() {
       aside += '<a class="concert-row-ticket" href="' + c.ticket + '" target="_blank" rel="noopener">' +
         ticketsLabel + '</a>';
     }
-    aside += '<span class="concert-row-more">' + detailsLabel + '</span>';
     var searchText = [d, c.title, c.place, c.composers, c.collaborators].join(' ').toLowerCase().replace(/"/g, '&quot;');
     return '<li class="concert-row' + (isArchive ? ' concert-row--archive' : '') + '" data-search="' + searchText + '">' +
       '<p class="concert-row-date">' + dateHtml + '</p>' +
@@ -93,6 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
         (c.place ? '<p class="concert-row-place">' + c.place + '</p>' : '') +
       '</div>' +
       '<div class="concert-row-aside">' + aside + '</div>' +
+      '<span class="concert-row-more" aria-hidden="true">&#8594;</span>' +
     '</li>';
   }
 
