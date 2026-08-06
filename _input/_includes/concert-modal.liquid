@@ -54,10 +54,31 @@
 
     var meta = document.getElementById('cm-meta');
     meta.innerHTML = '';
-    [c.place, c.composers, c.collaborators].forEach(function (value) {
+    function projectFor(text) {
+      if (!text || !window.projectLinks) return null;
+      var t = text.toLowerCase();
+      for (var i = 0; i < window.projectLinks.length; i++) {
+        var words = (window.projectLinks[i].words || '').split(',');
+        for (var j = 0; j < words.length; j++) {
+          var w = words[j].trim();
+          if (w && t.indexOf(w) !== -1) return window.projectLinks[i].url;
+        }
+      }
+      return null;
+    }
+    [[c.place, false], [c.composers, false], [c.collaborators, true]].forEach(function (entry) {
+      var value = entry[0];
       if (!value) return;
       var span = document.createElement('span');
-      span.textContent = value;
+      var projUrl = entry[1] ? projectFor(value) : null;
+      if (projUrl) {
+        var a = document.createElement('a');
+        a.href = projUrl;
+        a.textContent = value;
+        span.appendChild(a);
+      } else {
+        span.textContent = value;
+      }
       meta.appendChild(span);
     });
 

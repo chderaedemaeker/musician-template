@@ -36,6 +36,13 @@ document.addEventListener('DOMContentLoaded', function() {
   var lang = '{{ lang }}';
   var ticketsLabel = '{{ languages[lang].tickets }}';
 
+  /* Collaborators in the modal link to their project page */
+  window.projectLinks = [
+    {% for proj in collections.projects_en %}
+    { url: {{ proj.url | json }}, words: {{ proj.data.match | default: proj.data.title | downcase | json }} }{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+  ];
+
   /* A concert counts as upcoming until its last day has fully passed:
      end date for multi-day, end of month for month-only, end of day otherwise. */
   function endOf(c) {

@@ -31,11 +31,27 @@
     {% if date %}<p class="date">{{ date | concertDate: date_end, month_only, lang }}</p>{% endif %}
     <h1>{{ title }}</h1>
 
+    {% comment %} If the collaborators match a project's match words,
+       the collaborator line links to that project {% endcomment %}
+    {% assign collabProjectUrl = "" %}
+    {% if collaborators %}
+      {% assign collabDown = collaborators | downcase %}
+      {% for proj in collections.projects_en %}
+        {% if collabProjectUrl == "" %}
+          {% assign projWords = proj.data.match | default: proj.data.title | downcase | split: "," %}
+          {% for w in projWords %}
+            {% assign wt = w | strip %}
+            {% if wt != "" and collabDown contains wt %}{% assign collabProjectUrl = proj.url %}{% endif %}
+          {% endfor %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+
     {% if place or composers or collaborators %}
     <div class="meta">
       {% if place %}<span>{{ place }}</span>{% endif %}
       {% if composers %}<span>{{ composers }}</span>{% endif %}
-      {% if collaborators %}<span>{{ collaborators }}</span>{% endif %}
+      {% if collaborators %}<span>{% if collabProjectUrl != "" %}<a href="{{ collabProjectUrl }}">{{ collaborators }}</a>{% else %}{{ collaborators }}{% endif %}</span>{% endif %}
     </div>
     {% endif %}
 

@@ -686,6 +686,22 @@
   margin-bottom: var(--space-md);
 }
 
+.concert-modal-meta a,
+.concert-detail .meta a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--mid-grey);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: color var(--dur-fast) var(--ease), text-decoration-color var(--dur-fast) var(--ease);
+}
+
+.concert-modal-meta a:hover,
+.concert-detail .meta a:hover {
+  color: var(--near-black);
+  text-decoration-color: var(--near-black);
+}
+
 .concert-modal-body {
   margin-bottom: var(--space-sm);
 }
