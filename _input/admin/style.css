@@ -1276,3 +1276,15 @@ body { letter-spacing: -0.01em; }
   font-weight: 400;
   font-size: 0.85rem;
 }
+
+/* Match-words preview in the project editor */
+.match-preview {
+  margin-top: 0.4rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--dark-grey);
+  background: var(--off-white);
+  border-left: 2px solid var(--warm-grey);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0 6px 6px 0;
+}

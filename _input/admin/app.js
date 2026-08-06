@@ -1296,6 +1296,28 @@ class App {
     this._updateLivePreview(state);
   }
 
+  async _ensureConcertEntries() {
+    if (this._concertEntriesCache) return this._concertEntriesCache;
+    const concertCol = this.collections.find(c => c.name === 'concerts');
+    if (!concertCol) return [];
+    try {
+      const tree = await this.api.getTree(concertCol.folder);
+      const files = tree.filter(f => f.name.endsWith('.md'));
+      const entries = [];
+      for (let i = 0; i < files.length; i += 8) {
+        const batch = await Promise.all(files.slice(i, i + 8).map(async f => {
+          try {
+            const parsed = FrontMatter.parse(await this.api.getBlob(f.sha));
+            return { name: f.name, data: parsed.data };
+          } catch { return { name: f.name, data: {} }; }
+        }));
+        entries.push(...batch);
+      }
+      this._concertEntriesCache = entries;
+      return entries;
+    } catch { return []; }
+  }
+
   _fillConcertDataLists(formEl, col) {
     if (col.name !== 'concerts') return;
     const acFields = ['place', 'composers', 'collaborators'];
@@ -1436,6 +1458,40 @@ class App {
     formEl.querySelectorAll('.image-browse-btn').forEach(btn => {
       btn.addEventListener('click', () => this._showImagePicker(btn.dataset.imgField, btn.dataset.imgLocale, state));
     });
+
+    // Live preview of which concerts a project's match words pick up
+    const matchInput = formEl.querySelector('input[data-field="match"]');
+    if (matchInput && state.col.name === 'projects') {
+      const preview = document.createElement('div');
+      preview.className = 'match-preview';
+      preview.textContent = 'Checking which concerts match…';
+      matchInput.closest('.form-group').appendChild(preview);
+      const update = () => {
+        this._ensureConcertEntries().then(entries => {
+          const titleInput = formEl.querySelector('input[data-field="title"]');
+          const raw = matchInput.value.trim() || (titleInput ? titleInput.value : '');
+          const words = raw.toLowerCase().split(',').map(w => w.trim()).filter(Boolean);
+          if (!words.length) { preview.textContent = 'Add match words to link concerts to this project.'; return; }
+          const hits = entries.filter(e => {
+            const hay = ((e.data.collaborators || '') + ' ' + (e.data.title || '')).toLowerCase();
+            return words.some(w => hay.indexOf(w) !== -1);
+          });
+          if (!hits.length) {
+            preview.textContent = 'No concerts match these words yet — check the spelling against the concerts\u2019 collaborators.';
+            return;
+          }
+          const shown = hits.slice(0, 6).map(e => {
+            const d = e.data.date ? String(e.data.date).substring(0, 10) : '';
+            return (e.data.title || e.name) + (d ? ' (' + d + ')' : '');
+          });
+          preview.textContent = 'Linked to ' + hits.length + ' concert' + (hits.length > 1 ? 's' : '') + ': ' +
+            shown.join(' · ') + (hits.length > 6 ? ' · …' : '');
+        });
+      };
+      let matchTimer;
+      matchInput.addEventListener('input', () => { clearTimeout(matchTimer); matchTimer = setTimeout(update, 400); });
+      update();
+    }
 
     // Hint toggles — click the ? to show/hide the explanation
     formEl.querySelectorAll('.hint-toggle').forEach(btn => {
