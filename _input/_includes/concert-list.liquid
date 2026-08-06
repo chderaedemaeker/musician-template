@@ -65,6 +65,8 @@ document.addEventListener('DOMContentLoaded', function() {
     .sort(function(a, b) { return new Date(a.date) - new Date(b.date); });
   var archive = concerts.filter(function(c) { return endOf(c) < now; })
     .sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
+  /* The modal steps through concerts in the same order as the page */
+  window.concertNavOrder = upcoming.concat(archive);
 
   function rowHtml(c, isArchive) {
     var d = dateStr(c, { day: 'numeric', month: 'long', year: 'numeric' });

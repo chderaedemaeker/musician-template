@@ -107,6 +107,7 @@ module.exports = function (eleventyConfig) {
     eleventyConfig.addPassthroughCopy("_input/images");
     eleventyConfig.addPassthroughCopy("_input/css");
     eleventyConfig.addPassthroughCopy("_input/js");
+    eleventyConfig.addPassthroughCopy("_input/audio");
 
     // Helper: get collection with English fallback
     function collectionWithFallback(collection, langGlob, enGlob) {

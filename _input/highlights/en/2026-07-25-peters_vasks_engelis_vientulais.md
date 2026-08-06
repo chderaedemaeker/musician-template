@@ -13,3 +13,5 @@ lang: en
 ---
 
 Recording of Pēteris Vasks' *Vientulais Engelis* (The Lonely Angel), a meditation for violin and strings.
+
+<audio controls preload="none" src="/audio/vasks-vientulais-engelis.m4a"></audio>

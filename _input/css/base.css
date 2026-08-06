@@ -2,14 +2,6 @@
    BASE — Tokens, Reset, Typography
    ============================================ */
 
-@font-face {
-  font-family: 'AGL';
-  src: url('/images/AppleGaramond-Light.ttf') format('truetype');
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-
 :root {
   /* ── Colors ── */
   --white: #f6f6f4;
@@ -20,19 +12,20 @@
   --near-black: #1a1a19;
 
   /* ── Fonts ── */
-  --font-serif: 'AGL', Georgia, serif;
+  --font-serif: 'EB Garamond', Georgia, serif;
   --font-sans: 'Helvetica Neue', Helvetica, sans-serif;
+  --font-inter: 'Inter', 'Helvetica Neue', Helvetica, sans-serif;
 
   /* ── Type scale ── */
   --text-caption: 0.75rem;    /* 12px — footer, fine print */
   --text-label: 0.8125rem;    /* 13px — labels, eyebrows, dates */
   --text-sans: 0.9375rem;     /* 15px — nav, buttons, form labels, meta */
-  --text-body: 1.1875rem;     /* 19px — paragraphs */
-  --text-lede: 1.5rem;        /* 24px — intro paragraphs, pull-quotes */
-  --text-h3: 1.5rem;          /* 24px — list and card titles */
-  --text-h2: 2rem;            /* 32px — section headings */
-  --text-h1: clamp(2.25rem, 4vw, 3rem);       /* page titles */
-  --text-display: clamp(2.75rem, 7vw, 4.5rem); /* hero name only */
+  --text-body: 1.3125rem;     /* 21px — serif paragraphs */
+  --text-lede: 1.625rem;      /* 26px — intro paragraphs, pull-quotes */
+  --text-h3: 1.625rem;        /* 26px — list and card titles */
+  --text-h2: 2.25rem;         /* 36px — section headings */
+  --text-h1: clamp(2.5rem, 4.5vw, 3.375rem);  /* page titles */
+  --text-display: clamp(3rem, 7.5vw, 5rem);    /* hero name only */
 
 
 

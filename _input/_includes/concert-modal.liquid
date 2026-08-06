@@ -11,6 +11,10 @@
       <a class="btn" id="cm-ticket" target="_blank" rel="noopener" hidden>{{ languages[lang].tickets }}</a>
       <a class="btn btn-sm" id="cm-page" hidden>{{ languages[lang].full_page }} <span aria-hidden="true">&#8594;</span></a>
     </div>
+    <div class="concert-modal-nav">
+      <button type="button" class="concert-modal-nav-btn" id="cm-prev" hidden><span aria-hidden="true">&#8592;</span> {{ languages[lang].previous }}</button>
+      <button type="button" class="concert-modal-nav-btn" id="cm-next" hidden>{{ languages[lang].next }} <span aria-hidden="true">&#8594;</span></button>
+    </div>
   </div>
 </div>
 
@@ -20,8 +24,21 @@
   var panel = modal.querySelector('.concert-modal-panel');
   var lastTrigger = null;
   var closeTimer = null;
+  var currentConcert = null;
 
-  window.openConcertModal = function (c) {
+  function navStep(delta) {
+    var order = window.concertNavOrder || [];
+    var idx = order.indexOf(currentConcert);
+    var target = order[idx + delta];
+    if (idx !== -1 && target) window.openConcertModal(target, true);
+  }
+
+  window.openConcertModal = function (c, keepFocus) {
+    currentConcert = c;
+    var order = window.concertNavOrder || [];
+    var idx = order.indexOf(c);
+    document.getElementById('cm-prev').hidden = idx <= 0;
+    document.getElementById('cm-next').hidden = idx === -1 || idx >= order.length - 1;
     var dateText = window.concertDateStr
       ? window.concertDateStr(c, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
       : '';
@@ -55,7 +72,7 @@
     if (c.link) page.href = c.link;
 
     if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
-    lastTrigger = document.activeElement;
+    if (!keepFocus) lastTrigger = document.activeElement;
     modal.hidden = false;
     document.body.classList.add('modal-open');
     /* Let the browser paint the hidden→shown state before transitioning */
@@ -65,8 +82,11 @@
       });
     });
     panel.scrollTop = 0;
-    panel.focus();
+    if (!keepFocus) panel.focus();
   };
+
+  document.getElementById('cm-prev').addEventListener('click', function () { navStep(-1); });
+  document.getElementById('cm-next').addEventListener('click', function () { navStep(1); });
 
   window.closeConcertModal = function () {
     if (modal.hidden) return;
@@ -83,6 +103,8 @@
   document.addEventListener('keydown', function (e) {
     if (modal.hidden) return;
     if (e.key === 'Escape') closeConcertModal();
+    if (e.key === 'ArrowLeft') navStep(-1);
+    if (e.key === 'ArrowRight') navStep(1);
     if (e.key === 'Tab' && window.siteTrapFocus) window.siteTrapFocus(panel, e);
   });
 })();

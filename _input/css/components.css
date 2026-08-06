@@ -690,6 +690,33 @@
   margin-top: var(--space-sm);
 }
 
+.concert-modal-nav {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid var(--warm-grey);
+  margin-top: var(--space-md);
+  padding-top: var(--space-sm);
+}
+
+.concert-modal-nav-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: var(--text-sans);
+  color: var(--dark-grey);
+  padding: var(--space-2xs) 0;
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.concert-modal-nav-btn:hover {
+  color: var(--near-black);
+}
+
+.concert-modal-nav-btn#cm-next {
+  margin-left: auto;
+}
+
 body.modal-open {
   overflow: hidden;
 }

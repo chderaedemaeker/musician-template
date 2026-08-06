@@ -24,4 +24,4 @@
 - [ ] Social links on [[Contact Page]] are still placeholders (bare facebook.com / instagram.com / youtube.com) — need the real profile URLs.
 - [ ] German content (about/highlights/projects) still falls back to English until it's written in the CMS.
 - [ ] "Duo Altiler at Studio Toots" highlight has no date yet — set it in the CMS so it sorts correctly.
-- [ ] Vientulais Engelis (Vasks): no recording link exists on the old site or online — need the audio file or a listen link from Veronique to make it playable.
+- [x] Vientulais Engelis (Vasks) recording → found the self-hosted audio on the old site (hidden in an Essential Audio player); it and the Berio Sequenza VIII live recording are now self-hosted under `/audio/` with native players on their highlight pages.

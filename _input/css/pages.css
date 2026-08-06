@@ -315,6 +315,10 @@
 }
 
 .about-page .content {
+  /* Long-form reading text in Inter for legibility; headings, the lede
+     and the pull-quote stay serif */
+  font-family: var(--font-inter);
+  font-size: 1.0625rem;
   line-height: var(--leading-relaxed);
 }
 
@@ -339,6 +343,7 @@
 
 /* First text paragraph reads as a lede */
 .about-page .content > .prog-img-wrap + p {
+  font-family: var(--font-serif);
   font-size: var(--text-lede);
   line-height: 1.45;
   margin-bottom: var(--space-md);
@@ -350,6 +355,7 @@
 }
 
 .about-page .content blockquote {
+  font-family: var(--font-serif);
   font-size: var(--text-lede);
   line-height: 1.45;
   border-left: 1px solid var(--mid-grey);
@@ -488,12 +494,18 @@
   border: none;
 }
 
-/* Embedded players inside content (e.g. SoundCloud) */
+/* Embedded players inside content (SoundCloud, audio recordings) */
 .detail-page .content iframe,
 .concert-detail .content iframe {
   width: 100%;
   border: none;
   border-radius: var(--radius-sm);
+  margin: var(--space-sm) 0;
+}
+
+.detail-page .content audio,
+.concert-detail .content audio {
+  width: 100%;
   margin: var(--space-sm) 0;
 }
 
