@@ -35,15 +35,26 @@
     var nav = document.querySelector('.nav');
     if (!nav) return;
     var lastY = window.scrollY;
-    function onScroll() {
+    var ticking = false;
+    function apply() {
+      ticking = false;
       var y = window.scrollY;
-      nav.classList.toggle('is-scrolled', y > 60);
-      if (y > 140 && y > lastY) nav.classList.add('nav--quiet');
-      else if (y < lastY || y <= 60) nav.classList.remove('nav--quiet');
-      lastY = y;
+      /* hysteresis: switch on past 90, only switch off back under 40 —
+         no flickering around a single threshold */
+      if (y > 90) nav.classList.add('is-scrolled');
+      else if (y < 40) nav.classList.remove('is-scrolled');
+      var delta = y - lastY;
+      if (Math.abs(delta) > 8) {
+        if (delta > 0 && y > 280) nav.classList.add('nav--quiet');
+        else if (delta < 0) nav.classList.remove('nav--quiet');
+        lastY = y;
+      }
+      if (y <= 90) nav.classList.remove('nav--quiet');
     }
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+    window.addEventListener('scroll', function () {
+      if (!ticking) { ticking = true; requestAnimationFrame(apply); }
+    }, { passive: true });
+    apply();
   });
 
   /* Reveal animations. Elements in a .reveal-group (card grids) flow in

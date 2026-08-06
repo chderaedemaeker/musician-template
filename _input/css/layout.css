@@ -362,10 +362,14 @@ main {
 
 .footer-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(8rem, max-content)) minmax(16rem, 24rem);
-  justify-content: space-between;
-  gap: var(--space-md);
+  grid-template-columns: max-content max-content max-content 1fr;
+  gap: var(--space-lg2);
   margin-bottom: var(--space-md);
+}
+
+.footer-news {
+  justify-self: end;
+  width: min(24rem, 100%);
 }
 
 .footer-heading {
