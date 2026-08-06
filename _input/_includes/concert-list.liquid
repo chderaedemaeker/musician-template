@@ -67,10 +67,14 @@ document.addEventListener('DOMContentLoaded', function() {
     .sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
 
   function rowHtml(c, isArchive) {
-    var dateOpts = isArchive
-      ? { day: 'numeric', month: 'long', year: 'numeric' }
-      : { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-    var d = dateStr(c, dateOpts);
+    var d = dateStr(c, { day: 'numeric', month: 'long', year: 'numeric' });
+    /* Upcoming single-day concerts show the weekday on its own, lighter line */
+    var dateHtml = d;
+    if (!isArchive && !c.monthOnly && !c.dateEnd) {
+      var weekday = new Date(c.date).toLocaleDateString(lang, { weekday: 'long' });
+      dateHtml = '<span class="concert-row-day">' + weekday + '</span><br>' + d;
+      d = weekday + ' ' + d;
+    }
     var aside = '';
     if (c.composers) aside += '<p class="concert-row-detail">' + c.composers + '</p>';
     if (c.collaborators) aside += '<p class="concert-row-detail">' + c.collaborators + '</p>';
@@ -81,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
     aside += '<span class="concert-row-more">' + detailsLabel + '</span>';
     var searchText = [d, c.title, c.place, c.composers, c.collaborators].join(' ').toLowerCase().replace(/"/g, '&quot;');
     return '<li class="concert-row' + (isArchive ? ' concert-row--archive' : '') + '" data-search="' + searchText + '">' +
-      '<p class="concert-row-date">' + d + '</p>' +
+      '<p class="concert-row-date">' + dateHtml + '</p>' +
       '<div class="concert-row-main">' +
         '<h3><button type="button" class="concert-row-trigger" data-ci="' + concerts.indexOf(c) + '">' + c.title + '</button></h3>' +
         (c.place ? '<p class="concert-row-place">' + c.place + '</p>' : '') +

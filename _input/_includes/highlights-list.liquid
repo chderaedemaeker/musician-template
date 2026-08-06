@@ -16,6 +16,7 @@
               {% if highlight.data.type %}<p class="highlight-card-type">{{ highlight.data.type }}</p>{% endif %}
               <h3 class="highlight-card-title">{{ highlight.data.title }}</h3>
             </div>
+            <span class="card-cta" aria-hidden="true"><span class="card-cta-text">{{ languages[lang].view }}</span><span class="card-cta-arrow">&#8594;</span></span>
           </div>
         </a>
       {% endfor %}

@@ -212,6 +212,11 @@
   font-variant-numeric: tabular-nums;
   padding-top: 0.55rem;
   margin: 0;
+  line-height: 1.5;
+}
+
+.concert-row-day {
+  color: var(--dark-grey);
 }
 
 .concert-row-trigger {
@@ -434,6 +439,100 @@
 
 .highlight-card--noimg .highlight-card-title {
   color: var(--near-black);
+}
+
+/* ── Card call-to-action — faint arrow always there, button fades in ── */
+.card-cta {
+  position: absolute;
+  right: var(--space-sm);
+  bottom: var(--space-sm);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 0.45em;
+  font-family: var(--font-sans);
+  font-size: var(--text-sans);
+  line-height: 1;
+  padding: 0.55em 0.9em;
+  border-radius: 999px;
+  color: var(--white);
+  background-color: transparent;
+  transition: background-color var(--dur-med) var(--ease), color var(--dur-med) var(--ease);
+}
+
+.card-cta-arrow {
+  opacity: 0.55;
+  transition: opacity var(--dur-med) var(--ease);
+}
+
+.card-cta-text {
+  opacity: 0;
+  transform: translateX(6px);
+  transition: opacity var(--dur-med) var(--ease), transform var(--dur-med) var(--ease);
+}
+
+.highlight-card:hover .card-cta,
+.highlight-card:focus-visible .card-cta,
+.bento-highlight:hover .card-cta,
+.bento-highlight:focus-visible .card-cta {
+  background-color: rgba(246, 246, 244, 0.92);
+  color: var(--near-black);
+}
+
+.highlight-card:hover .card-cta-arrow,
+.highlight-card:focus-visible .card-cta-arrow,
+.bento-highlight:hover .card-cta-arrow,
+.bento-highlight:focus-visible .card-cta-arrow {
+  opacity: 1;
+}
+
+.highlight-card:hover .card-cta-text,
+.highlight-card:focus-visible .card-cta-text,
+.bento-highlight:hover .card-cta-text,
+.bento-highlight:focus-visible .card-cta-text {
+  opacity: 1;
+  transform: none;
+}
+
+/* Light placeholder cards: dark arrow at rest, dark pill on hover */
+.highlight-card--noimg .card-cta,
+.bento-highlight--noimg .card-cta {
+  color: var(--near-black);
+}
+
+.highlight-card--noimg .card-cta-arrow,
+.bento-highlight--noimg .card-cta-arrow {
+  opacity: 0.4;
+}
+
+.highlight-card--noimg:hover .card-cta,
+.highlight-card--noimg:focus-visible .card-cta,
+.bento-highlight--noimg:hover .card-cta,
+.bento-highlight--noimg:focus-visible .card-cta {
+  background-color: var(--near-black);
+  color: var(--off-white);
+}
+
+/* Titles lift out of the way while the corner button is showing */
+.highlight-card-top {
+  transition: transform var(--dur-med) var(--ease);
+}
+
+.highlight-card:hover .highlight-card-top,
+.highlight-card:focus-visible .highlight-card-top {
+  transform: translateY(-2.6rem);
+}
+
+.bento-highlight-label,
+.bento-highlight-title {
+  transition: transform var(--dur-med) var(--ease);
+}
+
+.bento-highlight:hover .bento-highlight-label,
+.bento-highlight:hover .bento-highlight-title,
+.bento-highlight:focus-visible .bento-highlight-label,
+.bento-highlight:focus-visible .bento-highlight-title {
+  transform: translateY(-2.6rem);
 }
 
 .highlight-card-type {

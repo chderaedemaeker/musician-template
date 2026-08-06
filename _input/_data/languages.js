@@ -1,5 +1,6 @@
 module.exports = {
   en: {
+    view: "View",
     search_placeholder: "Search concerts…",
     no_results: "No concerts found.",
     previous: "Previous",
@@ -39,6 +40,7 @@ module.exports = {
     no_projects: "No projects found."
   },
   nl: {
+    view: "Bekijk",
     search_placeholder: "Zoek concerten…",
     no_results: "Geen concerten gevonden.",
     previous: "Vorige",
@@ -78,6 +80,7 @@ module.exports = {
     no_projects: "Geen projecten gevonden."
   },
   fr: {
+    view: "Voir",
     search_placeholder: "Rechercher des concerts…",
     no_results: "Aucun concert trouvé.",
     previous: "Précédent",
@@ -117,6 +120,7 @@ module.exports = {
     no_projects: "Aucun projet trouvé."
   },
   de: {
+    view: "Ansehen",
     search_placeholder: "Konzerte suchen…",
     no_results: "Keine Konzerte gefunden.",
     previous: "Zurück",
