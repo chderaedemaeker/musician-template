@@ -61,13 +61,14 @@
   --space-2xl: 8rem;
 
   /* ── Layout ── */
-  --nav-height: 6rem;
+  --nav-height: 4.5rem;
   --width-wide: 1100px;
   --width-content: 50rem;   /* 800px */
   --width-prose: 40rem;     /* 640px */
   --gutter: clamp(1.25rem, 4vw, 2.5rem);
-  --radius-sm: 6px;
-  --radius-lg: 12px;
+  /* Square corners everywhere — buttons are the one pill-shaped exception */
+  --radius-sm: 0;
+  --radius-lg: 0;
 
   /* ── Motion ── */
   --dur-fast: 150ms;
@@ -77,7 +78,7 @@
 }
 
 @media (max-width: 768px) {
-  :root { --nav-height: 4.5rem; }
+  :root { --nav-height: 4rem; }
 }
 
 *, *::before, *::after {

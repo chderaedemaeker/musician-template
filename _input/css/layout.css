@@ -66,19 +66,28 @@ main {
 }
 
 .nav-inner {
+  position: relative;
   width: 100%;
-  max-width: var(--width-wide);
+  max-width: none;
   margin-inline: auto;
   padding-inline: var(--gutter);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
+}
+
+/* The name sits in the exact middle of the bar */
+.nav-brand {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
 }
 
 .nav-brand a {
   font-family: var(--font-serif);
-  font-size: 1.875rem;
+  font-size: 1.5rem;
   font-weight: 300;
   letter-spacing: -0.005em;
   line-height: 1.05;
@@ -93,7 +102,7 @@ main {
 }
 
 .nav-links a {
-  font-size: var(--text-sans);
+  font-size: var(--text-label);
   font-family: var(--font-sans);
   color: var(--dark-grey);
   text-decoration: underline;
@@ -117,10 +126,7 @@ main {
 .lang-switcher {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin-left: var(--space-xs);
-  padding-left: var(--space-md2);
-  border-left: 1px solid var(--warm-grey);
+  gap: 0.65rem;
 }
 
 .lang-switcher a {
@@ -268,18 +274,23 @@ main {
   background-color: var(--white);
 }
 
-@media (max-width: 768px) {
-  .nav-links {
+@media (max-width: 1020px) {
+  .nav-links,
+  .nav-inner > .lang-switcher {
     display: none;
   }
 
   .hamburger {
     display: flex;
     flex-direction: column;
+    margin-left: auto;
     /* stays visible above the mobile nav overlay */
     position: relative;
     z-index: 101;
   }
+}
+
+@media (max-width: 768px) {
 
   /* Keep the transparent nav fixed so it stays over the highlights reel */
   .nav-transparent {
@@ -295,41 +306,103 @@ main {
 }
 
 /* ============================================
-   FOOTER
+   FOOTER — tall, with the name as a faint watermark
    ============================================ */
 
 .footer {
   width: 100%;
-  margin-top: var(--space-xl);
-  padding: var(--space-lg) 0 var(--space-md);
+  margin-top: var(--space-2xl);
+  padding: var(--space-xl) 0 var(--space-md);
   border-top: 1px solid var(--warm-grey);
   font-family: var(--font-sans);
+  overflow: hidden;
 }
 
 .footer-inner {
-  max-width: var(--width-wide);
-  margin-inline: auto;
   padding-inline: var(--gutter);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
 }
 
-.footer p {
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: var(--space-lg) var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+.footer-name {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  color: var(--near-black);
+  margin: 0 0 var(--space-2xs);
+}
+
+.footer-sub {
+  font-size: var(--text-label);
+  color: var(--dark-grey);
+  margin: 0;
+}
+
+.footer-heading {
+  font-size: var(--text-label);
+  color: var(--dark-grey);
+  margin: 0 0 var(--space-sm);
+}
+
+.footer-col ul {
+  list-style: none;
+}
+
+.footer-col li {
+  margin-bottom: var(--space-xs);
+}
+
+.footer-col a {
+  font-size: var(--text-sans);
+  color: var(--charcoal);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  transition: color var(--dur-fast) var(--ease), text-decoration-color var(--dur-fast) var(--ease);
+}
+
+.footer-col a:hover {
+  color: var(--near-black);
+  text-decoration-color: var(--near-black);
+}
+
+.footer-watermark {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: clamp(3rem, 7.6vw, 9.5rem);
+  line-height: 1;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  text-align: center;
+  color: rgba(18, 18, 17, 0.055);
+  margin: var(--space-lg) 0 var(--space-md);
+  user-select: none;
+  pointer-events: none;
+}
+
+.footer-bottom {
+  border-top: 1px solid var(--warm-grey);
+  padding-top: var(--space-sm);
+}
+
+.footer-bottom p {
   font-size: var(--text-caption);
   color: var(--dark-grey);
   margin: 0;
 }
 
-.footer-links {
-  display: flex;
-  flex-direction: row;
-  gap: var(--space-sm);
-}
-
-.footer-links a {
-  color: var(--dark-grey);
-  font-size: var(--text-caption);
+@media (max-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .footer-watermark {
+    font-size: clamp(2rem, 9vw, 3rem);
+  }
 }

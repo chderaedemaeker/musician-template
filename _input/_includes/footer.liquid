@@ -13,11 +13,40 @@
 
 <footer class="footer">
   <div class="footer-inner">
-    <p>&copy; {{ "now" | date: "%Y" }} {{ languages[lang].site_title }}. {{ languages[lang].copyright }}</p>
-    <div class="footer-links">
-      {% for item in navigation[lang] %}
-        <a href="{{ item.url }}">{{ item.text }}</a>
-      {% endfor %}
+    <div class="footer-grid">
+      <div class="footer-col footer-col-lead">
+        <p class="footer-name">{{ languages[lang].site_title }}</p>
+        <p class="footer-sub">{{ languages[lang].site_subtitle }}</p>
+      </div>
+      <div class="footer-col">
+        <p class="footer-heading">{{ languages[lang].footer_navigate }}</p>
+        <ul>
+          {% for item in navigation[lang] %}
+          <li><a href="{{ item.url }}">{{ item.text }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="footer-col">
+        <p class="footer-heading">{{ languages[lang].footer_follow }}</p>
+        <ul>
+          <li><a href="https://www.facebook.com/" target="_blank" rel="noopener">Facebook</a></li>
+          <li><a href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a></li>
+          <li><a href="https://www.youtube.com/" target="_blank" rel="noopener">YouTube</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <p class="footer-heading">{{ languages[lang].contact_title }}</p>
+        <ul>
+          <li><a href="/en/contact/">{{ languages[lang].send_message }}</a></li>
+          <li><a href="/en/contact/">{{ languages[lang].newsletter }}</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="footer-watermark" aria-hidden="true">{{ languages[lang].site_title }}</p>
+
+    <div class="footer-bottom">
+      <p>&copy; {{ "now" | date: "%Y" }} {{ languages[lang].site_title }}. {{ languages[lang].copyright }}</p>
     </div>
   </div>
 </footer>

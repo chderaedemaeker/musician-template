@@ -11,7 +11,7 @@
   font-family: var(--font-sans);
   background-color: transparent;
   border: 1px solid var(--near-black);
-  border-radius: var(--radius-sm);
+  border-radius: 999px;
   cursor: pointer;
   text-decoration: none;
   color: var(--near-black);
@@ -229,7 +229,7 @@
 }
 
 .concert-row--featured .concert-row-daynum {
-  color: var(--accent);
+  color: var(--charcoal);
 }
 
 .concert-row-where {
@@ -251,7 +251,7 @@
   font-size: 2.25rem;
   font-weight: 300;
   line-height: var(--leading-snug);
-  color: var(--accent-deep);
+  color: var(--near-black);
   padding: 0;
 }
 
@@ -304,31 +304,23 @@
   transform: translateY(-50%) translateX(4px);
 }
 
-/* Featured concerts — flagged in the CMS: extra room and a quiet
-   blue wash with accent details, blending with the warm palette */
+/* Featured concerts — flagged in the CMS: a calm white block with
+   extra breathing room */
 .concert-row--featured {
-  background: linear-gradient(90deg, rgba(53, 80, 122, 0.07), rgba(53, 80, 122, 0.02));
-  border-radius: var(--radius-sm);
-  border-bottom: none;
-  border-left: 2px solid var(--accent);
+  background: #fff;
+  border: 1px solid var(--warm-grey);
+  border-bottom: 1px solid var(--warm-grey);
   padding-block: var(--space-lg);
-  margin-block: var(--space-2xs);
+  margin-block: var(--space-xs);
 }
 
 .concert-row--featured:hover,
 .concert-row--featured:focus-within {
-  background: linear-gradient(90deg, rgba(53, 80, 122, 0.11), rgba(53, 80, 122, 0.04));
+  background: #fbfaf8;
 }
 
 .concert-row--featured .concert-row-more {
-  color: var(--accent);
-  opacity: 0.7;
-}
-
-.concert-row--featured:hover .concert-row-more,
-.concert-row--featured:focus-within .concert-row-more {
-  color: var(--accent-deep);
-  opacity: 1;
+  display: none;
 }
 
 /* Ticket link floats above the row-wide trigger */
@@ -495,32 +487,6 @@
 .highlight-card--featured {
   grid-column: span 2;
   aspect-ratio: 16 / 10;
-}
-
-.highlight-card--featured.highlight-card--noimg {
-  background: linear-gradient(160deg, #e9edf3, #dbe2ec);
-}
-
-.highlight-card--featured.highlight-card--noimg::before {
-  color: rgba(53, 80, 122, 0.08);
-}
-
-.highlight-card--featured.highlight-card--noimg .highlight-card-type {
-  color: var(--accent);
-}
-
-.highlight-card--featured.highlight-card--noimg .highlight-card-title {
-  color: var(--accent-deep);
-}
-
-.highlight-card--featured.highlight-card--noimg .card-cta {
-  color: var(--accent-deep);
-}
-
-.highlight-card--featured.highlight-card--noimg:hover .card-cta-arrow,
-.highlight-card--featured.highlight-card--noimg:focus-visible .card-cta-arrow {
-  background-color: var(--accent-deep);
-  color: var(--off-white);
 }
 
 @media (max-width: 700px) {

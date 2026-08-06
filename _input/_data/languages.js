@@ -1,5 +1,7 @@
 module.exports = {
   en: {
+    footer_navigate: "Navigate",
+    footer_follow: "Follow",
     view: "View",
     search_placeholder: "Search concerts…",
     no_results: "No concerts found.",
@@ -40,6 +42,8 @@ module.exports = {
     no_projects: "No projects found."
   },
   nl: {
+    footer_navigate: "Navigatie",
+    footer_follow: "Volg",
     view: "Bekijk",
     search_placeholder: "Zoek concerten…",
     no_results: "Geen concerten gevonden.",
@@ -80,6 +84,8 @@ module.exports = {
     no_projects: "Geen projecten gevonden."
   },
   fr: {
+    footer_navigate: "Navigation",
+    footer_follow: "Suivre",
     view: "Voir",
     search_placeholder: "Rechercher des concerts…",
     no_results: "Aucun concert trouvé.",
@@ -120,6 +126,8 @@ module.exports = {
     no_projects: "Aucun projet trouvé."
   },
   de: {
+    footer_navigate: "Navigation",
+    footer_follow: "Folgen",
     view: "Ansehen",
     search_placeholder: "Konzerte suchen…",
     no_results: "Keine Konzerte gefunden.",

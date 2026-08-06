@@ -21,13 +21,14 @@
       {% for item in navigation[lang] %}
         <a href="{{ item.url }}"{% if page.url == item.url %} class="active" aria-current="page"{% endif %}>{{ item.text }}</a>
       {% endfor %}
-      <nav class="lang-switcher" aria-label="Language">
-        {% assign langCodes = "en|nl|fr|de" | split: "|" %}
-        {% for code in langCodes %}
-          <a href="/{{ code }}/" {% if lang == code %}class="active" aria-current="true"{% endif %} onclick="switchLanguage('{{ code }}'); return false;">{{ code }}</a>
-        {% endfor %}
-      </nav>
     </div>
+
+    <nav class="lang-switcher" aria-label="Language">
+      {% assign langCodes = "en|nl|fr|de" | split: "|" %}
+      {% for code in langCodes %}
+        <a href="/{{ code }}/" {% if lang == code %}class="active" aria-current="true"{% endif %} onclick="switchLanguage('{{ code }}'); return false;">{{ code }}</a>
+      {% endfor %}
+    </nav>
 
     <button class="hamburger" aria-label="Menu" aria-expanded="false" aria-controls="mobile-nav" onclick="toggleMobileNav()">
       <span></span>
