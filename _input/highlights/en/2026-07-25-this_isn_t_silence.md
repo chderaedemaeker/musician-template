@@ -7,7 +7,7 @@ image: /images/silence.jpeg
 link: ""
 place: HfMT Cologne, Germany
 collaborators: ""
-featured: true
+featured: false
 layout: highlight.html
 tags: highlights
 lang: en
