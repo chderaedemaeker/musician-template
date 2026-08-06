@@ -26,7 +26,7 @@
 
 <main>
   <div class="concert-detail">
-    <a class="back-link back-link--top" href="/{{ lang }}/concerts/"><span aria-hidden="true">&#8592;</span> {{ languages[lang].back_to_overview }}</a>
+    <a class="btn btn--back" href="/{{ lang }}/concerts/"><span aria-hidden="true">&#8592;</span> {{ languages[lang].back_to_overview }}</a>
 
     {% if date %}<p class="date">{{ date | concertDate: date_end, month_only, lang }}</p>{% endif %}
     <h1>{{ title }}</h1>

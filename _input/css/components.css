@@ -56,6 +56,10 @@
   margin-bottom: var(--space-md);
 }
 
+.btn--back {
+  margin-bottom: var(--space-md);
+}
+
 /* ── Previous / next between detail pages ── */
 .detail-nav {
   display: grid;
@@ -141,7 +145,8 @@
 
 .concert-search {
   width: min(18rem, 100%);
-  padding: 0.55em 0.85em;
+  padding: 0.55em 1.1em;
+  border-radius: 999px;
   background: #fff;
   border: 1px solid var(--warm-grey);
   border-radius: var(--radius-sm);
@@ -811,10 +816,10 @@ body.modal-open {
 .form-group input,
 .form-group textarea {
   width: 100%;
-  padding: 0.7em 0.85em;
+  padding: 0.7em 1.1em;
   background: #fff;
   border: 1px solid var(--warm-grey);
-  border-radius: var(--radius-sm);
+  border-radius: 999px;
   font-family: var(--font-serif);
   font-size: var(--text-body);
   color: var(--near-black);
@@ -836,6 +841,7 @@ body.modal-open {
   min-height: 150px;
   resize: vertical;
   line-height: var(--leading-normal);
+  border-radius: 1.25rem; /* soft corners — a full pill fights multi-line text */
 }
 
 .newsletter-form label {
@@ -855,10 +861,10 @@ body.modal-open {
 .newsletter-row input {
   flex: 1;
   min-width: 0;
-  padding: 0.7em 0.85em;
+  padding: 0.7em 1.1em;
   background: #fff;
   border: 1px solid var(--warm-grey);
-  border-radius: var(--radius-sm);
+  border-radius: 999px;
   font-family: var(--font-serif);
   font-size: var(--text-body);
   color: var(--near-black);
