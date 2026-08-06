@@ -1102,6 +1102,7 @@ class App {
         <h2>${isNew ? `New ${esc(col.label.replace(/s$/, ''))}` : 'Edit'}</h2>
         <div class="editor-actions">
           ${isI18n ? '<button class="btn btn-ghost btn-sm" id="translate-btn">Translate</button>' : ''}
+          <button class="btn btn-ghost" id="cancel-btn">Cancel edits</button>
           <button class="btn btn-primary" id="save-btn">Save</button>
           ${!isNew ? '<button class="btn btn-danger" id="delete-btn">Delete</button>' : ''}
         </div>
@@ -1196,6 +1197,13 @@ class App {
 
     // Save
     document.getElementById('save-btn').addEventListener('click', () => this._saveEntry(state));
+
+    // Cancel — discard unsaved changes and go back to the list
+    document.getElementById('cancel-btn').addEventListener('click', () => {
+      if (this._unsavedChanges && !confirm('Discard your unsaved changes?')) return;
+      this._markClean();
+      location.hash = `#/${colName}`;
+    });
 
     // Status bar (projects / highlights only)
     if (!isNew && isI18n && (col.name === 'projects' || col.name === 'highlights')) {
