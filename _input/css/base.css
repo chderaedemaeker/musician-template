@@ -154,6 +154,11 @@ hr {
   text-decoration-color: var(--near-black);
 }
 
+/* Buttons inside prose never take the prose underline */
+.content a.btn {
+  text-decoration: none;
+}
+
 /* ── Keyboard focus — one visible ring everywhere ── */
 :focus-visible {
   outline: 2px solid var(--near-black);

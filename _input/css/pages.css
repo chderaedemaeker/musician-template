@@ -375,6 +375,14 @@
   margin-top: var(--space-lg);
 }
 
+/* Standalone external links inside content render as clean buttons */
+.content-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin: var(--space-md) 0 0;
+}
+
 .about-projects {
   max-width: var(--width-content);
   margin-inline: auto;

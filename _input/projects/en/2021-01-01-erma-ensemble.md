@@ -10,18 +10,12 @@ The ÉRMA Ensemble is a young, Cologne-based ensemble that has come together to 
 
 The ensemble’s goal is to bring contemporary music closer to its audience—where “audience” in this context means “anyone who is willing to listen.” For this reason, ÉRMA has successfully experimented with alternative concert formats, such as the acclaimed opening of the Panorama concert series, during which the ensemble invited its audience to the Kabinett der Sinne in March 2026 for an immersive experience that blended concert and art exhibition.
 
-
 Furthermore, the ensemble is committed to developing projects with social relevance. Collaborations with other art forms and cultures play a major role in this effort, which led to a partnership with Derya Yildrim, a Hamburg-based bağlama player of Turkish descent, for the November 2024 production *Crossing the Abyss*.
 The ensemble has performed several times at the Achtbrücken Festival in Cologne, for example in 2023, when the composition competition was dedicated to ÉRMA (concert at the WDR Funkhaus). ÉRMA played a children's concert at the Cologne Philharmonie in May 2026. 
 
-From 2023 to 2025, ÉRMA was part of the InSzene funding program run by the Podium Gegenwart of the Deutsche Muskrat.
+From 2023 to 2025, ÉRMA was part of the InSzene funding program run by the Podium Gegenwart of the Deutscher Musikrat.
 
 image by Anna Tena
 
-[https://erma-ensemble.com(url)
-
-[https://substack.com/@ermaensemble(url)
-
-[https://www.instagram.com/erma.ensemble?igsh=MTR0ZTNudWsxbm0xdQ==(url)
-
+<div class="content-actions"><a class="btn btn-sm" href="https://erma-ensemble.com" target="_blank" rel="noopener">erma-ensemble.com</a> <a class="btn btn-sm" href="https://substack.com/@ermaensemble" target="_blank" rel="noopener">Newsletter</a> <a class="btn btn-sm" href="https://www.instagram.com/erma.ensemble" target="_blank" rel="noopener">Instagram</a></div>
 

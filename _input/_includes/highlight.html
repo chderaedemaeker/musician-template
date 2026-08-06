@@ -39,13 +39,12 @@
     </div>
     {% endif %}
 
+    {% comment %} The video replaces the image — never both {% endcomment %}
     {% if link and link != "" %}
       <div class="video-wrap">
         <iframe src="https://www.youtube.com/embed/{{ link }}" title="{{ title }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
       </div>
-    {% endif %}
-
-    {% if image %}
+    {% elsif image and image != "" %}
       <div class="featured-image">
         {% progressiveImage image, title %}
       </div>

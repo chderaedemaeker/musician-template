@@ -441,42 +441,35 @@
   color: var(--near-black);
 }
 
-/* ── Card call-to-action — faint arrow always there, button fades in ── */
+/* ── Card call-to-action — faint arrow bottom-right, label fades in
+      at the bottom-left of the whole card on hover ── */
 .card-cta {
   position: absolute;
+  left: var(--space-md);
   right: var(--space-sm);
   bottom: var(--space-sm);
   z-index: 3;
   display: flex;
   align-items: center;
-  gap: 0.45em;
+  justify-content: space-between;
   font-family: var(--font-sans);
   font-size: var(--text-sans);
   line-height: 1;
-  padding: 0.55em 0.9em;
-  border-radius: 999px;
   color: var(--white);
-  background-color: transparent;
-  transition: background-color var(--dur-med) var(--ease), color var(--dur-med) var(--ease);
 }
 
 .card-cta-arrow {
   opacity: 0.55;
-  transition: opacity var(--dur-med) var(--ease);
+  padding: 0.55em 0.9em;
+  border-radius: 999px;
+  background-color: transparent;
+  transition: opacity var(--dur-med) var(--ease), background-color var(--dur-med) var(--ease), color var(--dur-med) var(--ease);
 }
 
 .card-cta-text {
   opacity: 0;
-  transform: translateX(6px);
+  transform: translateY(4px);
   transition: opacity var(--dur-med) var(--ease), transform var(--dur-med) var(--ease);
-}
-
-.highlight-card:hover .card-cta,
-.highlight-card:focus-visible .card-cta,
-.bento-highlight:hover .card-cta,
-.bento-highlight:focus-visible .card-cta {
-  background-color: rgba(246, 246, 244, 0.92);
-  color: var(--near-black);
 }
 
 .highlight-card:hover .card-cta-arrow,
@@ -484,6 +477,8 @@
 .bento-highlight:hover .card-cta-arrow,
 .bento-highlight:focus-visible .card-cta-arrow {
   opacity: 1;
+  background-color: rgba(246, 246, 244, 0.92);
+  color: var(--near-black);
 }
 
 .highlight-card:hover .card-cta-text,
@@ -505,10 +500,10 @@
   opacity: 0.4;
 }
 
-.highlight-card--noimg:hover .card-cta,
-.highlight-card--noimg:focus-visible .card-cta,
-.bento-highlight--noimg:hover .card-cta,
-.bento-highlight--noimg:focus-visible .card-cta {
+.highlight-card--noimg:hover .card-cta-arrow,
+.highlight-card--noimg:focus-visible .card-cta-arrow,
+.bento-highlight--noimg:hover .card-cta-arrow,
+.bento-highlight--noimg:focus-visible .card-cta-arrow {
   background-color: var(--near-black);
   color: var(--off-white);
 }

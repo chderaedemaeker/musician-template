@@ -20,6 +20,5 @@ Their repertoire spans from classical to contemporary, featuring works by Beetho
 
 Currently Duo Altiler follows the chamber music course at the Orpheus Institute. They worked on repertoire with Robert Kulek, Alasdair Beatson, Paulo Álvares, David Quiggle, José Luis Estelles, Piet Kuijken, Abdel Rahman El Bacha & Amy Norrington.
 
-[https://www.duoaltiler.com(url)
-
+<div class="content-actions"><a class="btn btn-sm" href="https://www.duoaltiler.com" target="_blank" rel="noopener">duoaltiler.com</a></div>
 image by Anna Tena
