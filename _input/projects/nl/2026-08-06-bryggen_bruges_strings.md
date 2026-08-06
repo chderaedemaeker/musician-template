@@ -2,6 +2,7 @@
 title: BRYGGEN Bruges Strings
 collaborators: "Artistic direction: Jolente De Maeyer"
 image: "/images/bryggen-bruges-strings.jpg"
+match: "bryggen"
 layout: project.html
 tags: projects
 lang: nl

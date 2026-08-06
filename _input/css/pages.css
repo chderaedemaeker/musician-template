@@ -406,9 +406,16 @@
 
 /* ── Contact ── */
 .contact-page {
-  max-width: var(--width-prose);
+  max-width: var(--width-content);
   margin-inline: auto;
   padding: 0 var(--gutter) var(--space-xl);
+}
+
+/* Fields stay a comfortable reading width inside the wider page */
+.contact-page .form-group input,
+.contact-page .form-group textarea,
+.contact-page .newsletter-row {
+  max-width: 34rem;
 }
 
 .contact-page form {
@@ -529,4 +536,30 @@
   margin-inline: auto;
   padding: var(--space-2xl) var(--gutter) var(--space-xl);
   text-align: center;
+}
+
+/* ── Concerts belonging to a project ── */
+.project-concerts {
+  margin-top: var(--space-lg);
+}
+
+.project-concerts > h2 {
+  margin-bottom: var(--space-sm);
+}
+
+.project-concerts-label {
+  margin: var(--space-md) 0 var(--space-2xs);
+}
+
+.upcoming-list--past .upcoming-item-title {
+  font-size: 1.25rem;
+  color: var(--charcoal);
+}
+
+.upcoming-list--past .upcoming-item {
+  padding-block: var(--space-sm);
+}
+
+.project-concerts-more {
+  margin-top: var(--space-sm);
 }

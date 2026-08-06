@@ -2,6 +2,7 @@
 title: ÉRMA Ensemble
 collaborators: ""
 image: /images/erma.png
+match: "érma, erma"
 layout: project.html
 tags: projects
 lang: nl

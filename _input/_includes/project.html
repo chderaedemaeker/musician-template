@@ -52,6 +52,64 @@
       </div>
     {% endif %}
 
+    {% comment %} Concerts belonging to this project, matched on the
+       project's match words (falling back to its title) {% endcomment %}
+    {% assign matchWords = match | default: title | downcase | split: "," %}
+    {% assign nowTs = "now" | date: "%s" %}
+    {% assign upcomingConcerts = "" | split: "" %}
+    {% assign pastConcerts = "" | split: "" %}
+    {% assign allConcerts = collections.concerts | sort: "date" %}
+    {% for c in allConcerts %}
+      {% assign hay = c.data.collaborators | append: " " | append: c.data.title | downcase %}
+      {% assign hit = false %}
+      {% for w in matchWords %}
+        {% assign wt = w | strip %}
+        {% if wt != "" and hay contains wt %}{% assign hit = true %}{% endif %}
+      {% endfor %}
+      {% if hit %}
+        {% assign cTs = c.date | date: "%s" %}
+        {% if cTs >= nowTs %}
+          {% assign upcomingConcerts = upcomingConcerts | push: c %}
+        {% else %}
+          {% assign pastConcerts = pastConcerts | push: c %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+    {% if upcomingConcerts.size > 0 or pastConcerts.size > 0 %}
+    <section class="project-concerts">
+      <h2>{{ languages[lang].concerts_title }}</h2>
+      {% if upcomingConcerts.size > 0 %}
+        <p class="label project-concerts-label">{{ languages[lang].upcoming_concerts }}</p>
+        <ul class="upcoming-list">
+          {% for c in upcomingConcerts %}
+          <li><a class="upcoming-item" href="{{ c.url }}">
+            <span class="upcoming-item-date">{{ c.date | concertDate: c.data.date_end, c.data.month_only, lang }}</span>
+            <span class="upcoming-item-title">{{ c.data.title }}</span>
+            {% if c.data.place %}<span class="upcoming-item-place">{{ c.data.place }}</span>{% endif %}
+          </a></li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+      {% if pastConcerts.size > 0 %}
+        <p class="label project-concerts-label">{{ languages[lang].archive }}</p>
+        {% assign pastRecent = pastConcerts | reverse %}
+        <ul class="upcoming-list upcoming-list--past">
+          {% for c in pastRecent limit: 5 %}
+          <li><a class="upcoming-item" href="{{ c.url }}">
+            <span class="upcoming-item-date">{{ c.date | concertDate: c.data.date_end, c.data.month_only, lang }}</span>
+            <span class="upcoming-item-title">{{ c.data.title }}</span>
+            {% if c.data.place %}<span class="upcoming-item-place">{{ c.data.place }}</span>{% endif %}
+          </a></li>
+          {% endfor %}
+        </ul>
+        {% if pastConcerts.size > 5 %}
+          <p class="project-concerts-more"><a class="back-link" href="/en/concerts/">{{ languages[lang].archive }} <span aria-hidden="true">&#8594;</span></a></p>
+        {% endif %}
+      {% endif %}
+    </section>
+    {% endif %}
+
     {% assign langProjects = 'projects_' | append: lang %}
     {% assign detailItems = collections[langProjects] | sort: 'date' | reverse %}
     {% include "detail-nav.liquid" %}

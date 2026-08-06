@@ -222,6 +222,13 @@ button, input, select, textarea,
   transform: none;
 }
 
+/* Cards fade in without moving — animating a transform on the card
+   breaks its rounded-corner clipping while it runs */
+.js .highlight-card.reveal,
+.js .bento-highlight.reveal {
+  transform: none;
+}
+
 /* ── Reduced motion — stillness, everything visible ── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
