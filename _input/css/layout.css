@@ -80,7 +80,7 @@ main {
   font-family: var(--font-serif);
   font-size: 1.875rem;
   font-weight: 300;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.005em;
   line-height: 1.05;
   color: var(--near-black);
   display: block;

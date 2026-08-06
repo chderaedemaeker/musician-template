@@ -16,12 +16,13 @@
   --off-white: #f5f4f2;
   --warm-grey: #e8e6e1;
   --mid-grey: #b5b0a8;   /* decoration only — fails contrast as text */
-  --dark-grey: #7a746b;  /* secondary text — lighter for hierarchy, still AA */
-  --near-black: #121211; /* primary text — darker for contrast */
+  --dark-grey: #8a847a;  /* secondary text — light, for quiet meta */
+  --charcoal: #4d4841;   /* soft ink — long-form reading text */
+  --near-black: #0d0d0c; /* primary text — near pure black */
 
   /* ── Fonts ── */
   --font-serif: 'AGL', Georgia, serif;
-  --font-sans: 'Helvetica Neue', Helvetica, sans-serif;
+  --font-sans: 'Inter', 'Helvetica Neue', Helvetica, sans-serif;
   --font-inter: 'Inter', 'Helvetica Neue', Helvetica, sans-serif;
 
   /* ── Type scale ── */
@@ -90,6 +91,7 @@ body {
   background-color: var(--off-white);
   color: var(--near-black);
   line-height: var(--leading-normal);
+  letter-spacing: 0.01em; /* a little air in the serif */
   min-height: 100vh;
 }
 
@@ -111,6 +113,7 @@ ul, ol {
 
 h1 {
   font-family: var(--font-serif);
+  letter-spacing: 0.01em;
   font-size: var(--text-h1);
   font-weight: 300;
   line-height: var(--leading-tight);
@@ -118,6 +121,7 @@ h1 {
 
 h2 {
   font-family: var(--font-serif);
+  letter-spacing: 0.01em;
   font-size: var(--text-h2);
   font-weight: 300;
   line-height: var(--leading-snug);
@@ -125,6 +129,7 @@ h2 {
 
 h3 {
   font-family: var(--font-serif);
+  letter-spacing: 0.01em;
   font-size: var(--text-h3);
   font-weight: 300;
   line-height: var(--leading-snug);
@@ -158,6 +163,22 @@ hr {
 /* Buttons inside prose never take the prose underline */
 .content a.btn {
   text-decoration: none;
+}
+
+/* ── Inter kerns tighter than the old system sans ── */
+button, input, select, textarea,
+.label, .btn, .back-link, .footer,
+.nav-links a, .lang-switcher a, .socials-list a,
+.concert-row-date, .concert-row-place, .concert-row-detail, .concert-row-ticket,
+.concert-tab, .concert-search, .concert-year-heading,
+.concert-modal-date, .concert-modal-meta, .concert-modal-nav-btn,
+.upcoming-item-date, .upcoming-item-place,
+.bento-cell-link, .contact-newsletter-hint,
+.highlight-card-type, .highlight-card-title,
+.bento-highlight-label, .bento-highlight-title, .card-cta,
+.concert-detail .date, .concert-detail .meta, .detail-page .meta,
+.about-page .content {
+  letter-spacing: -0.015em;
 }
 
 /* ── Keyboard focus — one visible ring everywhere ── */

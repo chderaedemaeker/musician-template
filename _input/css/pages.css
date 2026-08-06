@@ -59,7 +59,7 @@
   font-size: var(--text-display);
   font-weight: 300;
   line-height: 0.95;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.01em;
   color: var(--white);
 }
 
@@ -320,6 +320,7 @@
   font-family: var(--font-inter);
   font-size: 1.0625rem;
   line-height: var(--leading-relaxed);
+  color: var(--charcoal);
 }
 
 /* The markdown image paragraph collapses to an empty <p> once the browser
