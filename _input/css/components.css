@@ -215,6 +215,21 @@
 
 .concert-row-day {
   opacity: 0.75;
+  font-size: var(--text-label);
+}
+
+.concert-row-daynum {
+  font-family: var(--font-serif);
+  font-size: 1.75rem;
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: var(--charcoal);
+  margin-right: 1px;
+}
+
+.concert-row--featured .concert-row-daynum {
+  color: var(--accent);
 }
 
 .concert-row-where {
@@ -236,7 +251,7 @@
   font-size: 2.25rem;
   font-weight: 300;
   line-height: var(--leading-snug);
-  color: inherit;
+  color: var(--accent-deep);
   padding: 0;
 }
 
@@ -287,6 +302,33 @@
   opacity: 1;
   color: var(--near-black);
   transform: translateY(-50%) translateX(4px);
+}
+
+/* Featured concerts — flagged in the CMS: extra room and a quiet
+   blue wash with accent details, blending with the warm palette */
+.concert-row--featured {
+  background: linear-gradient(90deg, rgba(53, 80, 122, 0.07), rgba(53, 80, 122, 0.02));
+  border-radius: var(--radius-sm);
+  border-bottom: none;
+  border-left: 2px solid var(--accent);
+  padding-block: var(--space-lg);
+  margin-block: var(--space-2xs);
+}
+
+.concert-row--featured:hover,
+.concert-row--featured:focus-within {
+  background: linear-gradient(90deg, rgba(53, 80, 122, 0.11), rgba(53, 80, 122, 0.04));
+}
+
+.concert-row--featured .concert-row-more {
+  color: var(--accent);
+  opacity: 0.7;
+}
+
+.concert-row--featured:hover .concert-row-more,
+.concert-row--featured:focus-within .concert-row-more {
+  color: var(--accent-deep);
+  opacity: 1;
 }
 
 /* Ticket link floats above the row-wide trigger */
@@ -456,29 +498,29 @@
 }
 
 .highlight-card--featured.highlight-card--noimg {
-  background: linear-gradient(160deg, var(--accent), var(--accent-deep));
+  background: linear-gradient(160deg, #e9edf3, #dbe2ec);
 }
 
 .highlight-card--featured.highlight-card--noimg::before {
-  color: rgba(246, 246, 244, 0.08);
+  color: rgba(53, 80, 122, 0.08);
 }
 
 .highlight-card--featured.highlight-card--noimg .highlight-card-type {
-  color: rgba(246, 246, 244, 0.8);
+  color: var(--accent);
 }
 
 .highlight-card--featured.highlight-card--noimg .highlight-card-title {
-  color: var(--white);
+  color: var(--accent-deep);
 }
 
 .highlight-card--featured.highlight-card--noimg .card-cta {
-  color: var(--white);
+  color: var(--accent-deep);
 }
 
 .highlight-card--featured.highlight-card--noimg:hover .card-cta-arrow,
 .highlight-card--featured.highlight-card--noimg:focus-visible .card-cta-arrow {
-  background-color: rgba(246, 246, 244, 0.92);
-  color: var(--accent-deep);
+  background-color: var(--accent-deep);
+  color: var(--off-white);
 }
 
 @media (max-width: 700px) {

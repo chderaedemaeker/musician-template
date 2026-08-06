@@ -451,7 +451,7 @@
 /* ── Detail pages (concert, project, highlight) ── */
 .concert-detail,
 .detail-page {
-  max-width: var(--width-prose);
+  max-width: var(--width-content);
   margin-inline: auto;
   padding: var(--space-2xl) var(--gutter) var(--space-xl);
 }

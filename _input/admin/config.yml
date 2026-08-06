@@ -41,6 +41,7 @@ collections:
       - {label: "Composers", name: "composers", widget: "string", required: false, autocomplete: true, hint: "Composers on the programme, separated by commas, e.g. \"Bach, Ysaÿe\"."}
       - {label: "Collaborators", name: "collaborators", widget: "string", required: false, autocomplete: true, hint: "Who plays with you, e.g. \"Duo Altiler (Alexander Declercq - Piano)\"."}
       - {label: "Link", name: "link", widget: "string", required: false, hint: "Web address for tickets or more information. Shown as a \"Tickets & Info\" button."}
+      - {label: "Featured", name: "featured", widget: "boolean", required: false, default: false, hint: "Turn on to give this concert extra attention in the list: more space and the blue accent background."}
       - {label: "Extra links", name: "links", widget: "links", required: false, hint: "Optional extra buttons at the bottom of the concert page. Give each one a short name (what visitors will read) and the full web address."}
       - {label: "Additional information", name: "body", widget: "markdown", required: false, hint: "Free text shown on the concert page: programme, background, anything visitors should know."}
 

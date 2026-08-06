@@ -181,6 +181,7 @@ module.exports = function (eleventyConfig) {
                 composers: concert.data.composers,
                 collaborators: concert.data.collaborators,
                 ticket: concert.data.link || null,
+                featured: !!concert.data.featured,
                 body: body,
                 link: concert.url
             };

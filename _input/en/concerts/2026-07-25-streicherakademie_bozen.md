@@ -5,5 +5,6 @@ place: Bozen, Italy
 composers: J.S. Bach, Honneger, Martin
 collaborators: Streicherakademie Bozen & Holliger
 link: "https://streicherakademie.it/de/konzerte/"
+featured: true
 layout: concert.html
 ---

@@ -79,11 +79,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function rowHtml(c, isArchive) {
     var d = dateStr(c);
-    /* Upcoming single-day concerts show the weekday on its own, lighter line */
+    /* Upcoming single-day concerts: light weekday, large serif day number */
     var dateHtml = d;
     if (!isArchive && !c.monthOnly && !c.dateEnd) {
-      var weekday = new Date(c.date).toLocaleDateString(lang, { weekday: 'long' });
-      dateHtml = '<span class="concert-row-day">' + weekday + '</span><br>' + d;
+      var dd = new Date(c.date);
+      var weekday = dd.toLocaleDateString(lang, { weekday: 'long' });
+      var monthYear = dd.toLocaleDateString(lang, { month: 'long', year: 'numeric' });
+      dateHtml = '<span class="concert-row-day">' + weekday + '</span><br>' +
+        '<span class="concert-row-daynum">' + dd.getDate() + '</span> ' + monthYear;
       d = weekday + ' ' + d;
     }
     var aside = '';
@@ -93,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ticketsLabel + '</a>';
     }
     var searchText = [d, c.title, c.place, c.composers, c.collaborators].join(' ').toLowerCase().replace(/"/g, '&quot;');
-    return '<li class="concert-row' + (isArchive ? ' concert-row--archive' : '') + '" data-search="' + searchText + '">' +
+    return '<li class="concert-row' + (isArchive ? ' concert-row--archive' : '') + (c.featured ? ' concert-row--featured' : '') + '" data-search="' + searchText + '">' +
       '<div class="concert-row-when">' +
         '<p class="concert-row-date">' + dateHtml + '</p>' +
         (c.place ? '<p class="concert-row-where">' + c.place + '</p>' : '') +
