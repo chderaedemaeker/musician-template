@@ -1,7 +1,7 @@
 ---
 title: Radio Poupoule
-date: "2026-10-28T20:00"
-place: Hasselt, Belgium
+date: "2026-11-15T15:00"
+place: Brugge, Belgium
 composers: Poulenc
 collaborators: I solisti, Vlaams Radio Koor, Filip Jordens & Maaike Cafmeyer
 link: ""
