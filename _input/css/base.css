@@ -170,6 +170,13 @@ hr {
   text-decoration: none;
 }
 
+/* Safari: strip native input chrome so pills render as designed */
+input:not([type="checkbox"]):not([type="radio"]),
+textarea {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
 /* ── Inter kerns tighter than the old system sans ── */
 button, input, select, textarea,
 .label, .btn, .back-link, .footer,
@@ -183,7 +190,7 @@ button, input, select, textarea,
 .bento-highlight-label, .bento-highlight-title, .card-cta,
 .concert-detail .date, .concert-detail .meta, .detail-page .meta,
 .about-page .content {
-  letter-spacing: -0.015em;
+  letter-spacing: -0.02em;
 }
 
 /* ── Keyboard focus — one visible ring everywhere ── */

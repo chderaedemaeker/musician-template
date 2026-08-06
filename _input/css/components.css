@@ -248,7 +248,7 @@
   font-family: var(--font-sans);
   font-size: var(--text-sans);
   line-height: 1.25;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.02em;
   color: var(--charcoal);
 }
 
@@ -270,7 +270,7 @@
   font-family: var(--font-sans);
   font-size: var(--text-label);
   color: var(--dark-grey);
-  letter-spacing: -0.015em;
+  letter-spacing: -0.02em;
   margin: var(--space-xs) 0 0;
 }
 

@@ -41,10 +41,13 @@
 
     /* On the home page the name travels with the scroll, pixel for
        pixel, from the middle of the hero up into the bar. */
+    var brandLink = brand ? brand.querySelector('a') : null;
     function moveBrand(y) {
-      if (!brand) return;
+      if (!brand || !brandLink) return;
       var vh = window.innerHeight;
-      var startScale = window.matchMedia('(max-width: 768px)').matches ? 1.9 : 3;
+      var small = window.matchMedia('(max-width: 768px)').matches;
+      var startSize = small ? 45.6 : 72;   /* px — matches the stylesheet */
+      var endSize = 24;                    /* 1.5rem dock size */
       var p = Math.min(1, Math.max(0, y / (vh * 0.6)));
       if (p >= 1) {
         /* journey done — hand back to the stylesheet so the name sits
@@ -54,19 +57,20 @@
         brand.style.left = '';
         brand.style.top = '';
         brand.style.transform = '';
+        brandLink.style.fontSize = '';
         return p;
       }
       var inner = nav.querySelector('.nav-inner');
       var gutter = inner ? parseFloat(getComputedStyle(inner).paddingLeft) || 24 : 24;
       var startY = vh * 0.5;
       var endY = nav.offsetHeight / 2;
-      var startX = window.innerWidth / 2;
-      var endX = gutter + brand.offsetWidth / 2;
       brand.style.transition = 'none';
       brand.style.position = 'fixed';
-      brand.style.left = (startX + (endX - startX) * p) + 'px';
+      brand.style.left = gutter + 'px';
       brand.style.top = (startY + (endY - startY) * p) + 'px';
-      brand.style.transform = 'translate(-50%, -50%) scale(' + (startScale + (1 - startScale) * p) + ')';
+      brand.style.transform = 'translateY(-50%)';
+      /* real font-size per frame keeps the glyphs crisp — no raster scaling */
+      brandLink.style.fontSize = (startSize + (endSize - startSize) * p) + 'px';
       return p;
     }
 
