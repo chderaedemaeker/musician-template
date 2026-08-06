@@ -34,18 +34,18 @@
       <p class="contact-newsletter-hint">{{ languages[lang].newsletter_hint }}</p>
       <form name="newsletter" method="POST" data-netlify="true" action="/{{ lang }}/contact/success/" class="newsletter-form">
         <input type="hidden" name="form-name" value="newsletter">
-        <div class="form-group">
-          <label for="newsletter-email">{{ languages[lang].your_email }}</label>
+        <label for="newsletter-email">{{ languages[lang].your_email }}</label>
+        <div class="newsletter-row">
           <input required type="email" id="newsletter-email" name="email" autocomplete="email">
+          <button type="submit" class="btn">{{ languages[lang].subscribe }}</button>
         </div>
-        <button type="submit" class="btn btn-sm">{{ languages[lang].subscribe }} <span aria-hidden="true">&#8594;</span></button>
       </form>
     </div>
 
     <div class="socials-list">
-      <a href="https://www.facebook.com/" target="_blank" rel="noopener">Facebook <span aria-hidden="true">&#8599;</span></a>
-      <a href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram <span aria-hidden="true">&#8599;</span></a>
-      <a href="https://www.youtube.com/" target="_blank" rel="noopener">YouTube <span aria-hidden="true">&#8599;</span></a>
+      <a href="https://www.facebook.com/" target="_blank" rel="noopener">Facebook</a>
+      <a href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.youtube.com/" target="_blank" rel="noopener">YouTube</a>
     </div>
   </div>
 

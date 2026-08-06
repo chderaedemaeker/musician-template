@@ -1,6 +1,6 @@
 {% assign lang = page.lang %}
 
-<div class="container-content">
+<div class="container">
 
   <header class="page-header">
     <h1>{{ languages[lang].projects_title }}</h1>
@@ -9,25 +9,24 @@
   {% assign langProjects = 'projects_' | append: lang %}
   {% assign sortedProjects = collections[langProjects] | sort: 'date' | reverse %}
 
-  <ul class="text-list">
-    {% if sortedProjects.size > 0 %}
+  {% if sortedProjects.size > 0 %}
+    <div class="highlights-grid highlights-grid--compact reveal-group">
       {% for project in sortedProjects %}
-        <li>
-          <a href="{{ project.url }}" class="text-list-item{% if project.data.image and project.data.image != '' %} text-list-item--thumb{% endif %}">
-            {% if project.data.image and project.data.image != '' %}
-              <div class="text-list-thumb"><img src="{{ project.data.image }}" alt=""></div>
-            {% endif %}
-            <div class="text-list-left">
-              <h3 class="text-list-title">{{ project.data.title }}</h3>
-              {% if project.data.collaborators %}<p class="text-list-detail">{{ project.data.collaborators }}</p>{% endif %}
+        <a href="{{ project.url }}" class="highlight-card reveal{% unless project.data.image and project.data.image != '' %} highlight-card--noimg{% endunless %}" {% unless project.data.image and project.data.image != '' %}data-initial="{{ project.data.title | strip | slice: 0, 1 | upcase }}"{% endunless %}>
+          {% if project.data.image and project.data.image != '' %}
+            <img src="{{ project.data.image }}" alt="{{ project.data.title }}">
+          {% endif %}
+          <div class="highlight-card-overlay">
+            <div class="highlight-card-top">
+              {% if project.data.collaborators %}<p class="highlight-card-type">{{ project.data.collaborators }}</p>{% endif %}
+              <h3 class="highlight-card-title">{{ project.data.title }}</h3>
             </div>
-            <span class="text-list-arrow" aria-hidden="true">&#8594;</span>
-          </a>
-        </li>
+          </div>
+        </a>
       {% endfor %}
-    {% else %}
-      <li><p class="empty-note">{{ languages[lang].no_projects }}</p></li>
-    {% endif %}
-  </ul>
+    </div>
+  {% else %}
+    <p class="empty-note">{{ languages[lang].no_projects }}</p>
+  {% endif %}
 
 </div>

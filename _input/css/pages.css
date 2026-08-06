@@ -139,7 +139,6 @@
 .bento-highlight-label {
   font-family: var(--font-sans);
   font-size: var(--text-label);
-  letter-spacing: var(--tracking-label);
   color: rgba(246, 246, 244, 0.85);
   margin: 0 0 var(--space-xs);
 }
@@ -263,7 +262,8 @@
 
 .upcoming-item {
   display: block;
-  padding: var(--space-md2) 0;
+  padding: var(--space-md2) var(--space-sm);
+  margin-inline: calc(-1 * var(--space-sm));
   border-bottom: 1px solid var(--warm-grey);
   transition: background-color var(--dur-fast) var(--ease);
 }
@@ -280,7 +280,6 @@
   font-family: var(--font-sans);
   font-size: var(--text-label);
   color: var(--dark-grey);
-  letter-spacing: var(--tracking-label);
   display: block;
   margin-bottom: var(--space-2xs);
 }
@@ -444,7 +443,6 @@
   font-size: var(--text-label);
   color: var(--dark-grey);
   font-family: var(--font-sans);
-  letter-spacing: var(--tracking-label);
   margin-bottom: var(--space-sm);
 }
 

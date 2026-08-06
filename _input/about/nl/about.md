@@ -41,4 +41,4 @@ Haar fascinatie voor nieuwe muziek heeft haar in staat gesteld samen te werken m
 
 Veronique speelt op een viool van Stefan-Peter Greiner. In 2024 was ze te gast in het programma "De Twintigers" op Klara.
 
-<div class="about-actions"><a class="btn" href="https://drive.google.com/drive/folders/10JwfYTSOn1MJtgt9THW4HzrtER7Nq5Ye" target="_blank" rel="noopener">Perskit <span aria-hidden="true">↗</span></a> <a class="btn" href="https://drive.google.com/drive/folders/1-8P87yl21E9Urwilq09JQ_omojNFYXTy" target="_blank" rel="noopener">Repertoire <span aria-hidden="true">↗</span></a></div>
+<div class="about-actions"><a class="btn" href="https://drive.google.com/drive/folders/10JwfYTSOn1MJtgt9THW4HzrtER7Nq5Ye" target="_blank" rel="noopener">Perskit</a> <a class="btn" href="https://drive.google.com/drive/folders/1-8P87yl21E9Urwilq09JQ_omojNFYXTy" target="_blank" rel="noopener">Repertoire</a></div>

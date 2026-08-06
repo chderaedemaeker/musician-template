@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (c.collaborators) aside += '<p class="concert-row-detail">' + c.collaborators + '</p>';
     if (c.ticket && !isArchive) {
       aside += '<a class="concert-row-ticket" href="' + c.ticket + '" target="_blank" rel="noopener">' +
-        ticketsLabel + ' <span aria-hidden="true">&#8599;</span></a>';
+        ticketsLabel + '</a>';
     }
     aside += '<span class="concert-row-more">' + detailsLabel + '</span>';
     var searchText = [d, c.title, c.place, c.composers, c.collaborators].join(' ').toLowerCase().replace(/"/g, '&quot;');

@@ -28,7 +28,7 @@
     {% endif %}
 
     <!-- Latest highlight — newest entry that has a real date -->
-    {% assign langHighlights = 'highlights_' | append: lang %}
+    {% assign langHighlights = 'highlights_en' %}
     {% assign sortedHighlightsHome = collections[langHighlights] | sort: 'date' | reverse %}
     {% assign latestFound = false %}
     {% for h in sortedHighlightsHome %}
@@ -54,11 +54,11 @@
     <div class="bento-cell bento-concerts reveal" id="upcoming-section">
       <h2 class="label">{{ languages[lang].upcoming_concerts }}</h2>
       {% include "upcoming-concerts.liquid" %}
-      <a class="bento-cell-link" href="/{{ lang }}/concerts/">{{ languages[lang].see_all_concerts }} <span aria-hidden="true">&#8594;</span></a>
+      <a class="bento-cell-link" href="/en/concerts/">{{ languages[lang].see_all_concerts }} <span aria-hidden="true">&#8594;</span></a>
     </div>
 
     <!-- Projects -->
-    {% assign langProjects = 'projects_' | append: lang %}
+    {% assign langProjects = 'projects_en' %}
     {% assign homeProjects = collections[langProjects] | sort: 'date' | reverse %}
     {% if homeProjects.size > 0 %}
     <div class="bento-cell bento-projects reveal">
@@ -68,7 +68,7 @@
           <li><a href="{{ project.url }}">{{ project.data.title }}</a></li>
         {% endfor %}
       </ul>
-      <a class="bento-cell-link" href="/{{ lang }}/projects/">{{ languages[lang].projects_title }} <span aria-hidden="true">&#8594;</span></a>
+      <a class="bento-cell-link" href="/en/projects/">{{ languages[lang].projects_title }} <span aria-hidden="true">&#8594;</span></a>
     </div>
     {% endif %}
 
@@ -76,7 +76,7 @@
     <div class="bento-cell bento-contact reveal">
       <h2 class="label">{{ languages[lang].contact_title }}</h2>
       <p class="bento-contact-text">{{ languages[lang].contact_intro }}</p>
-      <a class="btn" href="/{{ lang }}/contact/">{{ languages[lang].contact_title }} <span aria-hidden="true">&#8594;</span></a>
+      <a class="btn" href="/en/contact/">{{ languages[lang].contact_title }} <span aria-hidden="true">&#8594;</span></a>
     </div>
 
   </div>

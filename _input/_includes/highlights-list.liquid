@@ -4,7 +4,7 @@
 {% assign sortedHighlights = collections[langHighlights] | sort: 'date' | reverse %}
 
 <div class="highlights-section">
-  <div class="highlights-grid reveal-group">
+  <div class="highlights-grid highlights-grid--large reveal-group">
     {% if sortedHighlights.size > 0 %}
       {% for highlight in sortedHighlights %}
         <a href="{{ highlight.url }}" class="highlight-card reveal{% unless highlight.data.image and highlight.data.image != '' %} highlight-card--noimg{% endunless %}" {% unless highlight.data.image and highlight.data.image != '' %}data-initial="{{ highlight.data.title | strip | slice: 0, 1 | upcase }}"{% endunless %}>

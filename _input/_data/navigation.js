@@ -1,3 +1,5 @@
+// Only the home page and the biography are multilingual for now —
+// every other section defaults to the English pages.
 module.exports = {
   en: [
     { text: 'About', url: '/en/about/' },
@@ -8,23 +10,24 @@ module.exports = {
   ],
   nl: [
     { text: 'Over', url: '/nl/about/' },
-    { text: 'Concerten', url: '/nl/concerts/' },
-    { text: 'Projecten', url: '/nl/projects/' },
-    { text: 'Hoogtepunten', url: '/nl/highlights/' },
-    { text: 'Contact', url: '/nl/contact/' }
+    { text: 'Concerts', url: '/en/concerts/' },
+    { text: 'Projects', url: '/en/projects/' },
+    { text: 'Highlights', url: '/en/highlights/' },
+    { text: 'Contact', url: '/en/contact/' }
   ],
   fr: [
     { text: 'À propos', url: '/fr/about/' },
-    { text: 'Concerts', url: '/fr/concerts/' },
-    { text: 'Projets', url: '/fr/projects/' },
-    { text: 'Highlights', url: '/fr/highlights/' },
-    { text: 'Contact', url: '/fr/contact/' }
+    { text: 'Concerts', url: '/en/concerts/' },
+    { text: 'Projects', url: '/en/projects/' },
+    { text: 'Highlights', url: '/en/highlights/' },
+    { text: 'Contact', url: '/en/contact/' }
   ],
   de: [
-    { text: 'Über', url: '/de/about/' },
-    { text: 'Konzerte', url: '/de/concerts/' },
-    { text: 'Projekte', url: '/de/projects/' },
-    { text: 'Highlights', url: '/de/highlights/' },
-    { text: 'Kontakt', url: '/de/contact/' }
+    // No German biography yet — point to the English one
+    { text: 'About', url: '/en/about/' },
+    { text: 'Concerts', url: '/en/concerts/' },
+    { text: 'Projects', url: '/en/projects/' },
+    { text: 'Highlights', url: '/en/highlights/' },
+    { text: 'Contact', url: '/en/contact/' }
   ]
 };

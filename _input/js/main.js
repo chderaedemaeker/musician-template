@@ -1,10 +1,18 @@
 (function () {
   'use strict';
 
-  /* Language switcher */
+  /* Language switcher — only the home page and the biography are
+     multilingual; from any other page, switching goes to that
+     language's home page. German has no biography yet. */
   window.switchLanguage = function (lang) {
     var path = window.location.pathname;
-    window.location.href = path.replace(/^\/(en|nl|fr|de)/, '/' + lang);
+    var multilingual = path.match(/^\/(en|nl|fr|de)\/(about\/)?$/);
+    if (multilingual) {
+      if (multilingual[2] && lang === 'de') { window.location.href = '/en/about/'; return; }
+      window.location.href = path.replace(/^\/(en|nl|fr|de)/, '/' + lang);
+      return;
+    }
+    window.location.href = '/' + lang + '/';
   };
 
   /* Mobile navigation */

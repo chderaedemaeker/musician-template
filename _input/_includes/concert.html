@@ -44,7 +44,7 @@
     </div>
 
     {% if link and link != "" %}
-      <a class="btn" href="{{ link }}" target="_blank" rel="noopener">{{ languages[lang].tickets }} <span aria-hidden="true">&#8599;</span></a>
+      <a class="btn" href="{{ link }}" target="_blank" rel="noopener">{{ languages[lang].tickets }}</a>
     {% endif %}
 
     {% assign detailItems = collections.concerts | sort: 'date' | reverse %}

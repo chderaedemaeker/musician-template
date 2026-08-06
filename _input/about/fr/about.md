@@ -41,4 +41,4 @@ Sa fascination pour la musique nouvelle lui a permis de collaborer avec des comp
 
 Veronique joue sur un violon de Stefan-Peter Greiner. En 2024, elle a été présentée dans l'émission "The Twintigers" sur Klara.
 
-<div class="about-actions"><a class="btn" href="https://drive.google.com/drive/folders/10JwfYTSOn1MJtgt9THW4HzrtER7Nq5Ye" target="_blank" rel="noopener">Dossier de presse <span aria-hidden="true">↗</span></a> <a class="btn" href="https://drive.google.com/drive/folders/1-8P87yl21E9Urwilq09JQ_omojNFYXTy" target="_blank" rel="noopener">Répertoire <span aria-hidden="true">↗</span></a></div>
+<div class="about-actions"><a class="btn" href="https://drive.google.com/drive/folders/10JwfYTSOn1MJtgt9THW4HzrtER7Nq5Ye" target="_blank" rel="noopener">Dossier de presse</a> <a class="btn" href="https://drive.google.com/drive/folders/1-8P87yl21E9Urwilq09JQ_omojNFYXTy" target="_blank" rel="noopener">Répertoire</a></div>

@@ -128,7 +128,6 @@ main {
 .lang-switcher a {
   font-family: var(--font-sans);
   font-size: var(--text-label);
-  letter-spacing: var(--tracking-label);
   color: var(--dark-grey);
   text-decoration: underline;
   text-decoration-color: transparent;
