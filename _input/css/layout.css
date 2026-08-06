@@ -560,3 +560,9 @@ main {
 .nav-transparent.is-scrolled.nav--quiet {
   border-color: transparent;
 }
+
+/* The home nav never draws a border line — the veil is separation enough */
+.nav-transparent,
+.nav-transparent.is-scrolled {
+  border-color: transparent;
+}
