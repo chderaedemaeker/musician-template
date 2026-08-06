@@ -26,7 +26,9 @@ class GitGatewayAPI {
     const res = await fetch(url, opts);
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || `Git Gateway ${res.status}`);
+      const error = new Error(err.message || `Git Gateway ${res.status}`);
+      error.status = res.status;
+      throw error;
     }
     if (res.status === 204) return null;
     return res.json();
@@ -54,6 +56,24 @@ class GitGatewayAPI {
     const body = { message, content: encodeBase64UTF8(content), branch: this.branch };
     if (sha) body.sha = sha;
     return this._request('PUT', `/contents/${path}`, body);
+  }
+
+  // Save with one retry: if the write fails because our sha is missing or
+  // stale, look up the sha currently on the branch and try again.
+  async saveFile(path, content, message, sha) {
+    try {
+      return await this.createOrUpdateFile(path, content, message, sha);
+    } catch (e) {
+      let freshSha;
+      try { freshSha = (await this.getFileInfo(path)).sha; } catch (e2) { freshSha = undefined; }
+      if (freshSha === sha) throw e; // sha was correct — some other problem
+      return this.createOrUpdateFile(path, content, message, freshSha);
+    }
+  }
+
+  async getBlob(sha) {
+    const data = await this._request('GET', `/git/blobs/${sha}`);
+    return decodeBase64UTF8(data.content);
   }
 
   async deleteFile(path, sha, message) {
@@ -175,6 +195,18 @@ function generateFilename(title) {
 }
 
 function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+// Map over items with at most `limit` calls in flight — firing hundreds of
+// requests at once gets rate-limited by git-gateway.
+async function pMap(items, fn, limit = 8) {
+  const results = new Array(items.length);
+  let next = 0;
+  const workers = Array.from({ length: Math.min(limit, items.length) }, async () => {
+    while (next < items.length) { const i = next++; results[i] = await fn(items[i], i); }
+  });
+  await Promise.all(workers);
+  return results;
+}
 
 function formatFileSize(bytes) {
   if (bytes < 1024) return bytes + ' B';
@@ -321,7 +353,10 @@ class App {
   _onIdentityLogin(user) {
     this._identityUser = user;
     this.api = new GitGatewayAPI(() => {
-      return this._identityUser.jwt(true); // force refresh
+      // jwt() refreshes the token only when it has expired; jwt(true) would
+      // force a refresh on every call and gets rate-limited by Netlify Identity
+      // when many requests run in parallel.
+      return this._identityUser.jwt();
     });
     netlifyIdentity.close();
     this.loadConfig().then(() => this.route());
@@ -541,12 +576,12 @@ class App {
       const listEl = document.getElementById('entry-list');
       if (!files.length) { listEl.innerHTML = '<div class="empty-state">No entries yet.</div>'; return; }
 
-      const entries = await Promise.all(files.map(async f => {
+      const entries = await pMap(files, async f => {
         try {
           const fd = await this.api.getFile(f.path);
           return { name: f.name, data: FrontMatter.parse(fd.content).data, path: f.path, sha: fd.sha };
         } catch { return { name: f.name, data: { title: f.name }, path: f.path, sha: null }; }
-      }));
+      });
 
       listEl.innerHTML = `<div class="entry-row" style="border-bottom:1px solid var(--warm-grey);cursor:default;padding:.5rem 0;">
           <div class="entry-row-left"><input type="checkbox" class="entry-checkbox" id="select-all-checkbox" /><span style="font-size:.65rem;color:var(--mid-grey);margin-left:.4rem;text-transform:uppercase;letter-spacing:.08em;">Select all</span></div>
@@ -622,19 +657,20 @@ class App {
     this._concertTableState = { entries: [], col, columns, gridCols, sortKey: 'date', sortDir: 'desc', saveTimers: {} };
 
     try {
-      const contents = await this.api.getContents(col.folder);
-      const files = contents.filter(f => f.name.endsWith('.md')).sort((a, b) => b.name.localeCompare(a.name));
+      // One tree request gives every file's path AND blob sha — the sha must
+      // always be known, or saving a row fails with "sha wasn't supplied".
+      const tree = await this.api.getTree(col.folder);
+      const files = tree.filter(f => f.name.endsWith('.md')).sort((a, b) => b.name.localeCompare(a.name));
       const bodyEl = document.getElementById('notion-body');
 
       if (!files.length) { bodyEl.innerHTML = '<div class="empty-state">No concerts yet.</div>'; return; }
 
-      const entries = await Promise.all(files.map(async f => {
+      const entries = await pMap(files, async f => {
         try {
-          const fd = await this.api.getFile(f.path);
-          const parsed = FrontMatter.parse(fd.content);
-          return { name: f.name, data: parsed.data, body: parsed.body, path: f.path, sha: fd.sha, dirty: false };
-        } catch { return { name: f.name, data: { title: f.name }, body: '', path: f.path, sha: null, dirty: false }; }
-      }));
+          const parsed = FrontMatter.parse(await this.api.getBlob(f.sha));
+          return { name: f.name, data: parsed.data, body: parsed.body, path: f.path, sha: f.sha, dirty: false, loadFailed: false };
+        } catch { return { name: f.name, data: { title: f.name }, body: '', path: f.path, sha: f.sha, dirty: false, loadFailed: true }; }
+      });
 
       this._concertTableState.entries = entries;
       this._renderTableRows();
@@ -651,6 +687,14 @@ class App {
     const sorted = [...entries].sort((a, b) => {
       const va = (a.data[sortKey] || '').toLowerCase();
       const vb = (b.data[sortKey] || '').toLowerCase();
+      if (!va && !vb) return 0;
+      if (!va) return 1; // entries without a value always sort last
+      if (!vb) return -1;
+      if (sortKey === 'date') {
+        // ISO date strings — plain string comparison, immune to locale collation
+        const cmp = va < vb ? -1 : va > vb ? 1 : 0;
+        return sortDir === 'asc' ? cmp : -cmp;
+      }
       return sortDir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
     });
 
@@ -658,7 +702,7 @@ class App {
     bodyEl.innerHTML = sorted.map((entry, i) => {
       const idx = entries.indexOf(entry);
       const dateVal = entry.data.date ? entry.data.date.substring(0, 10) : '';
-      return `<div class="notion-row${entry.dirty ? ' notion-row-dirty' : ''}" data-idx="${idx}" style="grid-template-columns: ${gridCols};">
+      return `<div class="notion-row${entry.dirty ? ' notion-row-dirty' : ''}${entry.loadFailed ? ' notion-row-loadfailed' : ''}" data-idx="${idx}" style="grid-template-columns: ${gridCols};"${entry.loadFailed ? ' title="This row failed to load — its saved data is safe and will reappear after you edit and save, or reload the page."' : ''}>
         <div class="notion-cell notion-cell-check"><input type="checkbox" class="entry-checkbox entry-select" data-idx="${idx}" data-file="${esc(entry.name)}" /></div>
         <div class="notion-cell notion-cell-title" data-field="title" data-idx="${idx}" contenteditable="true">${esc(entry.data.title || '')}</div>
         <div class="notion-cell notion-cell-date" data-field="date" data-idx="${idx}"><input type="date" class="notion-date-input" value="${esc(dateVal)}" data-idx="${idx}" /></div>
@@ -787,6 +831,7 @@ class App {
         if (entry && entry.data[fieldName] !== newVal) {
           entry.data[fieldName] = newVal;
           entry.dirty = true;
+          (entry.editedFields || (entry.editedFields = new Set())).add(fieldName);
           cell.closest('.notion-row').classList.add('notion-row-dirty');
           this._debounceSaveRow(idx);
         }
@@ -835,6 +880,7 @@ class App {
         if (entry) {
           entry.data.date = input.value ? input.value + 'T00:00:00' : '';
           entry.dirty = true;
+          (entry.editedFields || (entry.editedFields = new Set())).add('date');
           input.closest('.notion-row').classList.add('notion-row-dirty');
           this._debounceSaveRow(idx);
         }
@@ -863,16 +909,20 @@ class App {
         const idx = parseInt(btn.dataset.idx);
         const entry = state.entries[idx];
         if (!entry) return;
-        const newData = { ...entry.data, title: (entry.data.title || '') + ' (copy)' };
-        const now = new Date();
-        const datePrefix = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-        const slug = (newData.title || 'untitled').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-        const newName = `${datePrefix}-${slug}.md`;
-        const newPath = state.col.folder + '/' + newName;
-        if (!newData.layout) newData.layout = 'concert.html';
-        const content = FrontMatter.serialize(newData, entry.body || '');
         try {
           showStatus('saving', 'Duplicating...');
+          if (entry.loadFailed) await this._reloadEntry(entry);
+          const newData = { ...entry.data, title: (entry.data.title || '') + ' (copy)' };
+          const now = new Date();
+          const datePrefix = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+          const slug = (newData.title || 'untitled').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+          // Avoid colliding with an existing file — creating over an existing
+          // path without its sha fails with "sha wasn't supplied".
+          let newName = `${datePrefix}-${slug}.md`;
+          for (let n = 2; state.entries.some(en => en && en.name === newName); n++) newName = `${datePrefix}-${slug}-${n}.md`;
+          const newPath = state.col.folder + '/' + newName;
+          if (!newData.layout) newData.layout = 'concert.html';
+          const content = FrontMatter.serialize(newData, entry.body || '');
           const result = await this.api.createOrUpdateFile(newPath, content, `Duplicate concert: ${newData.title}`);
           state.entries.push({ name: newName, data: newData, body: entry.body || '', path: newPath, sha: result.content.sha, dirty: false });
           this._renderTableRows();
@@ -911,6 +961,20 @@ class App {
     state.saveTimers[idx] = setTimeout(() => this._saveTableRow(idx), 1200);
   }
 
+  // Re-fetch an entry whose initial load failed, keeping any fields the user
+  // edited in the meantime. Without this, saving such a row would overwrite
+  // the file with the blank placeholder data.
+  async _reloadEntry(entry) {
+    const file = await this.api.getFile(entry.path);
+    const parsed = FrontMatter.parse(file.content);
+    const edited = {};
+    for (const f of entry.editedFields || []) edited[f] = entry.data[f];
+    entry.data = { ...parsed.data, ...edited };
+    entry.body = parsed.body;
+    entry.sha = file.sha;
+    entry.loadFailed = false;
+  }
+
   async _saveTableRow(idx) {
     const state = this._concertTableState;
     const entry = state.entries[idx];
@@ -918,14 +982,23 @@ class App {
 
     const row = document.querySelector(`.notion-row[data-idx="${idx}"]`);
     if (row) row.classList.add('notion-row-saving');
+    const wasLoadFailed = entry.loadFailed;
 
     try {
+      if (entry.loadFailed) await this._reloadEntry(entry);
       const data = { ...entry.data };
       if (!data.layout) data.layout = 'concert.html';
       const content = FrontMatter.serialize(data, entry.body || '');
-      const result = await this.api.createOrUpdateFile(entry.path, content, `Update concert: ${data.title || entry.name}`, entry.sha || undefined);
+      const result = await this.api.saveFile(entry.path, content, `Update concert: ${data.title || entry.name}`, entry.sha || undefined);
       entry.sha = result.content.sha;
       entry.dirty = false;
+      if (wasLoadFailed) {
+        // The reload restored fields that were displayed blank — redraw.
+        this._renderTableRows();
+        this._bindTableRowEvents();
+        showStatus('saved', 'Saved');
+        return;
+      }
       if (row) {
         row.classList.remove('notion-row-dirty', 'notion-row-saving');
         row.classList.add('notion-row-saved');
@@ -1044,7 +1117,12 @@ class App {
             state.data[loc] = { ...state.data[loc], ...parsed.data };
             state.body[loc] = parsed.body;
             state.sha[loc] = file.sha;
-          } catch (e) { if (!isI18n) throw e; }
+          } catch (e) {
+            // A 404 means the locale file doesn't exist yet (fine — saving
+            // creates it). Any other failure must abort: continuing without
+            // the file's sha and content would overwrite it with defaults.
+            if (!isI18n || e.status !== 404) throw e;
+          }
         }
       } catch (e) {
         document.getElementById('editor-form').innerHTML = `<div class="empty-state" style="color:var(--danger);">${esc(e.message)}</div>`;
@@ -1648,7 +1726,7 @@ class App {
         const content = FrontMatter.serialize(data, state.body[loc] || '');
         const path = isI18n ? `${col.folder}/${loc}/${filename}` : `${col.folder}/${filename}`;
         const msg = isNew ? `Create ${col.label}: ${data.title || filename}` : `Update ${col.label}: ${data.title || filename}`;
-        const result = await this.api.createOrUpdateFile(path, content, msg, state.sha[loc] || undefined);
+        const result = await this.api.saveFile(path, content, msg, state.sha[loc] || undefined);
         state.sha[loc] = result.content.sha;
         state.filePath[loc] = path;
       }
@@ -2008,7 +2086,7 @@ class App {
       const content = JSON.stringify(siteData, null, 2) + '\n';
       showStatus('saving', 'Saving...');
       try {
-        const result = await this.api.createOrUpdateFile(siteDataPath, content, 'Update hero image', siteSha || undefined);
+        const result = await this.api.saveFile(siteDataPath, content, 'Update hero image', siteSha || undefined);
         siteSha = result.content.sha;
         showStatus('saved', 'Saved — site will rebuild');
       } catch (e) { showStatus('error', e.message); }
