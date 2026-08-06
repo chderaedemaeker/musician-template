@@ -28,6 +28,24 @@
 
   var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* Navbar behavior: the bar fades away while scrolling down (only the
+     name stays); it returns on scroll-up. On the home page the name
+     starts big over the photo and settles once scrolling begins. */
+  document.addEventListener('DOMContentLoaded', function () {
+    var nav = document.querySelector('.nav');
+    if (!nav) return;
+    var lastY = window.scrollY;
+    function onScroll() {
+      var y = window.scrollY;
+      nav.classList.toggle('is-scrolled', y > 60);
+      if (y > 140 && y > lastY) nav.classList.add('nav--quiet');
+      else if (y < lastY || y <= 60) nav.classList.remove('nav--quiet');
+      lastY = y;
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  });
+
   /* Reveal animations. Elements in a .reveal-group (card grids) flow in
      on load with a tiny stagger — waiting for scroll would hide that
      there is more below the fold. Standalone .reveal elements still

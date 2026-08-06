@@ -7,25 +7,11 @@
 
 <div class="hero-fullscreen">
   {% assign heroAlt = languages[lang].site_title %}{% progressiveImage site.hero_image, heroAlt %}
-  <div class="hero-content">
-    <p class="hero-eyebrow label">{{ languages[lang].site_subtitle }}</p>
-    <h1 class="hero-title">{{ languages[lang].site_title }}</h1>
-  </div>
 </div>
 
 <!-- Bento: everything at a glance -->
 <section class="section container">
   <div class="bento reveal-group">
-
-    <!-- Bio -->
-    {% assign aboutPage = collections.about | where: "data.lang", lang | first %}
-    {% if aboutPage and aboutPage.data.summaryabout %}
-    <div class="bento-cell bento-bio reveal">
-      <h2 class="label">{{ languages[lang].about_nav | default: 'About' }}</h2>
-      <p class="bento-bio-text">{{ aboutPage.data.summaryabout }}</p>
-      <a class="bento-cell-link" href="/{{ lang }}/about/">{{ languages[lang].biography }} <span aria-hidden="true">&#8594;</span></a>
-    </div>
-    {% endif %}
 
     <!-- Latest highlight — newest entry that has a real date -->
     {% assign langHighlights = 'highlights_en' %}
@@ -57,21 +43,6 @@
       {% include "upcoming-concerts.liquid" %}
       <a class="bento-cell-link" href="/en/concerts/">{{ languages[lang].see_all_concerts }} <span aria-hidden="true">&#8594;</span></a>
     </div>
-
-    <!-- Projects -->
-    {% assign langProjects = 'projects_en' %}
-    {% assign homeProjects = collections[langProjects] | sort: 'date' | reverse %}
-    {% if homeProjects.size > 0 %}
-    <div class="bento-cell bento-projects reveal">
-      <h2 class="label">{{ languages[lang].projects_title }}</h2>
-      <ul class="bento-projects-list">
-        {% for project in homeProjects limit: 4 %}
-          <li><a href="{{ project.url }}">{{ project.data.title }}</a></li>
-        {% endfor %}
-      </ul>
-      <a class="bento-cell-link" href="/en/projects/">{{ languages[lang].projects_title }} <span aria-hidden="true">&#8594;</span></a>
-    </div>
-    {% endif %}
 
     <!-- Contact -->
     <div class="bento-cell bento-contact reveal">

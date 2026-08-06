@@ -14,10 +14,6 @@
 <footer class="footer">
   <div class="footer-inner">
     <div class="footer-grid">
-      <div class="footer-col footer-col-lead">
-        <p class="footer-name">{{ languages[lang].site_title }}</p>
-        <p class="footer-sub">{{ languages[lang].site_subtitle }}</p>
-      </div>
       <div class="footer-col">
         <p class="footer-heading">{{ languages[lang].footer_navigate }}</p>
         <ul>
@@ -38,8 +34,15 @@
         <p class="footer-heading">{{ languages[lang].contact_title }}</p>
         <ul>
           <li><a href="/en/contact/">{{ languages[lang].send_message }}</a></li>
-          <li><a href="/en/contact/">{{ languages[lang].newsletter }}</a></li>
         </ul>
+      </div>
+      <div class="footer-news">
+        <p class="footer-news-title">{{ languages[lang].newsletter_hint }}</p>
+        <form name="newsletter" method="POST" data-netlify="true" action="/en/contact/success/" class="footer-news-row">
+          <input type="hidden" name="form-name" value="newsletter">
+          <input required type="email" name="email" placeholder="{{ languages[lang].your_email }}" aria-label="{{ languages[lang].your_email }}">
+          <button type="submit" class="btn">{{ languages[lang].subscribe }}</button>
+        </form>
       </div>
     </div>
 

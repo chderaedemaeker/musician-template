@@ -50,7 +50,8 @@ main {
 }
 
 /* ============================================
-   NAVIGATION
+   NAVIGATION — colorless bar; fades away scrolling
+   down, returns on scroll-up; name always on top
    ============================================ */
 
 .nav {
@@ -62,7 +63,40 @@ main {
   display: flex;
   align-items: center;
   border-bottom: 1px solid var(--warm-grey);
-  background-color: #f8f9fb; /* a touch lighter, with a hint of blue */
+  background-color: transparent;
+  transition: background-color var(--dur-med) var(--ease), border-color var(--dur-med) var(--ease);
+}
+
+/* Once scrolling, a translucent veil keeps the links readable */
+.nav.is-scrolled {
+  background-color: rgba(245, 244, 242, 0.88);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+/* Scrolling down: bar and menu fade out — only the name stays */
+.nav--quiet {
+  background-color: transparent;
+  border-color: transparent;
+}
+
+.nav.is-scrolled.nav--quiet {
+  background-color: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.nav-links,
+.nav-inner > .lang-switcher,
+.hamburger {
+  transition: opacity var(--dur-med) var(--ease);
+}
+
+.nav--quiet .nav-links,
+.nav--quiet .nav-inner > .lang-switcher,
+.nav--quiet .hamburger {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .nav-inner {
@@ -73,7 +107,8 @@ main {
   padding-inline: var(--gutter);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
+  gap: var(--space-md2);
 }
 
 /* The name sits in the exact middle of the bar */
@@ -83,6 +118,7 @@ main {
   top: 50%;
   transform: translate(-50%, -50%);
   white-space: nowrap;
+  transition: transform var(--dur-med) var(--ease), top var(--dur-med) var(--ease);
 }
 
 .nav-brand a {
@@ -122,7 +158,7 @@ main {
   text-decoration-color: var(--near-black);
 }
 
-/* ── Language switcher — plain lowercase links, current one marked ── */
+/* ── Language switcher ── */
 .lang-switcher {
   display: flex;
   align-items: center;
@@ -179,7 +215,7 @@ main {
   transform: translateY(-7px) rotate(-45deg);
 }
 
-/* ── Mobile nav — fades and settles, no snap ── */
+/* ── Mobile nav ── */
 .mobile-nav {
   position: fixed;
   inset: 0;
@@ -211,9 +247,6 @@ main {
 }
 
 .mobile-nav .lang-switcher {
-  border-left: none;
-  padding-left: 0;
-  margin-left: 0;
   gap: var(--space-sm);
 }
 
@@ -223,55 +256,47 @@ main {
   transition-delay: calc(var(--i, 0) * 40ms);
 }
 
-/* ── Transparent nav — home and highlights ── */
+/* ── Home page: the name starts big over the photo, the menu only
+      arrives once you scroll ── */
 .nav-transparent {
-  position: absolute;
+  position: fixed;
   left: 0;
   right: 0;
+  border-color: transparent;
+}
+
+.nav-transparent:not(.is-scrolled) {
   background-color: transparent;
-  border-bottom: none;
 }
 
-.nav-transparent .nav-brand a {
-  color: var(--white);
+.nav-transparent:not(.is-scrolled) .nav-brand {
+  top: 50vh;
+  transform: translate(-50%, -50%) scale(2.1);
 }
 
-.nav-transparent .nav-links a {
-  color: rgba(246, 246, 244, 0.75);
+.nav-transparent:not(.is-scrolled) .nav-links,
+.nav-transparent:not(.is-scrolled) .nav-inner > .lang-switcher,
+.nav-transparent:not(.is-scrolled) .hamburger {
+  opacity: 0;
+  pointer-events: none;
 }
 
-.nav-transparent .nav-links a:hover,
-.nav-transparent .nav-links a.active {
-  color: var(--white);
-}
-
-.nav-transparent .lang-switcher {
-  border-left-color: rgba(246, 246, 244, 0.35);
-}
-
+.nav-transparent .nav-brand a,
+.nav-transparent .nav-links a,
 .nav-transparent .lang-switcher a {
-  color: rgba(246, 246, 244, 0.75);
+  transition: color var(--dur-med) var(--ease);
 }
 
-.nav-transparent .lang-switcher a:hover,
-.nav-transparent .lang-switcher a.active {
+.nav-transparent:not(.is-scrolled) .nav-brand a {
   color: var(--white);
 }
 
-.nav-transparent .lang-switcher a.active {
-  text-decoration-color: var(--white);
+.nav-transparent.is-scrolled {
+  border-color: var(--warm-grey);
 }
 
-.nav-transparent .nav-links a:hover {
-  text-decoration-color: var(--white);
-}
-
-.nav-transparent .nav-links a.active {
-  text-decoration-color: var(--white);
-}
-
-.nav-transparent .hamburger span {
-  background-color: var(--white);
+.nav-transparent.is-scrolled.nav--quiet {
+  border-color: transparent;
 }
 
 @media (max-width: 1020px) {
@@ -284,36 +309,31 @@ main {
     display: flex;
     flex-direction: column;
     margin-left: auto;
-    /* stays visible above the mobile nav overlay */
     position: relative;
     z-index: 101;
   }
 }
 
 @media (max-width: 768px) {
-
-  /* Keep the transparent nav fixed so it stays over the highlights reel */
-  .nav-transparent {
-    position: fixed;
-    z-index: 100;
+  .nav-transparent:not(.is-scrolled) .nav-brand {
+    top: 50vh;
+    transform: translate(-50%, -50%) scale(1.5);
   }
 
-  /* When the overlay menu is open over a transparent nav, the bars must
-     stay visible against the light background */
   .nav-transparent .hamburger.open span {
     background-color: var(--near-black);
   }
 }
 
 /* ============================================
-   FOOTER — tall, with the name as a faint watermark
+   FOOTER — tight columns, newsletter, watermark
    ============================================ */
 
 .footer {
   width: 100%;
   margin-top: var(--space-2xl);
-  padding: var(--space-xl) 0 var(--space-md);
-  background-color: #e7ebf1; /* soft light blue — gentle step from the cream body */
+  padding: var(--space-lg) 0 var(--space-sm);
+  background-color: #667c9e; /* the middle blue */
   font-family: var(--font-sans);
   overflow: hidden;
 }
@@ -324,30 +344,16 @@ main {
 
 .footer-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: var(--space-lg) var(--space-md);
-  margin-bottom: var(--space-xl);
-}
-
-.footer-name {
-  font-family: var(--font-serif);
-  font-size: 1.5rem;
-  font-weight: 300;
-  letter-spacing: 0.01em;
-  color: var(--near-black);
-  margin: 0 0 var(--space-2xs);
-}
-
-.footer-sub {
-  font-size: var(--text-label);
-  color: #5c6b84;
-  margin: 0;
+  grid-template-columns: repeat(3, minmax(8rem, max-content)) minmax(16rem, 24rem);
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
 }
 
 .footer-heading {
   font-size: var(--text-label);
-  color: #5c6b84;
-  margin: 0 0 var(--space-sm);
+  color: #c0cbdd;
+  margin: 0 0 var(--space-xs);
 }
 
 .footer-col ul {
@@ -355,12 +361,12 @@ main {
 }
 
 .footer-col li {
-  margin-bottom: var(--space-xs);
+  margin-bottom: var(--space-2xs);
 }
 
 .footer-col a {
   font-size: var(--text-sans);
-  color: #33415c;
+  color: #e8edf4;
   text-decoration: underline;
   text-decoration-color: transparent;
   text-decoration-thickness: 1px;
@@ -369,10 +375,62 @@ main {
 }
 
 .footer-col a:hover {
-  color: var(--near-black);
-  text-decoration-color: var(--near-black);
+  color: #ffffff;
+  text-decoration-color: #ffffff;
 }
 
+/* Newsletter signup */
+.footer-news-title {
+  font-family: var(--font-serif);
+  font-size: var(--text-lede);
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  color: var(--white);
+  margin: 0 0 var(--space-sm);
+}
+
+.footer-news-row {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-xs);
+}
+
+.footer-news-row input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.6em 1.1em;
+  background: transparent;
+  border: 1px solid rgba(246, 246, 244, 0.45);
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: var(--text-sans);
+  color: var(--white);
+  outline: none;
+  transition: border-color var(--dur-fast) var(--ease);
+}
+
+.footer-news-row input::placeholder {
+  color: #c0cbdd;
+}
+
+.footer-news-row input:focus {
+  border-color: var(--white);
+}
+
+.footer-news-row .btn {
+  border-color: rgba(246, 246, 244, 0.7);
+  color: var(--white);
+  background: transparent;
+  white-space: nowrap;
+}
+
+.footer-news-row .btn:hover {
+  background: var(--white);
+  color: #33415c;
+  border-color: var(--white);
+}
+
+/* The name as a large, faint watermark */
 .footer-watermark {
   font-family: var(--font-serif);
   font-weight: 300;
@@ -381,24 +439,24 @@ main {
   letter-spacing: 0.01em;
   white-space: nowrap;
   text-align: center;
-  color: rgba(36, 58, 92, 0.14);
-  margin: var(--space-lg) 0 var(--space-md);
+  color: rgba(246, 246, 244, 0.14);
+  margin: var(--space-md) 0 var(--space-sm);
   user-select: none;
   pointer-events: none;
 }
 
 .footer-bottom {
-  border-top: 1px solid rgba(36, 58, 92, 0.15);
-  padding-top: var(--space-sm);
+  border-top: 1px solid rgba(246, 246, 244, 0.25);
+  padding-top: var(--space-xs);
 }
 
 .footer-bottom p {
   font-size: var(--text-caption);
-  color: #5c6b84;
+  color: #cfd8e6;
   margin: 0;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .footer-grid {
     grid-template-columns: 1fr 1fr;
   }
