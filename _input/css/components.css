@@ -217,6 +217,14 @@
   opacity: 0.75;
 }
 
+.concert-row-where {
+  font-family: var(--font-sans);
+  font-size: var(--text-label);
+  color: var(--dark-grey);
+  letter-spacing: -0.015em;
+  margin: var(--space-2xs) 0 0;
+}
+
 .concert-row-trigger {
   display: block;
   width: 100%;

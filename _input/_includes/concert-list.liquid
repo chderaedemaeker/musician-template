@@ -81,17 +81,19 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     var aside = '';
     if (c.composers) aside += '<p class="concert-row-detail">' + c.composers + '</p>';
-    if (c.collaborators) aside += '<p class="concert-row-detail">' + c.collaborators + '</p>';
     if (c.ticket && !isArchive) {
       aside += '<a class="concert-row-ticket" href="' + c.ticket + '" target="_blank" rel="noopener">' +
         ticketsLabel + '</a>';
     }
     var searchText = [d, c.title, c.place, c.composers, c.collaborators].join(' ').toLowerCase().replace(/"/g, '&quot;');
     return '<li class="concert-row' + (isArchive ? ' concert-row--archive' : '') + '" data-search="' + searchText + '">' +
-      '<p class="concert-row-date">' + dateHtml + '</p>' +
+      '<div class="concert-row-when">' +
+        '<p class="concert-row-date">' + dateHtml + '</p>' +
+        (c.place ? '<p class="concert-row-where">' + c.place + '</p>' : '') +
+      '</div>' +
       '<div class="concert-row-main">' +
         '<h3><button type="button" class="concert-row-trigger" data-ci="' + concerts.indexOf(c) + '">' + c.title + '</button></h3>' +
-        (c.place ? '<p class="concert-row-place">' + c.place + '</p>' : '') +
+        (c.collaborators ? '<p class="concert-row-place">' + c.collaborators + '</p>' : '') +
       '</div>' +
       '<div class="concert-row-aside">' + aside + '</div>' +
       '<span class="concert-row-more" aria-hidden="true">&#8594;</span>' +
