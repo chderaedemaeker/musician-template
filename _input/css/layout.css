@@ -274,21 +274,39 @@ main {
   transform: translate(-50%, -50%) scale(2.1);
 }
 
-.nav-transparent:not(.is-scrolled) .nav-links,
-.nav-transparent:not(.is-scrolled) .nav-inner > .lang-switcher,
-.nav-transparent:not(.is-scrolled) .hamburger {
-  opacity: 0;
-  pointer-events: none;
-}
-
 .nav-transparent .nav-brand a,
 .nav-transparent .nav-links a,
 .nav-transparent .lang-switcher a {
   transition: color var(--dur-med) var(--ease);
 }
 
+/* Over the hero photo: no bar, light menu */
 .nav-transparent:not(.is-scrolled) .nav-brand a {
   color: var(--white);
+}
+
+.nav-transparent:not(.is-scrolled) .nav-links a {
+  color: rgba(246, 246, 244, 0.8);
+}
+
+.nav-transparent:not(.is-scrolled) .nav-links a:hover,
+.nav-transparent:not(.is-scrolled) .nav-links a.active {
+  color: var(--white);
+  text-decoration-color: var(--white);
+}
+
+.nav-transparent:not(.is-scrolled) .lang-switcher a {
+  color: rgba(246, 246, 244, 0.7);
+}
+
+.nav-transparent:not(.is-scrolled) .lang-switcher a:hover,
+.nav-transparent:not(.is-scrolled) .lang-switcher a.active {
+  color: var(--white);
+  text-decoration-color: var(--white);
+}
+
+.nav-transparent:not(.is-scrolled) .hamburger span {
+  background-color: var(--white);
 }
 
 .nav-transparent.is-scrolled {
@@ -333,7 +351,7 @@ main {
   width: 100%;
   margin-top: var(--space-2xl);
   padding: var(--space-lg) 0 var(--space-sm);
-  background-color: #667c9e; /* the middle blue */
+  background-color: var(--accent); /* her steel blue */
   font-family: var(--font-sans);
   overflow: hidden;
 }
@@ -352,7 +370,7 @@ main {
 
 .footer-heading {
   font-size: var(--text-label);
-  color: #c0cbdd;
+  color: #2c3a55;
   margin: 0 0 var(--space-xs);
 }
 
@@ -366,7 +384,7 @@ main {
 
 .footer-col a {
   font-size: var(--text-sans);
-  color: #e8edf4;
+  color: var(--accent-deep);
   text-decoration: underline;
   text-decoration-color: transparent;
   text-decoration-thickness: 1px;
@@ -375,8 +393,8 @@ main {
 }
 
 .footer-col a:hover {
-  color: #ffffff;
-  text-decoration-color: #ffffff;
+  color: var(--accent-deep);
+  text-decoration-color: var(--accent-deep);
 }
 
 /* Newsletter signup */
@@ -385,7 +403,7 @@ main {
   font-size: var(--text-lede);
   font-weight: 300;
   letter-spacing: 0.01em;
-  color: var(--white);
+  color: var(--accent-deep);
   margin: 0 0 var(--space-sm);
 }
 
@@ -400,34 +418,34 @@ main {
   min-width: 0;
   padding: 0.6em 1.1em;
   background: transparent;
-  border: 1px solid rgba(246, 246, 244, 0.45);
+  border: 1px solid rgba(29, 36, 64, 0.45);
   border-radius: 999px;
   font-family: var(--font-sans);
   font-size: var(--text-sans);
-  color: var(--white);
+  color: var(--accent-deep);
   outline: none;
   transition: border-color var(--dur-fast) var(--ease);
 }
 
 .footer-news-row input::placeholder {
-  color: #c0cbdd;
+  color: #2c3a55;
 }
 
 .footer-news-row input:focus {
-  border-color: var(--white);
+  border-color: var(--accent-deep);
 }
 
 .footer-news-row .btn {
-  border-color: rgba(246, 246, 244, 0.7);
-  color: var(--white);
+  border-color: var(--accent-deep);
+  color: var(--accent-deep);
   background: transparent;
   white-space: nowrap;
 }
 
 .footer-news-row .btn:hover {
-  background: var(--white);
-  color: #33415c;
-  border-color: var(--white);
+  background: var(--accent-deep);
+  color: #f6f6f4;
+  border-color: var(--accent-deep);
 }
 
 /* The name as a large, faint watermark */
@@ -439,20 +457,20 @@ main {
   letter-spacing: 0.01em;
   white-space: nowrap;
   text-align: center;
-  color: rgba(246, 246, 244, 0.14);
+  color: #2a4b5a; /* deep teal, plainly visible like the reference */
   margin: var(--space-md) 0 var(--space-sm);
   user-select: none;
   pointer-events: none;
 }
 
 .footer-bottom {
-  border-top: 1px solid rgba(246, 246, 244, 0.25);
+  border-top: 1px solid rgba(29, 36, 64, 0.3);
   padding-top: var(--space-xs);
 }
 
 .footer-bottom p {
   font-size: var(--text-caption);
-  color: #cfd8e6;
+  color: #2c3a55;
   margin: 0;
 }
 

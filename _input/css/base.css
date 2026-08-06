@@ -20,10 +20,9 @@
   --charcoal: #4d4841;   /* soft ink — long-form reading text */
   --near-black: #0d0d0c; /* primary text — near pure black */
 
-  /* Secondary color — placeholder blues until the exact shade is chosen;
-     change these two values to restyle everything featured/accented */
-  --accent: #35507a;
-  --accent-deep: #243a5c;
+  /* Secondary colors — her blues: steel blue ground, dark navy ink */
+  --accent: #5c8ca3;
+  --accent-deep: #1d2440;
 
   /* ── Fonts ── */
   --font-serif: 'AGL', Georgia, serif;
