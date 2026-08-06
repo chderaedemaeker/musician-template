@@ -13,55 +13,73 @@
   </div>
 </div>
 
-<!-- Short bio -->
-{% assign aboutPage = collections.about | where: "data.lang", lang | first %}
-{% if aboutPage and aboutPage.data.summaryabout %}
-<section class="section container-prose home-intro reveal">
-  <p class="lede">{{ aboutPage.data.summaryabout }}</p>
-  <a class="btn" href="/{{ lang }}/about/">{{ languages[lang].biography }} <span aria-hidden="true">&#8594;</span></a>
-</section>
-{% endif %}
+<!-- Bento: everything at a glance -->
+<section class="section container">
+  <div class="bento reveal-group">
 
-<!-- Upcoming concerts -->
-{% include "upcoming-concerts.liquid" %}
+    <!-- Bio -->
+    {% assign aboutPage = collections.about | where: "data.lang", lang | first %}
+    {% if aboutPage and aboutPage.data.summaryabout %}
+    <div class="bento-cell bento-bio reveal">
+      <h2 class="label">{{ languages[lang].about_nav | default: 'About' }}</h2>
+      <p class="bento-bio-text">{{ aboutPage.data.summaryabout }}</p>
+      <a class="bento-cell-link" href="/{{ lang }}/about/">{{ languages[lang].biography }} <span aria-hidden="true">&#8594;</span></a>
+    </div>
+    {% endif %}
 
-<!-- Latest highlight -->
-{% assign langHighlights = 'highlights_' | append: lang %}
-{% assign latestHighlight = collections[langHighlights] | sort: 'date' | reverse | first %}
-{% if latestHighlight %}
-<section class="section container-content reveal">
-
-  <div class="home-section-header">
-    <h2 class="label">{{ languages[lang].most_recent_highlight }}</h2>
-  </div>
-
-  <div class="highlights-grid">
-    <a href="{{ latestHighlight.url }}" class="highlight-card highlight-card--solo{% unless latestHighlight.data.image and latestHighlight.data.image != '' %} highlight-card--noimg{% endunless %}" {% unless latestHighlight.data.image and latestHighlight.data.image != '' %}data-initial="{{ latestHighlight.data.title | strip | slice: 0, 1 | upcase }}"{% endunless %}>
+    <!-- Latest highlight — newest entry that has a real date -->
+    {% assign langHighlights = 'highlights_' | append: lang %}
+    {% assign sortedHighlightsHome = collections[langHighlights] | sort: 'date' | reverse %}
+    {% assign latestFound = false %}
+    {% for h in sortedHighlightsHome %}
+      {% if latestFound == false and h.data.date and h.data.date != '' %}
+        {% assign latestHighlight = h %}
+        {% assign latestFound = true %}
+      {% endif %}
+    {% endfor %}
+    {% if latestFound == false %}{% assign latestHighlight = sortedHighlightsHome | first %}{% endif %}
+    {% if latestHighlight %}
+    <a href="{{ latestHighlight.url }}" class="bento-cell bento-highlight reveal{% unless latestHighlight.data.image and latestHighlight.data.image != '' %} bento-highlight--noimg{% endunless %}" {% unless latestHighlight.data.image and latestHighlight.data.image != '' %}data-initial="{{ latestHighlight.data.title | strip | slice: 0, 1 | upcase }}"{% endunless %}>
       {% if latestHighlight.data.image and latestHighlight.data.image != '' %}
         <img src="{{ latestHighlight.data.image }}" alt="{{ latestHighlight.data.title }}">
       {% endif %}
-      <div class="highlight-card-overlay">
-        <div class="highlight-card-top">
-          {% if latestHighlight.data.type %}<p class="highlight-card-type">{{ latestHighlight.data.type }}</p>{% endif %}
-          <h3 class="highlight-card-title">{{ latestHighlight.data.title }}</h3>
-        </div>
+      <div class="bento-highlight-overlay">
+        <p class="bento-highlight-label">{{ languages[lang].most_recent_highlight }}</p>
+        <h3 class="bento-highlight-title">{{ latestHighlight.data.title }}</h3>
       </div>
     </a>
-  </div>
+    {% endif %}
 
-  <div class="home-more">
-    <a class="btn" href="/{{ lang }}/highlights/">{{ languages[lang].see_all_highlights }} <span aria-hidden="true">&#8594;</span></a>
-  </div>
+    <!-- Upcoming concerts -->
+    <div class="bento-cell bento-concerts reveal" id="upcoming-section">
+      <h2 class="label">{{ languages[lang].upcoming_concerts }}</h2>
+      {% include "upcoming-concerts.liquid" %}
+      <a class="bento-cell-link" href="/{{ lang }}/concerts/">{{ languages[lang].see_all_concerts }} <span aria-hidden="true">&#8594;</span></a>
+    </div>
 
-</section>
-{% endif %}
+    <!-- Projects -->
+    {% assign langProjects = 'projects_' | append: lang %}
+    {% assign homeProjects = collections[langProjects] | sort: 'date' | reverse %}
+    {% if homeProjects.size > 0 %}
+    <div class="bento-cell bento-projects reveal">
+      <h2 class="label">{{ languages[lang].projects_title }}</h2>
+      <ul class="bento-projects-list">
+        {% for project in homeProjects limit: 4 %}
+          <li><a href="{{ project.url }}">{{ project.data.title }}</a></li>
+        {% endfor %}
+      </ul>
+      <a class="bento-cell-link" href="/{{ lang }}/projects/">{{ languages[lang].projects_title }} <span aria-hidden="true">&#8594;</span></a>
+    </div>
+    {% endif %}
 
-<!-- Contact -->
-<section class="section container-prose text-center reveal">
-  <div class="home-section-header">
-    <h2 class="label">{{ languages[lang].contact_title }}</h2>
+    <!-- Contact -->
+    <div class="bento-cell bento-contact reveal">
+      <h2 class="label">{{ languages[lang].contact_title }}</h2>
+      <p class="bento-contact-text">{{ languages[lang].contact_intro }}</p>
+      <a class="btn" href="/{{ lang }}/contact/">{{ languages[lang].contact_title }} <span aria-hidden="true">&#8594;</span></a>
+    </div>
+
   </div>
-  <a class="btn" href="/{{ lang }}/contact/">{{ languages[lang].contact_title }} <span aria-hidden="true">&#8594;</span></a>
 </section>
 
 </main>

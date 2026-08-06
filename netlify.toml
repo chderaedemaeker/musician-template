@@ -24,13 +24,13 @@
   [headers.values]
     Cache-Control = "public, max-age=604800"
 
-# Language redirects — detect browser language, Dutch is the default
+# Language redirects — detect browser language, English is the default
 [[redirects]]
   from = "/"
-  to = "/en"
+  to = "/nl"
   status = 302
   force = true
-  conditions = {Language = ["en"]}
+  conditions = {Language = ["nl"]}
 
 [[redirects]]
   from = "/"
@@ -48,6 +48,6 @@
 
 [[redirects]]
   from = "/"
-  to = "/nl"
+  to = "/en"
   status = 302
   force = true

@@ -1,0 +1,33 @@
+{% comment %}
+  Previous / next navigation between detail pages.
+  Expects `detailItems` (sorted collection) and `lang` to be assigned.
+{% endcomment %}
+{% assign prevUrl = '' %}{% assign prevTitle = '' %}
+{% assign nextUrl = '' %}{% assign nextTitle = '' %}
+{% assign seenCurrent = false %}
+{% for item in detailItems %}
+  {% if seenCurrent and nextUrl == '' %}
+    {% assign nextUrl = item.url %}{% assign nextTitle = item.data.title %}
+  {% endif %}
+  {% if item.url == page.url %}
+    {% assign seenCurrent = true %}
+  {% elsif seenCurrent == false %}
+    {% assign prevUrl = item.url %}{% assign prevTitle = item.data.title %}
+  {% endif %}
+{% endfor %}
+{% if prevUrl != '' or nextUrl != '' %}
+<nav class="detail-nav">
+  {% if prevUrl != '' %}
+  <a class="detail-nav-item detail-nav-prev" href="{{ prevUrl }}">
+    <span class="label"><span aria-hidden="true">&#8592;</span> {{ languages[lang].previous }}</span>
+    <span class="detail-nav-title">{{ prevTitle }}</span>
+  </a>
+  {% endif %}
+  {% if nextUrl != '' %}
+  <a class="detail-nav-item detail-nav-next" href="{{ nextUrl }}">
+    <span class="label">{{ languages[lang].next }} <span aria-hidden="true">&#8594;</span></span>
+    <span class="detail-nav-title">{{ nextTitle }}</span>
+  </a>
+  {% endif %}
+</nav>
+{% endif %}

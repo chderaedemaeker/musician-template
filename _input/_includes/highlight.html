@@ -26,6 +26,8 @@
 
 <main>
   <div class="detail-page">
+    <a class="back-link back-link--top" href="/{{ lang }}/highlights/"><span aria-hidden="true">&#8592;</span> {{ languages[lang].back_to_overview }}</a>
+
     <h1>{{ title }}</h1>
 
     {% if type or place or collaborators or date %}
@@ -53,9 +55,9 @@
       {{ content }}
     </div>
 
-    <div class="mt-lg">
-      <a class="back-link" href="/{{ lang }}/highlights/"><span aria-hidden="true">&#8592;</span> {{ languages[lang].back_to_overview }}</a>
-    </div>
+    {% assign langHighlights = 'highlights_' | append: lang %}
+    {% assign detailItems = collections[langHighlights] | sort: 'date' | reverse %}
+    {% include "detail-nav.liquid" %}
   </div>
 </main>
 

@@ -6,10 +6,14 @@
     <h1>{{ languages[lang].concerts_title }}</h1>
   </header>
 
-  <div class="concert-tabs">
-    <button type="button" class="concert-tab active" id="tab-upcoming" aria-pressed="true" aria-controls="section-upcoming">{{ languages[lang].upcoming_concerts }}</button>
-    <button type="button" class="concert-tab" id="tab-archive" aria-pressed="false" aria-controls="section-archive">{{ languages[lang].archive }}</button>
+  <div class="concert-toolbar">
+    <div class="concert-tabs">
+      <button type="button" class="concert-tab active" id="tab-upcoming" aria-pressed="true" aria-controls="section-upcoming">{{ languages[lang].upcoming_concerts }}</button>
+      <button type="button" class="concert-tab" id="tab-archive" aria-pressed="false" aria-controls="section-archive">{{ languages[lang].archive }}</button>
+    </div>
+    <input type="search" class="concert-search" id="concert-search" placeholder="{{ languages[lang].search_placeholder }}" aria-label="{{ languages[lang].search_placeholder }}">
   </div>
+  <p class="empty-note" id="search-empty" hidden>{{ languages[lang].no_results }}</p>
 
   <section class="concert-list-section" id="section-upcoming" aria-labelledby="tab-upcoming">
     <ul class="concert-list" id="upcoming-concerts"></ul>
@@ -75,7 +79,8 @@ document.addEventListener('DOMContentLoaded', function() {
         ticketsLabel + ' <span aria-hidden="true">&#8599;</span></a>';
     }
     aside += '<span class="concert-row-more">' + detailsLabel + '</span>';
-    return '<li class="concert-row' + (isArchive ? ' concert-row--archive' : '') + '">' +
+    var searchText = [d, c.title, c.place, c.composers, c.collaborators].join(' ').toLowerCase().replace(/"/g, '&quot;');
+    return '<li class="concert-row' + (isArchive ? ' concert-row--archive' : '') + '" data-search="' + searchText + '">' +
       '<p class="concert-row-date">' + d + '</p>' +
       '<div class="concert-row-main">' +
         '<h3><button type="button" class="concert-row-trigger" data-ci="' + concerts.indexOf(c) + '">' + c.title + '</button></h3>' +
@@ -141,15 +146,54 @@ document.addEventListener('DOMContentLoaded', function() {
     { tab: document.getElementById('tab-upcoming'), section: document.getElementById('section-upcoming') },
     { tab: document.getElementById('tab-archive'), section: document.getElementById('section-archive') }
   ];
+  function applyTabs() {
+    tabs.forEach(function(t) {
+      t.section.hidden = !t.tab.classList.contains('active');
+    });
+  }
   tabs.forEach(function(current) {
     current.tab.addEventListener('click', function() {
       tabs.forEach(function(other) {
         var active = other === current;
         other.tab.classList.toggle('active', active);
         other.tab.setAttribute('aria-pressed', active ? 'true' : 'false');
-        other.section.hidden = !active;
       });
+      if (!searching) applyTabs();
     });
+  });
+
+  /* Search across all concerts — while a query is active, both sections
+     are shown and every archive year is loaded so nothing is missed. */
+  var searchInput = document.getElementById('concert-search');
+  var searchEmpty = document.getElementById('search-empty');
+  var searching = false;
+
+  searchInput.addEventListener('input', function() {
+    var q = this.value.trim().toLowerCase();
+    searching = q !== '';
+
+    if (searching && !moreBtn.hidden) moreBtn.click(); /* load the full archive */
+
+    if (!searching) {
+      document.querySelectorAll('.concert-row, .concert-year-heading').forEach(function(el) {
+        el.style.display = '';
+      });
+      searchEmpty.hidden = true;
+      applyTabs();
+      return;
+    }
+
+    tabs.forEach(function(t) { t.section.hidden = false; });
+    var matches = 0;
+    document.querySelectorAll('.concert-row').forEach(function(row) {
+      var hit = (row.dataset.search || '').indexOf(q) !== -1;
+      row.style.display = hit ? '' : 'none';
+      if (hit) matches++;
+    });
+    document.querySelectorAll('.concert-year-heading').forEach(function(el) {
+      el.style.display = 'none';
+    });
+    searchEmpty.hidden = matches > 0;
   });
 });
 </script>

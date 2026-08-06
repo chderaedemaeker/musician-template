@@ -1,0 +1,28 @@
+---
+permalink: /index.html
+eleventyExcludeFromCollections: true
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Veronique De Raedemaeker</title>
+  <meta name="robots" content="noindex">
+  <!-- Netlify edge redirects normally handle language detection before this
+       page is served; this static fallback covers local serving and any
+       host without redirect support. English is the default. -->
+  <meta http-equiv="refresh" content="0; url=/en/">
+  <script>
+    (function () {
+      var supported = ['en', 'nl', 'fr', 'de'];
+      var lang = (navigator.language || 'en').slice(0, 2).toLowerCase();
+      if (supported.indexOf(lang) === -1) lang = 'en';
+      window.location.replace('/' + lang + '/');
+    })();
+  </script>
+</head>
+<body>
+  <p><a href="/en/">Veronique De Raedemaeker</a></p>
+</body>
+</html>

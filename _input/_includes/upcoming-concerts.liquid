@@ -1,22 +1,9 @@
-{% assign lang = page.lang %}
-<section id="upcoming-section" class="section container-prose reveal">
-
-  <div class="home-section-header">
-    <h2 class="label">{{ languages[lang].upcoming_concerts }}</h2>
-  </div>
-
-  <ul class="upcoming-list"></ul>
-
-  <div class="home-more">
-    <a class="btn" href="/{{ lang }}/concerts/">{{ languages[lang].see_all_concerts }} <span aria-hidden="true">&#8594;</span></a>
-  </div>
-
-</section>
+<ul class="upcoming-list"></ul>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   var concerts = {% concertsJson collections.concerts %};
-  var lang = '{{ lang }}';
+  var lang = '{{ page.lang }}';
 
   function endOf(c) {
     var d = new Date(c.dateEnd || c.date);
@@ -46,8 +33,10 @@ document.addEventListener('DOMContentLoaded', function() {
     .slice(0, 3);
 
   var list = document.querySelector('.upcoming-list');
+  if (!list) return;
   if (upcoming.length === 0) {
-    document.getElementById('upcoming-section').style.display = 'none';
+    var section = document.getElementById('upcoming-section');
+    if (section) section.style.display = 'none';
   } else {
     list.innerHTML = upcoming.map(function(c) {
       return '<li>' +

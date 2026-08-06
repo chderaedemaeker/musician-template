@@ -12,7 +12,15 @@
 - [x] inser the link of the concert appear in the list → "Tickets & info ↗" link on each concert row that has one.
 - [x] have the full information of the concert appear in a big popup on the website if possible → clicking a concert row opens a modal with dates, place, composers, collaborators, the full description, a tickets button, and a link to the full page. See [[Concerts Page]].
 
+- [x] have english index on index.html → static `/index.html` now redirects by browser language with English as the default (was Dutch); Netlify edge redirects updated to match.
+- [x] make a bento box with all latest update instead of long scrolling on index. all elements visible in a grid. → homepage below the hero is now a bento grid: bio, next three concerts, latest highlight (large image card), projects, contact — all visible at a glance.
+- [x] make mandatory to have images of highlights → image is now a required CMS field and the editor blocks saving without one; highlights that still lack an image get a designed placeholder card (tonal gradient + large initial) instead of a broken image.
+- [x] Automatically have all fields be in english (copy) if no other language has been provided → the CMS now treats English as the hub on every save: empty English fields are filled from whichever language has content, and empty fields in other languages are filled from English. Works in both directions.
+- [x] Highlights filled in from veroniquederaedemaeker.com → "This isn't Silence" (full details + SoundCloud live-recording player), Vasks "Vientulais Engelis", Duo Altiler at Studio Toots, and the missing Garland CD added in en/nl/fr.
+- [x] Concerts search bar, upcoming/archive switcher, and previous/next navigation on all detail pages (concerts, highlights, projects) with "back to overview" moved to the top.
+
 ## Still open / needs Veronique
 
 - [ ] Social links on [[Contact Page]] are still placeholders (bare facebook.com / instagram.com / youtube.com) — need the real profile URLs.
 - [ ] German content (about/highlights/projects) still falls back to English until it's written in the CMS.
+- [ ] "Duo Altiler at Studio Toots" highlight has no date yet — set it in the CMS so it sorts correctly.

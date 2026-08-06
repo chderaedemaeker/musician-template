@@ -1,8 +1,8 @@
 ---
-title: ""
-slug: ""
-date: ""
-type: ""
+title: "Vientulais Engelis — Pēteris Vasks"
+slug: "vientulais-engelis"
+date: 2022-08-20T00:00:00
+type: "Enregistrement"
 image: ""
 link: ""
 place: ""
@@ -11,3 +11,5 @@ layout: highlight.html
 tags: highlights
 lang: fr
 ---
+
+Enregistrement de *Vientulais Engelis* (L'ange solitaire) de Pēteris Vasks, une méditation pour violon et cordes.

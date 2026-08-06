@@ -51,6 +51,48 @@
   color: var(--near-black);
 }
 
+.back-link--top {
+  margin-bottom: var(--space-md);
+}
+
+/* ── Previous / next between detail pages ── */
+.detail-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+  border-top: 1px solid var(--warm-grey);
+  margin-top: var(--space-xl);
+  padding-top: var(--space-md);
+}
+
+.detail-nav-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  min-width: 0;
+}
+
+.detail-nav-next {
+  grid-column: 2;
+  text-align: right;
+  align-items: flex-end;
+}
+
+.detail-nav-title {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  line-height: var(--leading-snug);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: text-decoration-color var(--dur-fast) var(--ease);
+}
+
+.detail-nav-item:hover .detail-nav-title {
+  text-decoration-color: var(--near-black);
+}
+
 /* ── Empty states ── */
 .empty-note {
   color: var(--dark-grey);
@@ -82,12 +124,42 @@
   margin: var(--space-lg2) 0 var(--space-xs);
 }
 
-/* ── Upcoming / archive switcher ── */
+/* ── Upcoming / archive switcher + search ── */
+.concert-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-sm) var(--space-md);
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--warm-grey);
+  margin-bottom: var(--space-md);
+}
+
 .concert-tabs {
   display: flex;
   gap: var(--space-md);
-  border-bottom: 1px solid var(--warm-grey);
-  margin-bottom: var(--space-md);
+}
+
+.concert-search {
+  width: min(18rem, 100%);
+  padding: 0.55em 0.85em;
+  margin-bottom: var(--space-xs);
+  background: #fff;
+  border: 1px solid var(--warm-grey);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-sans);
+  font-size: var(--text-sans);
+  color: var(--near-black);
+  outline: none;
+  transition: border-color var(--dur-fast) var(--ease);
+}
+
+.concert-search:focus {
+  border-color: var(--near-black);
+}
+
+.concert-search::placeholder {
+  color: var(--dark-grey);
 }
 
 .concert-tab {

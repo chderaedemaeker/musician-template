@@ -1,13 +1,15 @@
 ---
-title: Duo Altiler Studio Toots
-slug: ""
+title: "Duo Altiler at Studio Toots"
+slug: "duo-altiler-studio-toots"
 date: ""
-type: ""
-image: ""
+type: "Studio recording"
+image: "/images/duo-altiler.jpeg"
 link: ""
-place: ""
-collaborators: ""
+place: "Studio Toots, Brussels"
+collaborators: "Duo Altiler (Alexander Declercq — Piano)"
 layout: highlight.html
 tags: highlights
 lang: en
 ---
+
+Studio session by Duo Altiler at Studio Toots in Brussels.

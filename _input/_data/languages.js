@@ -1,5 +1,9 @@
 module.exports = {
   en: {
+    search_placeholder: "Search concerts…",
+    no_results: "No concerts found.",
+    previous: "Previous",
+    next: "Next",
     dir: '',
     site_title: 'Veronique De Raedemaeker',
     site_subtitle: 'Violinist',
@@ -35,6 +39,10 @@ module.exports = {
     no_projects: "No projects found."
   },
   nl: {
+    search_placeholder: "Zoek concerten…",
+    no_results: "Geen concerten gevonden.",
+    previous: "Vorige",
+    next: "Volgende",
     dir: '',
     site_title: 'Veronique De Raedemaeker',
     site_subtitle: 'Violiste',
@@ -70,6 +78,10 @@ module.exports = {
     no_projects: "Geen projecten gevonden."
   },
   fr: {
+    search_placeholder: "Rechercher des concerts…",
+    no_results: "Aucun concert trouvé.",
+    previous: "Précédent",
+    next: "Suivant",
     dir: '',
     site_title: 'Veronique De Raedemaeker',
     site_subtitle: 'Violoniste',
@@ -105,6 +117,10 @@ module.exports = {
     no_projects: "Aucun projet trouvé."
   },
   de: {
+    search_placeholder: "Konzerte suchen…",
+    no_results: "Keine Konzerte gefunden.",
+    previous: "Zurück",
+    next: "Weiter",
     dir: '',
     site_title: 'Veronique De Raedemaeker',
     site_subtitle: 'Geigerin',

@@ -1700,11 +1700,30 @@ class App {
     const { col, locales, isNew } = state;
     const isI18n = !!(col.i18n || col.i18nStructure);
     let filename = state.filename;
+    // Required fields need a value in at least the primary locale
+    for (const f of col.fields) {
+      if (!f.required || f.name === 'body') continue;
+      const v = state.data[locales[0]][f.name];
+      if (!v || !String(v).trim()) { showStatus('error', `${f.label} is required`); return; }
+    }
     if (isNew) {
-      const title = state.data[locales[0]].title;
-      if (!title) { showStatus('error', 'Title is required'); return; }
-      filename = generateFilename(title);
+      filename = generateFilename(state.data[locales[0]].title);
       state.filename = filename;
+    }
+    if (isI18n) {
+      // Content parity: English is the hub. Fill empty English fields from
+      // whichever locale has content, so nothing exists only in one language.
+      for (const f of col.fields) {
+        if (f.name === 'body' || state.data['en'][f.name]) continue;
+        for (const l of locales) {
+          if (state.data[l][f.name]) { state.data['en'][f.name] = state.data[l][f.name]; break; }
+        }
+      }
+      if (!state.body['en']) {
+        for (const l of locales) {
+          if (state.body[l]) { state.body['en'] = state.body[l]; break; }
+        }
+      }
     }
     showStatus('saving', 'Saving...');
     try {
@@ -1721,7 +1740,9 @@ class App {
           if (!data.layout) data.layout = 'concert.html';
         }
         if (isI18n && loc !== 'en') {
-          for (const f of col.fields) { if (f.i18n === 'duplicate' && !data[f.name]) data[f.name] = state.data['en'][f.name] || ''; }
+          // Any field still empty in this locale falls back to the English value
+          for (const f of col.fields) { if (f.name !== 'body' && !data[f.name]) data[f.name] = state.data['en'][f.name] || ''; }
+          if (!state.body[loc]) state.body[loc] = state.body['en'] || '';
         }
         const content = FrontMatter.serialize(data, state.body[loc] || '');
         const path = isI18n ? `${col.folder}/${loc}/${filename}` : `${col.folder}/${filename}`;
