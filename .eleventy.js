@@ -106,6 +106,7 @@ module.exports = function (eleventyConfig) {
     eleventyConfig.addPassthroughCopy("_input/admin");
     eleventyConfig.addPassthroughCopy("_input/images");
     eleventyConfig.addPassthroughCopy("_input/css");
+    eleventyConfig.addPassthroughCopy("_input/js");
 
     // Helper: get collection with English fallback
     function collectionWithFallback(collection, langGlob, enGlob) {
@@ -188,11 +189,13 @@ module.exports = function (eleventyConfig) {
     });
 
     // Full concert date display: month-only → "August 2026"; range → "12 – 16 August 2026"
-    eleventyConfig.addFilter("concertDate", (dateObj, dateEnd, monthOnly) => {
+    // `lang` localizes month and weekday names (defaults to English).
+    eleventyConfig.addFilter("concertDate", (dateObj, dateEnd, monthOnly, lang) => {
         if (!dateObj) return "";
-        const toDt = d => d instanceof Date
+        const locale = lang || 'en';
+        const toDt = d => (d instanceof Date
             ? DateTime.fromJSDate(d, { zone: 'UTC' })
-            : DateTime.fromISO(String(d), { zone: 'UTC' });
+            : DateTime.fromISO(String(d), { zone: 'UTC' })).setLocale(locale);
         const dt = toDt(dateObj);
         if (!dt.isValid) return "";
         if (monthOnly) return dt.toFormat("LLLL y");
@@ -204,7 +207,7 @@ module.exports = function (eleventyConfig) {
                 return `${dt.toFormat("d LLLL y")} – ${end.toFormat("d LLLL y")}`;
             }
         }
-        const formatted = dt.toFormat("cccc LLLL d, y — HH:mm");
+        const formatted = dt.toFormat("cccc d LLLL y — HH:mm");
         return formatted.endsWith("00:00") ? formatted.replace(" — 00:00", "") : formatted;
     });
 

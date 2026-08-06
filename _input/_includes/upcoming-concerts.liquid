@@ -1,15 +1,17 @@
 {% assign lang = page.lang %}
-<div id="upcoming-section" style="max-width: var(--content-width); margin: 0 auto; padding: var(--space-xl) var(--space-md);">
+<section id="upcoming-section" class="section container-prose reveal">
 
-  <h2 class="section-title" style="margin-bottom: var(--space-lg);">{{ languages[lang].upcoming_concerts }}</h2>
-
-  <div class="upcoming-concerts-list"></div>
-
-  <div style="margin-top: var(--space-lg);">
-    <a class="btn" href="/{{ lang }}/concerts/">{{ languages[lang].see_all_concerts }}</a>
+  <div class="home-section-header">
+    <h2 class="label">{{ languages[lang].upcoming_concerts }}</h2>
   </div>
 
-</div>
+  <ul class="upcoming-list"></ul>
+
+  <div class="home-more">
+    <a class="btn" href="/{{ lang }}/concerts/">{{ languages[lang].see_all_concerts }} <span aria-hidden="true">&#8594;</span></a>
+  </div>
+
+</section>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -43,13 +45,19 @@ document.addEventListener('DOMContentLoaded', function() {
     .sort(function(a, b) { return new Date(a.date) - new Date(b.date); })
     .slice(0, 3);
 
-  var list = document.querySelector('.upcoming-concerts-list');
+  var list = document.querySelector('.upcoming-list');
   if (upcoming.length === 0) {
     document.getElementById('upcoming-section').style.display = 'none';
   } else {
-    upcoming.forEach(function(c) {
-      list.innerHTML += '<a href="' + c.link + '" style="display: block; padding: var(--space-sm) 0; border-bottom: 1px solid var(--warm-grey); text-decoration: none;"><span style="font-size: 0.75em; color: var(--dark-grey); font-family: var(--font-sans);">' + dateStr(c) + '</span><br><span style="font-weight: 300;">' + c.title + '</span>' + (c.place ? '<br><span style="font-size: 0.8em; color: var(--dark-grey); font-style: italic;">' + c.place + '</span>' : '') + '</a>';
-    });
+    list.innerHTML = upcoming.map(function(c) {
+      return '<li>' +
+        '<a class="upcoming-item" href="' + c.link + '">' +
+          '<span class="upcoming-item-date">' + dateStr(c) + '</span>' +
+          '<span class="upcoming-item-title">' + c.title + '</span>' +
+          (c.place ? '<span class="upcoming-item-place">' + c.place + '</span>' : '') +
+        '</a>' +
+      '</li>';
+    }).join('');
   }
 });
 </script>

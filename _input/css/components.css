@@ -1,76 +1,399 @@
 /* ============================================
-   COMPONENTS — Swiper, Search, Footer
+   COMPONENTS — Buttons, Lists, Cards, Modal, Forms
    ============================================ */
 
-/* Swiper */
-.swiper {
-  width: 100%;
-  max-width: var(--max-width);
-  margin: 0 auto var(--space-lg);
-  padding: 0 var(--space-md);
-}
-
-.swiper-slide {
-  background: var(--white);
-  padding: var(--space-md);
-  border-radius: var(--radius);
-}
-
-.swiper-slide a {
-  text-decoration: none;
-}
-
-.swiper-slide .date {
-  font-size: var(--sans-label);
-  color: var(--dark-grey);
+/* ── Buttons — visible at rest, quiet inversion on hover ── */
+.btn {
+  display: inline-block;
+  padding: 0.8em 1.6em;
+  font-size: var(--text-sans);
+  line-height: 1;
   font-family: var(--font-sans);
-}
-
-.swiper-slide h3 {
-  font-size: var(--serif-body);
-  font-weight: 300;
-}
-
-.swiper-slide .place {
-  font-size: var(--sans-label);
-  color: var(--dark-grey);
-  font-style: italic;
-  font-family: var(--font-sans);
-}
-
-/* Search */
-.search-container {
-  display: flex;
-  margin-bottom: var(--space-lg);
-  max-width: var(--content-width);
-  margin-left: auto;
-  margin-right: auto;
-  padding: 0 var(--space-md);
-}
-
-.search-container input {
-  flex: 1;
-  padding: 6px;
-  border: none;
-  border-bottom: 1px solid var(--warm-grey);
-  background: transparent;
-  font-family: var(--font-sans);
-  font-size: var(--sans-label);
-  outline: none;
-}
-
-.search-container button {
-  padding: 6px 14px;
-  border: none;
-  border-bottom: 1px solid var(--warm-grey);
-  background: transparent;
+  background-color: transparent;
+  border: 1px solid var(--near-black);
+  border-radius: var(--radius-sm);
   cursor: pointer;
+  text-decoration: none;
+  color: var(--near-black);
+  transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+
+.btn:hover {
+  background-color: var(--near-black);
+  color: var(--off-white);
+}
+
+.btn-primary {
+  background-color: var(--near-black);
+  color: var(--off-white);
+}
+
+.btn-primary:hover {
+  background-color: var(--dark-grey);
+  border-color: var(--dark-grey);
+}
+
+.btn-sm {
+  padding: 0.7em 1.2em;
+  font-size: var(--text-label);
+}
+
+/* ── Back link — quiet return action ── */
+.back-link {
+  display: inline-block;
   font-family: var(--font-sans);
-  font-size: var(--sans-label);
+  font-size: var(--text-sans);
+  color: var(--dark-grey);
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.back-link:hover {
+  color: var(--near-black);
+}
+
+/* ── Empty states ── */
+.empty-note {
+  color: var(--dark-grey);
+  padding: var(--space-md) 0;
 }
 
 /* ============================================
-   CONCERT MODAL — full concert info popup
+   CONCERT LIST — aligned columns, calm rows
+   ============================================ */
+
+.concert-list {
+  list-style: none;
+}
+
+.concert-list-section {
+  margin-bottom: var(--space-xl);
+}
+
+.concert-list-section > h2 {
+  margin-bottom: var(--space-md);
+}
+
+.concert-year-heading {
+  font-family: var(--font-sans);
+  font-size: var(--text-label);
+  font-weight: 400;
+  letter-spacing: var(--tracking-label);
+  color: var(--dark-grey);
+  margin: var(--space-lg2) 0 var(--space-xs);
+}
+
+.concert-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(8.5rem, 11rem) 1fr minmax(0, 18rem);
+  gap: var(--space-sm) var(--space-md);
+  padding-block: var(--space-md2);
+  border-bottom: 1px solid var(--warm-grey);
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+.concert-row:first-child {
+  border-top: 1px solid var(--warm-grey);
+}
+
+.concert-row:hover,
+.concert-row:focus-within {
+  background-color: rgba(232, 230, 225, 0.35);
+}
+
+.concert-row-date {
+  font-family: var(--font-sans);
+  font-size: var(--text-label);
+  color: var(--dark-grey);
+  font-variant-numeric: tabular-nums;
+  padding-top: 0.4rem;
+  margin: 0;
+}
+
+.concert-row-trigger {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-serif);
+  font-size: var(--text-h3);
+  font-weight: 300;
+  line-height: var(--leading-snug);
+  color: inherit;
+  padding: 0;
+}
+
+/* The whole row is the click target */
+.concert-row-trigger::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+.concert-row-place {
+  font-family: var(--font-sans);
+  font-size: var(--text-sans);
+  color: var(--dark-grey);
+  margin: var(--space-2xs) 0 0;
+}
+
+.concert-row-aside {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  padding-top: 0.4rem;
+}
+
+.concert-row-detail {
+  font-family: var(--font-sans);
+  font-size: var(--text-label);
+  color: var(--dark-grey);
+  margin: 0;
+}
+
+/* A visible promise of what a click does */
+.concert-row-more {
+  font-family: var(--font-sans);
+  font-size: var(--text-label);
+  letter-spacing: var(--tracking-label);
+  color: var(--dark-grey);
+  margin-top: var(--space-2xs);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: text-decoration-color var(--dur-fast) var(--ease);
+  pointer-events: none;
+}
+
+.concert-row:hover .concert-row-more,
+.concert-row:focus-within .concert-row-more {
+  text-decoration-color: var(--dark-grey);
+}
+
+/* Ticket link floats above the row-wide trigger */
+.concert-row-ticket {
+  position: relative;
+  z-index: 1;
+  align-self: flex-start;
+  font-family: var(--font-sans);
+  font-size: var(--text-label);
+  color: var(--dark-grey);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.concert-row-ticket:hover {
+  color: var(--near-black);
+}
+
+/* Archive rows step back without disappearing */
+.concert-row--archive {
+  padding-block: var(--space-sm);
+}
+
+.concert-row--archive .concert-row-trigger {
+  color: var(--dark-grey);
+}
+
+@media (max-width: 700px) {
+  .concert-row {
+    grid-template-columns: 1fr;
+    gap: var(--space-2xs);
+  }
+  .concert-row-date,
+  .concert-row-aside {
+    padding-top: 0;
+  }
+}
+
+/* ============================================
+   TEXT LIST — projects overview
+   ============================================ */
+
+.text-list {
+  list-style: none;
+}
+
+.text-list-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md2) 0;
+  border-bottom: 1px solid var(--warm-grey);
+  color: var(--near-black);
+}
+
+.text-list-item:first-child {
+  border-top: 1px solid var(--warm-grey);
+}
+
+.text-list-title {
+  font-size: var(--text-h3);
+  font-weight: 300;
+  line-height: var(--leading-snug);
+  margin: 0 0 var(--space-2xs);
+}
+
+.text-list-detail {
+  font-size: var(--text-sans);
+  font-family: var(--font-sans);
+  color: var(--dark-grey);
+  margin: 0;
+}
+
+.text-list-arrow {
+  font-size: 1.2rem;
+  color: var(--dark-grey);
+  transition: transform var(--dur-fast) var(--ease);
+}
+
+.text-list-item:hover .text-list-arrow {
+  transform: translateX(4px);
+}
+
+/* ============================================
+   HIGHLIGHT CARDS — grid + mobile reel
+   ============================================ */
+
+.highlights-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--space-md2);
+}
+
+/* A single featured card (home page) stays modest */
+.highlight-card--solo {
+  max-width: 34rem;
+  margin-inline: auto;
+}
+
+.highlight-card {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  aspect-ratio: 4 / 5;
+  background-color: var(--warm-grey);
+}
+
+/* aspect-ratio fallback for iOS 14 and older */
+@supports not (aspect-ratio: 1) {
+  .highlight-card::before {
+    content: '';
+    display: block;
+    padding-top: 125%;
+  }
+}
+
+/* Hover: scale the image inside, never the card itself — transforming the
+   card breaks border-radius clipping in Safari (overflow:hidden + transform) */
+.highlight-card img {
+  transition: transform 400ms var(--ease);
+}
+
+.highlight-card:hover img,
+.highlight-card:focus-visible img {
+  transform: scale(1.03);
+}
+
+.highlight-card img,
+.highlight-card picture,
+.highlight-card picture img,
+.highlight-card .prog-img-wrap {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+}
+
+.highlight-card img,
+.highlight-card picture img,
+.highlight-card .prog-img-wrap img {
+  object-fit: cover !important;
+  object-position: top center !important;
+}
+
+.highlight-card-overlay {
+  position: absolute;
+  inset: 0;
+  /* tonal near-black scrim, strong enough at the base for white text */
+  background: linear-gradient(rgba(26, 26, 25, 0.02) 45%, rgba(26, 26, 25, 0.55));
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: var(--space-md);
+  z-index: 2;
+}
+
+.highlight-card-type {
+  font-size: var(--text-label);
+  font-family: var(--font-sans);
+  letter-spacing: var(--tracking-label);
+  color: rgba(246, 246, 244, 0.85);
+  margin: 0 0 var(--space-xs);
+}
+
+.highlight-card-title {
+  font-family: var(--font-sans);
+  font-size: var(--text-h3);
+  font-weight: 500;
+  line-height: 1.15;
+  color: var(--white);
+  margin: 0;
+}
+
+/* ── Mobile reel — highlights snap-scroll on phones ── */
+@media (max-width: 768px) {
+  /* Outer wrapper: one screen tall. NO overflow:hidden — that blocks
+     touch-scroll on child elements in iOS Safari. */
+  .highlights-section {
+    height: 100dvh;
+    padding: 0;
+  }
+
+  .highlights-section .highlights-grid {
+    display: block;
+    height: 100dvh;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    gap: 0;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    scrollbar-width: none;
+  }
+  .highlights-section .highlights-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .highlights-section .highlight-card {
+    display: block;
+    scroll-snap-align: start;
+    height: 100dvh;
+    width: 100%;
+    border-radius: 0;
+    aspect-ratio: unset;
+  }
+
+  .highlights-section .highlight-card-title {
+    font-size: clamp(1.4rem, 6vw, 2rem);
+  }
+  .highlights-section .highlight-card-overlay {
+    padding: var(--space-md2) var(--space-md2) var(--space-md);
+  }
+}
+
+/* ============================================
+   CONCERT MODAL
    ============================================ */
 
 .concert-modal {
@@ -91,18 +414,32 @@
   position: absolute;
   inset: 0;
   background: rgba(26, 26, 25, 0.45);
+  opacity: 0;
+  transition: opacity var(--dur-med) var(--ease);
 }
 
 .concert-modal-panel {
   position: relative;
   background: var(--off-white);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
   max-width: 640px;
   width: 100%;
   max-height: 85vh;
   overflow-y: auto;
   padding: var(--space-lg);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity var(--dur-med) var(--ease), transform var(--dur-med) var(--ease);
+}
+
+.concert-modal.is-open .concert-modal-backdrop {
+  opacity: 1;
+}
+
+.concert-modal.is-open .concert-modal-panel {
+  opacity: 1;
+  transform: none;
 }
 
 .concert-modal-close {
@@ -116,6 +453,7 @@
   cursor: pointer;
   color: var(--dark-grey);
   padding: 4px 8px;
+  transition: color var(--dur-fast) var(--ease);
 }
 
 .concert-modal-close:hover {
@@ -123,9 +461,10 @@
 }
 
 .concert-modal-date {
-  font-size: var(--sans-label);
+  font-size: var(--text-label);
   color: var(--dark-grey);
   font-family: var(--font-sans);
+  letter-spacing: var(--tracking-label);
   margin-bottom: var(--space-xs);
 }
 
@@ -136,11 +475,10 @@
 .concert-modal-meta {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  font-size: var(--sans-label);
+  gap: var(--space-2xs);
+  font-size: var(--text-sans);
   color: var(--dark-grey);
   font-family: var(--font-sans);
-  font-style: italic;
   margin-bottom: var(--space-md);
 }
 
@@ -160,56 +498,76 @@ body.modal-open {
   overflow: hidden;
 }
 
-/* Concert list rows open the modal; the ticket link inside stays a plain link */
-.concert-row {
-  cursor: pointer;
+/* ============================================
+   FORMS
+   ============================================ */
+
+.form-group {
+  margin-bottom: var(--space-md2);
 }
 
-.text-list-ticket {
-  display: inline-block;
-  margin-top: 6px;
+.form-group label {
+  display: block;
   font-family: var(--font-sans);
-  font-size: var(--sans-label);
+  font-size: var(--text-sans);
   color: var(--dark-grey);
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  margin-bottom: var(--space-2xs);
 }
 
-.text-list-ticket:hover {
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 10px 0;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--warm-grey);
+  border-radius: 0;
+  font-family: var(--font-serif);
+  font-size: var(--text-body);
   color: var(--near-black);
+  outline: none;
+  transition: border-color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
 }
 
-/* Footer */
-.footer {
-  width: 95%;
-  margin: 0 auto;
-  margin-top: var(--space-xl);
-  padding: var(--space-xl) 0 var(--space-md);
-  border-top: 1px solid var(--warm-grey);
+.form-group input:focus,
+.form-group textarea:focus {
+  border-bottom-color: var(--near-black);
+  box-shadow: 0 1px 0 0 var(--near-black);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: var(--dark-grey);
+}
+
+.form-group textarea {
+  min-height: 150px;
+  resize: vertical;
+  line-height: var(--leading-normal);
+}
+
+.newsletter-form {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-sm);
+}
+
+.newsletter-form .form-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.socials-list {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.socials-list a {
   font-family: var(--font-sans);
+  font-size: var(--text-sans);
+  color: var(--dark-grey);
 }
 
-.footer-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.footer p {
-  font-size: 0.7em;
-  color: var(--mid-grey);
-  margin: 0;
-}
-
-.footer-links {
-  display: flex;
-  flex-direction: row;
-  gap: 15px;
-}
-
-.footer-links a {
-  color: var(--mid-grey);
-  font-size: 0.7em;
+.socials-list a:hover {
+  color: var(--near-black);
 }

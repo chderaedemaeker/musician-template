@@ -1,16 +1,26 @@
 {% assign lang = page.lang %}
 
-<div style="padding-top: 120px;"></div>
+<div class="concerts-page">
 
-<div style="max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-md);">
-  <span class="section-title" style="margin-top: var(--space-lg);">{{ languages[lang].upcoming_concerts }}</span>
-</div>
-<div class="text-list" id="upcoming-concerts"></div>
+  <header class="page-header">
+    <p class="label">{{ languages[lang].site_subtitle }}</p>
+    <h1>{{ languages[lang].concerts_title }}</h1>
+  </header>
 
-<div style="max-width: var(--max-width); margin: 0 auto; padding: 0 var(--space-md);">
-  <span class="section-title" style="margin-top: var(--space-lg);">{{ languages[lang].archive }}</span>
+  <section class="concert-list-section">
+    <h2>{{ languages[lang].upcoming_concerts }}</h2>
+    <ul class="concert-list" id="upcoming-concerts"></ul>
+  </section>
+
+  <section class="concert-list-section">
+    <h2>{{ languages[lang].archive }}</h2>
+    <ul class="concert-list" id="archive-concerts"></ul>
+    <div class="mt-md">
+      <button type="button" class="btn" id="archive-more" hidden>{{ languages[lang].show_earlier }}</button>
+    </div>
+  </section>
+
 </div>
-<div class="text-list" id="archive-concerts"></div>
 
 {% include "concert-modal.liquid" %}
 
@@ -18,6 +28,8 @@
 document.addEventListener('DOMContentLoaded', function() {
   var concerts = {% concertsJson collections.concerts %};
   var lang = '{{ lang }}';
+  var detailsLabel = '{{ languages[lang].details }}';
+  var ticketsLabel = '{{ languages[lang].tickets }}';
 
   /* A concert counts as upcoming until its last day has fully passed:
      end date for multi-day, end of month for month-only, end of day otherwise. */
@@ -48,31 +60,78 @@ document.addEventListener('DOMContentLoaded', function() {
   var archive = concerts.filter(function(c) { return endOf(c) < now; })
     .sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
 
-  function renderConcerts(list, containerId) {
-    var container = document.getElementById(containerId);
-    if (list.length === 0) {
-      container.innerHTML = '<div style="padding: var(--space-md);"><p style="color: var(--mid-grey); font-style: italic;">{{ languages[lang].no_upcoming }}</p></div>';
-      return;
+  function rowHtml(c, isArchive) {
+    var dateOpts = isArchive
+      ? { day: 'numeric', month: 'long', year: 'numeric' }
+      : { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+    var d = dateStr(c, dateOpts);
+    var aside = '';
+    if (c.composers) aside += '<p class="concert-row-detail">' + c.composers + '</p>';
+    if (c.collaborators) aside += '<p class="concert-row-detail">' + c.collaborators + '</p>';
+    if (c.ticket && !isArchive) {
+      aside += '<a class="concert-row-ticket" href="' + c.ticket + '" target="_blank" rel="noopener">' +
+        ticketsLabel + ' <span aria-hidden="true">&#8599;</span></a>';
     }
-    container.innerHTML = list.map(function(c) {
-      var d = dateStr(c, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-      var right = '';
-      if (c.composers) right += '<p class="text-list-detail">' + c.composers + '</p>';
-      if (c.collaborators) right += '<p class="text-list-detail">' + c.collaborators + '</p>';
-      if (c.ticket) right += '<a class="text-list-ticket" href="' + c.ticket + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">{{ languages[lang].tickets }} &#8599;</a>';
-      return '<div class="text-list-item concert-row" data-ci="' + concerts.indexOf(c) + '">' +
-        '<div class="text-list-left"><p class="text-list-type">' + d + '</p><h3 class="text-list-title">' + c.title + '</h3><p class="text-list-detail">' + (c.place || '') + '</p></div>' +
-        (right ? '<div class="text-list-right">' + right + '</div>' : '') +
-        '</div>';
-    }).join('');
-    container.querySelectorAll('.concert-row').forEach(function(row) {
-      row.addEventListener('click', function() {
+    aside += '<span class="concert-row-more">' + detailsLabel + '</span>';
+    return '<li class="concert-row' + (isArchive ? ' concert-row--archive' : '') + '">' +
+      '<p class="concert-row-date">' + d + '</p>' +
+      '<div class="concert-row-main">' +
+        '<h3><button type="button" class="concert-row-trigger" data-ci="' + concerts.indexOf(c) + '">' + c.title + '</button></h3>' +
+        (c.place ? '<p class="concert-row-place">' + c.place + '</p>' : '') +
+      '</div>' +
+      '<div class="concert-row-aside">' + aside + '</div>' +
+    '</li>';
+  }
+
+  function bindRows(container) {
+    container.querySelectorAll('.concert-row-trigger:not([data-bound])').forEach(function(btn) {
+      btn.dataset.bound = '1';
+      btn.addEventListener('click', function() {
         openConcertModal(concerts[parseInt(this.dataset.ci, 10)]);
       });
     });
   }
 
-  renderConcerts(upcoming, 'upcoming-concerts');
-  renderConcerts(archive, 'archive-concerts');
+  var upcomingEl = document.getElementById('upcoming-concerts');
+  if (upcoming.length === 0) {
+    upcomingEl.innerHTML = '<li><p class="empty-note">{{ languages[lang].no_upcoming }}</p></li>';
+  } else {
+    upcomingEl.innerHTML = upcoming.map(function(c) { return rowHtml(c, false); }).join('');
+    bindRows(upcomingEl);
+  }
+
+  /* Archive: grouped by year, recent two years shown, the rest behind a button */
+  var archiveEl = document.getElementById('archive-concerts');
+  var moreBtn = document.getElementById('archive-more');
+
+  function archiveHtml(list) {
+    var html = '';
+    var lastYear = null;
+    list.forEach(function(c) {
+      var year = new Date(c.date).getFullYear();
+      if (year !== lastYear) {
+        html += '<li class="concert-year-heading">' + year + '</li>';
+        lastYear = year;
+      }
+      html += rowHtml(c, true);
+    });
+    return html;
+  }
+
+  var cutoffYear = now.getFullYear() - 1;
+  var recent = archive.filter(function(c) { return new Date(c.date).getFullYear() >= cutoffYear; });
+  var earlier = archive.filter(function(c) { return new Date(c.date).getFullYear() < cutoffYear; });
+
+  archiveEl.innerHTML = archiveHtml(recent);
+  bindRows(archiveEl);
+
+  if (earlier.length > 0) {
+    moreBtn.hidden = false;
+    moreBtn.addEventListener('click', function() {
+      archiveEl.insertAdjacentHTML('beforeend', archiveHtml(earlier));
+      bindRows(archiveEl);
+      moreBtn.hidden = true;
+    });
+  }
 });
 </script>

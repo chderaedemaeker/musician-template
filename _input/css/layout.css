@@ -1,21 +1,286 @@
 /* ============================================
-   LAYOUT — Containers, Utilities
+   LAYOUT — Containers, Sections, Nav, Footer
    ============================================ */
 
 main {
   width: 100%;
 }
 
+/* ── One container system: every width shares the same gutter ── */
 .container {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 0 var(--space-md);
+  max-width: var(--width-wide);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
 }
 
-.text-center { text-align: center; }
-.mt-sm { margin-top: var(--space-sm); }
-.mt-md { margin-top: var(--space-md); }
-.mt-lg { margin-top: var(--space-lg); }
-.mb-sm { margin-bottom: var(--space-sm); }
-.mb-md { margin-bottom: var(--space-md); }
-.mb-lg { margin-bottom: var(--space-lg); }
+.container-content {
+  max-width: var(--width-content);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.container-prose {
+  max-width: var(--width-prose);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* ── Section rhythm ── */
+.section {
+  padding-block: var(--space-xl);
+}
+
+.page-header {
+  padding-top: var(--space-2xl);
+  padding-bottom: var(--space-lg);
+}
+
+.page-header .label {
+  margin-bottom: var(--space-sm);
+}
+
+.page-header .lede {
+  margin-top: var(--space-md2);
+  color: var(--dark-grey);
+}
+
+@media (max-width: 768px) {
+  .section { padding-block: var(--space-lg); }
+  .page-header { padding-top: var(--space-xl); padding-bottom: var(--space-md); }
+}
+
+/* ============================================
+   NAVIGATION
+   ============================================ */
+
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  min-height: var(--nav-height);
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--warm-grey);
+  background-color: var(--off-white);
+}
+
+.nav-inner {
+  width: 100%;
+  max-width: var(--width-wide);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.nav-brand a {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  color: var(--near-black);
+  display: block;
+}
+
+.brand-line {
+  display: block;
+  line-height: 1.05;
+}
+
+.nav-links {
+  display: flex;
+  gap: var(--space-md2);
+  align-items: center;
+}
+
+.nav-links a {
+  font-size: var(--text-sans);
+  font-family: var(--font-sans);
+  color: var(--near-black);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
+  transition: text-decoration-color var(--dur-fast) var(--ease);
+}
+
+.nav-links a:hover {
+  text-decoration-color: var(--mid-grey);
+}
+
+.nav-links a.active {
+  text-decoration-color: var(--near-black);
+}
+
+.lang-switcher select {
+  background: transparent;
+  border: none;
+  padding: 4px 8px;
+  font-size: var(--text-sans);
+  font-family: var(--font-sans);
+  cursor: pointer;
+  color: var(--near-black);
+}
+
+/* ── Hamburger ── */
+.hamburger {
+  display: none;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 6px 2px;
+}
+
+.hamburger span {
+  display: block;
+  width: 22px;
+  height: 1px;
+  background-color: var(--near-black);
+  margin: 6px 0;
+  transition: transform var(--dur-med) var(--ease), opacity var(--dur-med) var(--ease);
+}
+
+.hamburger.open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.hamburger.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ── Mobile nav — fades and settles, no snap ── */
+.mobile-nav {
+  position: fixed;
+  inset: 0;
+  background: var(--off-white);
+  z-index: 99;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity var(--dur-med) var(--ease), visibility 0s var(--dur-med);
+}
+
+.mobile-nav.open {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity var(--dur-med) var(--ease);
+}
+
+.mobile-nav a {
+  font-size: 2rem;
+  font-family: var(--font-serif);
+  font-weight: 300;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity var(--dur-med) var(--ease), transform var(--dur-med) var(--ease);
+}
+
+.mobile-nav.open a {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(var(--i, 0) * 40ms);
+}
+
+/* ── Transparent nav — home and highlights ── */
+.nav-transparent {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background-color: transparent;
+  border-bottom: none;
+}
+
+.nav-transparent .nav-brand a,
+.nav-transparent .nav-links a,
+.nav-transparent .lang-switcher select {
+  color: var(--white);
+}
+
+.nav-transparent .nav-links a:hover {
+  text-decoration-color: var(--white);
+}
+
+.nav-transparent .nav-links a.active {
+  text-decoration-color: var(--white);
+}
+
+.nav-transparent .hamburger span {
+  background-color: var(--white);
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+  }
+
+  .hamburger {
+    display: flex;
+    flex-direction: column;
+    /* stays visible above the mobile nav overlay */
+    position: relative;
+    z-index: 101;
+  }
+
+  /* Keep the transparent nav fixed so it stays over the highlights reel */
+  .nav-transparent {
+    position: fixed;
+    z-index: 100;
+  }
+
+  /* When the overlay menu is open over a transparent nav, the bars must
+     stay visible against the light background */
+  .nav-transparent .hamburger.open span {
+    background-color: var(--near-black);
+  }
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+
+.footer {
+  width: 100%;
+  margin-top: var(--space-xl);
+  padding: var(--space-lg) 0 var(--space-md);
+  border-top: 1px solid var(--warm-grey);
+  font-family: var(--font-sans);
+}
+
+.footer-inner {
+  max-width: var(--width-wide);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.footer p {
+  font-size: var(--text-caption);
+  color: var(--dark-grey);
+  margin: 0;
+}
+
+.footer-links {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-sm);
+}
+
+.footer-links a {
+  color: var(--dark-grey);
+  font-size: var(--text-caption);
+}

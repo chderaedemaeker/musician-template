@@ -1,38 +1,42 @@
 {% assign navTransparent = true %}
 {% include "navigation.liquid" %}
 
+{% assign lang = page.lang %}
+
 <main>
 
 <div class="hero-fullscreen">
-  {% assign heroAlt = languages[page.lang].site_title %}{% progressiveImage site.hero_image, heroAlt %}
+  {% assign heroAlt = languages[lang].site_title %}{% progressiveImage site.hero_image, heroAlt %}
   <div class="hero-content">
+    <p class="hero-eyebrow label">{{ languages[lang].site_subtitle }}</p>
+    <h1 class="hero-title">{{ languages[lang].site_title }}</h1>
   </div>
 </div>
 
-{% assign lang = page.lang %}
-
-<!-- Short Bio -->
+<!-- Short bio -->
 {% assign aboutPage = collections.about | where: "data.lang", lang | first %}
 {% if aboutPage and aboutPage.data.summaryabout %}
-<div style="max-width: var(--content-width); margin: 0 auto; padding: var(--space-xl) var(--space-md); text-align: center;">
-  <p style="font-size: var(--serif-body); font-family: var(--font-serif); font-weight: 300; line-height: 1.6; color: var(--near-black); margin: 0 0 var(--space-lg);">{{ aboutPage.data.summaryabout }}</p>
-  <a class="btn" href="/{{ lang }}/about/">{{ languages[lang].biography }}</a>
-</div>
+<section class="section container-prose home-intro reveal">
+  <p class="lede">{{ aboutPage.data.summaryabout }}</p>
+  <a class="btn" href="/{{ lang }}/about/">{{ languages[lang].biography }} <span aria-hidden="true">&#8594;</span></a>
+</section>
 {% endif %}
 
-<!-- Upcoming Concerts -->
+<!-- Upcoming concerts -->
 {% include "upcoming-concerts.liquid" %}
 
-<!-- Latest Highlight -->
+<!-- Latest highlight -->
 {% assign langHighlights = 'highlights_' | append: lang %}
 {% assign latestHighlight = collections[langHighlights] | sort: 'date' | reverse | first %}
 {% if latestHighlight %}
-<div style="padding: var(--space-xl) 0;">
+<section class="section container-content reveal">
 
-  <h2 class="section-title" style="margin-bottom: var(--space-lg);">{{ languages[lang].most_recent_highlight }}</h2>
+  <div class="home-section-header">
+    <h2 class="label">{{ languages[lang].most_recent_highlight }}</h2>
+  </div>
 
   <div class="highlights-grid">
-    <a href="{{ latestHighlight.url }}" class="highlight-card">
+    <a href="{{ latestHighlight.url }}" class="highlight-card highlight-card--solo">
       {% if latestHighlight.data.image %}
         <img src="{{ latestHighlight.data.image }}" alt="{{ latestHighlight.data.title }}">
       {% endif %}
@@ -45,16 +49,19 @@
     </a>
   </div>
 
-  <div style="text-align: center; margin-top: var(--space-lg);">
-    <a class="btn" href="/{{ lang }}/highlights/">{{ languages[lang].see_all_highlights }}</a>
+  <div class="home-more">
+    <a class="btn" href="/{{ lang }}/highlights/">{{ languages[lang].see_all_highlights }} <span aria-hidden="true">&#8594;</span></a>
   </div>
 
-</div>
+</section>
 {% endif %}
 
 <!-- Contact -->
-<div style="text-align: center; padding: var(--space-xl) var(--space-md);">
-  <a class="btn" href="/{{ lang }}/contact/">{{ languages[lang].contact_title }}</a>
-</div>
+<section class="section container-prose text-center reveal">
+  <div class="home-section-header">
+    <h2 class="label">{{ languages[lang].contact_title }}</h2>
+  </div>
+  <a class="btn" href="/{{ lang }}/contact/">{{ languages[lang].contact_title }} <span aria-hidden="true">&#8594;</span></a>
+</section>
 
 </main>

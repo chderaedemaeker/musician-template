@@ -4,10 +4,10 @@
 {% assign sortedHighlights = collections[langHighlights] | sort: 'date' | reverse %}
 
 <div class="highlights-section">
-  <div class="highlights-grid">
+  <div class="highlights-grid reveal-group">
     {% if sortedHighlights.size > 0 %}
       {% for highlight in sortedHighlights %}
-        <a href="{{ highlight.url }}" class="highlight-card">
+        <a href="{{ highlight.url }}" class="highlight-card reveal">
           {% if highlight.data.image %}
             <img src="{{ highlight.data.image }}" alt="{{ highlight.data.title }}">
           {% endif %}
@@ -20,7 +20,7 @@
         </a>
       {% endfor %}
     {% else %}
-      <p style="padding: var(--space-md); color: var(--mid-grey); font-style: italic;">{{ languages[lang].no_highlights }}</p>
+      <p class="empty-note">{{ languages[lang].no_highlights }}</p>
     {% endif %}
   </div>
 </div>

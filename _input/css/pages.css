@@ -1,119 +1,223 @@
 /* ============================================
-   PAGES — Detail pages, About, Contact
+   PAGES — Hero, Home, About, Contact, Details
    ============================================ */
 
-.concert-detail,
-.detail-page {
-  max-width: var(--content-width);
-  margin: 0 auto;
-  padding: var(--space-xl) var(--space-md);
-  padding-top: 120px;
-}
-
-.about-page {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: var(--space-xl) var(--space-md);
-  padding-top: 120px;
-}
-
-.contact-page {
-  max-width: 480px;
-  margin: 0 auto;
-  padding: var(--space-xl) var(--space-md);
-  padding-top: 150px;
-}
-
-.concert-detail h1,
-.detail-page h1,
-.about-page h1 {
-  font-size: var(--serif-heading);
-  font-weight: 300;
-  margin-bottom: var(--space-sm);
-}
-
-.concert-detail .date,
-.detail-page .meta {
-  font-size: var(--sans-label);
-  color: var(--dark-grey);
-  font-family: var(--font-sans);
-  margin-bottom: var(--space-sm);
-}
-
-.concert-detail .meta {
-  font-size: var(--sans-label);
-  color: var(--dark-grey);
-  font-family: var(--font-sans);
-  font-style: italic;
-  margin-bottom: var(--space-lg);
-}
-
-.detail-page .featured-image {
-  margin-bottom: var(--space-lg);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-
-.detail-page .video-wrap {
+/* ── Fullscreen hero ── */
+.hero-fullscreen {
   position: relative;
-  padding-bottom: 56.25%;
-  height: 0;
+  height: 100vh;          /* fallback */
+  height: 100dvh;         /* accounts for iOS browser chrome */
+  width: 100%;
   overflow: hidden;
-  margin-bottom: var(--space-lg);
+  display: flex;
+  align-items: flex-end;
 }
 
-.detail-page .video-wrap iframe {
+.hero-fullscreen > img,
+.hero-fullscreen > picture,
+.hero-fullscreen > picture img,
+.hero-fullscreen > .prog-img-wrap {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  z-index: 0;
+}
+
+.hero-fullscreen > .prog-img-wrap img,
+.hero-fullscreen > img,
+.hero-fullscreen > picture img {
+  object-fit: cover !important;
+}
+
+/* Tonal scrim so the name stays legible over any photo */
+.hero-fullscreen::after {
+  content: '';
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  border: none;
+  background: linear-gradient(rgba(26, 26, 25, 0) 55%, rgba(26, 26, 25, 0.45));
+  z-index: 1;
+  pointer-events: none;
 }
 
-/* 404 + form-success pages */
-.page-404,
-.page-success {
-  max-width: var(--content-width);
-  margin: 0 auto;
-  padding: var(--space-xl) var(--space-md);
-  padding-top: 180px;
+.hero-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: var(--width-wide);
+  margin-inline: auto;
+  padding: 0 var(--gutter) var(--space-lg);
+}
+
+.hero-eyebrow {
+  color: rgba(246, 246, 244, 0.85);
+  margin-bottom: var(--space-xs);
+}
+
+.hero-title {
+  font-size: var(--text-display);
+  font-weight: 300;
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  color: var(--white);
+}
+
+/* ── Home sections ── */
+.home-intro {
   text-align: center;
 }
 
-/* Form */
-.form-group {
+.home-intro .lede {
+  margin-bottom: var(--space-lg);
+}
+
+.home-section-header {
+  text-align: center;
+  margin-bottom: var(--space-md);
+}
+
+.home-more {
+  text-align: center;
+  margin-top: var(--space-lg);
+}
+
+.upcoming-list {
+  list-style: none;
+}
+
+.upcoming-item {
+  display: block;
+  padding: var(--space-md2) 0;
+  border-bottom: 1px solid var(--warm-grey);
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+.upcoming-item:first-child {
+  border-top: 1px solid var(--warm-grey);
+}
+
+.upcoming-item:hover {
+  background-color: rgba(232, 230, 225, 0.35);
+}
+
+.upcoming-item-date {
+  font-family: var(--font-sans);
+  font-size: var(--text-label);
+  color: var(--dark-grey);
+  letter-spacing: var(--tracking-label);
+  display: block;
+  margin-bottom: var(--space-2xs);
+}
+
+.upcoming-item-title {
+  font-family: var(--font-serif);
+  font-size: var(--text-h3);
+  font-weight: 300;
+  line-height: var(--leading-snug);
+  display: block;
+}
+
+.upcoming-item-place {
+  font-family: var(--font-sans);
+  font-size: var(--text-sans);
+  color: var(--dark-grey);
+  display: block;
+  margin-top: var(--space-2xs);
+}
+
+/* ── Concerts page ── */
+.concerts-page {
+  max-width: var(--width-wide);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* ── About ── */
+.about-page {
+  max-width: var(--width-content);
+  margin-inline: auto;
+  padding: 0 var(--gutter) var(--space-xl);
+}
+
+.about-page .content {
+  line-height: var(--leading-relaxed);
+}
+
+/* The markdown image paragraph collapses to an empty <p> once the browser
+   re-parents the progressive wrapper — hide its stray margin */
+.about-page .content > p:empty {
+  display: none;
+}
+
+/* Portrait: editorial float beside the opening text */
+.about-page .content > .prog-img-wrap {
+  float: right;
+  width: min(340px, 45%);
+  margin: 0.4rem 0 var(--space-md) var(--space-md);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+/* First text paragraph reads as a lede */
+.about-page .content > .prog-img-wrap + p {
+  font-size: var(--text-lede);
+  line-height: 1.45;
+  margin-bottom: var(--space-md);
+}
+
+.about-page .content h2 {
+  clear: left;
+  margin-top: var(--space-lg);
   margin-bottom: var(--space-sm);
 }
 
-.form-group input,
-.form-group textarea {
-  width: 100%;
-  padding: 10px 0;
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid var(--warm-grey);
-  font-family: var(--font-serif);
-  font-size: var(--serif-body);
-  color: var(--near-black);
-  outline: none;
-  transition: border-color 0.2s ease;
+.about-page .content blockquote {
+  font-size: var(--text-lede);
+  line-height: 1.45;
+  border-left: 1px solid var(--mid-grey);
+  padding-left: var(--space-md);
+  margin: var(--space-lg) 0;
 }
 
-.form-group input:focus,
-.form-group textarea:focus {
-  border-bottom-color: var(--near-black);
+.about-page .content blockquote p {
+  margin-bottom: 0;
 }
 
-.form-group input::placeholder,
-.form-group textarea::placeholder {
-  color: var(--mid-grey);
-  font-style: italic;
+@media (max-width: 700px) {
+  .about-page .content > .prog-img-wrap {
+    float: none;
+    width: 100%;
+    margin: 0 0 var(--space-md);
+  }
 }
 
-.form-group textarea {
-  min-height: 150px;
-  resize: vertical;
-  line-height: 1.5;
+.about-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+}
+
+.about-projects {
+  max-width: var(--width-content);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.about-projects > h2 {
+  margin-bottom: var(--space-md);
+}
+
+.about-projects-more {
+  margin-top: var(--space-md);
+}
+
+/* ── Contact ── */
+.contact-page {
+  max-width: var(--width-prose);
+  margin-inline: auto;
+  padding: 0 var(--gutter) var(--space-xl);
 }
 
 .contact-page form {
@@ -124,61 +228,100 @@
   margin-top: var(--space-sm);
 }
 
-/* Divider */
+.contact-page h2 {
+  margin-bottom: var(--space-md);
+}
+
 .contact-divider {
   border-top: 1px solid var(--warm-grey);
   margin: var(--space-lg) 0;
 }
 
-/* Newsletter + Socials footer */
 .contact-footer {
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
 }
 
-.newsletter-form {
-  display: flex;
-  align-items: flex-end;
-  gap: var(--space-xs);
-}
-
-.newsletter-form input {
-  flex: 1;
-  padding: 8px 0;
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid var(--warm-grey);
-  font-family: var(--font-serif);
-  font-size: var(--serif-body);
-  color: var(--near-black);
-  outline: none;
-  transition: border-color 0.2s ease;
-}
-
-.newsletter-form input:focus {
-  border-bottom-color: var(--near-black);
-}
-
-.newsletter-form input::placeholder {
-  color: var(--mid-grey);
-  font-style: italic;
-}
-
-.socials-list {
-  display: flex;
-  gap: var(--space-md);
-}
-
-.socials-list a {
+.contact-newsletter-hint {
   font-family: var(--font-sans);
-  font-size: var(--sans-label);
+  font-size: var(--text-sans);
   color: var(--dark-grey);
-  text-decoration: none;
-  transition: color 0.2s ease;
+  margin-bottom: var(--space-sm);
 }
 
-.socials-list a:hover {
-  color: var(--near-black);
-  text-decoration: none;
+/* ── Detail pages (concert, project, highlight) ── */
+.concert-detail,
+.detail-page {
+  max-width: var(--width-prose);
+  margin-inline: auto;
+  padding: var(--space-2xl) var(--gutter) var(--space-xl);
+}
+
+.concert-detail h1,
+.detail-page h1 {
+  margin-bottom: var(--space-sm);
+}
+
+.concert-detail .date {
+  font-size: var(--text-label);
+  color: var(--dark-grey);
+  font-family: var(--font-sans);
+  letter-spacing: var(--tracking-label);
+  margin-bottom: var(--space-sm);
+}
+
+.concert-detail .meta,
+.detail-page .meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  font-size: var(--text-sans);
+  color: var(--dark-grey);
+  font-family: var(--font-sans);
+  margin-bottom: var(--space-lg);
+}
+
+.detail-page .featured-image {
+  margin-bottom: var(--space-lg);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.detail-page .video-wrap {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  margin-bottom: var(--space-lg);
+  border-radius: var(--radius-lg);
+}
+
+.detail-page .video-wrap iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* ── Highlights listing ── */
+.highlights-section {
+  padding-top: calc(var(--nav-height) + var(--space-md));
+  padding-bottom: var(--space-xl);
+}
+
+.highlights-section .highlights-grid {
+  max-width: var(--width-wide);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* ── 404 + form-success ── */
+.page-404,
+.page-success {
+  max-width: var(--width-prose);
+  margin-inline: auto;
+  padding: var(--space-2xl) var(--gutter) var(--space-xl);
+  text-align: center;
 }

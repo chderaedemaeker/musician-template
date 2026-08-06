@@ -26,18 +26,6 @@
 
 <main>
   <div class="detail-page">
-    {% if link and link != "" %}
-      <div class="video-wrap">
-        <iframe src="https://www.youtube.com/embed/{{ link }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-      </div>
-    {% endif %}
-
-    {% if image %}
-      <div class="featured-image">
-        {% progressiveImage image, title %}
-      </div>
-    {% endif %}
-
     <h1>{{ title }}</h1>
 
     {% if type or place or collaborators or date %}
@@ -49,12 +37,24 @@
     </div>
     {% endif %}
 
+    {% if link and link != "" %}
+      <div class="video-wrap">
+        <iframe src="https://www.youtube.com/embed/{{ link }}" title="{{ title }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      </div>
+    {% endif %}
+
+    {% if image %}
+      <div class="featured-image">
+        {% progressiveImage image, title %}
+      </div>
+    {% endif %}
+
     <div class="content">
       {{ content }}
     </div>
 
     <div class="mt-lg">
-      <a class="btn btn-sm" href="/{{ lang }}/highlights/">{{ languages[lang].back_to_overview }}</a>
+      <a class="back-link" href="/{{ lang }}/highlights/"><span aria-hidden="true">&#8592;</span> {{ languages[lang].back_to_overview }}</a>
     </div>
   </div>
 </main>

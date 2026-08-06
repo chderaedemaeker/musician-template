@@ -11,21 +11,14 @@
 
 {% include "navigation.liquid" %}
 
-{% assign lang = "" %}
-{% if page.url contains '/en/' %}
-  {% assign lang = "en" %}
-{% elsif page.url contains '/nl/' %}
-  {% assign lang = "nl" %}
-{% elsif page.url contains '/fr/' %}
-  {% assign lang = "fr" %}
-{% elsif page.url contains '/de/' %}
-  {% assign lang = "de" %}
-{% else %}
-  {% assign lang = "en" %}
-{% endif %}
+{% assign lang = page.lang %}
 
 <main>
   <div class="about-page">
+    <header class="page-header">
+      <p class="label">{{ languages[lang].site_subtitle }}</p>
+      <h1>{{ languages[lang].site_title }}</h1>
+    </header>
     <div class="content">
       {{ content }}
     </div>
@@ -36,24 +29,28 @@
   {% assign sortedProjects = collections[langProjects] | sort: 'date' | reverse %}
 
   {% if sortedProjects.size > 0 %}
-    <div style="max-width: 800px; margin: 0 auto; padding: var(--space-xl) var(--space-md) var(--space-sm);">
-      <h2 class="section-title">{{ languages[lang].projects_title }}</h2>
-    </div>
+    <section class="about-projects section">
+      <h2>{{ languages[lang].projects_title }}</h2>
 
-    <div class="highlights-grid" style="max-width: 800px;">
-      {% for project in sortedProjects %}
-        <a href="{{ project.url }}" class="highlight-card">
-          {% if project.data.image %}
-            <img src="{{ project.data.image }}" alt="{{ project.data.title }}">
-          {% endif %}
-          <div class="highlight-card-overlay">
-            <div class="highlight-card-top">
-              <h3 class="highlight-card-title">{{ project.data.title }}</h3>
+      <div class="highlights-grid">
+        {% for project in sortedProjects %}
+          <a href="{{ project.url }}" class="highlight-card">
+            {% if project.data.image %}
+              <img src="{{ project.data.image }}" alt="{{ project.data.title }}">
+            {% endif %}
+            <div class="highlight-card-overlay">
+              <div class="highlight-card-top">
+                <h3 class="highlight-card-title">{{ project.data.title }}</h3>
+              </div>
             </div>
-          </div>
-        </a>
-      {% endfor %}
-    </div>
+          </a>
+        {% endfor %}
+      </div>
+
+      <p class="about-projects-more">
+        <a class="btn" href="/{{ lang }}/projects/">{{ languages[lang].projects_title }} <span aria-hidden="true">&#8594;</span></a>
+      </p>
+    </section>
   {% endif %}
 </main>
 

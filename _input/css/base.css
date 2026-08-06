@@ -1,5 +1,5 @@
 /* ============================================
-   BASE — Variables, Reset, Typography
+   BASE — Tokens, Reset, Typography
    ============================================ */
 
 @font-face {
@@ -15,54 +15,62 @@
   --white: #f6f6f4;
   --off-white: #f5f4f2;
   --warm-grey: #e8e6e1;
-  --mid-grey: #b5b0a8;
+  --mid-grey: #b5b0a8;   /* decoration only — fails contrast as text */
   --dark-grey: #6b665e;
-  --charcoal: #3a3732;
   --near-black: #1a1a19;
 
   /* ── Fonts ── */
   --font-serif: 'AGL', Georgia, serif;
   --font-sans: 'Helvetica Neue', Helvetica, sans-serif;
 
-  /* ── Sans-serif sizes ── */
-  --sans-caption: 0.9rem;     /* nav links, lang switcher, section labels */
-  --sans-label: 0.9rem;       /* meta dates, tags, footer, card details */
-  --sans-body: 0.9rem;        /* h3, form labels, body sans text */
+  /* ── Type scale ── */
+  --text-caption: 0.75rem;    /* 12px — footer, fine print */
+  --text-label: 0.8125rem;    /* 13px — labels, eyebrows, dates */
+  --text-sans: 0.9375rem;     /* 15px — nav, buttons, form labels, meta */
+  --text-body: 1.1875rem;     /* 19px — paragraphs */
+  --text-lede: 1.5rem;        /* 24px — intro paragraphs, pull-quotes */
+  --text-h3: 1.5rem;          /* 24px — list and card titles */
+  --text-h2: 2rem;            /* 32px — section headings */
+  --text-h1: clamp(2.25rem, 4vw, 3rem);       /* page titles */
+  --text-display: clamp(2.75rem, 7vw, 4.5rem); /* hero name only */
 
-  /* ── Serif sizes ── */
-  --serif-body: 1.2rem;       /* paragraphs, card titles, forms */
-  --serif-heading: 2.2rem;    /* h1, page titles, mobile nav */
-  --serif-subheading: 1.5rem; /* h2 */
-  --serif-hero: 2.6rem;       /* hero fullscreen heading */
-  --serif-brand: 1.7rem;      /* nav brand name */
+  --tracking-label: 0.08em;   /* the one letter-spacing for sans labels */
 
   /* ── Line heights ── */
-  --leading-tight: 0.95;  /* headings, brand */
-  --leading-snug: 1.2;    /* subheadings, cards */
-  --leading-normal: 1.5;  /* body text */
-  --leading-relaxed: 1.7; /* long-form reading */
-
-  /* ── Letter spacing ── */
-  --tracking-tight: -0.03em;  /* brand, display */
-  --tracking-normal: 0;       /* body text */
-  --tracking-wide: 0.05em;    /* uppercase labels */
-  --tracking-wider: 0.15em;   /* section titles */
+  --leading-tight: 1.05;   /* display, h1 */
+  --leading-snug: 1.2;     /* h2, h3, cards */
+  --leading-normal: 1.5;   /* body text */
+  --leading-relaxed: 1.7;  /* long-form reading */
 
   /* ── Spacing ── */
+  --space-2xs: 0.25rem;
   --space-xs: 0.5rem;
   --space-sm: 1rem;
+  --space-md2: 1.5rem;
   --space-md: 2rem;
+  --space-lg2: 3rem;
   --space-lg: 4rem;
   --space-xl: 6rem;
+  --space-2xl: 8rem;
 
   /* ── Layout ── */
-  --max-width: 1400px;
-  --content-width: 600px;
-  --radius: 8px;
+  --nav-height: 6rem;
+  --width-wide: 1100px;
+  --width-content: 50rem;   /* 800px */
+  --width-prose: 40rem;     /* 640px */
+  --gutter: clamp(1.25rem, 4vw, 2.5rem);
+  --radius-sm: 6px;
+  --radius-lg: 12px;
 
-  /* ── Legacy aliases (for backward compat) ── */
-  --font-size-serif: var(--serif-body);
-  --font-size-sans: var(--sans-body);
+  /* ── Motion ── */
+  --dur-fast: 150ms;
+  --dur-med: 300ms;
+  --dur-slow: 600ms;
+  --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+@media (max-width: 768px) {
+  :root { --nav-height: 4.5rem; }
 }
 
 *, *::before, *::after {
@@ -72,12 +80,12 @@
 }
 
 html {
-  font-size: 16px;
+  font-size: 100%;
 }
 
 body {
   font-family: var(--font-serif);
-  font-size: var(--serif-body);
+  font-size: var(--text-body);
   background-color: var(--off-white);
   color: var(--near-black);
   line-height: var(--leading-normal);
@@ -96,32 +104,27 @@ a {
   font-size: inherit;
 }
 
-a:hover {
-  text-decoration: underline;
-}
-
 ul, ol {
   list-style: none;
 }
 
 h1 {
   font-family: var(--font-serif);
-  font-size: var(--serif-heading);
+  font-size: var(--text-h1);
   font-weight: 300;
-  line-height: var(--leading-snug);
-  letter-spacing: var(--tracking-normal);
+  line-height: var(--leading-tight);
 }
 
 h2 {
   font-family: var(--font-serif);
-  font-size: var(--serif-subheading);
+  font-size: var(--text-h2);
   font-weight: 300;
   line-height: var(--leading-snug);
 }
 
 h3 {
   font-family: var(--font-serif);
-  font-size: var(--sans-body);
+  font-size: var(--text-h3);
   font-weight: 300;
   line-height: var(--leading-snug);
 }
@@ -136,46 +139,74 @@ hr {
   margin: var(--space-lg) 0;
 }
 
-/* ── Typography utilities ── */
-.sans-caption   { font-size: var(--sans-caption); }
-.sans-label     { font-size: var(--sans-label); }
-.sans-body      { font-size: var(--sans-body); }
-.serif-body     { font-size: var(--serif-body); }
-.serif-heading  { font-size: var(--serif-heading); }
-.serif-hero     { font-size: var(--serif-hero); }
-.serif-brand    { font-size: var(--serif-brand); }
+/* ── Prose links — underlined by default, calm hover ── */
+.content a,
+.footer-links a,
+.socials-list a {
+  text-decoration: underline;
+  text-decoration-color: var(--mid-grey);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: text-decoration-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
 
-.font-serif { font-family: var(--font-serif); }
-.font-sans  { font-family: var(--font-sans); }
+.content a:hover,
+.footer-links a:hover,
+.socials-list a:hover {
+  text-decoration-color: var(--near-black);
+}
 
-.leading-tight   { line-height: var(--leading-tight); }
-.leading-snug    { line-height: var(--leading-snug); }
-.leading-normal  { line-height: var(--leading-normal); }
-.leading-relaxed { line-height: var(--leading-relaxed); }
+/* ── Keyboard focus — one visible ring everywhere ── */
+:focus-visible {
+  outline: 2px solid var(--near-black);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
 
-.tracking-tight  { letter-spacing: var(--tracking-tight); }
-.tracking-normal { letter-spacing: var(--tracking-normal); }
-.tracking-wide   { letter-spacing: var(--tracking-wide); }
-.tracking-wider  { letter-spacing: var(--tracking-wider); }
-
-.color-white     { color: var(--white); }
-.color-grey      { color: var(--mid-grey); }
-.color-dark      { color: var(--dark-grey); }
-.color-black     { color: var(--near-black); }
-
-.uppercase { text-transform: uppercase; }
-.weight-300 { font-weight: 300; }
-.weight-400 { font-weight: 400; }
-.weight-500 { font-weight: 500; }
-
-/* ── Section title — reusable label style ── */
-.section-title {
+/* ── Label — small sans marker, lowercase with air ── */
+.label {
   display: block;
-  font-size: 0.6rem;
   font-family: var(--font-sans);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  font-size: var(--text-label);
+  font-weight: 400;
+  letter-spacing: var(--tracking-label);
   color: var(--dark-grey);
-  margin-bottom: var(--space-md);
-  text-align: center;
+}
+
+/* ── Lede — intro-sized serif ── */
+.lede {
+  font-family: var(--font-serif);
+  font-size: var(--text-lede);
+  font-weight: 300;
+  line-height: 1.45;
+}
+
+/* ── Utilities ── */
+.text-center { text-align: center; }
+.mt-md { margin-top: var(--space-md); }
+.mt-lg { margin-top: var(--space-lg); }
+
+/* ── Scroll reveal (gated behind .js so content is never hidden without it) ── */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity var(--dur-slow) var(--ease), transform var(--dur-slow) var(--ease);
+}
+
+.js .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── Reduced motion — stillness, everything visible ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+  .js .reveal {
+    opacity: 1;
+    transform: none;
+  }
 }

@@ -26,14 +26,14 @@
 
 <main>
   <div class="concert-detail">
-    {% if date %}<p class="date">{{ date | concertDate: date_end, month_only }}</p>{% endif %}
+    {% if date %}<p class="date">{{ date | concertDate: date_end, month_only, lang }}</p>{% endif %}
     <h1>{{ title }}</h1>
 
     {% if place or composers or collaborators %}
     <div class="meta">
       {% if place %}<span>{{ place }}</span>{% endif %}
-      {% if composers %}<span><em>{{ composers }}</em></span>{% endif %}
-      {% if collaborators %}<span>With {{ collaborators }}</span>{% endif %}
+      {% if composers %}<span>{{ composers }}</span>{% endif %}
+      {% if collaborators %}<span>{{ collaborators }}</span>{% endif %}
     </div>
     {% endif %}
 
@@ -42,11 +42,11 @@
     </div>
 
     {% if link and link != "" %}
-      <a class="btn" href="{{ link }}">{{ languages[lang].tickets }}</a>
+      <a class="btn" href="{{ link }}" target="_blank" rel="noopener">{{ languages[lang].tickets }} <span aria-hidden="true">&#8599;</span></a>
     {% endif %}
 
     <div class="mt-lg">
-      <a class="btn btn-sm" href="/{{ lang }}/concerts/">{{ languages[lang].back_to_overview }}</a>
+      <a class="back-link" href="/{{ lang }}/concerts/"><span aria-hidden="true">&#8592;</span> {{ languages[lang].back_to_overview }}</a>
     </div>
   </div>
 </main>
