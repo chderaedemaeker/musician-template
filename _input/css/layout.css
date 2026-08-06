@@ -87,13 +87,13 @@ main {
 }
 
 .nav-links,
-.nav-inner > .lang-switcher,
+.lang-picker,
 .hamburger {
   transition: opacity var(--dur-med) var(--ease);
 }
 
 .nav--quiet .nav-links,
-.nav--quiet .nav-inner > .lang-switcher,
+.nav--quiet .lang-picker,
 .nav--quiet .hamburger {
   opacity: 0;
   pointer-events: none;
@@ -158,7 +158,68 @@ main {
   text-decoration-color: var(--near-black);
 }
 
-/* ── Language switcher ── */
+/* ── Language picker — a small popup on the right ── */
+.lang-picker {
+  position: relative;
+}
+
+.lang-picker-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: var(--text-label);
+  color: var(--dark-grey);
+  padding: 0.35em 0.2em;
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.lang-picker-btn:hover {
+  color: var(--near-black);
+}
+
+.lang-caret {
+  font-size: 0.7em;
+  opacity: 0.7;
+}
+
+.lang-picker-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  background: #fff;
+  border: 1px solid var(--warm-grey);
+  box-shadow: 0 12px 30px rgba(13, 13, 12, 0.08);
+  display: flex;
+  flex-direction: column;
+  min-width: 4.5rem;
+  padding: 0.35rem 0;
+  z-index: 110;
+}
+
+.lang-picker-menu[hidden] {
+  display: none;
+}
+
+.lang-picker-menu a {
+  font-family: var(--font-sans);
+  font-size: var(--text-sans);
+  color: var(--dark-grey);
+  padding: 0.45em 1em;
+  transition: color var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease);
+}
+
+.lang-picker-menu a:hover {
+  color: var(--near-black);
+  background-color: var(--off-white);
+}
+
+.lang-picker-menu a.active {
+  color: var(--near-black);
+  font-weight: 500;
+}
+
+/* ── Language switcher (mobile overlay) ── */
 .lang-switcher {
   display: flex;
   align-items: center;
@@ -271,7 +332,7 @@ main {
 
 .nav-transparent:not(.is-scrolled) .nav-brand {
   top: 50vh;
-  transform: translate(-50%, -50%) scale(2.1);
+  transform: translate(-50%, -50%) scale(3);
 }
 
 .nav-transparent .nav-brand a,
@@ -295,14 +356,12 @@ main {
   text-decoration-color: var(--white);
 }
 
-.nav-transparent:not(.is-scrolled) .lang-switcher a {
-  color: rgba(246, 246, 244, 0.7);
+.nav-transparent:not(.is-scrolled) .lang-picker-btn {
+  color: rgba(246, 246, 244, 0.8);
 }
 
-.nav-transparent:not(.is-scrolled) .lang-switcher a:hover,
-.nav-transparent:not(.is-scrolled) .lang-switcher a.active {
+.nav-transparent:not(.is-scrolled) .lang-picker-btn:hover {
   color: var(--white);
-  text-decoration-color: var(--white);
 }
 
 .nav-transparent:not(.is-scrolled) .hamburger span {
@@ -319,7 +378,7 @@ main {
 
 @media (max-width: 1020px) {
   .nav-links,
-  .nav-inner > .lang-switcher {
+  .nav-inner > .lang-picker {
     display: none;
   }
 

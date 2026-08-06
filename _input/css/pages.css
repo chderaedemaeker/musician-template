@@ -36,8 +36,9 @@
   content: '';
   position: absolute;
   inset: 0;
-  /* a constant 4% dark veil plus the deeper base scrim */
+  /* top scrim backing the name, a constant 4% veil, and the base scrim */
   background:
+    linear-gradient(rgba(26, 26, 25, 0.35), rgba(26, 26, 25, 0) 30%),
     linear-gradient(rgba(13, 13, 12, 0.04), rgba(13, 13, 12, 0.04)),
     linear-gradient(rgba(26, 26, 25, 0) 55%, rgba(26, 26, 25, 0.45));
   z-index: 1;

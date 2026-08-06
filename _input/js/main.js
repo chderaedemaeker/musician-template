@@ -44,7 +44,7 @@
     function moveBrand(y) {
       if (!brand) return;
       var vh = window.innerHeight;
-      var startScale = window.matchMedia('(max-width: 768px)').matches ? 1.5 : 2.1;
+      var startScale = window.matchMedia('(max-width: 768px)').matches ? 1.9 : 3;
       var p = Math.min(1, Math.max(0, y / (vh * 0.6)));
       var startY = vh * 0.5;
       var endY = nav.offsetHeight / 2;
@@ -118,6 +118,28 @@
       });
     }, { threshold: 0.1, rootMargin: '0px 0px -10% 0px' });
     solo.forEach(function (el) { io.observe(el); });
+  });
+
+  /* Language picker popup */
+  document.addEventListener('DOMContentLoaded', function () {
+    var picker = document.querySelector('.lang-picker');
+    if (!picker) return;
+    var btn = picker.querySelector('.lang-picker-btn');
+    var menu = picker.querySelector('.lang-picker-menu');
+    function setOpen(open) {
+      menu.hidden = !open;
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(menu.hidden);
+    });
+    document.addEventListener('click', function (e) {
+      if (!picker.contains(e.target)) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
   });
 
   /* Keep Tab inside a dialog. Call from a keydown handler when e.key === 'Tab'. */
