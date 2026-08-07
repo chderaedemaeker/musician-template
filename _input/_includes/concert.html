@@ -88,7 +88,8 @@
         {% if month_only %}data-month-only="true"{% endif %}
         data-place="{{ place | escape }}"
         data-composers="{{ composers | escape }}"
-        data-collaborators="{{ collaborators | escape }}"><svg class="btn-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16"/><path d="M8 3v4M16 3v4M3 10h18"/><path d="M12 13.5v5M9.5 16h5"/></svg>{{ languages[lang].add_to_calendar }}</button>
+        data-collaborators="{{ collaborators | escape }}"
+        {% if link and link != "" %}data-ticket="{{ link | escape }}"{% endif %}><svg class="btn-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16"/><path d="M8 3v4M16 3v4M3 10h18"/><path d="M12 13.5v5M9.5 16h5"/></svg>{{ languages[lang].add_to_calendar }}</button>
       {% endif %}
     </div>
 

@@ -1037,3 +1037,10 @@ body.modal-open {
   margin-right: 0.45em;
   vertical-align: -0.18em;
 }
+
+/* The add-to-calendar pill keeps its black icon and text — no inversion */
+#cm-cal:hover,
+.concert-cal-btn:hover {
+  background-color: transparent;
+  color: var(--near-black);
+}

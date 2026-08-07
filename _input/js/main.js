@@ -233,8 +233,9 @@
       lines.push('DTEND;VALUE=DATE:' + fmtDate(end));
     }
     lines.push('SUMMARY:' + escText((c.title || 'Concert') + ' \u2014 Veronique De Raedemaeker'));
-    var desc = [c.composers, c.collaborators].filter(Boolean).join(' \u2014 ');
-    if (desc) lines.push('DESCRIPTION:' + escText(desc));
+    var descParts = [c.composers, c.collaborators].filter(Boolean).join(' \u2014 ');
+    if (c.ticket) descParts = (descParts ? descParts + '\\n' : '') + 'Tickets: ' + c.ticket;
+    if (descParts) lines.push('DESCRIPTION:' + escText(descParts));
     if (c.place) lines.push('LOCATION:' + escText(c.place));
     if (c.link) lines.push('URL:' + location.origin + c.link);
     lines.push('UID:' + fmtDate(start) + '-' + (c.title || 'concert').toLowerCase().replace(/[^a-z0-9]+/g, '-') + '@veroniquederaedemaeker.com');
@@ -259,6 +260,7 @@
       place: btn.dataset.place || '',
       composers: btn.dataset.composers || '',
       collaborators: btn.dataset.collaborators || '',
+      ticket: btn.dataset.ticket || '',
       link: location.pathname
     });
   });
