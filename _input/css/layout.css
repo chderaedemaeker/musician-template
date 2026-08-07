@@ -418,7 +418,16 @@ main {
 
 @media (max-width: 768px) {
   .nav-transparent:not(.is-scrolled) .nav-brand a {
-    font-size: min(2.85rem, 7.2vw);
+    font-size: min(2.25rem, 8vw);
+  }
+
+  /* On phones the hamburger stays pinned to the top right corner —
+     only the name rides at the hero midline */
+  .nav-transparent .hamburger {
+    position: fixed;
+    top: 19px;
+    right: var(--gutter);
+    z-index: 101;
   }
 
   .nav-transparent .hamburger.open span {
