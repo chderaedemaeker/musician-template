@@ -3,7 +3,8 @@
   <div class="concert-modal-backdrop" onclick="closeConcertModal()"></div>
   <div class="concert-modal-panel" role="dialog" aria-modal="true" aria-labelledby="cm-title" tabindex="-1">
     <button class="concert-modal-close" aria-label="Close" onclick="closeConcertModal()">&#215;</button>
-    <p class="concert-modal-date" id="cm-date"></p>
+    <div class="concert-modal-date" id="cm-date"></div>
+    <p class="concert-modal-place" id="cm-place" hidden></p>
     <h2 class="concert-modal-title" id="cm-title"></h2>
     <div class="concert-modal-meta" id="cm-meta"></div>
     <div class="concert-modal-body" id="cm-body"></div>
@@ -43,17 +44,43 @@
     var idx = order.indexOf(c);
     document.getElementById('cm-prev').hidden = idx <= 0;
     document.getElementById('cm-next').hidden = idx === -1 || idx >= order.length - 1;
-    var dateText = window.concertDateStr
-      ? window.concertDateStr(c, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
-      : '';
-    /* Single-day concerts with a real hour also show the time */
-    if (!c.monthOnly && !c.dateEnd) {
-      var d = new Date(c.date);
-      if (d.getHours() !== 0 || d.getMinutes() !== 0) {
-        dateText += ' — ' + d.toLocaleTimeString(document.documentElement.lang || 'en', { hour: '2-digit', minute: '2-digit' });
+    /* Same date block as the concert list: light weekday, big serif day */
+    var lg = document.documentElement.lang || 'en';
+    var ds = new Date(c.date);
+    var dateHtml = '';
+    var timeText = '';
+    function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+    function block(day, wd, month) {
+      return '<span class="concert-row-day">' + wd + '</span>' +
+        '<span class="concert-row-datemain">' +
+          '<span class="concert-row-daynum">' + day + '</span>' +
+          '<span class="concert-row-monthyear"><span>' + month + '</span><span>' + ds.getFullYear() + '</span></span>' +
+        '</span>';
+    }
+    if (c.monthOnly && !c.dateEnd) {
+      dateHtml = '<span class="concert-row-day">' + ds.toLocaleDateString(lg, { month: 'long', year: 'numeric' }) + '</span>';
+    } else if (c.dateEnd) {
+      var de = new Date(c.dateEnd);
+      var sameMonth = ds.getMonth() === de.getMonth() && ds.getFullYear() === de.getFullYear();
+      dateHtml = block(
+        ds.getDate() + '\u2009\u2013\u2009' + de.getDate(),
+        ds.toLocaleDateString(lg, { weekday: 'short' }) + ' \u2013 ' + de.toLocaleDateString(lg, { weekday: 'short' }),
+        sameMonth ? ds.toLocaleDateString(lg, { month: 'long' })
+                  : ds.toLocaleDateString(lg, { month: 'short' }) + ' \u2013 ' + de.toLocaleDateString(lg, { month: 'short' }));
+    } else {
+      dateHtml = block(ds.getDate(), ds.toLocaleDateString(lg, { weekday: 'long' }), ds.toLocaleDateString(lg, { month: 'long' }));
+      if (ds.getHours() !== 0 || ds.getMinutes() !== 0) {
+        timeText = ds.toLocaleTimeString(lg, { hour: '2-digit', minute: '2-digit', hour12: false });
       }
     }
-    document.getElementById('cm-date').textContent = dateText;
+    document.getElementById('cm-date').innerHTML = dateHtml;
+
+    /* The address lives right under the date */
+    var placeEl = document.getElementById('cm-place');
+    var placeText = [timeText, c.place].filter(Boolean).join(' \u2014 ');
+    placeEl.hidden = !placeText;
+    placeEl.textContent = placeText;
+
     document.getElementById('cm-title').textContent = c.title || '';
 
     var meta = document.getElementById('cm-meta');
@@ -70,7 +97,7 @@
       }
       return null;
     }
-    [[c.place, false], [c.composers, false], [c.collaborators, true]].forEach(function (entry) {
+    [[c.composers, false], [c.collaborators, true]].forEach(function (entry) {
       var value = entry[0];
       if (!value) return;
       var span = document.createElement('span');

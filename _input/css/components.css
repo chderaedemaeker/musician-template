@@ -762,7 +762,19 @@
   font-size: var(--text-label);
   color: var(--dark-grey);
   font-family: var(--font-sans);
-  margin-bottom: var(--space-xs);
+  margin-bottom: var(--space-2xs);
+}
+
+.concert-modal-place {
+  font-family: var(--font-sans);
+  font-size: var(--text-label);
+  color: var(--dark-grey);
+  letter-spacing: -0.02em;
+  margin: var(--space-2xs) 0 0;
+}
+
+.concert-modal-place + .concert-modal-title {
+  margin-top: var(--space-sm);
 }
 
 .concert-modal-title {
