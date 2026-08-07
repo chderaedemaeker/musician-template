@@ -108,6 +108,8 @@ module.exports = function (eleventyConfig) {
     eleventyConfig.addPassthroughCopy("_input/css");
     eleventyConfig.addPassthroughCopy("_input/js");
     eleventyConfig.addPassthroughCopy("_input/audio");
+    eleventyConfig.addPassthroughCopy({ "_input/icons": "/" });
+    eleventyConfig.addPassthroughCopy({ "_input/robots.txt": "robots.txt" });
 
     // Helper: get collection with English fallback
     function collectionWithFallback(collection, langGlob, enGlob) {

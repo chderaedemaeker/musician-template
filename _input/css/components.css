@@ -303,10 +303,14 @@
 }
 
 /* The big day number and the title share a baseline — the title column
-   drops by the height of the weekday line above the number */
-.concert-row:not(.concert-row--archive) .concert-row-main,
-.concert-row:not(.concert-row--archive) .concert-row-aside {
+   drops by the height of the weekday line above the number. The composer
+   column drops further so its small first line lands on the same baseline. */
+.concert-row:not(.concert-row--archive) .concert-row-main {
   padding-top: 1.75rem;
+}
+
+.concert-row:not(.concert-row--archive) .concert-row-aside {
+  padding-top: 2.9rem;
 }
 
 .concert-row-aside {
