@@ -1310,3 +1310,30 @@ body { letter-spacing: -0.01em; }
 }
 
 .date-end-input[hidden] { display: none; }
+
+/* Archived entries read dark red so they stand out in every list */
+.entry-title--archived {
+  color: #8a1f1f;
+}
+
+.entry-status-badge.status-archived {
+  color: #8a1f1f;
+  background: #f7e8e8;
+  border: 1px solid #d9b0b0;
+}
+
+.notion-row-archived .notion-cell,
+.notion-row-archived .notion-cell-title,
+.notion-row-archived .notion-date-input {
+  color: #8a1f1f;
+}
+
+.notion-archive-btn {
+  color: inherit;
+}
+
+.editor-status-bar .status-label.status-archived {
+  color: #8a1f1f;
+  background: #f7e8e8;
+  border: 1px solid #d9b0b0;
+}

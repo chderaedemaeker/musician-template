@@ -26,7 +26,10 @@
 
 <main>
   <div class="detail-page">
-    <a class="btn btn--back" href="/{{ lang }}/highlights/"><span aria-hidden="true">&#8592;</span> {{ languages[lang].back_to_overview }}</a>
+    <div class="detail-top">
+      <a class="btn btn--back" href="/{{ lang }}/highlights/"><span aria-hidden="true">&#8592;</span> {{ languages[lang].back_to_overview }}</a>
+      {% include "share-actions.liquid" %}
+    </div>
 
     <h1>{{ title }}</h1>
 

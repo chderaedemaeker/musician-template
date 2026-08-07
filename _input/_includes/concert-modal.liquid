@@ -9,6 +9,7 @@
     <div class="concert-modal-body" id="cm-body"></div>
     <div class="concert-modal-actions">
       <a class="btn" id="cm-ticket" target="_blank" rel="noopener" hidden>{{ languages[lang].tickets }}</a>
+      <button type="button" class="btn" id="cm-cal" hidden><svg class="btn-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16"/><path d="M8 3v4M16 3v4M3 10h18"/><path d="M12 13.5v5M9.5 16h5"/></svg>{{ languages[lang].add_to_calendar }}</button>
       <a class="btn btn-sm" id="cm-page" hidden>{{ languages[lang].full_page }} <span aria-hidden="true">&#8594;</span></a>
     </div>
     <div class="concert-modal-nav">
@@ -88,6 +89,11 @@
     ticket.hidden = !c.ticket;
     if (c.ticket) ticket.href = c.ticket;
 
+    var cal = document.getElementById('cm-cal');
+    var lastDay = new Date(c.dateEnd || c.date);
+    lastDay.setHours(23, 59, 59);
+    cal.hidden = lastDay < new Date();
+
     var page = document.getElementById('cm-page');
     page.hidden = !c.link;
     if (c.link) page.href = c.link;
@@ -105,6 +111,42 @@
     panel.scrollTop = 0;
     if (!keepFocus) panel.focus();
   };
+
+  /* Add to calendar: build an .ics file from the concert and download it —
+     opens straight into Apple/Google/Outlook calendars, no service needed */
+  document.getElementById('cm-cal').addEventListener('click', function () {
+    var c = currentConcert;
+    if (!c) return;
+    function pad(n) { return (n < 10 ? '0' : '') + n; }
+    function fmtDate(d) { return '' + d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()); }
+    function fmtDT(d) { return fmtDate(d) + 'T' + pad(d.getHours()) + pad(d.getMinutes()) + '00'; }
+    function escText(t) { return String(t).replace(/([,;\\])/g, '\\$1'); }
+    var start = new Date(c.date);
+    var hasTime = !c.monthOnly && !c.dateEnd && (start.getHours() !== 0 || start.getMinutes() !== 0);
+    var lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Veronique De Raedemaeker//Concerts//EN', 'BEGIN:VEVENT'];
+    if (hasTime) {
+      lines.push('DTSTART:' + fmtDT(start));
+      lines.push('DTEND:' + fmtDT(new Date(start.getTime() + 2 * 3600 * 1000)));
+    } else {
+      var end = c.dateEnd ? new Date(c.dateEnd) : new Date(start);
+      end.setDate(end.getDate() + 1);
+      lines.push('DTSTART;VALUE=DATE:' + fmtDate(start));
+      lines.push('DTEND;VALUE=DATE:' + fmtDate(end));
+    }
+    lines.push('SUMMARY:' + escText((c.title || 'Concert') + ' \u2014 Veronique De Raedemaeker'));
+    var desc = [c.composers, c.collaborators].filter(Boolean).join(' \u2014 ');
+    if (desc) lines.push('DESCRIPTION:' + escText(desc));
+    if (c.place) lines.push('LOCATION:' + escText(c.place));
+    if (c.link) lines.push('URL:' + location.origin + c.link);
+    lines.push('UID:' + fmtDate(start) + '-' + (c.title || 'concert').toLowerCase().replace(/[^a-z0-9]+/g, '-') + '@veroniquederaedemaeker.com');
+    lines.push('END:VEVENT', 'END:VCALENDAR');
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([lines.join('\r\n')], { type: 'text/calendar' }));
+    a.download = (c.title || 'concert') + '.ics';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  });
 
   document.getElementById('cm-prev').addEventListener('click', function () { navStep(-1); });
   document.getElementById('cm-next').addEventListener('click', function () { navStep(1); });

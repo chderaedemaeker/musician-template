@@ -253,3 +253,67 @@ button, input, select, textarea,
     transform: none;
   }
 }
+
+/* ── Print — clean article on paper ── */
+@media print {
+  .nav,
+  .footer,
+  .mobile-nav,
+  .page-actions,
+  .btn,
+  .btn--back,
+  .detail-nav,
+  .concert-toolbar,
+  .concert-modal,
+  .card-cta,
+  .concert-row-more,
+  .content-actions,
+  .lang-picker,
+  iframe,
+  audio {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  .js .reveal,
+  .js .reveal-group > * {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  main,
+  .detail-page,
+  .concert-detail,
+  .about-page {
+    max-width: 42rem;
+    margin: 0 auto;
+    padding-top: 0;
+  }
+
+  a {
+    color: #000;
+    text-decoration: none;
+  }
+
+  .about-gallery {
+    display: none;
+  }
+
+  .concert-list-section[hidden] {
+    display: block;
+  }
+
+  .concert-row {
+    break-inside: avoid;
+    padding: 0.8rem 0;
+  }
+
+  .highlights-grid,
+  .projects-grid {
+    display: block;
+  }
+}

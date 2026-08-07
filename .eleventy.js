@@ -168,7 +168,7 @@ module.exports = function (eleventyConfig) {
     );
 
     eleventyConfig.addCollection("concerts", function(collectionApi) {
-        return collectionApi.getFilteredByGlob("./_input/en/concerts/*.md");
+        return collectionApi.getFilteredByGlob("./_input/en/concerts/*.md").filter(notHidden);
     });
 
     // Output concerts as JSON for the client-side lists and the detail popup

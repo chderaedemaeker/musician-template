@@ -193,6 +193,27 @@
     schedule();
   });
 
+  /* Share and print actions: native share sheet when available,
+     otherwise copy the link and confirm with a small tooltip */
+  document.addEventListener('click', function (e) {
+    var shareBtn = e.target.closest && e.target.closest('.action-share');
+    if (shareBtn) {
+      var payload = { title: document.title, url: location.href };
+      if (navigator.share) {
+        navigator.share(payload).catch(function () {});
+      } else if (navigator.clipboard) {
+        navigator.clipboard.writeText(location.href).then(function () {
+          shareBtn.classList.add('is-copied');
+          setTimeout(function () { shareBtn.classList.remove('is-copied'); }, 1800);
+        });
+      }
+      return;
+    }
+    if (e.target.closest && e.target.closest('.action-print')) {
+      window.print();
+    }
+  });
+
   /* Keep Tab inside a dialog. Call from a keydown handler when e.key === 'Tab'. */
   window.siteTrapFocus = function (container, e) {
     var focusables = container.querySelectorAll(

@@ -1,4 +1,13 @@
 <script>document.documentElement.classList.add('js');</script>
+{% assign ogImage = image | default: "/images/veroniqueportrait.jpg" %}
+<meta property="og:site_name" content="Veronique De Raedemaeker">
+<meta property="og:title" content="{% if title %}{{ title | escape }} — {% endif %}Veronique De Raedemaeker">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://veroniquederaedemaeker.com{{ page.url }}">
+<meta property="og:image" content="https://veroniquederaedemaeker.com{{ ogImage }}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{% if title %}{{ title | escape }} — {% endif %}Veronique De Raedemaeker">
+<meta name="twitter:image" content="https://veroniquederaedemaeker.com{{ ogImage }}">
 <link rel="preload" href="/images/AppleGaramond-Light.ttf" as="font" type="font/ttf" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

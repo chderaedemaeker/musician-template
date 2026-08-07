@@ -942,3 +942,70 @@ body.modal-open {
   background: var(--near-black);
   color: var(--off-white);
 }
+
+/* ── Share / print — compact quiet icon pair ── */
+.detail-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.detail-top .btn--back {
+  margin-bottom: 0;
+}
+
+.page-header--actions {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.page-actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.action-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: var(--dark-grey);
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease);
+}
+
+.action-btn:hover {
+  color: var(--near-black);
+  background: rgba(51, 50, 47, 0.06);
+}
+
+.action-share.is-copied::after {
+  content: attr(data-copied);
+  position: absolute;
+  bottom: calc(100% + 0.35rem);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-family: var(--font-inter);
+  font-size: var(--text-caption);
+  letter-spacing: -0.01em;
+  color: var(--white);
+  background: var(--near-black);
+  padding: 0.3em 0.8em;
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+.btn .btn-ico {
+  margin-right: 0.45em;
+  vertical-align: -0.18em;
+}

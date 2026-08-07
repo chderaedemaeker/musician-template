@@ -15,8 +15,9 @@
 
 <main>
   <div class="about-page">
-    <header class="page-header">
+    <header class="page-header page-header--actions">
       <h1>{{ title }}</h1>
+      {% include "share-actions.liquid" %}
     </header>
     {% comment %} Gallery photos are editable in the admin (About → Gallery photo 1–4);
        when none are set, the standard portraits are shown {% endcomment %}

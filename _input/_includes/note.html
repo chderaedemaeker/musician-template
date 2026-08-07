@@ -15,7 +15,10 @@
 
 <main>
   <div class="detail-page">
-    <a class="btn btn--back" href="/en/notes/"><span aria-hidden="true">&#8592;</span> {{ languages[lang].back_to_overview }}</a>
+    <div class="detail-top">
+      <a class="btn btn--back" href="/en/notes/"><span aria-hidden="true">&#8592;</span> {{ languages[lang].back_to_overview }}</a>
+      {% include "share-actions.liquid" %}
+    </div>
 
     {% if date %}<p class="date note-date">{{ date | shortDate }}</p>{% endif %}
     <h1>{{ title }}</h1>

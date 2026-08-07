@@ -40,6 +40,10 @@ module.exports = {
     show_earlier: "Show earlier concerts",
     contact_intro: "For bookings, programmes, press, or anything else — write a message below.",
     subscribe: "Subscribe",
+    share: "Share",
+    add_to_calendar: "Add to calendar",
+    print: "Print",
+    link_copied: "Link copied",
     newsletter_hint: "Stay up to date with the latest concerts, recordings and highlights.",
     no_projects: "No projects found."
   },
@@ -84,6 +88,10 @@ module.exports = {
     show_earlier: "Eerdere concerten tonen",
     contact_intro: "Voor boekingen, programma’s, pers of iets anders — stuur hieronder een bericht.",
     subscribe: "Inschrijven",
+    share: "Delen",
+    add_to_calendar: "Zet in agenda",
+    print: "Afdrukken",
+    link_copied: "Link gekopieerd",
     newsletter_hint: "Blijf op de hoogte van de nieuwste concerten, opnames en hoogtepunten — rechtstreeks van Veronique.",
     no_projects: "Geen projecten gevonden."
   },
@@ -128,6 +136,10 @@ module.exports = {
     show_earlier: "Afficher les concerts précédents",
     contact_intro: "Pour les réservations, programmes, presse ou toute autre demande — écrivez un message ci-dessous.",
     subscribe: "S’abonner",
+    share: "Partager",
+    add_to_calendar: "Ajouter au calendrier",
+    print: "Imprimer",
+    link_copied: "Lien copié",
     newsletter_hint: "Restez au courant des derniers concerts, enregistrements et moments forts — directement de Veronique.",
     no_projects: "Aucun projet trouvé."
   },
@@ -172,6 +184,10 @@ module.exports = {
     show_earlier: "Frühere Konzerte anzeigen",
     contact_intro: "Für Buchungen, Programme, Presse oder anderes — schreiben Sie unten eine Nachricht.",
     subscribe: "Abonnieren",
+    share: "Teilen",
+    add_to_calendar: "In den Kalender",
+    print: "Drucken",
+    link_copied: "Link kopiert",
     newsletter_hint: "Bleiben Sie auf dem Laufenden über die neuesten Konzerte, Aufnahmen und Highlights — direkt von Veronique.",
     no_projects: "Keine Projekte gefunden.",
   }

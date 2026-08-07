@@ -598,7 +598,7 @@ class App {
           return `<div class="entry-row" data-file="${esc(e.name)}" data-title="${esc(title)}" data-sha="${esc(e.sha||'')}" data-path="${esc(e.path)}">
             <div class="entry-row-left">
               <input type="checkbox" class="entry-checkbox entry-select" data-file="${esc(e.name)}" />
-              <div style="min-width:0;"><div class="entry-title">${esc(title)}${badgeHtml}</div>${date ? `<div class="entry-meta">${esc(date)}</div>` : ''}</div>
+              <div style="min-width:0;"><div class="entry-title${status === 'archived' ? ' entry-title--archived' : ''}">${esc(title)}${badgeHtml}</div>${date ? `<div class="entry-meta">${esc(date)}</div>` : ''}</div>
             </div>
           </div>`;
         }).join('');
@@ -702,14 +702,14 @@ class App {
     bodyEl.innerHTML = sorted.map((entry, i) => {
       const idx = entries.indexOf(entry);
       const dateVal = entry.data.date ? entry.data.date.substring(0, 10) : '';
-      return `<div class="notion-row${entry.dirty ? ' notion-row-dirty' : ''}${entry.loadFailed ? ' notion-row-loadfailed' : ''}" data-idx="${idx}" style="grid-template-columns: ${gridCols};"${entry.loadFailed ? ' title="This row failed to load — its saved data is safe and will reappear after you edit and save, or reload the page."' : ''}>
+      return `<div class="notion-row${entry.dirty ? ' notion-row-dirty' : ''}${entry.loadFailed ? ' notion-row-loadfailed' : ''}${entry.data.status === 'archived' ? ' notion-row-archived' : ''}" data-idx="${idx}" style="grid-template-columns: ${gridCols};"${entry.loadFailed ? ' title="This row failed to load — its saved data is safe and will reappear after you edit and save, or reload the page."' : ''}>
         <div class="notion-cell notion-cell-check"><input type="checkbox" class="entry-checkbox entry-select" data-idx="${idx}" data-file="${esc(entry.name)}" /></div>
         <div class="notion-cell notion-cell-title" data-field="title" data-idx="${idx}" contenteditable="true">${esc(entry.data.title || '')}</div>
         <div class="notion-cell notion-cell-date" data-field="date" data-idx="${idx}"><input type="date" class="notion-date-input" value="${esc(dateVal)}" data-idx="${idx}" /></div>
         <div class="notion-cell" data-field="place" data-idx="${idx}" contenteditable="true">${esc(entry.data.place || '')}</div>
         <div class="notion-cell" data-field="composers" data-idx="${idx}" contenteditable="true">${esc(entry.data.composers || '')}</div>
         <div class="notion-cell" data-field="collaborators" data-idx="${idx}" contenteditable="true">${esc(entry.data.collaborators || '')}</div>
-        <div class="notion-cell notion-cell-actions"><button class="notion-dup-btn" data-idx="${idx}" title="Duplicate">&#x2398;</button><button class="notion-open-btn" data-file="${esc(entry.name)}" title="Open full editor">&#8599;</button></div>
+        <div class="notion-cell notion-cell-actions"><button class="notion-archive-btn" data-idx="${idx}" title="${entry.data.status === 'archived' ? 'Put back on the site' : 'Move to the archive (hidden from the site)'}">${entry.data.status === 'archived' ? '&#8634;' : '&#9660;'}</button><button class="notion-dup-btn" data-idx="${idx}" title="Duplicate">&#x2398;</button><button class="notion-open-btn" data-file="${esc(entry.name)}" title="Open full editor">&#8599;</button></div>
       </div>`;
     }).join('');
 
@@ -903,6 +903,20 @@ class App {
     });
 
     // Duplicate button
+    bodyEl.querySelectorAll('.notion-archive-btn').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const idx = parseInt(btn.dataset.idx);
+        const entry = state.entries[idx];
+        if (entry.data.status === 'archived') delete entry.data.status;
+        else entry.data.status = 'archived';
+        entry.dirty = true;
+        this._renderTableRows();
+        this._bindTableRowEvents();
+        await this._saveTableRow(idx);
+      });
+    });
+
     bodyEl.querySelectorAll('.notion-dup-btn').forEach(btn => {
       btn.addEventListener('click', async (e) => {
         e.stopPropagation();
@@ -1073,7 +1087,7 @@ class App {
           ${!isNew ? '<button class="btn btn-danger" id="delete-btn">Delete</button>' : ''}
         </div>
       </div>
-      ${(isI18n && !isNew && (col.name === 'projects' || col.name === 'highlights')) ? `
+      ${(!isNew && ['projects', 'highlights', 'concerts', 'notes'].includes(col.name)) ? `
         <div class="editor-status-bar" id="status-bar">
           <span>Status:</span>
           <span class="status-label status-online" id="status-label">Online</span>
@@ -1168,7 +1182,7 @@ class App {
     });
 
     // Status bar (projects / highlights only)
-    if (!isNew && isI18n && (col.name === 'projects' || col.name === 'highlights')) {
+    if (!isNew && ['projects', 'highlights', 'concerts', 'notes'].includes(col.name)) {
       const initialStatus = state.data[locales[0]].status || '';
       this._updateStatusBar(initialStatus);
       document.getElementById('set-draft-btn').addEventListener('click', () => this._setStatus(state, 'draft'));
