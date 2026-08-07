@@ -687,3 +687,30 @@ li:last-child > .upcoming-item {
     aspect-ratio: 4 / 5;
   }
 }
+
+/* Past concerts on a project page fold away until asked for */
+.project-archive > summary {
+  cursor: pointer;
+  list-style: none;
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.project-archive > summary::-webkit-details-marker {
+  display: none;
+}
+
+.project-archive > summary::after {
+  content: '\25B8';
+  display: inline-block;
+  margin-left: 0.45em;
+  font-size: 0.85em;
+  transition: transform var(--dur-fast) var(--ease);
+}
+
+.project-archive[open] > summary::after {
+  transform: rotate(90deg);
+}
+
+.project-archive > summary:hover {
+  color: var(--near-black);
+}

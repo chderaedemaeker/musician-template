@@ -64,7 +64,7 @@
       if (!brand || !brandLink) return;
       var vh = window.innerHeight;
       var small = window.matchMedia('(max-width: 768px)').matches;
-      var startSize = small ? 45.6 : 72;   /* px — matches the stylesheet */
+      var startSize = small ? Math.min(45.6, window.innerWidth * 0.086) : 72; /* px — matches the stylesheet */
       var endSize = 24;                    /* 1.5rem dock size */
       var p = Math.min(1, Math.max(0, y / (vh * 0.6)));
       if (p >= 1) {

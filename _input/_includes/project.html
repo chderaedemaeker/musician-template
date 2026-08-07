@@ -95,20 +95,22 @@
         </ul>
       {% endif %}
       {% if pastConcerts.size > 0 %}
-        <p class="label project-concerts-label">{{ languages[lang].archive }}</p>
-        {% assign pastRecent = pastConcerts | reverse %}
-        <ul class="upcoming-list upcoming-list--past">
-          {% for c in pastRecent limit: 5 %}
-          <li><a class="upcoming-item" href="{{ c.url }}">
-            <span class="upcoming-item-date">{{ c.date | concertDate: c.data.date_end, c.data.month_only, lang }}</span>
-            <span class="upcoming-item-title">{{ c.data.title }}</span>
-            {% if c.data.place %}<span class="upcoming-item-place">{{ c.data.place }}</span>{% endif %}
-          </a></li>
-          {% endfor %}
-        </ul>
-        {% if pastConcerts.size > 5 %}
-          <p class="project-concerts-more"><a class="back-link" href="/en/concerts/">{{ languages[lang].archive }} <span aria-hidden="true">&#8594;</span></a></p>
-        {% endif %}
+        <details class="project-archive">
+          <summary class="label project-concerts-label">{{ languages[lang].archive }} ({{ pastConcerts.size }})</summary>
+          {% assign pastRecent = pastConcerts | reverse %}
+          <ul class="upcoming-list upcoming-list--past">
+            {% for c in pastRecent limit: 5 %}
+            <li><a class="upcoming-item" href="{{ c.url }}">
+              <span class="upcoming-item-date">{{ c.date | concertDate: c.data.date_end, c.data.month_only, lang }}</span>
+              <span class="upcoming-item-title">{{ c.data.title }}</span>
+              {% if c.data.place %}<span class="upcoming-item-place">{{ c.data.place }}</span>{% endif %}
+            </a></li>
+            {% endfor %}
+          </ul>
+          {% if pastConcerts.size > 5 %}
+            <p class="project-concerts-more"><a class="back-link" href="/en/concerts/">{{ languages[lang].archive }} <span aria-hidden="true">&#8594;</span></a></p>
+          {% endif %}
+        </details>
       {% endif %}
     </section>
     {% endif %}

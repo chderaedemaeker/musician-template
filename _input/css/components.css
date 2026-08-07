@@ -330,7 +330,7 @@
 /* A quiet arrow promises the row opens */
 .concert-row-more {
   position: absolute;
-  right: var(--space-2xs);
+  right: var(--space-md);
   top: 50%;
   font-family: var(--font-sans);
   font-size: 1.2rem;
@@ -647,48 +647,7 @@
   margin: 0;
 }
 
-/* ── Mobile reel — highlights snap-scroll on phones ── */
-@media (max-width: 768px) {
-  /* Outer wrapper: one screen tall. NO overflow:hidden — that blocks
-     touch-scroll on child elements in iOS Safari. */
-  .highlights-section {
-    height: calc(100dvh - var(--nav-height));
-    padding: 0;
-  }
 
-  .highlights-section .highlights-grid {
-    display: block;
-    height: calc(100dvh - var(--nav-height));
-    overflow-y: scroll;
-    scroll-snap-type: y mandatory;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-y: contain;
-    gap: 0;
-    max-width: 100%;
-    margin: 0;
-    padding: 0;
-    scrollbar-width: none;
-  }
-  .highlights-section .highlights-grid::-webkit-scrollbar {
-    display: none;
-  }
-
-  .highlights-section .highlight-card {
-    display: block;
-    scroll-snap-align: start;
-    height: calc(100dvh - var(--nav-height));
-    width: 100%;
-    border-radius: 0;
-    aspect-ratio: unset;
-  }
-
-  .highlights-section .highlight-card-title {
-    font-size: clamp(1.4rem, 6vw, 2rem);
-  }
-  .highlights-section .highlight-card-overlay {
-    padding: var(--space-md2) var(--space-md2) var(--space-md);
-  }
-}
 
 /* ============================================
    CONCERT MODAL
@@ -744,15 +703,15 @@
   position: absolute;
   top: var(--space-sm);
   left: var(--space-sm);
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 1.25rem;
+  height: 1.25rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   background: var(--near-black);
   border: none;
   border-radius: 999px;
-  font-size: 0.85rem;
+  font-size: 0.7rem;
   line-height: 1;
   cursor: pointer;
   color: var(--off-white);
@@ -1056,4 +1015,18 @@ body.modal-open {
 .concert-cal-btn:hover {
   background-color: transparent;
   color: var(--near-black);
+}
+
+/* On phones the modal becomes a full-width sheet with air above it */
+@media (max-width: 700px) {
+  .concert-modal {
+    padding: 3.5rem 0 0;
+    align-items: flex-end;
+  }
+
+  .concert-modal-panel {
+    max-width: none;
+    max-height: 100%;
+    border-radius: 0;
+  }
 }

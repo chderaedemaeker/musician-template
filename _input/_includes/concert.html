@@ -15,7 +15,7 @@
       {% if date_end %}"endDate": "{{ date_end | date: '%Y-%m-%dT%H:%M' }}",{% endif %}
       {% if place %}"location": { "@type": "Place", "name": {{ place | json }} },{% endif %}
       "performer": { "@type": "Person", "name": "Veronique De Raedemaeker" },
-      "url": "https://veroniquederaedemaeker.com{{ page.url }}"
+      "url": "{{ site.url }}{{ page.url }}"
     }
     </script>
 </head>

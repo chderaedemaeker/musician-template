@@ -6,7 +6,7 @@
 <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#2a281c">
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#f5f4f2">
-<link rel="canonical" href="https://veroniquederaedemaeker.com{{ page.url }}">
+<link rel="canonical" href="{{ site.url }}{{ page.url }}">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -23,11 +23,11 @@
 <meta property="og:site_name" content="Veronique De Raedemaeker">
 <meta property="og:title" content="{% if title %}{{ title | escape }} — {% endif %}Veronique De Raedemaeker">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://veroniquederaedemaeker.com{{ page.url }}">
-<meta property="og:image" content="https://veroniquederaedemaeker.com{{ ogImage | replace: " ", "%20" }}">
+<meta property="og:url" content="{{ site.url }}{{ page.url }}">
+<meta property="og:image" content="{{ site.url }}{{ ogImage | replace: " ", "%20" }}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{% if title %}{{ title | escape }} — {% endif %}Veronique De Raedemaeker">
-<meta name="twitter:image" content="https://veroniquederaedemaeker.com{{ ogImage | replace: " ", "%20" }}">
+<meta name="twitter:image" content="{{ site.url }}{{ ogImage | replace: " ", "%20" }}">
 {% comment %} Detail pages (highlights, projects, concerts, notes, about) describe
    themselves with the opening of their own text {% endcomment %}
 {% if layout != "default.html" %}{% capture ogDescRaw %}{{ content | strip_html }}{% endcapture %}{% assign ogDesc = ogDescRaw | strip_newlines | strip | truncate: 200 %}{% if ogDesc != "" %}<meta property="og:description" content="{{ ogDesc | escape }}">

@@ -255,7 +255,7 @@ main {
   cursor: pointer;
   background: none;
   border: none;
-  padding: 6px 2px;
+  padding: 6px;
 }
 
 .hamburger span {
@@ -263,12 +263,12 @@ main {
   width: 22px;
   height: 1px;
   background-color: var(--near-black);
-  margin: 6px 0;
+  margin: 4.5px 0;
   transition: transform var(--dur-med) var(--ease), opacity var(--dur-med) var(--ease);
 }
 
 .hamburger.open span:nth-child(1) {
-  transform: translateY(7px) rotate(45deg);
+  transform: translateY(5.5px) rotate(45deg);
 }
 
 .hamburger.open span:nth-child(2) {
@@ -276,7 +276,7 @@ main {
 }
 
 .hamburger.open span:nth-child(3) {
-  transform: translateY(-7px) rotate(-45deg);
+  transform: translateY(-5.5px) rotate(-45deg);
 }
 
 /* ── Mobile nav ── */
@@ -409,7 +409,7 @@ main {
   }
 
   .nav-transparent:not(.is-scrolled) .nav-brand a {
-    font-size: 2.85rem;
+    font-size: min(2.85rem, 8.6vw);
   }
 
   .nav-transparent .hamburger.open span {
@@ -488,6 +488,7 @@ main {
 .footer-news-row {
   display: flex;
   align-items: stretch;
+  flex-wrap: wrap;
   gap: var(--space-xs);
 }
 
