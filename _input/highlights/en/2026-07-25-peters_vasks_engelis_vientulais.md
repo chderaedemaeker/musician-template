@@ -1,5 +1,5 @@
 ---
-title: "Vientulais Engelis — Pēteris Vasks"
+title: "Vientulais Engelis — Peteris Vasks"
 slug: "vientulais-engelis"
 date: 2022-08-20T00:00:00
 type: "Recording"
@@ -12,6 +12,6 @@ tags: highlights
 lang: en
 ---
 
-Recording of Pēteris Vasks' *Vientulais Engelis* (The Lonely Angel), a meditation for violin and strings.
+Recording of Peteris Vasks' *Vientulais Engelis* (The Lonely Angel), a meditation for violin and strings.
 
 <audio controls preload="none" src="/audio/vasks-vientulais-engelis.m4a"></audio>
