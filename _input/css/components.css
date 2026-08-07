@@ -419,17 +419,17 @@
 
 .highlights-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
   gap: var(--space-md2);
 }
 
 /* Highlights page: larger cards; projects page: slightly smaller ones */
 .highlights-grid--large {
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(380px, 100%), 1fr));
 }
 
 .highlights-grid--compact {
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
 }
 
 /* A single featured card (home page) stays modest */
@@ -528,16 +528,16 @@
   color: var(--near-black);
 }
 
-/* ── Featured cards — flagged in the CMS: double width, blue ground ── */
+/* ── Featured cards — flagged in the CMS: double width where two
+   columns actually fit; forcing a span in a one-column grid overflows ── */
 .highlight-card--featured {
-  grid-column: span 2;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 4 / 5;
 }
 
-@media (max-width: 700px) {
+@media (min-width: 900px) {
   .highlight-card--featured {
-    grid-column: auto;
-    aspect-ratio: 4 / 5;
+    grid-column: span 2;
+    aspect-ratio: 16 / 10;
   }
 }
 
