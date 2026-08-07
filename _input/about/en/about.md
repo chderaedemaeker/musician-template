@@ -1,6 +1,10 @@
 ---
 title: About
-summaryabout: Belgian violinist based in Cologne, praised for her richness in sound and instinctively beautiful phrasing. 
+gallery1: /images/klvero.png
+gallery2: /images/veronique-18.jpeg
+gallery3: /images/veronique-25copy.jpeg
+gallery4: ""
+summaryabout: Belgian violinist based in Cologne, praised for her richness in sound and instinctively beautiful phrasing.
 layout: about.html
 tags: about
 lang: en
