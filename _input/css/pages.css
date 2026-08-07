@@ -174,10 +174,11 @@
 }
 
 .bento-highlight-title {
-  font-family: var(--font-sans);
-  font-size: var(--text-h3);
-  font-weight: 500;
-  line-height: 1.15;
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  line-height: 1.1;
   color: var(--white);
   margin: 0;
 }
@@ -353,7 +354,7 @@
   /* Long-form reading text in Inter for legibility; headings, the lede
      and the pull-quote stay serif */
   font-family: var(--font-inter);
-  font-size: 1.0625rem;
+  font-size: 1rem;
   line-height: var(--leading-relaxed);
   color: var(--charcoal);
 }

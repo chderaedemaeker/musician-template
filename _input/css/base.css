@@ -32,7 +32,7 @@
   /* ── Type scale ── */
   --text-caption: 0.75rem;    /* 12px — footer, fine print */
   --text-label: 0.8125rem;    /* 13px — labels, eyebrows, dates */
-  --text-sans: 0.9375rem;     /* 15px — nav, buttons, form labels, meta */
+  --text-sans: 0.875rem;      /* 14px — nav, buttons, form labels, meta */
   --text-body: 1.3125rem;     /* 21px — serif paragraphs */
   --text-lede: 1.75rem;       /* 28px — intro paragraphs, pull-quotes */
   --text-h3: 1.75rem;         /* 28px — list and card titles */
