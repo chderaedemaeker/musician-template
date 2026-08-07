@@ -5,13 +5,14 @@
 // --------------- Git Gateway API (via Netlify Identity) ---------------
 class GitGatewayAPI {
   constructor(tokenFn) {
-    this._tokenFn = tokenFn; // async function that returns a fresh JWT
+    this._tokenFn = tokenFn; // async function; pass true to force a refresh
     this.base = '/.netlify/git/github';
     this.branch = 'master';
+    this._refreshing = null; // single-flight token refresh
   }
 
-  async _headers() {
-    const token = await this._tokenFn();
+  async _headers(forceRefresh) {
+    const token = await this._tokenFn(forceRefresh);
     return {
       Authorization: `Bearer ${token}`,
       Accept: 'application/vnd.github.v3+json',
@@ -23,7 +24,27 @@ class GitGatewayAPI {
     const url = `${this.base}${endpoint}`;
     const opts = { method, headers: await this._headers() };
     if (body) opts.body = JSON.stringify(body);
-    const res = await fetch(url, opts);
+    let res = await fetch(url, opts);
+    if (res.status === 401) {
+      // Stale session (e.g. the tab sat open overnight): refresh the
+      // token once — shared across parallel requests — and retry.
+      if (!this._refreshing) {
+        this._refreshing = this._headers(true).finally(() => { this._refreshing = null; });
+      }
+      try {
+        opts.headers = await this._refreshing;
+        res = await fetch(url, opts);
+      } catch (e) {
+        const err = new Error('Your login session has expired — please log out and log in again.');
+        err.status = 401;
+        throw err;
+      }
+      if (res.status === 401) {
+        const err = new Error('Your login session has expired — please log out and log in again.');
+        err.status = 401;
+        throw err;
+      }
+    }
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       const error = new Error(err.message || `Git Gateway ${res.status}`);
@@ -66,8 +87,15 @@ class GitGatewayAPI {
     } catch (e) {
       let freshSha;
       try { freshSha = (await this.getFileInfo(path)).sha; } catch (e2) { freshSha = undefined; }
-      if (freshSha === sha) throw e; // sha was correct — some other problem
-      return this.createOrUpdateFile(path, content, message, freshSha);
+      if (freshSha && freshSha !== sha) {
+        return this.createOrUpdateFile(path, content, message, freshSha);
+      }
+      if (!freshSha && !sha) {
+        // We never knew the file's sha AND we can't look it up now —
+        // almost always a dropped connection or expired login session.
+        throw new Error('Could not save — the connection or login session failed. Your changes are still in the form: reload the page, log in again, and press Save once more.');
+      }
+      throw e; // sha was correct — some other problem
     }
   }
 
@@ -387,11 +415,11 @@ class App {
 
   _onIdentityLogin(user) {
     this._identityUser = user;
-    this.api = new GitGatewayAPI(() => {
-      // jwt() refreshes the token only when it has expired; jwt(true) would
-      // force a refresh on every call and gets rate-limited by Netlify Identity
-      // when many requests run in parallel.
-      return this._identityUser.jwt();
+    this.api = new GitGatewayAPI((force) => {
+      // jwt() refreshes the token only when it has expired; jwt(true)
+      // forces a refresh and is used exactly once when a request comes
+      // back 401 (rate-limited if called for every request in parallel).
+      return this._identityUser.jwt(force === true);
     });
     netlifyIdentity.close();
     this.loadConfig().then(() => this.route());
@@ -417,13 +445,22 @@ class App {
   }
 
   async loadConfig() {
-    try {
-      const file = await this.api.getFile('_input/admin/config.yml');
-      this.config = new ConfigParser(file.content);
-      this.collections = this.config.getCollections();
-    } catch (e) {
-      console.error('Failed to load config:', e);
-      showStatus('error', 'Could not load config.yml');
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const file = await this.api.getFile('_input/admin/config.yml');
+        this.config = new ConfigParser(file.content);
+        this.collections = this.config.getCollections();
+        return;
+      } catch (e) {
+        console.error('Failed to load config:', e);
+        if (e.status === 401) {
+          showStatus('error', 'Your login session has expired — please log in again.');
+          this.logout();
+          return;
+        }
+        if (attempt === 0) continue; // one silent retry for network blips
+        showStatus('error', 'Could not load the settings (connection problem?). Reload the page to try again.');
+      }
     }
   }
 
