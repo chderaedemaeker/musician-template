@@ -4,11 +4,16 @@
 <meta property="og:title" content="{% if title %}{{ title | escape }} — {% endif %}Veronique De Raedemaeker">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://veroniquederaedemaeker.com{{ page.url }}">
-<meta property="og:image" content="https://veroniquederaedemaeker.com{{ ogImage }}">
+<meta property="og:image" content="https://veroniquederaedemaeker.com{{ ogImage | replace: " ", "%20" }}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{% if title %}{{ title | escape }} — {% endif %}Veronique De Raedemaeker">
-<meta name="twitter:image" content="https://veroniquederaedemaeker.com{{ ogImage }}">
-<link rel="preload" href="/images/AppleGaramond-Light.ttf" as="font" type="font/ttf" crossorigin>
+<meta name="twitter:image" content="https://veroniquederaedemaeker.com{{ ogImage | replace: " ", "%20" }}">
+{% comment %} Detail pages (highlights, projects, concerts, notes, about) describe
+   themselves with the opening of their own text {% endcomment %}
+{% if layout != "default.html" %}{% capture ogDescRaw %}{{ content | strip_html }}{% endcapture %}{% assign ogDesc = ogDescRaw | strip_newlines | strip | truncate: 200 %}{% if ogDesc != "" %}<meta property="og:description" content="{{ ogDesc | escape }}">
+<meta name="twitter:description" content="{{ ogDesc | escape }}">
+<meta name="description" content="{{ ogDesc | escape }}">
+{% endif %}{% endif %}<link rel="preload" href="/images/AppleGaramond-Light.ttf" as="font" type="font/ttf" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
