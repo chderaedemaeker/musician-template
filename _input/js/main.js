@@ -42,6 +42,24 @@
     /* On the home page the name travels with the scroll, pixel for
        pixel, from the middle of the hero up into the bar. */
     var brandLink = brand ? brand.querySelector('a') : null;
+    var travelers = [nav.querySelector('.nav-links'), nav.querySelector('.lang-picker')].filter(Boolean);
+
+    /* The links make the same journey (no scaling): a plain translateY
+       from the hero's midline up to their place in the bar */
+    function moveLinks(p) {
+      var vh = window.innerHeight;
+      var endY = nav.offsetHeight / 2;
+      travelers.forEach(function (el) {
+        if (!el.offsetParent && p < 1) return; /* collapsed behind the hamburger */
+        if (p >= 1) {
+          el.style.transition = '';
+          el.style.transform = '';
+          return;
+        }
+        el.style.transition = 'none';
+        el.style.transform = 'translateY(' + ((vh * 0.5 - endY) * (1 - p)) + 'px)';
+      });
+    }
     function moveBrand(y) {
       if (!brand || !brandLink) return;
       var vh = window.innerHeight;
@@ -79,6 +97,7 @@
       var y = window.scrollY;
       if (isHero && !reducedMotion) {
         var p = moveBrand(y);
+        moveLinks(Math.min(1, Math.max(0, y / (window.innerHeight * 0.6))));
         if (p >= 1) nav.classList.add('is-scrolled');
         else if (p < 0.95) nav.classList.remove('is-scrolled');
       } else {
@@ -249,11 +268,12 @@
   document.addEventListener('click', function (e) {
     var shareBtn = e.target.closest && e.target.closest('.action-share');
     if (shareBtn) {
-      var payload = { title: document.title, url: location.href };
+      var shareUrl = shareBtn.dataset.shareUrl || location.href;
+      var payload = { title: shareBtn.dataset.shareTitle || document.title, url: shareUrl };
       if (navigator.share) {
         navigator.share(payload).catch(function () {});
       } else if (navigator.clipboard) {
-        navigator.clipboard.writeText(location.href).then(function () {
+        navigator.clipboard.writeText(shareUrl).then(function () {
           shareBtn.classList.add('is-copied');
           setTimeout(function () { shareBtn.classList.remove('is-copied'); }, 1800);
         });

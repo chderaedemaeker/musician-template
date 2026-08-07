@@ -80,7 +80,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function rowHtml(c, isArchive) {
     var d = dateStr(c);
-    /* Upcoming single-day concerts: light weekday, large serif day number */
+    /* Upcoming single-day concerts: light weekday, large serif day number.
+       Multi-day concerts get the same treatment with a day range. */
     var dateHtml = d;
     if (!isArchive && !c.monthOnly && !c.dateEnd) {
       var dd = new Date(c.date);
@@ -92,6 +93,20 @@ document.addEventListener('DOMContentLoaded', function() {
           '<span class="concert-row-monthyear"><span>' + month + '</span><span>' + dd.getFullYear() + '</span></span>' +
         '</span>';
       d = weekday + ' ' + d;
+    } else if (!isArchive && !c.monthOnly && c.dateEnd) {
+      var ds = new Date(c.date), de = new Date(c.dateEnd);
+      if (ds.getFullYear() === de.getFullYear()) {
+        var sameMonth = ds.getMonth() === de.getMonth();
+        var wd = ds.toLocaleDateString(lang, { weekday: 'short' }) + ' – ' + de.toLocaleDateString(lang, { weekday: 'short' });
+        var monthLabel = sameMonth
+          ? ds.toLocaleDateString(lang, { month: 'long' })
+          : ds.toLocaleDateString(lang, { month: 'short' }) + ' – ' + de.toLocaleDateString(lang, { month: 'short' });
+        dateHtml = '<span class="concert-row-day">' + wd + '</span>' +
+          '<span class="concert-row-datemain">' +
+            '<span class="concert-row-daynum">' + ds.getDate() + '\u2009\u2013\u2009' + de.getDate() + '</span>' +
+            '<span class="concert-row-monthyear"><span>' + monthLabel + '</span><span>' + ds.getFullYear() + '</span></span>' +
+          '</span>';
+      }
     }
     var aside = '';
     if (c.composers) aside += '<p class="concert-row-detail">' + c.composers + '</p>';
