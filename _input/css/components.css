@@ -724,7 +724,7 @@
   width: 100%;
   max-height: 85vh;
   overflow-y: auto;
-  padding: var(--space-lg);
+  padding: calc(var(--space-lg) + 1.25rem) var(--space-lg) var(--space-lg);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
   opacity: 0;
   transform: translateY(12px);
@@ -743,19 +743,25 @@
 .concert-modal-close {
   position: absolute;
   top: var(--space-sm);
-  right: var(--space-sm);
-  background: none;
+  left: var(--space-sm);
+  width: 1.5rem;
+  height: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--near-black);
   border: none;
-  font-size: 1.6rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
   line-height: 1;
   cursor: pointer;
-  color: var(--dark-grey);
-  padding: 4px 8px;
-  transition: color var(--dur-fast) var(--ease);
+  color: var(--off-white);
+  padding: 0;
+  transition: background-color var(--dur-fast) var(--ease);
 }
 
 .concert-modal-close:hover {
-  color: var(--near-black);
+  background: var(--charcoal);
 }
 
 .concert-modal-date {
@@ -1038,7 +1044,14 @@ body.modal-open {
   vertical-align: -0.18em;
 }
 
-/* The add-to-calendar pill keeps its black icon and text — no inversion */
+/* The add-to-calendar pill is the inverted one: filled at rest,
+   opening up on hover */
+#cm-cal,
+.concert-cal-btn {
+  background-color: var(--near-black);
+  color: var(--off-white);
+}
+
 #cm-cal:hover,
 .concert-cal-btn:hover {
   background-color: transparent;
