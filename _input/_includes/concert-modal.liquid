@@ -112,6 +112,84 @@
     if (!keepFocus) panel.focus();
   };
 
+  document.getElementById('cm-cal').addEventListener('click', function () {
+    if (currentConcert && window.downloadConcertIcs) window.downloadConcertIcs(currentConcert);
+  });
+
+  document.getElementById('cm-prev').hidden = idx <= 0;
+    document.getElementById('cm-next').hidden = idx === -1 || idx >= order.length - 1;
+    var dateText = window.concertDateStr
+      ? window.concertDateStr(c, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+      : '';
+    /* Single-day concerts with a real hour also show the time */
+    if (!c.monthOnly && !c.dateEnd) {
+      var d = new Date(c.date);
+      if (d.getHours() !== 0 || d.getMinutes() !== 0) {
+        dateText += ' — ' + d.toLocaleTimeString(document.documentElement.lang || 'en', { hour: '2-digit', minute: '2-digit' });
+      }
+    }
+    document.getElementById('cm-date').textContent = dateText;
+    document.getElementById('cm-title').textContent = c.title || '';
+
+    var meta = document.getElementById('cm-meta');
+    meta.innerHTML = '';
+    function projectFor(text) {
+      if (!text || !window.projectLinks) return null;
+      var t = text.toLowerCase();
+      for (var i = 0; i < window.projectLinks.length; i++) {
+        var words = (window.projectLinks[i].words || '').split(',');
+        for (var j = 0; j < words.length; j++) {
+          var w = words[j].trim();
+          if (w && t.indexOf(w) !== -1) return window.projectLinks[i].url;
+        }
+      }
+      return null;
+    }
+    [[c.place, false], [c.composers, false], [c.collaborators, true]].forEach(function (entry) {
+      var value = entry[0];
+      if (!value) return;
+      var span = document.createElement('span');
+      var projUrl = entry[1] ? projectFor(value) : null;
+      if (projUrl) {
+        var a = document.createElement('a');
+        a.href = projUrl;
+        a.textContent = value;
+        span.appendChild(a);
+      } else {
+        span.textContent = value;
+      }
+      meta.appendChild(span);
+    });
+
+    document.getElementById('cm-body').innerHTML = c.body || '';
+
+    var ticket = document.getElementById('cm-ticket');
+    ticket.hidden = !c.ticket;
+    if (c.ticket) ticket.href = c.ticket;
+
+    var cal = document.getElementById('cm-cal');
+    var lastDay = new Date(c.dateEnd || c.date);
+    lastDay.setHours(23, 59, 59);
+    cal.hidden = lastDay < new Date();
+
+    var page = document.getElementById('cm-page');
+    page.hidden = !c.link;
+    if (c.link) page.href = c.link;
+
+    if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
+    if (!keepFocus) lastTrigger = document.activeElement;
+    modal.hidden = false;
+    document.body.classList.add('modal-open');
+    /* Let the browser paint the hidden→shown state before transitioning */
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        modal.classList.add('is-open');
+      });
+    });
+    panel.scrollTop = 0;
+    if (!keepFocus) panel.focus();
+  };
+
   /* Add to calendar: build an .ics file from the concert and download it —
      opens straight into Apple/Google/Outlook calendars, no service needed */
   document.getElementById('cm-cal').addEventListener('click', function () {

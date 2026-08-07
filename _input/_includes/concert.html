@@ -62,9 +62,23 @@
       {{ content }}
     </div>
 
-    {% if link and link != "" %}
+    {% assign nowTs = "now" | date: "%s" %}
+    {% assign lastTs = date_end | default: date | date: "%s" %}
+    <div class="content-actions">
+      {% if link and link != "" %}
       <a class="btn" href="{{ link }}" target="_blank" rel="noopener">{{ languages[lang].tickets }}</a>
-    {% endif %}
+      {% endif %}
+      {% if lastTs >= nowTs %}
+      <button type="button" class="btn concert-cal-btn"
+        data-title="{{ title | escape }}"
+        data-date="{{ date | date: '%Y-%m-%dT%H:%M' }}"
+        {% if date_end %}data-date-end="{{ date_end | date: '%Y-%m-%dT%H:%M' }}"{% endif %}
+        {% if month_only %}data-month-only="true"{% endif %}
+        data-place="{{ place | escape }}"
+        data-composers="{{ composers | escape }}"
+        data-collaborators="{{ collaborators | escape }}"><svg class="btn-ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16"/><path d="M8 3v4M16 3v4M3 10h18"/><path d="M12 13.5v5M9.5 16h5"/></svg>{{ languages[lang].add_to_calendar }}</button>
+      {% endif %}
+    </div>
 
     {% if links and links.size > 0 %}
       <div class="content-actions">

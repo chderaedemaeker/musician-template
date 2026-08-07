@@ -193,6 +193,57 @@
     schedule();
   });
 
+  /* Build an .ics file for a concert and download it — used by the concert
+     modal and the concert detail pages. Opens straight into Apple/Google/
+     Outlook calendars, no external service involved. */
+  window.downloadConcertIcs = function (c) {
+    function pad(n) { return (n < 10 ? '0' : '') + n; }
+    function fmtDate(d) { return '' + d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()); }
+    function fmtDT(d) { return fmtDate(d) + 'T' + pad(d.getHours()) + pad(d.getMinutes()) + '00'; }
+    function escText(t) { return String(t).replace(/([,;\\])/g, '\\$1'); }
+    var start = new Date(c.date);
+    var hasTime = !c.monthOnly && !c.dateEnd && (start.getHours() !== 0 || start.getMinutes() !== 0);
+    var lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Veronique De Raedemaeker//Concerts//EN', 'BEGIN:VEVENT'];
+    if (hasTime) {
+      lines.push('DTSTART:' + fmtDT(start));
+      lines.push('DTEND:' + fmtDT(new Date(start.getTime() + 2 * 3600 * 1000)));
+    } else {
+      var end = c.dateEnd ? new Date(c.dateEnd) : new Date(start);
+      end.setDate(end.getDate() + 1);
+      lines.push('DTSTART;VALUE=DATE:' + fmtDate(start));
+      lines.push('DTEND;VALUE=DATE:' + fmtDate(end));
+    }
+    lines.push('SUMMARY:' + escText((c.title || 'Concert') + ' \u2014 Veronique De Raedemaeker'));
+    var desc = [c.composers, c.collaborators].filter(Boolean).join(' \u2014 ');
+    if (desc) lines.push('DESCRIPTION:' + escText(desc));
+    if (c.place) lines.push('LOCATION:' + escText(c.place));
+    if (c.link) lines.push('URL:' + location.origin + c.link);
+    lines.push('UID:' + fmtDate(start) + '-' + (c.title || 'concert').toLowerCase().replace(/[^a-z0-9]+/g, '-') + '@veroniquederaedemaeker.com');
+    lines.push('END:VEVENT', 'END:VCALENDAR');
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([lines.join('\r\n')], { type: 'text/calendar' }));
+    a.download = (c.title || 'concert') + '.ics';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  };
+
+  /* Add-to-calendar button on concert detail pages */
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest && e.target.closest('.concert-cal-btn');
+    if (!btn) return;
+    window.downloadConcertIcs({
+      title: btn.dataset.title,
+      date: btn.dataset.date,
+      dateEnd: btn.dataset.dateEnd || '',
+      monthOnly: btn.dataset.monthOnly === 'true',
+      place: btn.dataset.place || '',
+      composers: btn.dataset.composers || '',
+      collaborators: btn.dataset.collaborators || '',
+      link: location.pathname
+    });
+  });
+
   /* Share and print actions: native share sheet when available,
      otherwise copy the link and confirm with a small tooltip */
   document.addEventListener('click', function (e) {
