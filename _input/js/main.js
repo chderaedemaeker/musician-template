@@ -60,6 +60,11 @@
         el.style.transform = 'translateY(' + ((vh * 0.5 - endY) * (1 - p)) + 'px)';
       });
     }
+    /* The name is rendered ONCE at full size and travels on the
+       compositor alone (translate + scale) — no per-frame layout, so it
+       moves as smoothly as native sticky positioning. Scaling DOWN from
+       the large rendering keeps the glyphs crisp; at journey's end the
+       stylesheet takes over with real 1.5rem text. */
     function moveBrand(y) {
       if (!brand || !brandLink) return;
       var vh = window.innerHeight;
@@ -75,6 +80,8 @@
         brand.style.left = '';
         brand.style.top = '';
         brand.style.transform = '';
+        brand.style.transformOrigin = '';
+        brand.style.willChange = '';
         brandLink.style.fontSize = '';
         return p;
       }
@@ -82,13 +89,18 @@
       var gutter = inner ? parseFloat(getComputedStyle(inner).paddingLeft) || 24 : 24;
       var startY = vh * 0.5;
       var endY = nav.offsetHeight / 2;
+      /* fixed geometry set once — only the transform changes per frame */
       brand.style.transition = 'none';
       brand.style.position = 'fixed';
       brand.style.left = gutter + 'px';
-      brand.style.top = (startY + (endY - startY) * p) + 'px';
-      brand.style.transform = 'translateY(-50%)';
-      /* real font-size per frame keeps the glyphs crisp — no raster scaling */
-      brandLink.style.fontSize = (startSize + (endSize - startSize) * p) + 'px';
+      brand.style.top = '0';
+      brand.style.transformOrigin = 'left top';
+      brand.style.willChange = 'transform';
+      brandLink.style.fontSize = startSize + 'px';
+      var scale = (startSize + (endSize - startSize) * p) / startSize;
+      var centerY = startY + (endY - startY) * p;
+      var ty = centerY - (brand.offsetHeight * scale) / 2;
+      brand.style.transform = 'translate3d(0, ' + ty + 'px, 0) scale(' + scale + ')';
       return p;
     }
 

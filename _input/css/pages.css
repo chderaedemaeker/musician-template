@@ -610,12 +610,6 @@ li:last-child > .upcoming-item {
   padding-bottom: var(--space-xl);
 }
 
-.highlights-section .highlights-grid {
-  max-width: var(--width-wide);
-  margin-inline: auto;
-  padding-inline: var(--gutter);
-}
-
 /* ── 404 + form-success ── */
 .page-404,
 .page-success {
