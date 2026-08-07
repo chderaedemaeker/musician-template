@@ -1,5 +1,9 @@
 ---
 title: À propos
+gallery1: /images/klvero.png
+gallery2: /images/veronique-18.jpeg
+gallery3: /images/veronique-25copy.jpeg
+gallery4: ""
 summaryabout: Violoniste belge basée à Cologne, saluée pour sa richesse sonore et son phrasé instinctivement beau. Lauréate de plusieurs concours internationaux et boursière de la Werner Richard Dr. Carl Dörken Stiftung.
 layout: about.html
 tags: about
