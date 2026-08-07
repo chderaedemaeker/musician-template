@@ -1504,6 +1504,15 @@ class App {
       toggle.addEventListener('change', () => {
         if (toggle.checked) {
           input.hidden = false;
+          if (!input.value) {
+            const startEl = document.querySelector('[data-field="date"]');
+            if (startEl && startEl.value) {
+              const d = new Date(startEl.value);
+              d.setDate(d.getDate() + 1);
+              const p = n => String(n).padStart(2, '0');
+              input.value = `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+            }
+          }
           input.focus();
         } else {
           input.value = '';
@@ -1909,6 +1918,11 @@ class App {
       if (!f.required || f.name === 'body') continue;
       const v = state.data[locales[0]][f.name];
       if (!v || !String(v).trim()) { showStatus('error', `${f.label} is required`); return; }
+    }
+    const endToggle = document.querySelector('.date-end-toggle');
+    if (endToggle && endToggle.checked && !document.querySelector('.date-end-input').value) {
+      showStatus('error', 'Fill in the end date completely (day and time), or untick "runs for several days"');
+      return;
     }
     if (isNew) {
       filename = generateFilename(state.data[locales[0]].title);
