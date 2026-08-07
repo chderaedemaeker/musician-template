@@ -418,7 +418,7 @@ main {
 
 @media (max-width: 768px) {
   .nav-transparent:not(.is-scrolled) .nav-brand a {
-    font-size: min(2.85rem, 8.6vw);
+    font-size: min(2.85rem, 7.2vw);
   }
 
   .nav-transparent .hamburger.open span {
