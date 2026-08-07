@@ -106,5 +106,9 @@ collections:
     slug: 'about'
     fields:
       - {label: "Title", name: "title", widget: "string", required: true, i18n: true}
+      - {label: "Gallery photo 1", name: "gallery1", widget: "image", required: false, i18n: true, hint: "The photos that slide by at the top of the About page. Leave all four empty to keep the standard photos."}
+      - {label: "Gallery photo 2", name: "gallery2", widget: "image", required: false, i18n: true, hint: "Second gallery photo. Leave empty to skip."}
+      - {label: "Gallery photo 3", name: "gallery3", widget: "image", required: false, i18n: true, hint: "Third gallery photo. Leave empty to skip."}
+      - {label: "Gallery photo 4", name: "gallery4", widget: "image", required: false, i18n: true, hint: "Fourth gallery photo. Leave empty to skip."}
       - {label: "Short Bio", name: "summaryabout", widget: "markdown", i18n: true}
       - {label: "Bio", name: "body", widget: "markdown", i18n: true}

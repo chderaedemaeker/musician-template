@@ -18,20 +18,21 @@
     <header class="page-header">
       <h1>{{ title }}</h1>
     </header>
+    {% comment %} Gallery photos are editable in the admin (About → Gallery photo 1–4);
+       when none are set, the standard portraits are shown {% endcomment %}
+    {% assign galleryList = "" | split: "" %}
+    {% if gallery1 and gallery1 != "" %}{% assign galleryList = galleryList | push: gallery1 %}{% endif %}
+    {% if gallery2 and gallery2 != "" %}{% assign galleryList = galleryList | push: gallery2 %}{% endif %}
+    {% if gallery3 and gallery3 != "" %}{% assign galleryList = galleryList | push: gallery3 %}{% endif %}
+    {% if gallery4 and gallery4 != "" %}{% assign galleryList = galleryList | push: gallery4 %}{% endif %}
+    {% if galleryList.size == 0 %}
+      {% assign galleryList = "/images/veroniqueportrait.jpg,/images/veronique-18.jpeg,/images/veronique20b.jpg,/images/veronique-21.jpg" | split: "," %}
+    {% endif %}
     <div class="about-gallery">
       <div class="about-gallery-track">
-        <div class="gallery-slide is-active" style="background-image: url('/images/veroniqueportrait.jpg')" role="img" aria-label="{{ languages[lang].site_title }}"></div>
-        <div class="gallery-slide" style="background-image: url('/images/veronique-18.jpeg')" role="img" aria-label="{{ languages[lang].site_title }}"></div>
-        <div class="gallery-slide" style="background-image: url('/images/veronique20b.jpg')" role="img" aria-label="{{ languages[lang].site_title }}"></div>
-        <div class="gallery-slide" style="background-image: url('/images/veronique-21.jpg')" role="img" aria-label="{{ languages[lang].site_title }}"></div>
-      </div>
-      <div class="gallery-nav">
-        <button type="button" class="gallery-btn gallery-prev" aria-label="Previous image">
-          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M17 5 L8 12 L17 19 Z" fill="currentColor" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/></svg>
-        </button>
-        <button type="button" class="gallery-btn gallery-next" aria-label="Next image">
-          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M7 5 L16 12 L7 19 Z" fill="currentColor" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/></svg>
-        </button>
+        {% for g in galleryList %}
+        <div class="gallery-slide{% if forloop.first %} is-active{% endif %}" style="background-image: url('{{ g }}')" role="img" aria-label="{{ languages[lang].site_title }}"></div>
+        {% endfor %}
       </div>
     </div>
 

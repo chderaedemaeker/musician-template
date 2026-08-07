@@ -176,18 +176,20 @@
     var index = 0;
     var timer = null;
     function show(i) {
+      var prev = index;
       index = (i + imgs.length) % imgs.length;
-      imgs.forEach(function (img, j) { img.classList.toggle('is-active', j === index); });
+      imgs.forEach(function (img, j) {
+        /* the outgoing slide stays fully visible underneath while the new
+           one dissolves in on top — no flash of the background between them */
+        img.classList.toggle('was-active', j === prev && prev !== index);
+        img.classList.toggle('is-active', j === index);
+      });
     }
     function schedule() {
       if (reducedMotion) return;
       clearInterval(timer);
       timer = setInterval(function () { show(index + 1); }, 5000);
     }
-    gallery.querySelector('.gallery-prev').addEventListener('click', function () { show(index - 1); schedule(); });
-    gallery.querySelector('.gallery-next').addEventListener('click', function () { show(index + 1); schedule(); });
-    gallery.addEventListener('mouseenter', function () { clearInterval(timer); });
-    gallery.addEventListener('mouseleave', schedule);
     schedule();
   });
 

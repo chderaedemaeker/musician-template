@@ -12,4 +12,4 @@ tags: highlights
 lang: en
 ---
 
-Studio session by Duo Altiler at Studio Toots in Brussels.
+Studio session by Duo Altiler at Studio Toots in Brussels, featuring Ravel's Blues, Messiaen's Louange à l'éternité de l'enfant Jésus, and Bartók's 1st Violin Sonata.

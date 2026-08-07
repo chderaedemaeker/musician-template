@@ -40,7 +40,7 @@ module.exports = {
     show_earlier: "Show earlier concerts",
     contact_intro: "For bookings, programmes, press, or anything else — write a message below.",
     subscribe: "Subscribe",
-    newsletter_hint: "Stay up to date with the latest concerts, recordings and highlights — straight from Veronique.",
+    newsletter_hint: "Stay up to date with the latest concerts, recordings and highlights.",
     no_projects: "No projects found."
   },
   nl: {
