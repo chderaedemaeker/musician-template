@@ -257,13 +257,35 @@
   text-decoration-color: var(--near-black);
 }
 
+/* Contact reads as the one colored cell — the footer's steel blue,
+   navy ink, and a filled pill that can't be missed */
 .bento-contact {
   grid-column: 1 / 7;
+  background: var(--accent);
+  padding: var(--space-lg) var(--space-md);
+}
+
+.bento-contact .label {
+  color: #2c3a55;
 }
 
 .bento-contact-text {
-  color: var(--dark-grey);
+  color: #1d2440;
+  font-size: var(--text-lede);
+  line-height: var(--leading-snug);
   margin: 0;
+}
+
+.bento-contact .btn {
+  background: var(--accent-deep);
+  border-color: var(--accent-deep);
+  color: #fff;
+}
+
+.bento-contact .btn:hover {
+  background: #fff;
+  border-color: #fff;
+  color: var(--accent-deep);
 }
 
 .bento-cell-link {
@@ -300,12 +322,35 @@
   display: block;
   padding: var(--space-md2) var(--space-sm);
   margin-inline: calc(-1 * var(--space-sm));
-  border-bottom: 1px solid var(--warm-grey);
+  border-bottom: 1px solid rgba(51, 50, 47, 0.08);
   transition: background-color var(--dur-fast) var(--ease);
 }
 
-.upcoming-item:first-child {
-  border-top: 1px solid var(--warm-grey);
+li:last-child > .upcoming-item {
+  border-bottom: none;
+}
+
+/* Home bento rows mirror the concerts overview: date block left, title
+   beside it on the shared baseline */
+.upcoming-item--rich {
+  display: grid;
+  grid-template-columns: minmax(7.5rem, 9.5rem) minmax(0, 1fr);
+  gap: var(--space-sm) var(--space-md);
+  align-items: start;
+}
+
+.upcoming-item--rich .upcoming-item-title {
+  padding-top: 1.6rem;
+  font-size: var(--text-h2);
+}
+
+@media (max-width: 700px) {
+  .upcoming-item--rich {
+    display: block;
+  }
+  .upcoming-item--rich .upcoming-item-title {
+    padding-top: var(--space-xs);
+  }
 }
 
 .upcoming-item:hover {

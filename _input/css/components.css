@@ -791,6 +791,18 @@
   margin-bottom: var(--space-md);
 }
 
+/* Collaborators carry the line-up — close to the title and clearly
+   weightier than the composer list beneath */
+.concert-modal-collab {
+  font-size: 1.0625rem;
+  color: var(--charcoal);
+}
+
+.concert-modal-composers {
+  margin-top: var(--space-2xs);
+  font-size: var(--text-label);
+}
+
 .concert-modal-meta a,
 .concert-detail .meta a {
   color: inherit;

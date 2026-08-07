@@ -97,10 +97,11 @@
       }
       return null;
     }
-    [[c.composers, false], [c.collaborators, true]].forEach(function (entry) {
+    [[c.collaborators, true, 'concert-modal-collab'], [c.composers, false, 'concert-modal-composers']].forEach(function (entry) {
       var value = entry[0];
       if (!value) return;
       var span = document.createElement('span');
+      span.className = entry[2];
       var projUrl = entry[1] ? projectFor(value) : null;
       if (projUrl) {
         var a = document.createElement('a');

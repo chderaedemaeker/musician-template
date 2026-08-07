@@ -37,12 +37,38 @@ document.addEventListener('DOMContentLoaded', function() {
     var section = document.getElementById('upcoming-section');
     if (section) section.style.display = 'none';
   } else {
+    /* Same date treatment as the concerts overview: light weekday,
+       big serif day number, month stacked over year */
+    function dateBlock(c) {
+      var d = new Date(c.date);
+      function stack(day, wd, month) {
+        return '<span class="concert-row-day">' + wd + '</span>' +
+          '<span class="concert-row-datemain">' +
+            '<span class="concert-row-daynum">' + day + '</span>' +
+            '<span class="concert-row-monthyear"><span>' + month + '</span><span>' + d.getFullYear() + '</span></span>' +
+          '</span>';
+      }
+      if (c.monthOnly && !c.dateEnd) {
+        return '<span class="concert-row-day">' + d.toLocaleDateString(lang, { month: 'long', year: 'numeric' }) + '</span>';
+      }
+      if (c.dateEnd) {
+        var e = new Date(c.dateEnd);
+        var sameMonth = d.getMonth() === e.getMonth() && d.getFullYear() === e.getFullYear();
+        return stack(
+          d.getDate() + '\u2009\u2013\u2009' + e.getDate(),
+          d.toLocaleDateString(lang, { weekday: 'short' }) + ' \u2013 ' + e.toLocaleDateString(lang, { weekday: 'short' }),
+          sameMonth ? d.toLocaleDateString(lang, { month: 'long' })
+                    : d.toLocaleDateString(lang, { month: 'short' }) + ' \u2013 ' + e.toLocaleDateString(lang, { month: 'short' }));
+      }
+      return stack(d.getDate(), d.toLocaleDateString(lang, { weekday: 'long' }), d.toLocaleDateString(lang, { month: 'long' }));
+    }
     list.innerHTML = upcoming.map(function(c) {
       return '<li>' +
-        '<a class="upcoming-item" href="' + c.link + '">' +
-          '<span class="upcoming-item-date">' + dateStr(c) + '</span>' +
+        '<a class="upcoming-item upcoming-item--rich" href="' + c.link + '">' +
+          '<span class="upcoming-item-when">' + dateBlock(c) +
+            (c.place ? '<span class="concert-row-where">' + c.place + '</span>' : '') +
+          '</span>' +
           '<span class="upcoming-item-title">' + c.title + '</span>' +
-          (c.place ? '<span class="upcoming-item-place">' + c.place + '</span>' : '') +
         '</a>' +
       '</li>';
     }).join('');
