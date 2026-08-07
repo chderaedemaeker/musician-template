@@ -332,9 +332,6 @@ main {
 /* ── Home page: the name starts big over the photo, the menu only
       arrives once you scroll ── */
 .nav-transparent {
-  position: fixed;
-  left: 0;
-  right: 0;
   border-color: transparent;
 }
 
@@ -342,11 +339,14 @@ main {
   background-color: transparent;
 }
 
-.nav-transparent:not(.is-scrolled) .nav-brand {
-  position: fixed;
-  left: var(--gutter);
-  top: 50vh;
-  transform: translateY(-50%);
+/* The home bar starts at the hero's midline and pins at the top —
+   pure position: sticky, nothing animated per frame. The margins
+   cancel exactly (top + height + bottom = 0), so the hero still
+   begins at the very top of the page. */
+.nav-transparent {
+  height: var(--nav-height);
+  margin-top: calc(50vh - var(--nav-height) / 2);
+  margin-bottom: calc(-50vh - var(--nav-height) / 2);
 }
 
 .nav-transparent:not(.is-scrolled) .nav-brand a {
@@ -410,13 +410,6 @@ main {
 }
 
 @media (max-width: 768px) {
-  .nav-transparent:not(.is-scrolled) .nav-brand {
-    position: fixed;
-    left: var(--gutter);
-    top: 50vh;
-    transform: translateY(-50%);
-  }
-
   .nav-transparent:not(.is-scrolled) .nav-brand a {
     font-size: min(2.85rem, 8.6vw);
   }

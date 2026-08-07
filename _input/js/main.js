@@ -34,84 +34,19 @@
   document.addEventListener('DOMContentLoaded', function () {
     var nav = document.querySelector('.nav');
     if (!nav) return;
-    var brand = nav.querySelector('.nav-brand');
     var isHero = nav.classList.contains('nav-transparent');
     var lastY = window.scrollY;
     var ticking = false;
 
-    /* On the home page the name travels with the scroll, pixel for
-       pixel, from the middle of the hero up into the bar. */
-    var brandLink = brand ? brand.querySelector('a') : null;
-    var travelers = [nav.querySelector('.nav-links'), nav.querySelector('.lang-picker')].filter(Boolean);
-
-    /* The links make the same journey (no scaling): a plain translateY
-       from the hero's midline up to their place in the bar */
-    function moveLinks(p) {
-      var vh = window.innerHeight;
-      var endY = nav.offsetHeight / 2;
-      travelers.forEach(function (el) {
-        if (!el.offsetParent && p < 1) return; /* collapsed behind the hamburger */
-        if (p >= 1) {
-          el.style.transition = '';
-          el.style.transform = '';
-          return;
-        }
-        el.style.transition = 'none';
-        el.style.transform = 'translateY(' + ((vh * 0.5 - endY) * (1 - p)) + 'px)';
-      });
-    }
-    /* The name is rendered ONCE at full size and travels on the
-       compositor alone (translate + scale) — no per-frame layout, so it
-       moves as smoothly as native sticky positioning. Scaling DOWN from
-       the large rendering keeps the glyphs crisp; at journey's end the
-       stylesheet takes over with real 1.5rem text. */
-    function moveBrand(y) {
-      if (!brand || !brandLink) return;
-      var vh = window.innerHeight;
-      var small = window.matchMedia('(max-width: 768px)').matches;
-      var startSize = small ? Math.min(45.6, window.innerWidth * 0.086) : 72; /* px — matches the stylesheet */
-      var endSize = 24;                    /* 1.5rem dock size */
-      var p = Math.min(1, Math.max(0, y / (vh * 0.6)));
-      if (p >= 1) {
-        /* journey done — hand back to the stylesheet so the name sits
-           exactly where the bar's own rules put it (left, in flow) */
-        brand.style.transition = '';
-        brand.style.position = '';
-        brand.style.left = '';
-        brand.style.top = '';
-        brand.style.transform = '';
-        brand.style.transformOrigin = '';
-        brand.style.willChange = '';
-        brandLink.style.fontSize = '';
-        return p;
-      }
-      var inner = nav.querySelector('.nav-inner');
-      var gutter = inner ? parseFloat(getComputedStyle(inner).paddingLeft) || 24 : 24;
-      var startY = vh * 0.5;
-      var endY = nav.offsetHeight / 2;
-      /* fixed geometry set once — only the transform changes per frame */
-      brand.style.transition = 'none';
-      brand.style.position = 'fixed';
-      brand.style.left = gutter + 'px';
-      brand.style.top = '0';
-      brand.style.transformOrigin = 'left top';
-      brand.style.willChange = 'transform';
-      brandLink.style.fontSize = startSize + 'px';
-      var scale = (startSize + (endSize - startSize) * p) / startSize;
-      var centerY = startY + (endY - startY) * p;
-      var ty = centerY - (brand.offsetHeight * scale) / 2;
-      brand.style.transform = 'translate3d(0, ' + ty + 'px, 0) scale(' + scale + ')';
-      return p;
-    }
-
     function apply() {
       ticking = false;
       var y = window.scrollY;
-      if (isHero && !reducedMotion) {
-        var p = moveBrand(y);
-        moveLinks(Math.min(1, Math.max(0, y / (window.innerHeight * 0.6))));
-        if (p >= 1) nav.classList.add('is-scrolled');
-        else if (p < 0.95) nav.classList.remove('is-scrolled');
+      if (isHero) {
+        /* the bar is position: sticky — it travels natively. This only
+           flips the docked look on/off around the pin point. */
+        var pinY = window.innerHeight * 0.5 - nav.offsetHeight / 2;
+        if (y >= pinY - 1) nav.classList.add('is-scrolled');
+        else if (y < pinY - 40) nav.classList.remove('is-scrolled');
       } else {
         /* hysteresis: no flickering around a single threshold */
         if (y > 90) nav.classList.add('is-scrolled');
