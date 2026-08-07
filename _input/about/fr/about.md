@@ -11,7 +11,7 @@ lang: fr
 permalink: fr/about/index.html
 ---
 
-Veronique De Raedemaeker (née en 1996) est une violoniste belge vivant à Cologne.
+Veronique De Raedemaeker (née en 1996) est une violoniste belge vivant à Cologne. Saluée pour la richesse de sa sonorité et son phrasé d'une beauté instinctive, elle circule librement entre le grand répertoire et la musique des compositeurs vivants — convaincue que l'un et l'autre parlent avec la même urgence.
 
 ## Prix & soutiens
 
@@ -29,7 +29,7 @@ Au cours des dernières années, Veronique a été invitée à se produire au Kl
 
 ## Musique de chambre & enregistrements
 
-Passionnée de musique de chambre, elle se produit régulièrement avec ses propres ensembles — Trio Gilu, Oreneta Kammerensemble, ÉRMA Ensemble et en duo avec le pianiste Alexander Declercq (Duo Altiler) et avec la harpiste Mathilde Wauters.
+La musique de chambre est au cœur de son jeu — l'écoute, le souffle partagé, la conversation sans paroles. Elle se produit avec ses propres ensembles — Trio Gilu, Oreneta Kammerensemble, ÉRMA Ensemble — et en duo avec le pianiste Alexander Declercq (Duo Altiler) et avec la harpiste Mathilde Wauters.
 
 > "Richesse sonore et phrasé instinctivement beau."
 
@@ -39,7 +39,7 @@ En 2022, avec son Trio Gilu, elle a publié le CD "Garland — Songs for Soprano
 
 ## Musique nouvelle
 
-Sa fascination pour la musique nouvelle lui a permis de collaborer avec des compositeurs contemporains tels qu'Unsuk Chin, Helmut Lachenmann, Heinz Holliger et bien d'autres. Elle est membre fondatrice de l'ÉRMA Ensemble soutenu par le Deutscher Musikrat, spécialisé dans l'interprétation de la musique nouvelle.
+La musique nouvelle traverse tout ce qu'elle entreprend. Travailler aux côtés de compositeurs tels qu'Unsuk Chin, Helmut Lachenmann et Heinz Holliger a façonné sa manière d'écouter — la musique ancienne autant que la nouvelle. Elle est membre fondatrice de l'ÉRMA Ensemble, soutenu par le Deutscher Musikrat, qui se consacre à la musique de notre temps.
 
 Veronique joue sur un violon de Stefan-Peter Greiner. En 2024, elle a été présentée dans l'émission "The Twintigers" sur Klara.
 

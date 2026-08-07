@@ -10,7 +10,7 @@ tags: about
 lang: en
 permalink: en/about/index.html
 ---
-Veronique De Raedemaeker (born 1996) is a Belgian violinist living in Cologne.
+Veronique De Raedemaeker (born 1996) is a Belgian violinist living in Cologne. Praised for her richness of sound and instinctively beautiful phrasing, she moves freely between the great repertoire and the music of living composers — convinced that both speak with the same urgency.
 
 ## Prizes & support
 
@@ -28,7 +28,7 @@ Over the past years, Veronique has been invited to perform at the Klavierfestiva
 
 ## Chamber music & recordings
 
-A passionate chamber musician, she performs regularly with her own ensembles — Trio Gilu, Oreneta Kammerensemble, ÉRMA Ensemble and in duo with pianist Alexander Declercq (Duo Altiler) and with harpist Mathilde Wauters.
+Chamber music lies at the heart of her playing — the listening, the shared breath, the conversation without words. She performs with her own ensembles — Trio Gilu, Oreneta Kammerensemble, ÉRMA Ensemble — and in duo with pianist Alexander Declercq (Duo Altiler) and with harpist Mathilde Wauters.
 
 > "Richness in sound and instinctively beautiful phrasing."
 
@@ -38,7 +38,7 @@ In 2022, together with her Trio Gilu, she released the CD "Garland — Songs for
 
 ## New music
 
-Her fascination with new music has allowed her to collaborate with contemporary composers such as Unsuk Chin, Helmut Lachenmann, Heinz Holliger and many others. She is a founding member of the ÉRMA Ensemble supported by Deutscher Musikrat, which specializes in the performance of new music.
+New music runs through everything she does. Working alongside composers such as Unsuk Chin, Helmut Lachenmann and Heinz Holliger has shaped the way she listens — to old music as much as new. She is a founding member of the ÉRMA Ensemble, supported by the Deutscher Musikrat, which devotes itself to the music of our time.
 
 Veronique plays on a violin by Stefan-Peter Greiner. In 2024, she was featured on the program of "The Twintigers" on Klara.
 

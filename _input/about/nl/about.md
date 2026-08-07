@@ -11,7 +11,7 @@ lang: nl
 permalink: nl/about/index.html
 ---
 
-Veronique De Raedemaeker (geboren 1996) is een Belgische violiste woonachtig in Keulen.
+Veronique De Raedemaeker (geboren 1996) is een Belgische violiste woonachtig in Keulen. Geprezen om haar klankrijkdom en instinctief mooie frasering beweegt ze zich vrij tussen het grote repertoire en de muziek van levende componisten — overtuigd dat beide met dezelfde urgentie spreken.
 
 ## Prijzen & steun
 
@@ -29,7 +29,7 @@ De afgelopen jaren werd Veronique uitgenodigd om op te treden op het Klavierfest
 
 ## Kamermuziek & opnames
 
-Als gepassioneerd kamermuzikante treedt ze regelmatig op met haar eigen ensembles — Trio Gilu, Oreneta Kammerensemble, ÉRMA Ensemble en in duo met pianist Alexander Declercq (Duo Altiler) en met harpiste Mathilde Wauters.
+Kamermuziek vormt het hart van haar spel — het luisteren, de gedeelde adem, het gesprek zonder woorden. Ze musiceert met haar eigen ensembles — Trio Gilu, Oreneta Kammerensemble, ÉRMA Ensemble — en in duo met pianist Alexander Declercq (Duo Altiler) en met harpiste Mathilde Wauters.
 
 > "Rijkdom in klank en instinctief mooie frasering."
 
@@ -39,7 +39,7 @@ In 2022 bracht ze samen met haar Trio Gilu de cd "Garland — Songs for Soprano,
 
 ## Nieuwe muziek
 
-Haar fascinatie voor nieuwe muziek heeft haar in staat gesteld samen te werken met hedendaagse componisten zoals Unsuk Chin, Helmut Lachenmann, Heinz Holliger en vele anderen. Ze is medeoprichter van het ÉRMA Ensemble, gesteund door de Deutscher Musikrat, dat gespecialiseerd is in het uitvoeren van nieuwe muziek.
+Nieuwe muziek loopt als een rode draad door alles wat ze doet. Het werken met componisten als Unsuk Chin, Helmut Lachenmann en Heinz Holliger heeft haar manier van luisteren gevormd — naar oude muziek evenzeer als naar nieuwe. Ze is medeoprichter van het ÉRMA Ensemble, gesteund door de Deutscher Musikrat, dat zich wijdt aan de muziek van onze tijd.
 
 Veronique speelt op een viool van Stefan-Peter Greiner. In 2024 was ze te gast in het programma "De Twintigers" op Klara.
 
