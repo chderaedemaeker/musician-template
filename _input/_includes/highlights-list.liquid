@@ -4,10 +4,12 @@
 {% assign sortedHighlights = collections[langHighlights] | sort: 'date' | reverse %}
 
 <div class="highlights-section">
-  <header class="page-header page-header--actions">
-    <h1>{{ languages[lang].highlights_title }}</h1>
-    {% include "share-actions.liquid" %}
-  </header>
+  <div class="container">
+    <header class="page-header page-header--actions">
+      <h1>{{ languages[lang].highlights_title }}</h1>
+      {% include "share-actions.liquid" %}
+    </header>
+  </div>
   <div class="highlights-grid highlights-grid--large reveal-group">
     {% if sortedHighlights.size > 0 %}
       {% for highlight in sortedHighlights %}
