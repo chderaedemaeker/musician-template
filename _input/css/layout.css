@@ -359,30 +359,37 @@ main {
   transition: color var(--dur-med) var(--ease);
 }
 
-/* Over the hero photo: no bar, light menu */
-.nav-transparent:not(.is-scrolled) .nav-brand a {
+/* Over the hero photo (until the photo has fully passed): no bar,
+   light menu — the veil never sits on top of the hero */
+.nav.nav-transparent:not(.nav--past) {
+  background-color: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.nav-transparent:not(.nav--past) .nav-brand a {
   color: var(--white);
 }
 
-.nav-transparent:not(.is-scrolled) .nav-links a {
+.nav-transparent:not(.nav--past) .nav-links a {
   color: rgba(246, 246, 244, 0.8);
 }
 
-.nav-transparent:not(.is-scrolled) .nav-links a:hover,
-.nav-transparent:not(.is-scrolled) .nav-links a.active {
+.nav-transparent:not(.nav--past) .nav-links a:hover,
+.nav-transparent:not(.nav--past) .nav-links a.active {
   color: var(--white);
   text-decoration-color: var(--white);
 }
 
-.nav-transparent:not(.is-scrolled) .lang-picker-btn {
+.nav-transparent:not(.nav--past) .lang-picker-btn {
   color: rgba(246, 246, 244, 0.8);
 }
 
-.nav-transparent:not(.is-scrolled) .lang-picker-btn:hover {
+.nav-transparent:not(.nav--past) .lang-picker-btn:hover {
   color: var(--white);
 }
 
-.nav-transparent:not(.is-scrolled) .hamburger span {
+.nav-transparent:not(.nav--past) .hamburger span {
   background-color: var(--white);
 }
 

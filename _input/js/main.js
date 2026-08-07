@@ -42,11 +42,15 @@
       ticking = false;
       var y = window.scrollY;
       if (isHero) {
-        /* the bar is position: sticky — it travels natively. This only
-           flips the docked look on/off around the pin point. */
+        /* the bar is position: sticky — it travels natively. These only
+           flip classes: docked size at the pin point, and the veil
+           background once the hero photo has fully passed. */
         var pinY = window.innerHeight * 0.5 - nav.offsetHeight / 2;
         if (y >= pinY - 1) nav.classList.add('is-scrolled');
         else if (y < pinY - 40) nav.classList.remove('is-scrolled');
+        var pastY = window.innerHeight - nav.offsetHeight;
+        if (y >= pastY) nav.classList.add('nav--past');
+        else if (y < pastY - 40) nav.classList.remove('nav--past');
       } else {
         /* hysteresis: no flickering around a single threshold */
         if (y > 90) nav.classList.add('is-scrolled');
