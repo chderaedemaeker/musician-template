@@ -922,7 +922,7 @@ class App {
       const selecting = wrap.classList.toggle('selecting');
       selectBtn.textContent = selecting ? 'Done' : 'Select';
       // the checkbox column only takes space while selecting
-      const cols = (selecting ? '36px' : '0px') + ' 96px ' + colWidths;
+      const cols = (selecting ? '36px' : '0px') + ' 96px ' + state.columns.map(c => c.width).join(' ');
       document.getElementById('notion-table').style.gridTemplateColumns = cols;
       state.gridCols = cols;
       wrap.querySelectorAll('.notion-row').forEach(r => { r.style.gridTemplateColumns = cols; });

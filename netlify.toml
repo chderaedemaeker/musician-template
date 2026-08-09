@@ -12,6 +12,12 @@
     X-XSS-Protection = "1; mode=block"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
 
+# The admin must always load matching fresh assets
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    Cache-Control = "no-cache"
+
 # Cache optimized images
 [[headers]]
   for = "/images/optimized/*"
