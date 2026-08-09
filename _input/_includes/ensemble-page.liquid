@@ -96,7 +96,7 @@
         </ul>
       {% endif %}
       {% if pastConcerts.size > 0 %}
-        <details class="project-archive">
+        <details class="project-archive"{% if upcomingConcerts.size == 0 %} open{% endif %}>
           <summary class="label project-concerts-label">{{ languages[lang].archive }} ({{ pastConcerts.size }})</summary>
           {% assign pastRecent = pastConcerts | reverse %}
           <ul class="upcoming-list upcoming-list--past">

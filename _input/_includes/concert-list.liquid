@@ -196,6 +196,15 @@ document.addEventListener('DOMContentLoaded', function() {
       t.section.hidden = !t.tab.classList.contains('active');
     });
   }
+  /* Nothing coming up? Open straight onto the archive. */
+  if (upcoming.length === 0 && archive.length > 0) {
+    tabs[0].tab.classList.remove('active');
+    tabs[0].tab.setAttribute('aria-pressed', 'false');
+    tabs[1].tab.classList.add('active');
+    tabs[1].tab.setAttribute('aria-pressed', 'true');
+    applyTabs();
+  }
+
   tabs.forEach(function(current) {
     current.tab.addEventListener('click', function() {
       tabs.forEach(function(other) {
