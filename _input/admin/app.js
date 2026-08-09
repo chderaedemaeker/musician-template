@@ -793,6 +793,10 @@ class App {
     const entries = state.visibleCount ? state.entries.slice(0, state.visibleCount) : state.entries;
 
     const sorted = [...entries].sort((a, b) => {
+      // Broken rows (no date) always float to the top, whatever the sort
+      const aBad = !a.data.date ? 0 : 1;
+      const bBad = !b.data.date ? 0 : 1;
+      if (aBad !== bBad) return aBad - bBad;
       const va = (a.data[sortKey] || '').toLowerCase();
       const vb = (b.data[sortKey] || '').toLowerCase();
       if (!va && !vb) return 0;
