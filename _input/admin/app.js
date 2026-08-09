@@ -1291,7 +1291,11 @@ class App {
     const isI18n = !!(col.i18n || col.i18nStructure);
 
     if (!isI18n) {
-      // Single-language collections (concerts, notes) keep the plain form
+      if (col.name === 'concerts') {
+        this._renderConcertForm(state, formEl);
+        return;
+      }
+      // Other single-language collections (notes) keep the plain form
       const data = state.data[state.activeLocale];
       const body = state.body[state.activeLocale];
       let html = '';
@@ -1368,6 +1372,79 @@ class App {
     formEl.innerHTML = html;
     this._bindFormHandlers(formEl, state);
     this._bindI18nFieldControls(formEl, state);
+    this._fillConcertDataLists(formEl, state.col);
+    this._updateLivePreview(state);
+  }
+
+  // The concert editor mirrors how a calendar event is composed: what and
+  // where first, then when, then the optional extras — grouped, quiet,
+  // no labels where a placeholder says enough.
+  _renderConcertForm(state, formEl) {
+    const { col } = state;
+    const loc = state.activeLocale;
+    const data = state.data[loc];
+    const byName = {};
+    for (const f of col.fields) byName[f.name] = f;
+    const used = new Set();
+    const field = (name) => { used.add(name); return byName[name]; };
+    const control = (name) => byName[name] ? this._renderField(byName[name], data[name] || '', loc) : '';
+    const hintFor = (name) => {
+      const f = byName[name];
+      return f && f.hint ? `<button type="button" class="hint-toggle" aria-label="What is this?" title="${esc(f.hint)}">?</button><span class="field-hint" hidden>${esc(f.hint)}</span>` : '';
+    };
+    const row = (label, name, extraClass) => byName[name] ? `
+      <div class="cedit-row${extraClass ? ' ' + extraClass : ''}">
+        <span class="cedit-row-label">${label}${hintFor(name)}</span>
+        <div class="cedit-row-control">${control(name)}</div>
+      </div>` : '';
+
+    field('title'); field('place'); field('date'); field('date_end'); field('month_only');
+    field('composers'); field('collaborators'); field('link'); field('links'); field('featured');
+
+    let html = `
+      <div class="cedit">
+        <input type="text" class="cedit-title" data-field="title" data-locale="${loc}" value="${esc(data.title || '')}" placeholder="Concert title" />
+        <input type="text" class="cedit-place" data-field="place" data-locale="${loc}" value="${esc(data.place || '')}" placeholder="Location" list="ac-place-${loc}" autocomplete="off" />
+        <datalist id="ac-place-${loc}"></datalist>
+
+        <div class="cedit-card">
+          ${row('Starts', 'date')}
+          ${row('Ends', 'date_end')}
+          ${row('Month only', 'month_only')}
+        </div>
+
+        <div class="cedit-card">
+          ${row('Composers', 'composers')}
+          ${row('With', 'collaborators')}
+        </div>
+
+        <div class="cedit-card">
+          ${row('Tickets', 'link')}
+          ${row('Links', 'links', 'cedit-row--stack')}
+        </div>
+
+        <div class="cedit-card">
+          ${row('Featured', 'featured')}
+        </div>`;
+
+    // Any field added to the config later still shows up
+    for (const f of col.fields) {
+      if (f.name === 'body' || used.has(f.name)) continue;
+      html += `<div class="form-group">${this._renderLabel(f)}${this._renderField(f, data[f.name] || '', loc)}</div>`;
+    }
+
+    const bodyField = byName['body'];
+    if (bodyField) {
+      html += `
+        <div class="cedit-notes">
+          <span class="cedit-row-label">Notes${hintFor('body')}</span>
+          ${this._renderMarkdownEditor('body', state.body[loc], loc)}
+        </div>`;
+    }
+    html += '</div>';
+
+    formEl.innerHTML = html;
+    this._bindFormHandlers(formEl, state);
     this._fillConcertDataLists(formEl, state.col);
     this._updateLivePreview(state);
   }
