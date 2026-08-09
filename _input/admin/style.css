@@ -1647,3 +1647,10 @@ body { letter-spacing: -0.01em; }
   gap: .35rem;
   align-items: center;
 }
+
+/* Checkboxes appear only in selection mode ("Select" above the table) */
+.notion-table:not(.selecting) .notion-th-check input,
+.notion-table:not(.selecting) .notion-cell-check input {
+  visibility: hidden;
+  pointer-events: none;
+}

@@ -680,6 +680,7 @@ class App {
       <div class="list-header">
         <h2>${esc(col.label)}</h2>
         <div style="display:flex;gap:.5rem;">
+          <button class="btn btn-ghost btn-sm" id="select-mode-btn">Select</button>
           <button class="btn btn-primary btn-sm" id="new-row-btn">+ New</button>
         </div>
       </div>
@@ -875,6 +876,18 @@ class App {
       document.getElementById('bulk-bar').style.display = 'none';
       document.getElementById('select-all-checkbox').checked = false;
       showStatus('saved', 'Deleted');
+    });
+
+    // Selection mode: checkboxes stay hidden until asked for
+    const selectBtn = document.getElementById('select-mode-btn');
+    selectBtn.addEventListener('click', () => {
+      const table = document.getElementById('notion-table');
+      const selecting = table.classList.toggle('selecting');
+      selectBtn.textContent = selecting ? 'Done' : 'Select';
+      if (!selecting) {
+        table.querySelectorAll('.entry-select, #select-all-checkbox').forEach(cb => { cb.checked = false; });
+        document.getElementById('bulk-bar').style.display = 'none';
+      }
     });
 
     // New row
