@@ -25,7 +25,9 @@ class GitGatewayAPI {
 
   async _request(method, endpoint, body) {
     const url = `${this.base}${endpoint}`;
-    const opts = { method, headers: await this._headers() };
+    // no-store: a cached GET would hand back a stale file sha, and every
+    // save built on it fails with "does not match ..."
+    const opts = { method, headers: await this._headers(), cache: 'no-store' };
     if (body) opts.body = JSON.stringify(body);
     let res = await fetch(url, opts);
     if (res.status === 401) {
@@ -97,6 +99,12 @@ class GitGatewayAPI {
         // We never knew the file's sha AND we can't look it up now —
         // almost always a dropped connection or expired login session.
         throw new Error('Could not save — the connection or login session failed. Your changes are still in the form: reload the page, log in again, and press Save once more.');
+      }
+      if (/does not match/.test(e.message || '')) {
+        // The branch moved between read and write — settle and try once more
+        await new Promise(r => setTimeout(r, 900));
+        const again = (await this.getFileInfo(path)).sha;
+        return this.createOrUpdateFile(path, content, message, again);
       }
       throw e; // sha was correct — some other problem
     }
