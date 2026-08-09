@@ -1929,15 +1929,27 @@ body { letter-spacing: -0.01em; }
   border-radius: 10px;
 }
 
-/* A concert without a date is invisible on the site — make it loud */
-.notion-row-nodate .notion-cell-date {
-  background: #f7e8e8;
-  border-radius: 6px;
+/* A concert without a date is invisible on the site — make it loud:
+   the whole row goes dark red with white text */
+.notion-row-nodate,
+.notion-row-nodate .notion-cell,
+.notion-row-nodate .notion-cell-title,
+.notion-row-nodate .notion-date-input {
+  background: #8a2222;
+  color: #fff;
+}
+
+.notion-row-nodate .notion-open-btn,
+.notion-row-nodate .notion-dup-btn {
+  background: #fff;
+  color: #8a2222;
+  border-color: #fff;
 }
 
 .notion-row-nodate .notion-cell-date::after {
   content: 'no date!';
   font-size: .62rem;
-  color: #8a2222;
+  color: #fff;
+  opacity: .85;
   margin-left: .3rem;
 }
