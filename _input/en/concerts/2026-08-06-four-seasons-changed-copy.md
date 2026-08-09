@@ -6,5 +6,4 @@ composers: Richter
 collaborators: Bryggen Bruges Strings
 link: "https://bryggen.be/concerten/"
 layout: concert.html
-status: archived
 ---
