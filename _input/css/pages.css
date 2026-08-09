@@ -474,7 +474,11 @@ li:last-child > .upcoming-item {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-sm);
-  margin: var(--space-md) 0 0;
+  margin: var(--space-xl) 0 0;
+}
+
+.content-actions + .content-actions {
+  margin-top: var(--space-sm);
 }
 
 .about-projects {

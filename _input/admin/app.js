@@ -672,7 +672,8 @@ class App {
       { key: 'composers', label: 'Composers', width: 'minmax(120px, 1fr)' },
       { key: 'collaborators', label: 'Collaborators', width: 'minmax(120px, 1fr)' },
     ];
-    const gridCols = '36px 132px ' + columns.map(c => c.width).join(' ');
+    const colWidths = columns.map(c => c.width).join(' ');
+    const gridCols = '0px 96px ' + colWidths;
 
     this.el.innerHTML = `
       ${this._topbar()}
@@ -884,6 +885,11 @@ class App {
       const wrap = document.querySelector('.notion-table-wrap');
       const selecting = wrap.classList.toggle('selecting');
       selectBtn.textContent = selecting ? 'Done' : 'Select';
+      // the checkbox column only takes space while selecting
+      const cols = (selecting ? '36px' : '0px') + ' 96px ' + colWidths;
+      document.getElementById('notion-table').style.gridTemplateColumns = cols;
+      state.gridCols = cols;
+      wrap.querySelectorAll('.notion-row').forEach(r => { r.style.gridTemplateColumns = cols; });
       if (!selecting) {
         wrap.querySelectorAll('.entry-select, #select-all-checkbox').forEach(cb => { cb.checked = false; });
         document.getElementById('bulk-bar').style.display = 'none';

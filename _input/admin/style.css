@@ -725,13 +725,15 @@ a:hover { opacity: 0.6; }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 26px;
+  height: 22px;
   border: 1px solid var(--warm-grey);
   border-radius: 999px;
   background: #fff;
   font-family: inherit;
-  font-size: .72rem;
-  padding: 0 .65rem;
+  font-size: .68rem;
+  line-height: 1;
+  color: var(--near-black);
+  padding: 0 .55rem;
   cursor: pointer;
   font-size: 1rem;
   color: var(--mid-grey);
@@ -1653,4 +1655,12 @@ body { letter-spacing: -0.01em; }
 .notion-table-wrap:not(.selecting) .notion-cell-check input {
   visibility: hidden;
   pointer-events: none;
+}
+
+/* Collapsed checkbox column takes no space at all */
+.notion-th-check,
+.notion-cell-check {
+  overflow: hidden;
+  padding-left: 0;
+  padding-right: 0;
 }
