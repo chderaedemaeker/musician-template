@@ -540,7 +540,7 @@ class App {
         ${this.collections.map(c => `
           <div class="card" data-col="${c.name}">
             <div class="card-label">${esc(c.label)}<span class="card-badge" id="badge-${c.name}" style="display:none;"></span></div>
-            <div class="card-count">${c.i18n ? 'EN · NL · FR' : 'Single language'}</div>
+
           </div>
         `).join('')}
         <div class="card" id="media-card">
@@ -881,11 +881,11 @@ class App {
     // Selection mode: checkboxes stay hidden until asked for
     const selectBtn = document.getElementById('select-mode-btn');
     selectBtn.addEventListener('click', () => {
-      const table = document.getElementById('notion-table');
-      const selecting = table.classList.toggle('selecting');
+      const wrap = document.querySelector('.notion-table-wrap');
+      const selecting = wrap.classList.toggle('selecting');
       selectBtn.textContent = selecting ? 'Done' : 'Select';
       if (!selecting) {
-        table.querySelectorAll('.entry-select, #select-all-checkbox').forEach(cb => { cb.checked = false; });
+        wrap.querySelectorAll('.entry-select, #select-all-checkbox').forEach(cb => { cb.checked = false; });
         document.getElementById('bulk-bar').style.display = 'none';
       }
     });
