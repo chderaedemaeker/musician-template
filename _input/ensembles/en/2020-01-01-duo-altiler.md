@@ -15,7 +15,7 @@ links:
     url: "https://instagram.com/duoaltiler"
   - label: Facebook
     url: "https://www.facebook.com/profile.php?id=61552079672263"
-order: 5
+order: 1
 ---
 Duo Altiler is a Belgian violin-piano duo featuring Veronique De Raedemaeker and Alexander Declercq.
 
