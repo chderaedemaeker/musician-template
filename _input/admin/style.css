@@ -1953,3 +1953,11 @@ body { letter-spacing: -0.01em; }
   opacity: .85;
   margin-left: .3rem;
 }
+
+/* Concerts without a concrete hour (00:00) or with only a month: yellow —
+   worth a look, but not broken, so they keep their place in the sort */
+.notion-row-notime,
+.notion-row-notime .notion-cell,
+.notion-row-notime .notion-date-input {
+  background: #fdf3d7;
+}
