@@ -87,8 +87,7 @@ collections:
     i18n: true
     fields:
       - {label: "Title", name: "title", widget: "string", required: true, i18n: true, hint: "The name of the highlight, e.g. a recording, video or special concert."}
-      - {label: "Slug", name: "slug", widget: "string", required: true, i18n: duplicate}
-      - {label: "Date", name: "date", widget: "datetime", required: false, format: "YYYY-MM-DDTHH:mm:ss", time_format: false, picker_utc: false, i18n: duplicate}
+      - {label: "Date", name: "date", widget: "datetime", required: true, format: "YYYY-MM-DDTHH:mm:ss", time_format: false, picker_utc: false, i18n: duplicate, hint: "Highlights are shown newest first — the date decides the order."}
       - {label: "Type", name: "type", widget: "string", required: false, i18n: duplicate, hint: "A short word for what this is: \"Video\", \"Recording\", \"CD release\"…"}
       - {label: "Thumbnail", name: "image", widget: "image", required: true, i18n: duplicate, hint: "The photo on the highlight card. Required — highlights without a photo look empty."}
       - {label: "Youtube ID", name: "link", widget: "string", required: false, i18n: duplicate, hint: "Only the code after watch?v= in a YouTube address, e.g. \"XSOi7_MJnqI\". The video then replaces the photo on the page."}

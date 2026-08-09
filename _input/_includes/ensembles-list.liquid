@@ -8,7 +8,7 @@
   </header>
 
   {% assign langProjects = 'projects_' | append: lang %}
-  {% assign sortedProjects = collections[langProjects] | sort: 'date' | reverse %}
+  {% assign sortedProjects = collections[langProjects] | sort: 'data.sortOrder' %}
 
   {% if sortedProjects.size > 0 %}
     <div class="highlights-grid highlights-grid--compact reveal-group">

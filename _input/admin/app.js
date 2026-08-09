@@ -102,6 +102,23 @@ class GitGatewayAPI {
     }
   }
 
+  // Write several files as ONE commit — no per-file sha races when
+  // saving a reordering or any other batch.
+  async commitFiles(changes, message) {
+    const branch = await this._request('GET', `/branches/${this.branch}`);
+    const tree = await this._request('POST', '/git/trees', {
+      base_tree: branch.commit.commit.tree.sha,
+      tree: changes.map(c => ({ path: c.path, mode: '100644', type: 'blob', content: c.content })),
+    });
+    const commit = await this._request('POST', '/git/commits', {
+      message,
+      tree: tree.sha,
+      parents: [branch.commit.sha],
+    });
+    await this._request('PATCH', `/git/refs/heads/${this.branch}`, { sha: commit.sha });
+    return commit;
+  }
+
   async getBlob(sha) {
     const data = await this._request('GET', `/git/blobs/${sha}`);
     return decodeBase64UTF8(data.content);
@@ -617,12 +634,15 @@ class App {
       const listEl = document.getElementById('entry-list');
       if (!files.length) { listEl.innerHTML = '<div class="empty-state">No entries yet.</div>'; return; }
 
-      const entries = await pMap(files, async f => {
+      let entries = await pMap(files, async f => {
         try {
           const fd = await this.api.getFile(f.path);
           return { name: f.name, data: FrontMatter.parse(fd.content).data, path: f.path, sha: fd.sha };
         } catch { return { name: f.name, data: { title: f.name }, path: f.path, sha: null }; }
       });
+      if (col.name === 'projects') {
+        entries = entries.sort((a, b) => (a.data.order != null ? a.data.order : 9999) - (b.data.order != null ? b.data.order : 9999));
+      }
 
       listEl.innerHTML = `<div class="entry-row" style="border-bottom:1px solid var(--warm-grey);cursor:default;padding:.5rem 0;">
           <div class="entry-row-left"><input type="checkbox" class="entry-checkbox" id="select-all-checkbox" /><span style="font-size:.65rem;color:var(--mid-grey);margin-left:.4rem;text-transform:uppercase;letter-spacing:.08em;">Select all</span></div>
@@ -638,6 +658,7 @@ class App {
             : '';
           return `<div class="entry-row" data-file="${esc(e.name)}" data-title="${esc(title)}" data-sha="${esc(e.sha||'')}" data-path="${esc(e.path)}">
             <div class="entry-row-left">
+              ${col.name === 'projects' ? '<span class="drag-handle" title="Drag to reorder">&#8801;</span>' : ''}
               <input type="checkbox" class="entry-checkbox entry-select" data-file="${esc(e.name)}" />
               <div style="min-width:0;"><div class="entry-title${status === 'archived' ? ' entry-title--archived' : ''}">${esc(title)}${badgeHtml}</div>${date ? `<div class="entry-meta">${esc(date)}</div>` : ''}</div>
             </div>
@@ -645,8 +666,11 @@ class App {
         }).join('');
 
       listEl.querySelectorAll('.entry-row[data-file]').forEach(row => {
-        row.addEventListener('click', e => { if (e.target.closest('.entry-checkbox')) return; location.hash = `#/${name}/edit/${encodeURIComponent(row.dataset.file)}`; });
+        row.addEventListener('click', e => { if (e.target.closest('.entry-checkbox') || e.target.closest('.drag-handle')) return; location.hash = `#/${name}/edit/${encodeURIComponent(row.dataset.file)}`; });
       });
+
+      // Ensembles are hand-ordered: drag a row to move it, the site follows
+      if (col.name === 'projects') this._enableEntryDragOrder(listEl, col);
 
       // Search
       document.getElementById('collection-search').addEventListener('input', function() {
@@ -1342,7 +1366,7 @@ class App {
     // Translated collections: one list of fields. Universal fields appear
     // once; translatable fields carry a per-field language switcher where
     // every language follows English until it gets its own text.
-    let html = '';
+    let html = '<div class="cedit cedit--entry">';
     const orderedFields = col.fields.filter(f => f.name !== 'body');
     const bodyField = col.fields.find(f => f.name === 'body');
     const renderRow = (field) => {
@@ -1376,7 +1400,8 @@ class App {
         </div>`;
       }).join('');
 
-      return `<div class="form-group form-group--i18n" data-i18n-field="${field.name}">
+      const hero = field.name === 'title' ? ' form-group--hero' : '';
+      return `<div class="form-group form-group--i18n${hero}" data-i18n-field="${field.name}">
         <div class="form-label-row">
           ${this._renderLabel(field)}
           <div class="field-langs">${pills}<button type="button" class="lang-expand" data-expand-field="${field.name}" title="Show all languages">&#8862;</button></div>
@@ -1387,6 +1412,7 @@ class App {
 
     for (const field of orderedFields) html += renderRow(field);
     if (bodyField) html += renderRow(bodyField);
+    html += '</div>';
 
     formEl.innerHTML = html;
     this._bindFormHandlers(formEl, state);
@@ -1426,9 +1452,28 @@ class App {
         <input type="text" class="cedit-place" data-field="place" data-locale="${loc}" value="${esc(data.place || '')}" placeholder="Location" list="ac-place-${loc}" autocomplete="off" />
         <datalist id="ac-place-${loc}"></datalist>
 
-        <div class="cedit-card">
-          ${row('Starts', 'date')}
-          ${row('Ends', 'date_end')}
+        <div class="cedit-card cedit-when">
+          <input type="hidden" data-field="date" data-locale="${loc}" class="dtp2-hidden-start" value="${esc((data.date || '').substring(0, 16))}" />
+          <input type="hidden" data-field="date_end" data-locale="${loc}" class="date-end-input dtp2-hidden-end" value="${esc((data.date_end || '').substring(0, 16))}" />
+          <div class="cedit-row">
+            <span class="cedit-row-label">Starts${hintFor('date')}</span>
+            <div class="cedit-row-control dtp2-chips">
+              <button type="button" class="dtp2-chip dtp2-start active">–</button>
+              <input type="time" class="dtp2-time dtp2-start-time" value="${esc((data.date || '').substring(11, 16))}" />
+            </div>
+          </div>
+          <div class="cedit-row">
+            <span class="cedit-row-label">Ends${hintFor('date_end')}</span>
+            <div class="cedit-row-control dtp2-chips">
+              <label class="checkbox-row"><input type="checkbox" class="date-end-toggle dtp2-multi"${data.date_end ? ' checked' : ''} /> <span>several days</span></label>
+              <span class="dtp2-endwrap"${data.date_end ? '' : ' hidden'}>
+                <button type="button" class="dtp2-chip dtp2-end">–</button>
+              </span>
+            </div>
+          </div>
+          <div class="cedit-row cedit-row--stack cedit-cal-row">
+            <div class="dtp2-cal"></div>
+          </div>
           ${row('Month only', 'month_only')}
         </div>
 
@@ -1464,8 +1509,175 @@ class App {
 
     formEl.innerHTML = html;
     this._bindFormHandlers(formEl, state);
+    this._bindWhenCard(formEl);
     this._fillConcertDataLists(formEl, state.col);
     this._updateLivePreview(state);
+  }
+
+  // One integrated when-picker: start, optional end (several days), and an
+  // always-visible month grid. Picking fills the active chip; with several
+  // days on, the range is shown on the calendar itself.
+  _bindWhenCard(formEl) {
+    const card = formEl.querySelector('.cedit-when');
+    if (!card) return;
+    const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const startHid = card.querySelector('.dtp2-hidden-start');
+    const endHid = card.querySelector('.dtp2-hidden-end');
+    const startChip = card.querySelector('.dtp2-start');
+    const endChip = card.querySelector('.dtp2-end');
+    const startTime = card.querySelector('.dtp2-start-time');
+    const multi = card.querySelector('.dtp2-multi');
+    const endWrap = card.querySelector('.dtp2-endwrap');
+    const calEl = card.querySelector('.dtp2-cal');
+    let active = 'start';
+    let view = startHid.value && !isNaN(new Date(startHid.value)) ? new Date(startHid.value) : new Date();
+
+    const pad = n => String(n).padStart(2, '0');
+    const fmt = iso => {
+      if (!iso) return 'Choose a date';
+      const d = new Date(iso);
+      return isNaN(d) ? 'Choose a date' : d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+    };
+    const ping = el => el.dispatchEvent(new Event('input', { bubbles: true }));
+    const syncChips = () => {
+      startChip.textContent = fmt(startHid.value);
+      if (endChip) endChip.textContent = fmt(endHid.value);
+      startChip.classList.toggle('active', active === 'start');
+      if (endChip) endChip.classList.toggle('active', active === 'end');
+    };
+
+    const dayKey = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    const renderCal = () => {
+      const y = view.getFullYear(), m = view.getMonth();
+      const start = startHid.value ? new Date(startHid.value) : null;
+      const end = endHid.value ? new Date(endHid.value) : null;
+      const today = new Date();
+      const firstDay = (new Date(y, m, 1).getDay() + 6) % 7;
+      const days = new Date(y, m + 1, 0).getDate();
+      let cells = '';
+      for (let i = 0; i < firstDay; i++) cells += '<span></span>';
+      for (let d = 1; d <= days; d++) {
+        const cur = new Date(y, m, d);
+        const k = dayKey(cur);
+        const isStart = start && !isNaN(start) && dayKey(start) === k;
+        const isEnd = end && !isNaN(end) && dayKey(end) === k;
+        const inRange = start && end && !isNaN(start) && !isNaN(end) && cur > start && cur < end && !isStart && !isEnd;
+        const isToday = dayKey(today) === k;
+        cells += `<button type="button" class="dtp-day${isStart || isEnd ? ' sel' : ''}${inRange ? ' range' : ''}${isToday ? ' today' : ''}" data-d="${d}">${d}</button>`;
+      }
+      calEl.innerHTML = `
+        <div class="dtp-cal-head">
+          <button type="button" class="dtp-nav" data-nav="-1">&#8249;</button>
+          <span class="dtp-cal-title">${MONTHS[m]} ${y}</span>
+          <button type="button" class="dtp-nav" data-nav="1">&#8250;</button>
+        </div>
+        <div class="dtp-grid dtp-grid-head"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+        <div class="dtp-grid">${cells}</div>`;
+      calEl.querySelectorAll('.dtp-nav').forEach(b => b.addEventListener('click', () => {
+        view = new Date(view.getFullYear(), view.getMonth() + parseInt(b.dataset.nav, 10), 1);
+        renderCal();
+      }));
+      calEl.querySelectorAll('.dtp-day').forEach(b => b.addEventListener('click', () => {
+        const d = parseInt(b.dataset.d, 10);
+        if (active === 'start' || !multi.checked) {
+          startHid.value = `${y}-${pad(m + 1)}-${pad(d)}T` + (startTime.value || '00:00');
+          ping(startHid);
+          // with several days on, iOS-style flow: next tap picks the end
+          if (multi.checked) active = 'end';
+        } else {
+          endHid.value = `${y}-${pad(m + 1)}-${pad(d)}T` + (startTime.value || '00:00');
+          ping(endHid);
+        }
+        syncChips();
+        renderCal();
+      }));
+    };
+
+    startChip.addEventListener('click', () => { active = 'start'; syncChips(); });
+    if (endChip) endChip.addEventListener('click', () => { active = 'end'; syncChips(); });
+    startTime.addEventListener('input', () => {
+      if (startHid.value) {
+        startHid.value = startHid.value.substring(0, 10) + 'T' + (startTime.value || '00:00');
+        ping(startHid);
+      }
+    });
+    multi.addEventListener('change', () => {
+      if (multi.checked) {
+        endWrap.hidden = false;
+        if (!endHid.value && startHid.value) {
+          const d = new Date(startHid.value);
+          d.setDate(d.getDate() + 1);
+          endHid.value = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T` + (startTime.value || '00:00');
+          ping(endHid);
+        }
+        active = 'end';
+      } else {
+        endWrap.hidden = true;
+        endHid.value = '';
+        ping(endHid);
+        active = 'start';
+      }
+      syncChips();
+      renderCal();
+    });
+
+    syncChips();
+    renderCal();
+  }
+
+  // iOS-style row reordering: grab the handle, drop, order is saved to
+  // the English files (localized copies inherit it at build time).
+  _enableEntryDragOrder(listEl, col) {
+    let dragging = null;
+    listEl.querySelectorAll('.entry-row[data-file]').forEach(row => {
+      row.draggable = true;
+      row.addEventListener('dragstart', (e) => {
+        dragging = row;
+        row.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+      });
+      row.addEventListener('dragend', async () => {
+        row.classList.remove('dragging');
+        dragging = null;
+        await this._persistEntryOrder(listEl, col);
+      });
+      row.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        if (!dragging || dragging === row) return;
+        const rect = row.getBoundingClientRect();
+        const before = e.clientY < rect.top + rect.height / 2;
+        row.parentNode.insertBefore(dragging, before ? row : row.nextSibling);
+      });
+    });
+  }
+
+  async _persistEntryOrder(listEl, col) {
+    if (this._orderSaving) { this._orderDirty = true; return; }
+    this._orderSaving = true;
+    showStatus('saving', 'Saving order...');
+    try {
+      do {
+        this._orderDirty = false;
+        const rows = Array.from(listEl.querySelectorAll('.entry-row[data-file]'));
+        const changes = [];
+        for (let i = 0; i < rows.length; i++) {
+          const path = rows[i].dataset.path;
+          const file = await this.api.getFile(path);
+          const parsed = FrontMatter.parse(file.content);
+          if (String(parsed.data.order) === String(i + 1)) continue;
+          parsed.data.order = i + 1;
+          changes.push({ path, content: FrontMatter.serialize(parsed.data, parsed.body) });
+        }
+        if (changes.length) {
+          await this.api.commitFiles(changes, `Reorder ${col.label.toLowerCase()}`);
+        }
+      } while (this._orderDirty);
+      showStatus('saved', 'Order saved');
+    } catch (e) {
+      showStatus('error', 'Could not save the order: ' + e.message);
+    } finally {
+      this._orderSaving = false;
+    }
   }
 
   _bindI18nFieldControls(formEl, state) {
@@ -1641,14 +1853,20 @@ class App {
       case 'datetime': {
         let dtVal = value;
         if (dtVal && dtVal.length > 16) dtVal = dtVal.substring(0, 16);
+        const picker = (extraClass) => `<div class="dtp">
+            <input type="hidden" class="${extraClass || ''}" ${dataAttr} value="${esc(dtVal)}" />
+            <button type="button" class="dtp-date-btn">date</button>
+            <input type="time" class="dtp-time" value="${esc(dtVal ? dtVal.substring(11, 16) : '')}" />
+            <div class="dtp-cal" hidden></div>
+          </div>`;
         if (field.name === 'date_end') {
           // Hidden behind a checkbox so nobody sets an end date by accident
           return `<div class="date-end-field">
             <label class="checkbox-row"><input type="checkbox" class="date-end-toggle"${dtVal ? ' checked' : ''} /> <span>This concert runs for several days</span></label>
-            <input type="datetime-local" class="form-input date-end-input" ${dataAttr} value="${esc(dtVal)}"${dtVal ? '' : ' hidden'} />
+            <div class="date-end-picker"${dtVal ? '' : ' hidden'}>${picker('date-end-input')}</div>
           </div>`;
         }
-        return `<input type="datetime-local" class="form-input" ${dataAttr} value="${esc(dtVal)}" />`;
+        return picker('');
       }
 
       case 'image':
@@ -1705,7 +1923,91 @@ class App {
     </div>`;
   }
 
+  // Calendar-style date picking, composed like iOS: a date chip that
+  // expands an inline month grid, and a small time chip beside it.
+  _bindDatePickers(formEl) {
+    const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const fmt = (iso) => {
+      if (!iso) return 'Choose a date';
+      const d = new Date(iso);
+      if (isNaN(d)) return 'Choose a date';
+      return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+    };
+    formEl.querySelectorAll('.dtp').forEach(dtp => {
+      if (dtp.dataset.bound) return;
+      dtp.dataset.bound = '1';
+      const hidden = dtp.querySelector('input[type="hidden"]');
+      const dateBtn = dtp.querySelector('.dtp-date-btn');
+      const timeInp = dtp.querySelector('.dtp-time');
+      const cal = dtp.querySelector('.dtp-cal');
+      let view = hidden.value ? new Date(hidden.value) : new Date();
+      if (isNaN(view)) view = new Date();
+
+      const sync = () => {
+        dateBtn.textContent = fmt(hidden.value);
+        hidden.dispatchEvent(new Event('input', { bubbles: true }));
+      };
+      const setDate = (y, m, d) => {
+        const pad = n => String(n).padStart(2, '0');
+        const time = timeInp.value || '00:00';
+        hidden.value = `${y}-${pad(m + 1)}-${pad(d)}T${time}`;
+        sync();
+      };
+
+      const renderCal = () => {
+        const y = view.getFullYear(), m = view.getMonth();
+        const sel = hidden.value ? new Date(hidden.value) : null;
+        const today = new Date();
+        const firstDay = (new Date(y, m, 1).getDay() + 6) % 7; // Monday first
+        const days = new Date(y, m + 1, 0).getDate();
+        let cells = '';
+        for (let i = 0; i < firstDay; i++) cells += '<span></span>';
+        for (let d = 1; d <= days; d++) {
+          const isSel = sel && !isNaN(sel) && sel.getFullYear() === y && sel.getMonth() === m && sel.getDate() === d;
+          const isToday = today.getFullYear() === y && today.getMonth() === m && today.getDate() === d;
+          cells += `<button type="button" class="dtp-day${isSel ? ' sel' : ''}${isToday ? ' today' : ''}" data-d="${d}">${d}</button>`;
+        }
+        cal.innerHTML = `
+          <div class="dtp-cal-head">
+            <button type="button" class="dtp-nav" data-nav="-1">&#8249;</button>
+            <span class="dtp-cal-title">${MONTHS[m]} ${y}</span>
+            <button type="button" class="dtp-nav" data-nav="1">&#8250;</button>
+          </div>
+          <div class="dtp-grid dtp-grid-head"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+          <div class="dtp-grid">${cells}</div>`;
+        cal.querySelectorAll('.dtp-nav').forEach(b => b.addEventListener('click', () => {
+          view = new Date(view.getFullYear(), view.getMonth() + parseInt(b.dataset.nav, 10), 1);
+          renderCal();
+        }));
+        cal.querySelectorAll('.dtp-day').forEach(b => b.addEventListener('click', () => {
+          setDate(y, m, parseInt(b.dataset.d, 10));
+          renderCal();
+        }));
+      };
+
+      dateBtn.addEventListener('click', () => {
+        cal.hidden = !cal.hidden;
+        if (!cal.hidden) {
+          view = hidden.value && !isNaN(new Date(hidden.value)) ? new Date(hidden.value) : new Date();
+          renderCal();
+        }
+      });
+      timeInp.addEventListener('input', () => {
+        if (!hidden.value) {
+          const t = new Date();
+          setDate(t.getFullYear(), t.getMonth(), t.getDate());
+        } else {
+          hidden.value = hidden.value.substring(0, 10) + 'T' + (timeInp.value || '00:00');
+          sync();
+        }
+      });
+      dateBtn.textContent = fmt(hidden.value);
+    });
+  }
+
   _bindFormHandlers(formEl, state) {
+    this._bindDatePickers(formEl);
+
     // Track changes + live preview
     formEl.querySelectorAll('input, textarea, select').forEach(el => el.addEventListener('input', () => {
       this._markDirty();
@@ -1765,23 +2067,30 @@ class App {
     // End-date checkbox: reveal the field only when it applies
     formEl.querySelectorAll('.date-end-field').forEach(wrap => {
       const toggle = wrap.querySelector('.date-end-toggle');
+      const pickerWrap = wrap.querySelector('.date-end-picker');
       const input = wrap.querySelector('.date-end-input');
       toggle.addEventListener('change', () => {
         if (toggle.checked) {
-          input.hidden = false;
+          pickerWrap.hidden = false;
           if (!input.value) {
-            const startEl = document.querySelector('[data-field="date"]');
+            const startEl = document.querySelector('input[data-field="date"]');
             if (startEl && startEl.value) {
               const d = new Date(startEl.value);
               d.setDate(d.getDate() + 1);
               const p = n => String(n).padStart(2, '0');
               input.value = `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+              input.dispatchEvent(new Event('input', { bubbles: true }));
+              const btn = wrap.querySelector('.dtp-date-btn');
+              if (btn) btn.textContent = new Date(input.value).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+              const t = wrap.querySelector('.dtp-time');
+              if (t) t.value = input.value.substring(11, 16);
             }
           }
-          input.focus();
         } else {
           input.value = '';
-          input.hidden = true;
+          pickerWrap.hidden = true;
+          const btn = wrap.querySelector('.dtp-date-btn');
+          if (btn) btn.textContent = 'Choose a date';
         }
         this._markDirty();
       });

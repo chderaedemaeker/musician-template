@@ -116,7 +116,7 @@
     </section>
     {% endif %}
 
-    {% assign detailItems = collections.projects_en | sort: 'date' | reverse %}
+    {% assign detailItems = collections.projects_en | sort: 'data.sortOrder' %}
     {% assign detailLangSwap = '/' | append: lang | append: '/' %}
     {% include "detail-nav.liquid" %}
   </div>

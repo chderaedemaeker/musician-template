@@ -1623,15 +1623,16 @@ body { letter-spacing: -0.01em; }
 
 .cedit .field-hint {
   position: absolute;
-  left: .9rem;
-  right: .9rem;
-  top: calc(100% - .35rem);
+  left: calc(100% + .6rem);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 230px;
   z-index: 5;
   display: block;
   background: #fff;
   border: 1px solid var(--warm-grey);
   border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(13, 13, 12, 0.08);
+  box-shadow: 0 8px 24px rgba(13, 13, 12, 0.12);
   padding: .5rem .7rem;
   font-size: .72rem;
   line-height: 1.5;
@@ -1663,4 +1664,261 @@ body { letter-spacing: -0.01em; }
   overflow: hidden;
   padding-left: 0;
   padding-right: 0;
+}
+
+/* ── Date-time picker — chips + inline month grid ─────────── */
+.dtp {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .4rem;
+  position: relative;
+}
+
+.dtp-date-btn {
+  font-family: inherit;
+  font-size: .85rem;
+  color: var(--near-black);
+  background: var(--off-white);
+  border: none;
+  border-radius: 7px;
+  padding: .35rem .7rem;
+  cursor: pointer;
+  transition: background-color .15s ease;
+}
+
+.dtp-date-btn:hover {
+  background: var(--warm-grey);
+}
+
+.dtp-time {
+  font-family: inherit;
+  font-size: .85rem;
+  color: var(--near-black);
+  background: var(--off-white);
+  border: none;
+  border-radius: 7px;
+  padding: .3rem .5rem;
+  width: auto;
+}
+
+.dtp-cal {
+  flex-basis: 100%;
+  max-width: 250px;
+  background: #fff;
+  border: 1px solid var(--warm-grey);
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(13, 13, 12, 0.1);
+  padding: .6rem .7rem .7rem;
+  margin-top: .3rem;
+}
+
+.dtp-cal[hidden] {
+  display: none;
+}
+
+.dtp-cal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: .4rem;
+}
+
+.dtp-cal-title {
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--near-black);
+}
+
+.dtp-nav {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: var(--mid-grey);
+  cursor: pointer;
+  padding: .1rem .45rem;
+  border-radius: 6px;
+}
+
+.dtp-nav:hover {
+  background: var(--off-white);
+  color: var(--near-black);
+}
+
+.dtp-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.dtp-grid-head span {
+  font-size: .62rem;
+  color: var(--mid-grey);
+  text-align: center;
+  padding: .15rem 0;
+}
+
+.dtp-day {
+  font-family: inherit;
+  font-size: .74rem;
+  color: var(--near-black);
+  background: none;
+  border: none;
+  border-radius: 50%;
+  aspect-ratio: 1;
+  cursor: pointer;
+  transition: background-color .12s ease;
+}
+
+.dtp-day:hover {
+  background: var(--off-white);
+}
+
+.dtp-day.today {
+  color: #8a2222;
+  font-weight: 600;
+}
+
+.dtp-day.sel {
+  background: var(--near-black);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Integrated when-card: chips + always-visible calendar + range */
+.dtp2-chips {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  flex-wrap: wrap;
+}
+
+.dtp2-chip {
+  font-family: inherit;
+  font-size: .85rem;
+  color: var(--near-black);
+  background: var(--off-white);
+  border: 1px solid transparent;
+  border-radius: 7px;
+  padding: .35rem .7rem;
+  cursor: pointer;
+  transition: background-color .15s ease, border-color .15s ease;
+}
+
+.dtp2-chip.active {
+  border-color: var(--near-black);
+  background: #fff;
+}
+
+.cedit-cal-row {
+  border-top: 1px solid var(--warm-grey);
+}
+
+.cedit-when .dtp2-cal {
+  max-width: 270px;
+  margin: 0 auto;
+}
+
+.dtp-day.range {
+  background: var(--off-white);
+  border-radius: 0;
+}
+
+/* ── Entry editors share the concert editor's composition ──── */
+.cedit--entry {
+  gap: .5rem;
+}
+
+.cedit--entry .form-group {
+  background: #fff;
+  border: 1px solid var(--warm-grey);
+  border-radius: 10px;
+  padding: .65rem .9rem;
+  margin: 0;
+}
+
+.cedit--entry .form-group--hero {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: .25rem 0 .4rem;
+}
+
+.cedit--entry .form-group--hero input {
+  border: none;
+  background: transparent;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--near-black);
+  padding: .2rem 0;
+  width: 100%;
+  outline: none;
+}
+
+.cedit--entry .form-label {
+  font-size: .78rem;
+  color: var(--mid-grey);
+  text-transform: none;
+  letter-spacing: 0;
+  margin-bottom: .3rem;
+}
+
+.cedit--entry .form-group--hero .form-label {
+  margin-bottom: 0;
+}
+
+.cedit--entry input[type="text"],
+.cedit--entry select,
+.cedit--entry textarea {
+  border: none;
+  background: transparent;
+  padding: .15rem 0;
+  outline: none;
+  width: 100%;
+  font-family: inherit;
+  font-size: .9rem;
+  color: var(--near-black);
+}
+
+.cedit--entry .form-group {
+  position: relative;
+}
+
+.cedit--entry .field-hint {
+  position: absolute;
+  left: calc(100% + .6rem);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 230px;
+  z-index: 5;
+  background: #fff;
+  border: 1px solid var(--warm-grey);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(13, 13, 12, 0.12);
+  padding: .5rem .7rem;
+  font-size: .72rem;
+  line-height: 1.5;
+  color: var(--mid-grey);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.cedit--entry .field-hint[hidden] {
+  display: none;
+}
+
+/* Drag ordering */
+.drag-handle {
+  cursor: grab;
+  color: var(--mid-grey);
+  font-size: 1rem;
+  padding: 0 .35rem 0 0;
+  user-select: none;
+}
+
+.entry-row.dragging {
+  opacity: .9;
+  background: #fff;
+  box-shadow: 0 12px 30px rgba(13, 13, 12, 0.15);
+  border-radius: 10px;
 }

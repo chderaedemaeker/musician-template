@@ -45,7 +45,7 @@
 
   <!-- Projects -->
   {% assign langProjects = 'projects_' | append: lang %}
-  {% assign sortedProjects = collections[langProjects] | sort: 'date' | reverse %}
+  {% assign sortedProjects = collections[langProjects] | sort: 'data.sortOrder' %}
 
   {% if sortedProjects.size > 0 %}
     <section class="about-projects section">
