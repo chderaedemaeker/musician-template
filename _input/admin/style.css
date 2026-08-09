@@ -1610,11 +1610,27 @@ body { letter-spacing: -0.01em; }
   margin-bottom: .4rem;
 }
 
+/* Hints escape the narrow label column and float under the row */
+.cedit-row,
+.cedit-notes {
+  position: relative;
+}
+
 .cedit .field-hint {
+  position: absolute;
+  left: .9rem;
+  right: .9rem;
+  top: calc(100% - .35rem);
+  z-index: 5;
   display: block;
+  background: #fff;
+  border: 1px solid var(--warm-grey);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(13, 13, 12, 0.08);
+  padding: .5rem .7rem;
   font-size: .72rem;
+  line-height: 1.5;
   color: var(--mid-grey);
-  margin-top: .2rem;
   text-transform: none;
   letter-spacing: 0;
 }
