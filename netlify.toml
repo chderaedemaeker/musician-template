@@ -51,3 +51,14 @@
   to = "/en"
   status = 302
   force = true
+
+# Projects was renamed to Ensembles
+[[redirects]]
+  from = "/en/projects/*"
+  to = "/en/ensembles/:splat"
+  status = 301
+
+[[redirects]]
+  from = "/projects/*"
+  to = "/ensembles/:splat"
+  status = 301

@@ -62,9 +62,9 @@ collections:
       - {label: "Text", name: "body", widget: "markdown", required: true, hint: "Your note — as short or long as you like. Personal, in your own words."}
       - {label: "Extra links", name: "links", widget: "links", required: false, hint: "Optional buttons at the bottom of the note."}
 
-  - label: "Projects"
+  - label: "Ensembles"
     name: "projects"
-    folder: "_input/projects"
+    folder: "_input/ensembles"
     slug: '{{year}}-{{month}}-{{day}}-{{slug}}'
     create: true
     i18n: true

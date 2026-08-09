@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "aa278b38fba97143",
+        "id": "2c1b9d577745397b",
         "type": "tabs",
         "children": [
           {
-            "id": "22f8c3bb292510f4",
+            "id": "303e87b90bf93717",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "To do list.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "To do list"
+              "title": "Nieuw tabblad"
             }
           }
         ]
@@ -186,7 +182,7 @@
       "bases:Nieuwe basis maken": false
     }
   },
-  "active": "22f8c3bb292510f4",
+  "active": "303e87b90bf93717",
   "lastOpenFiles": [
     "To do list.md"
   ]

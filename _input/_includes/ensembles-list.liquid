@@ -1,0 +1,33 @@
+{% assign lang = page.lang %}
+
+<div class="container">
+
+  <header class="page-header">
+    <h1>{{ languages[lang].projects_title }}</h1>
+  </header>
+
+  {% assign langProjects = 'projects_' | append: lang %}
+  {% assign sortedProjects = collections[langProjects] | sort: 'date' | reverse %}
+
+  {% if sortedProjects.size > 0 %}
+    <div class="highlights-grid highlights-grid--compact reveal-group">
+      {% for project in sortedProjects %}
+        <a href="{{ project.url }}" class="highlight-card reveal{% if project.data.featured %} highlight-card--featured{% endif %}{% unless project.data.image and project.data.image != '' %} highlight-card--noimg{% endunless %}" {% unless project.data.image and project.data.image != '' %}data-initial="{{ project.data.title | strip | slice: 0, 1 | upcase }}"{% endunless %}>
+          {% if project.data.image and project.data.image != '' %}
+            {% progressiveImage project.data.image, project.data.title %}
+          {% endif %}
+          <div class="highlight-card-overlay">
+            <div class="highlight-card-top">
+              {% if project.data.collaborators %}<p class="highlight-card-type">{{ project.data.collaborators }}</p>{% endif %}
+              <h3 class="highlight-card-title">{{ project.data.title }}</h3>
+            </div>
+            <span class="card-cta" aria-hidden="true"><span class="card-cta-text">{{ languages[lang].view }}</span><span class="card-cta-arrow">&#8594;</span></span>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="empty-note">{{ languages[lang].no_projects }}</p>
+  {% endif %}
+
+</div>

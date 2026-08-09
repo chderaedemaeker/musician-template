@@ -137,16 +137,16 @@ module.exports = function (eleventyConfig) {
 
     // Collections for projects per language
     eleventyConfig.addCollection('projects_en', function(c) {
-        return c.getFilteredByGlob('./_input/projects/en/*.md').filter(notHidden);
+        return c.getFilteredByGlob('./_input/ensembles/en/*.md').filter(notHidden);
     });
     eleventyConfig.addCollection('projects_nl', function(c) {
-        return collectionWithFallback(c, './_input/projects/nl/*.md', './_input/projects/en/*.md').filter(notHidden);
+        return collectionWithFallback(c, './_input/ensembles/nl/*.md', './_input/ensembles/en/*.md').filter(notHidden);
     });
     eleventyConfig.addCollection('projects_fr', function(c) {
-        return collectionWithFallback(c, './_input/projects/fr/*.md', './_input/projects/en/*.md').filter(notHidden);
+        return collectionWithFallback(c, './_input/ensembles/fr/*.md', './_input/ensembles/en/*.md').filter(notHidden);
     });
     eleventyConfig.addCollection('projects_de', function(c) {
-        return collectionWithFallback(c, './_input/projects/de/*.md', './_input/projects/en/*.md').filter(notHidden);
+        return collectionWithFallback(c, './_input/ensembles/de/*.md', './_input/ensembles/en/*.md').filter(notHidden);
     });
 
     // Collections for about per language
@@ -167,6 +167,16 @@ module.exports = function (eleventyConfig) {
     eleventyConfig.addCollection("notes", collection =>
         collection.getFilteredByGlob("./_input/en/notes/*.md").filter(notHidden)
     );
+
+    // Render a markdown file's body straight from disk — used by the
+    // localized concert pages, which reuse the English source content
+    // without depending on template render order.
+    const matter = require('gray-matter');
+    const mdLib = require('markdown-it')({ html: true });
+    eleventyConfig.addFilter('fileBody', function(inputPath) {
+        try { return mdLib.render(matter.read(inputPath).content); }
+        catch (e) { return ''; }
+    });
 
     eleventyConfig.addCollection("concerts", function(collectionApi) {
         return collectionApi.getFilteredByGlob("./_input/en/concerts/*.md").filter(notHidden);

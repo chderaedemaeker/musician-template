@@ -1,5 +1,5 @@
 ---
-title: About
+title: Über
 gallery1: /images/klvero.png
 gallery2: /images/veronique-18.jpeg
 gallery3: /images/veronique-25copy.jpeg

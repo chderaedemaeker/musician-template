@@ -35,6 +35,10 @@
 document.addEventListener('DOMContentLoaded', function() {
   var concerts = {% concertsJson collections.concerts %};
   var lang = '{{ lang }}';
+  /* concert detail URLs are generated per language from the English source */
+  concerts.forEach(function (c) {
+    if (c.link && lang !== 'en') c.link = c.link.replace(/^\/en\//, '/' + lang + '/');
+  });
   var ticketsLabel = '{{ languages[lang].tickets }}';
 
   /* Collaborators in the modal link to their project page */
@@ -115,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ticketsLabel + '</a>';
     }
     var searchText = [d, c.title, c.place, c.composers, c.collaborators].join(' ').toLowerCase().replace(/"/g, '&quot;');
-    return '<li class="concert-row' + (isArchive ? ' concert-row--archive' : '') + (c.featured ? ' concert-row--featured' : '') + '" data-search="' + searchText + '">' +
+    return '<li class="concert-row reveal' + (isArchive ? ' concert-row--archive' : '') + (c.featured ? ' concert-row--featured' : '') + '" data-search="' + searchText + '">' +
       '<div class="concert-row-when">' +
         '<p class="concert-row-date">' + dateHtml + '</p>' +
         (c.place ? '<p class="concert-row-where">' + c.place + '</p>' : '') +
@@ -130,6 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function bindRows(container) {
+    if (window.siteObserveReveals) window.siteObserveReveals(container);
     container.querySelectorAll('.concert-row-trigger:not([data-bound])').forEach(function(btn) {
       btn.dataset.bound = '1';
       btn.addEventListener('click', function() {

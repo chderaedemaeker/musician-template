@@ -4,12 +4,18 @@
   /* Language switcher — only the home page and the biography are
      multilingual; from any other page, switching goes to that
      language's home page. German has no biography yet. */
+  /* Every section exists in every language. Section pages carry the
+     language as the first path segment (/nl/concerts/), detail pages for
+     highlights and ensembles carry it as the second (/highlights/nl/slug). */
   window.switchLanguage = function (lang) {
     var path = window.location.pathname;
-    var multilingual = path.match(/^\/(en|nl|fr|de)\/(about\/)?$/);
-    if (multilingual) {
-      if (multilingual[2] && lang === 'de') { window.location.href = '/en/about/'; return; }
-      window.location.href = path.replace(/^\/(en|nl|fr|de)/, '/' + lang);
+    if (/^\/(en|nl|fr|de)\//.test(path)) {
+      window.location.href = path.replace(/^\/(en|nl|fr|de)\//, '/' + lang + '/');
+      return;
+    }
+    var detail = path.match(/^\/(highlights|ensembles)\/(en|nl|fr|de)\//);
+    if (detail) {
+      window.location.href = path.replace(/^\/(highlights|ensembles)\/(en|nl|fr|de)\//, '/' + detail[1] + '/' + lang + '/');
       return;
     }
     window.location.href = '/' + lang + '/';
@@ -237,6 +243,25 @@
       window.print();
     }
   });
+
+  /* Reveal elements rendered by page scripts (concert rows) as they
+     scroll into view. Safe to call repeatedly. */
+  window.siteObserveReveals = function (container) {
+    var els = Array.prototype.slice.call((container || document).querySelectorAll('.reveal:not(.is-visible)'));
+    if (!els.length) return;
+    if (reducedMotion || !('IntersectionObserver' in window)) {
+      els.forEach(function (el) { el.classList.add('is-visible'); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-visible');
+        io.unobserve(entry.target);
+      });
+    }, { threshold: 0.05, rootMargin: '0px 0px -8% 0px' });
+    els.forEach(function (el) { io.observe(el); });
+  };
 
   /* Keep Tab inside a dialog. Call from a keydown handler when e.key === 'Tab'. */
   window.siteTrapFocus = function (container, e) {

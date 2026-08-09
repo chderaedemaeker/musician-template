@@ -6,13 +6,15 @@
 {% assign nextUrl = '' %}{% assign nextTitle = '' %}
 {% assign seenCurrent = false %}
 {% for item in detailItems %}
+  {% assign itemUrl = item.url %}
+  {% if detailLangSwap %}{% assign itemUrl = item.url | replace_first: '/en/', detailLangSwap %}{% endif %}
   {% if seenCurrent and nextUrl == '' %}
-    {% assign nextUrl = item.url %}{% assign nextTitle = item.data.title %}
+    {% assign nextUrl = itemUrl %}{% assign nextTitle = item.data.title %}
   {% endif %}
-  {% if item.url == page.url %}
+  {% if itemUrl == page.url %}
     {% assign seenCurrent = true %}
   {% elsif seenCurrent == false %}
-    {% assign prevUrl = item.url %}{% assign prevTitle = item.data.title %}
+    {% assign prevUrl = itemUrl %}{% assign prevTitle = item.data.title %}
   {% endif %}
 {% endfor %}
 {% if prevUrl != '' or nextUrl != '' %}

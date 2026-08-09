@@ -1376,7 +1376,7 @@ class App {
     const base = filename.replace(/\.md$/, '');
     if (col.name === 'concerts') return `/en/concerts/${base}/`;
     if (col.name === 'notes') return `/en/notes/${base}/`;
-    if (col.name === 'projects') return `/projects/en/${base}/`;
+    if (col.name === 'projects') return `/ensembles/en/${base}/`;
     if (col.name === 'highlights') return `/highlights/en/${base}/`;
     if (col.name === 'about') return `/en/about/`;
     return null;

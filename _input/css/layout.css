@@ -207,6 +207,15 @@ main {
   z-index: 110;
 }
 
+.lang-picker-menu {
+  animation: lang-menu-in var(--dur-fast) var(--ease);
+}
+
+@keyframes lang-menu-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+
 .lang-picker-menu[hidden] {
   display: none;
 }
@@ -296,12 +305,75 @@ main {
   z-index: 99;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   gap: var(--space-md);
+  padding: var(--space-xl) var(--gutter);
+  overflow-y: auto;
   visibility: hidden;
   opacity: 0;
   transition: opacity var(--dur-med) var(--ease), visibility 0s var(--dur-med);
+}
+
+.mobile-nav-title {
+  display: block;
+}
+
+.mobile-nav-desc {
+  display: block;
+  font-family: var(--font-inter);
+  font-size: var(--text-label);
+  letter-spacing: -0.01em;
+  color: var(--dark-grey);
+  margin-top: 0.15rem;
+}
+
+/* Newsletter inside the menu — same Netlify form as the footer */
+.mobile-nav-news {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity var(--dur-med) var(--ease), transform var(--dur-med) var(--ease);
+  margin-top: var(--space-sm);
+  width: 100%;
+  max-width: 24rem;
+}
+
+.mobile-nav.open .mobile-nav-news {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(var(--i, 0) * 40ms);
+}
+
+.mobile-nav-news-title {
+  font-family: var(--font-inter);
+  font-size: var(--text-label);
+  letter-spacing: -0.01em;
+  color: var(--dark-grey);
+  margin: 0 0 var(--space-xs);
+}
+
+.mobile-nav-news-row {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.mobile-nav-news-row input {
+  flex: 1;
+  min-width: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  padding: 0.55em 1.1em;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid transparent;
+  font-family: var(--font-sans);
+  font-size: var(--text-sans);
+  color: var(--near-black);
+  outline: none;
+}
+
+.mobile-nav-news-row input:focus {
+  border-color: var(--mid-grey);
 }
 
 .mobile-nav.open {
@@ -323,10 +395,17 @@ main {
   gap: var(--space-sm);
 }
 
-.mobile-nav.open a {
+.mobile-nav.open a,
+.mobile-nav.open .lang-switcher {
   opacity: 1;
   transform: none;
   transition-delay: calc(var(--i, 0) * 40ms);
+}
+
+.mobile-nav .lang-switcher {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity var(--dur-med) var(--ease), transform var(--dur-med) var(--ease);
 }
 
 /* ── Home page: the name starts big over the photo, the menu only

@@ -1,0 +1,20 @@
+---
+pagination:
+  data: collections.concerts
+  size: 1
+  alias: item
+permalink: "{{ item.url | replace_first: '/en/', '/nl/' }}"
+eleventyExcludeFromCollections: true
+---
+{% assign title = item.data.title %}
+{% assign date = item.data.date %}
+{% assign date_end = item.data.date_end %}
+{% assign month_only = item.data.month_only %}
+{% assign place = item.data.place %}
+{% assign composers = item.data.composers %}
+{% assign collaborators = item.data.collaborators %}
+{% assign link = item.data.link %}
+{% assign links = item.data.links %}
+{% assign content = item.inputPath | fileBody %}
+{% assign detailLangSwap = "/nl/" %}
+{% include "concert-page.liquid" %}

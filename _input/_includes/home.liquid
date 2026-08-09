@@ -42,7 +42,7 @@
     {% if latestHighlight %}
     <a href="{{ latestHighlight.url }}" class="bento-cell bento-highlight reveal{% unless latestHighlight.data.image and latestHighlight.data.image != '' %} bento-highlight--noimg{% endunless %}" {% unless latestHighlight.data.image and latestHighlight.data.image != '' %}data-initial="{{ latestHighlight.data.title | strip | slice: 0, 1 | upcase }}"{% endunless %}>
       {% if latestHighlight.data.image and latestHighlight.data.image != '' %}
-        <img src="{{ latestHighlight.data.image }}" alt="{{ latestHighlight.data.title }}">
+        {% progressiveImage latestHighlight.data.image, latestHighlight.data.title %}
       {% endif %}
       <div class="bento-highlight-overlay">
         <p class="bento-highlight-label">{{ languages[lang].most_recent_highlight }}</p>
