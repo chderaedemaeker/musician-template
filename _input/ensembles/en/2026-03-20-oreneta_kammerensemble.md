@@ -2,13 +2,14 @@
 title: Oreneta Kammerensemble
 collaborators: ""
 image: /images/IMG_1440.jpeg
-match: "oreneta"
+match: oreneta
 layout: project.html
 tags: projects
 lang: en
 links:
-  - label: "Instagram"
+  - label: Instagram
     url: "https://www.instagram.com/orenetakammerensemble"
+order: 3
 ---
 
 The Oreneta Kammerensemble was formed in 2023 from an already existing string quartet. The four young musicians met at the Hochschule für Musik und Tanz Köln, where in 2019 they began studying chamber music in the class of Prof. Harald Schoneweg alongside their individual degree programs. 

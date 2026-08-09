@@ -2,17 +2,18 @@
 title: ÉRMA Ensemble
 collaborators: ""
 image: /images/ÉRMA (c) Anna Tena-2.2.jpeg
-match: "érma, erma"
+match: érma, erma
 layout: project.html
 tags: projects
 lang: en
 links:
-  - label: "erma-ensemble.com"
+  - label: erma-ensemble.com
     url: "https://erma-ensemble.com"
-  - label: "Newsletter"
+  - label: Newsletter
     url: "https://substack.com/@ermaensemble"
-  - label: "Instagram"
+  - label: Instagram
     url: "https://www.instagram.com/erma.ensemble"
+order: 4
 ---
 The ÉRMA Ensemble is a young, Cologne-based ensemble that has come together to explore the music of the second half of the 20th century and the 21st century in all its virtuosity and timbres. A diverse range of instruments, including the mandolin, guitar, and harp, offers ÉRMA unique sonic possibilities.
 

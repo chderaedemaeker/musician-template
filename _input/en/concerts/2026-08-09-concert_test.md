@@ -1,5 +1,5 @@
 ---
-title: concert test
+title: Concert test
 date: "2027-08-20T00:00"
 date_end: ""
 month_only: true
