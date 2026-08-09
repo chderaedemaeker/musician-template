@@ -1928,3 +1928,16 @@ body { letter-spacing: -0.01em; }
   box-shadow: 0 12px 30px rgba(13, 13, 12, 0.15);
   border-radius: 10px;
 }
+
+/* A concert without a date is invisible on the site — make it loud */
+.notion-row-nodate .notion-cell-date {
+  background: #f7e8e8;
+  border-radius: 6px;
+}
+
+.notion-row-nodate .notion-cell-date::after {
+  content: 'no date!';
+  font-size: .62rem;
+  color: #8a2222;
+  margin-left: .3rem;
+}

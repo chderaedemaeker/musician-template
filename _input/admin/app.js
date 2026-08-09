@@ -810,7 +810,7 @@ class App {
     bodyEl.innerHTML = sorted.map((entry, i) => {
       const idx = entries.indexOf(entry);
       const dateVal = entry.data.date ? entry.data.date.substring(0, 10) : '';
-      return `<div class="notion-row${entry.dirty ? ' notion-row-dirty' : ''}${entry.loadFailed ? ' notion-row-loadfailed' : ''}${entry.data.status === 'archived' ? ' notion-row-archived' : ''}" data-idx="${idx}" style="grid-template-columns: ${gridCols};"${entry.loadFailed ? ' title="This row failed to load — its saved data is safe and will reappear after you edit and save, or reload the page."' : ''}>
+      return `<div class="notion-row${entry.dirty ? ' notion-row-dirty' : ''}${entry.loadFailed ? ' notion-row-loadfailed' : ''}${entry.data.status === 'archived' ? ' notion-row-archived' : ''}${!entry.data.date ? ' notion-row-nodate' : ''}" data-idx="${idx}" style="grid-template-columns: ${gridCols};"${entry.loadFailed ? ' title="This row failed to load — its saved data is safe and will reappear after you edit and save, or reload the page."' : ''}>
         <div class="notion-cell notion-cell-check"><input type="checkbox" class="entry-checkbox entry-select" data-idx="${idx}" data-file="${esc(entry.name)}" /></div>
         <div class="notion-cell notion-cell-actions"><button class="notion-open-btn" data-file="${esc(entry.name)}" title="Open the full editor">Open</button><button class="notion-dup-btn" data-idx="${idx}" title="Duplicate this concert">&#x2398;</button></div>
         <div class="notion-cell notion-cell-title" data-field="title" data-idx="${idx}" contenteditable="true">${esc(entry.data.title || '')}</div>

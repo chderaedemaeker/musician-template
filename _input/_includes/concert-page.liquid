@@ -100,7 +100,9 @@
       </div>
     {% endif %}
 
-    {% assign detailItems = collections.concerts | sort: 'date' | reverse %}
+    {% assign detailItemsAll = collections.concerts | sort: 'date' | reverse %}
+    {% assign detailItems = "" | split: "" %}
+    {% for it in detailItemsAll %}{% if it.data.date and it.data.date != "" %}{% assign detailItems = detailItems | push: it %}{% endif %}{% endfor %}
     {% include "detail-nav.liquid" %}
   </div>
 </main>
