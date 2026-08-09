@@ -1621,24 +1621,30 @@ body { letter-spacing: -0.01em; }
   position: relative;
 }
 
+.cedit .cedit-row-label,
+.cedit .cedit-notes .cedit-row-label,
+.cedit--entry .form-label {
+  position: relative;
+}
+
 .cedit .field-hint {
   position: absolute;
-  left: calc(100% + .6rem);
-  top: 50%;
-  transform: translateY(-50%);
-  width: 230px;
-  z-index: 5;
-  display: block;
+  left: 0;
+  top: calc(100% + .4rem);
+  transform: none;
+  width: 250px;
+  z-index: 40;
   background: #fff;
   border: 1px solid var(--warm-grey);
   border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(13, 13, 12, 0.12);
+  box-shadow: 0 10px 30px rgba(13, 13, 12, 0.14);
   padding: .5rem .7rem;
   font-size: .72rem;
   line-height: 1.5;
   color: var(--mid-grey);
   text-transform: none;
   letter-spacing: 0;
+  display: block;
 }
 
 .cedit .field-hint[hidden] {
@@ -1886,15 +1892,15 @@ body { letter-spacing: -0.01em; }
 
 .cedit--entry .field-hint {
   position: absolute;
-  left: calc(100% + .6rem);
-  top: 50%;
-  transform: translateY(-50%);
-  width: 230px;
-  z-index: 5;
+  left: 0;
+  top: calc(100% + .4rem);
+  transform: none;
+  width: 250px;
+  z-index: 40;
   background: #fff;
   border: 1px solid var(--warm-grey);
   border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(13, 13, 12, 0.12);
+  box-shadow: 0 10px 30px rgba(13, 13, 12, 0.14);
   padding: .5rem .7rem;
   font-size: .72rem;
   line-height: 1.5;
