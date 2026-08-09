@@ -672,7 +672,7 @@ class App {
       { key: 'composers', label: 'Composers', width: 'minmax(120px, 1fr)' },
       { key: 'collaborators', label: 'Collaborators', width: 'minmax(120px, 1fr)' },
     ];
-    const gridCols = '36px ' + columns.map(c => c.width).join(' ') + ' 70px';
+    const gridCols = '36px 132px ' + columns.map(c => c.width).join(' ');
 
     this.el.innerHTML = `
       ${this._topbar()}
@@ -696,8 +696,8 @@ class App {
       <div class="notion-table-wrap">
         <div class="notion-table" id="notion-table" style="grid-template-columns: ${gridCols};">
           <div class="notion-th notion-th-check"><input type="checkbox" id="select-all-checkbox" class="entry-checkbox" /></div>
-          ${columns.map(c => `<div class="notion-th" data-sort="${c.key}">${esc(c.label)}<span class="sort-icon"></span></div>`).join('')}
           <div class="notion-th"></div>
+          ${columns.map(c => `<div class="notion-th" data-sort="${c.key}">${esc(c.label)}<span class="sort-icon"></span></div>`).join('')}
         </div>
         <div id="notion-body"><div class="loading-state"><span class="spinner"></span> Loading concerts...</div></div>
       </div>`;
@@ -778,12 +778,12 @@ class App {
       const dateVal = entry.data.date ? entry.data.date.substring(0, 10) : '';
       return `<div class="notion-row${entry.dirty ? ' notion-row-dirty' : ''}${entry.loadFailed ? ' notion-row-loadfailed' : ''}${entry.data.status === 'archived' ? ' notion-row-archived' : ''}" data-idx="${idx}" style="grid-template-columns: ${gridCols};"${entry.loadFailed ? ' title="This row failed to load — its saved data is safe and will reappear after you edit and save, or reload the page."' : ''}>
         <div class="notion-cell notion-cell-check"><input type="checkbox" class="entry-checkbox entry-select" data-idx="${idx}" data-file="${esc(entry.name)}" /></div>
+        <div class="notion-cell notion-cell-actions"><button class="notion-open-btn" data-file="${esc(entry.name)}" title="Open the full editor">Open</button><button class="notion-dup-btn" data-idx="${idx}" title="Duplicate this concert">&#x2398;</button></div>
         <div class="notion-cell notion-cell-title" data-field="title" data-idx="${idx}" contenteditable="true">${esc(entry.data.title || '')}</div>
         <div class="notion-cell notion-cell-date" data-field="date" data-idx="${idx}"><input type="date" class="notion-date-input" value="${esc(dateVal)}" data-idx="${idx}" /></div>
         <div class="notion-cell" data-field="place" data-idx="${idx}" contenteditable="true">${esc(entry.data.place || '')}</div>
         <div class="notion-cell" data-field="composers" data-idx="${idx}" contenteditable="true">${esc(entry.data.composers || '')}</div>
         <div class="notion-cell" data-field="collaborators" data-idx="${idx}" contenteditable="true">${esc(entry.data.collaborators || '')}</div>
-        <div class="notion-cell notion-cell-actions"><button class="notion-dup-btn" data-idx="${idx}" title="Duplicate">&#x2398;</button><button class="notion-open-btn" data-file="${esc(entry.name)}" title="Open full editor">&#8599;</button></div>
       </div>`;
     }).join('');
 
