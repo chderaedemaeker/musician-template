@@ -673,12 +673,21 @@ main {
   border-color: transparent;
 }
 
-/* The bar's name never shines through the open menu overlay */
+/* With the menu open, the invisible bar must not swallow taps —
+   the nav sits above the overlay (z-index) and covered the links
+   at its height. Only the hamburger stays interactive. */
 .nav-brand {
   transition: opacity var(--dur-med) var(--ease);
 }
 
 .menu-open .nav-brand {
   opacity: 0;
+}
+
+.menu-open .nav {
   pointer-events: none;
+}
+
+.menu-open .nav .hamburger {
+  pointer-events: auto;
 }
