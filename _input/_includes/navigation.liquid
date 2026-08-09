@@ -43,10 +43,7 @@
 
 <div class="mobile-nav" id="mobile-nav">
   {% for item in navigation[lang] %}
-    <a href="{{ item.url }}" style="--i: {{ forloop.index0 }}">
-      <span class="mobile-nav-title">{{ item.text }}</span>
-      {% if item.desc %}<span class="mobile-nav-desc">{{ item.desc }}</span>{% endif %}
-    </a>
+    <a href="{{ item.url }}" style="--i: {{ forloop.index0 }}">{{ item.text }}</a>
   {% endfor %}
   <form name="newsletter" method="POST" data-netlify="true" action="/{{ lang }}/contact/success/" class="mobile-nav-news" style="--i: 5">
     <input type="hidden" name="form-name" value="newsletter">
