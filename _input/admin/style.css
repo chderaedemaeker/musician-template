@@ -1337,3 +1337,148 @@ body { letter-spacing: -0.01em; }
   background: #f7e8e8;
   border: 1px solid #d9b0b0;
 }
+
+/* ── Per-field multilingual controls ─────────────────────── */
+.form-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  flex-wrap: wrap;
+}
+
+.form-label-row .form-label {
+  margin-bottom: 0;
+}
+
+.field-universal-chip {
+  display: inline-block;
+  font-size: .65rem;
+  color: var(--mid-grey);
+  border: 1px solid var(--warm-grey);
+  border-radius: 999px;
+  padding: .1rem .55rem;
+  margin-left: .5rem;
+  vertical-align: middle;
+  letter-spacing: .02em;
+}
+
+.field-langs {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+}
+
+.lang-pill {
+  position: relative;
+  font-family: inherit;
+  font-size: .68rem;
+  letter-spacing: .04em;
+  padding: .22rem .55rem;
+  border: 1px solid var(--warm-grey);
+  border-radius: 999px;
+  background: none;
+  color: var(--mid-grey);
+  cursor: pointer;
+  transition: color .15s ease, border-color .15s ease, background-color .15s ease;
+}
+
+.lang-pill:hover {
+  color: var(--near-black);
+  border-color: var(--mid-grey);
+}
+
+.lang-pill.active {
+  background: var(--near-black);
+  border-color: var(--near-black);
+  color: #fff;
+}
+
+/* A language that has its own translation carries a dot */
+.lang-pill.has-custom::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  right: 3px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #4b7d5c;
+}
+
+.lang-expand {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: .95rem;
+  color: var(--mid-grey);
+  padding: 0 .2rem;
+  transition: color .15s ease;
+}
+
+.lang-expand:hover {
+  color: var(--near-black);
+}
+
+.locale-input-wrap {
+  position: relative;
+}
+
+.form-group--i18n.expanded .locale-input-wrap {
+  display: grid;
+  grid-template-columns: 2.2rem 1fr;
+  gap: .5rem;
+  align-items: start;
+  margin-bottom: .5rem;
+}
+
+.form-group--i18n.expanded .locale-input-wrap > *:not(.locale-tag) {
+  grid-column: 2;
+}
+
+.locale-tag {
+  grid-column: 1;
+  grid-row: 1;
+  font-size: .65rem;
+  letter-spacing: .05em;
+  color: var(--mid-grey);
+  padding-top: .55rem;
+}
+
+/* Text that just follows English reads quieter */
+.locale-input-wrap.inherited input,
+.locale-input-wrap.inherited textarea {
+  color: var(--mid-grey);
+  font-style: italic;
+}
+
+.inherit-note {
+  font-size: .68rem;
+  color: var(--mid-grey);
+  margin-top: .25rem;
+}
+
+.inherit-note[hidden],
+.inherit-reset[hidden],
+.locale-tag[hidden],
+.locale-input-wrap[hidden] {
+  display: none;
+}
+
+.inherit-reset {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: .68rem;
+  color: var(--mid-grey);
+  padding: 0;
+  margin-top: .25rem;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color .15s ease;
+}
+
+.inherit-reset:hover {
+  color: var(--near-black);
+}

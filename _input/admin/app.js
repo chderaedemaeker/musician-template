@@ -1136,14 +1136,6 @@ class App {
           <button class="btn btn-ghost btn-sm" id="set-archived-btn">Archive</button>
           <button class="btn btn-ghost btn-sm" id="set-online-btn" style="display:none;">Publish</button>
         </div>` : ''}
-      ${isI18n ? `
-        <div class="trilingual-toggle">
-          <label><input type="checkbox" id="trilingual-mode" /> Show all languages side by side</label>
-        </div>
-        <div class="i18n-tabs" id="i18n-tabs">
-          ${locales.map(l => `<button class="i18n-tab ${l === locales[0] ? 'active' : ''}" data-locale="${l}">${l.toUpperCase()}</button>`).join('')}
-        </div>
-      ` : ''}
       <div class="editor-split">
         <div id="editor-form"><div class="loading-state"><span class="spinner"></span> Loading...</div></div>
         <div class="live-preview-panel" id="live-preview">
@@ -1155,7 +1147,7 @@ class App {
       </div>`;
     this._bindTopbar();
 
-    const state = { locales, data: {}, body: {}, sha: {}, filePath: {}, activeLocale: locales[0], filename, isNew, col, trilingualMode: false };
+    const state = { locales, data: {}, body: {}, sha: {}, filePath: {}, inherit: {}, activeLocale: locales[0], filename, isNew, col, trilingualMode: false };
     this._editorState = state;
 
     for (const loc of locales) {
@@ -1187,30 +1179,21 @@ class App {
       }
     }
 
-    this._renderEditorForm(state);
-
-    // i18n tabs
+    // Which locale values are their own translations vs copies of English.
+    // Parity-saved files load as fully inherited — exactly right.
     if (isI18n) {
-      document.getElementById('i18n-tabs').addEventListener('click', e => {
-        const tab = e.target.closest('.i18n-tab');
-        if (!tab || state.trilingualMode) return;
-        this._collectFormData(state);
-        state.activeLocale = tab.dataset.locale;
-        document.querySelectorAll('.i18n-tab').forEach(t => t.classList.toggle('active', t === tab));
-        this._renderEditorForm(state);
-      });
-
-      // Trilingual toggle
-      const triToggle = document.getElementById('trilingual-mode');
-      if (triToggle) {
-        triToggle.addEventListener('change', () => {
-          this._collectFormData(state);
-          state.trilingualMode = triToggle.checked;
-          document.getElementById('i18n-tabs').style.display = triToggle.checked ? 'none' : 'flex';
-          this._renderEditorForm(state);
-        });
+      for (const loc of locales) {
+        state.inherit[loc] = {};
+        if (loc === 'en') continue;
+        for (const f of col.fields) {
+          const v = f.name === 'body' ? state.body[loc] : state.data[loc][f.name];
+          const enV = f.name === 'body' ? state.body['en'] : state.data['en'][f.name];
+          state.inherit[loc][f.name] = !v || v === enV;
+        }
       }
     }
+
+    this._renderEditorForm(state);
 
     // Save
     document.getElementById('save-btn').addEventListener('click', () => this._saveEntry(state));
@@ -1248,77 +1231,177 @@ class App {
     }
   }
 
+  // A field is worth translating when it's marked i18n in the config AND
+  // holds prose. Everything else (image, date, flags, links) is universal:
+  // one value shared by every language.
+  _isTranslatable(field) {
+    const proseWidgets = ['string', 'text', 'markdown'];
+    const widget = field.widget || 'string';
+    return !!field.i18n && proseWidgets.includes(widget);
+  }
+
   _renderEditorForm(state) {
     const { col, locales } = state;
     const formEl = document.getElementById('editor-form');
+    const isI18n = !!(col.i18n || col.i18nStructure);
 
-    if (state.trilingualMode) {
-      this._renderTrilingualForm(state, formEl);
+    if (!isI18n) {
+      // Single-language collections (concerts, notes) keep the plain form
+      const data = state.data[state.activeLocale];
+      const body = state.body[state.activeLocale];
+      let html = '';
+      for (const field of col.fields) {
+        if (field.name === 'body') continue;
+        html += `<div class="form-group">
+          ${this._renderLabel(field)}
+          ${this._renderField(field, data[field.name] || '', state.activeLocale)}
+        </div>`;
+      }
+      const bodyField = col.fields.find(f => f.name === 'body');
+      if (bodyField) {
+        html += `<div class="form-group">
+          ${this._renderLabel(bodyField)}
+          ${this._renderMarkdownEditor('body', body, state.activeLocale)}
+        </div>`;
+      }
+      formEl.innerHTML = html;
+      this._bindFormHandlers(formEl, state);
+      this._fillConcertDataLists(formEl, state.col);
+      this._updateLivePreview(state);
       return;
     }
 
-    const data = state.data[state.activeLocale];
-    const body = state.body[state.activeLocale];
+    // Translated collections: one list of fields. Universal fields appear
+    // once; translatable fields carry a per-field language switcher where
+    // every language follows English until it gets its own text.
     let html = '';
-
-    for (const field of col.fields) {
-      if (field.name === 'body') continue;
-      const value = data[field.name] || '';
-      html += `<div class="form-group">
-        ${this._renderLabel(field)}
-        ${this._renderField(field, value, state.activeLocale)}
-      </div>`;
-    }
-
+    const orderedFields = col.fields.filter(f => f.name !== 'body');
     const bodyField = col.fields.find(f => f.name === 'body');
-    if (bodyField) {
-      html += `<div class="form-group">
-        ${this._renderLabel(bodyField)}
-        ${this._renderMarkdownEditor('body', body, state.activeLocale)}
+    const renderRow = (field) => {
+      const isBody = field.name === 'body';
+      const renderOne = (loc, value) => isBody
+        ? this._renderMarkdownEditor('body', value, loc)
+        : this._renderField(field, value, loc);
+
+      if (!this._isTranslatable(field)) {
+        const value = isBody ? state.body['en'] : (state.data['en'][field.name] || '');
+        return `<div class="form-group">
+          ${this._renderLabel(field)}<span class="field-universal-chip">same in every language</span>
+          ${renderOne('en', value)}
+        </div>`;
+      }
+
+      const pills = state.locales.map(loc => {
+        const custom = loc !== 'en' && !state.inherit[loc][field.name];
+        return `<button type="button" class="lang-pill${loc === 'en' ? ' active' : ''}${custom ? ' has-custom' : ''}" data-pill-field="${field.name}" data-pill-locale="${loc}">${loc.toUpperCase()}</button>`;
+      }).join('');
+
+      const inputs = state.locales.map(loc => {
+        const value = isBody ? state.body[loc] : (state.data[loc][field.name] || '');
+        const inherited = loc !== 'en' && state.inherit[loc][field.name];
+        const shown = inherited ? (isBody ? state.body['en'] : (state.data['en'][field.name] || '')) : value;
+        return `<div class="locale-input-wrap${inherited ? ' inherited' : ''}" data-wrap-field="${field.name}" data-wrap-locale="${loc}"${loc === 'en' ? '' : ' hidden'} ${inherited ? 'data-inherit="1"' : ''}>
+          <span class="locale-tag" hidden>${loc.toUpperCase()}</span>
+          ${renderOne(loc, shown)}
+          ${loc === 'en' ? '' : `<div class="inherit-note"${inherited ? '' : ' hidden'}>Follows English — type to translate</div>
+          <button type="button" class="inherit-reset"${inherited ? ' hidden' : ''} data-reset-field="${field.name}" data-reset-locale="${loc}">&#8617; back to English</button>`}
+        </div>`;
+      }).join('');
+
+      return `<div class="form-group form-group--i18n" data-i18n-field="${field.name}">
+        <div class="form-label-row">
+          ${this._renderLabel(field)}
+          <div class="field-langs">${pills}<button type="button" class="lang-expand" data-expand-field="${field.name}" title="Show all languages">&#8862;</button></div>
+        </div>
+        ${inputs}
       </div>`;
-    }
+    };
+
+    for (const field of orderedFields) html += renderRow(field);
+    if (bodyField) html += renderRow(bodyField);
 
     formEl.innerHTML = html;
     this._bindFormHandlers(formEl, state);
+    this._bindI18nFieldControls(formEl, state);
     this._fillConcertDataLists(formEl, state.col);
     this._updateLivePreview(state);
   }
 
-  _renderTrilingualForm(state, formEl) {
-    const { col, locales } = state;
-    let html = '<div class="trilingual-editor">';
+  _bindI18nFieldControls(formEl, state) {
+    const inputOf = (wrap) => wrap.querySelector('input[data-field], textarea[data-field], select[data-field]');
 
-    for (const loc of locales) {
-      const data = state.data[loc];
-      const body = state.body[loc];
-      html += `<div class="trilingual-col" data-locale="${loc}">
-        <div class="trilingual-col-header">${loc.toUpperCase()}</div>`;
+    // Language pills: show that locale's input (compact mode)
+    formEl.querySelectorAll('.lang-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        const group = pill.closest('.form-group--i18n');
+        if (group.classList.contains('expanded')) return;
+        group.querySelectorAll('.lang-pill').forEach(p => p.classList.toggle('active', p === pill));
+        group.querySelectorAll('.locale-input-wrap').forEach(w => {
+          w.hidden = w.dataset.wrapLocale !== pill.dataset.pillLocale;
+        });
+      });
+    });
 
-      for (const field of col.fields) {
-        if (field.name === 'body') continue;
-        const value = data[field.name] || '';
-        html += `<div class="form-group">
-          ${this._renderLabel(field)}
-          ${this._renderField(field, value, loc)}
-        </div>`;
-      }
+    // Expand: all languages stacked at once
+    formEl.querySelectorAll('.lang-expand').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const group = btn.closest('.form-group--i18n');
+        const expanded = group.classList.toggle('expanded');
+        btn.innerHTML = expanded ? '&#8863;' : '&#8862;';
+        group.querySelectorAll('.locale-input-wrap').forEach(w => {
+          w.hidden = expanded ? false : w.dataset.wrapLocale !== group.querySelector('.lang-pill.active').dataset.pillLocale;
+          w.querySelector('.locale-tag').hidden = !expanded;
+        });
+      });
+    });
 
-      const bodyField = col.fields.find(f => f.name === 'body');
-      if (bodyField) {
-        html += `<div class="form-group">
-          <label class="form-label">Content</label>
-          ${this._renderMarkdownEditor('body', body, loc)}
-        </div>`;
-      }
+    // Typing in a translation makes it custom; English mirrors into
+    // everything still inherited
+    formEl.querySelectorAll('.locale-input-wrap').forEach(wrap => {
+      const field = wrap.dataset.wrapField;
+      const loc = wrap.dataset.wrapLocale;
+      const input = inputOf(wrap);
+      if (!input) return;
+      input.addEventListener('input', () => {
+        const group = wrap.closest('.form-group--i18n');
+        if (loc === 'en') {
+          group.querySelectorAll('.locale-input-wrap[data-inherit="1"]').forEach(w => {
+            const sib = inputOf(w);
+            if (sib) sib.value = input.value;
+          });
+          return;
+        }
+        if (wrap.dataset.inherit === '1') {
+          delete wrap.dataset.inherit;
+          wrap.classList.remove('inherited');
+          state.inherit[loc][field] = false;
+          wrap.querySelector('.inherit-note').hidden = true;
+          wrap.querySelector('.inherit-reset').hidden = false;
+          group.querySelector(`.lang-pill[data-pill-locale="${loc}"]`).classList.add('has-custom');
+        }
+      });
+    });
 
-      html += '</div>';
-    }
-
-    html += '</div>';
-    formEl.innerHTML = html;
-    this._bindFormHandlers(formEl, state);
-    this._fillConcertDataLists(formEl, state.col);
-    this._updateLivePreview(state);
+    // Back to English: re-inherit
+    formEl.querySelectorAll('.inherit-reset').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const field = btn.dataset.resetField;
+        const loc = btn.dataset.resetLocale;
+        const group = btn.closest('.form-group--i18n');
+        const wrap = group.querySelector(`.locale-input-wrap[data-wrap-locale="${loc}"]`);
+        const enWrap = group.querySelector('.locale-input-wrap[data-wrap-locale="en"]');
+        const input = inputOf(wrap);
+        const enInput = inputOf(enWrap);
+        if (input && enInput) input.value = enInput.value;
+        wrap.dataset.inherit = '1';
+        wrap.classList.add('inherited');
+        state.inherit[loc][field] = true;
+        wrap.querySelector('.inherit-note').hidden = false;
+        btn.hidden = true;
+        group.querySelector(`.lang-pill[data-pill-locale="${loc}"]`).classList.remove('has-custom');
+        this._markDirty();
+      });
+    });
   }
 
   async _ensureConcertEntries() {
@@ -1922,16 +2005,9 @@ class App {
     const formEl = document.getElementById('editor-form');
     if (!formEl) return;
 
-    if (state.trilingualMode) {
-      // Collect from all three columns
-      for (const loc of state.locales) {
-        formEl.querySelectorAll(`[data-locale="${loc}"][data-field]`).forEach(el => {
-          if (el.dataset.field === 'body') state.body[loc] = el.value;
-          else state.data[loc][el.dataset.field] = el.value;
-        });
-      }
-    } else {
-      const loc = state.activeLocale;
+    const isI18n = !!(state.col.i18n || state.col.i18nStructure);
+    const locs = isI18n ? state.locales : [state.activeLocale];
+    for (const loc of locs) {
       formEl.querySelectorAll(`[data-locale="${loc}"][data-field]`).forEach(el => {
         if (el.dataset.field === 'body') state.body[loc] = el.value;
         else state.data[loc][el.dataset.field] = el.value;
@@ -1970,6 +2046,20 @@ class App {
       state.filename = filename;
     }
     if (isI18n) {
+      // Inheritance: universal fields share the English value everywhere;
+      // translatable fields follow English unless the language has its own
+      // translation (tracked per field in state.inherit).
+      for (const f of col.fields) {
+        const translatable = this._isTranslatable(f);
+        for (const loc of locales) {
+          if (loc === 'en') continue;
+          const follows = !translatable || (state.inherit[loc] && state.inherit[loc][f.name]);
+          if (!follows) continue;
+          if (f.name === 'body') state.body[loc] = state.body['en'];
+          else state.data[loc][f.name] = state.data['en'][f.name];
+        }
+      }
+
       // Content parity: English is the hub. Fill empty English fields from
       // whichever locale has content, so nothing exists only in one language.
       for (const f of col.fields) {
