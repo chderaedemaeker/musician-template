@@ -6,7 +6,10 @@
 class GitGatewayAPI {
   constructor(tokenFn) {
     this._tokenFn = tokenFn; // async function; pass true to force a refresh
-    this.base = '/.netlify/git/github';
+    // On localhost the Netlify services live on the deployed site
+    this.base = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+      ? 'https://vdr-staging.netlify.app/.netlify/git/github'
+      : '/.netlify/git/github';
     this.branch = 'master';
     this._refreshing = null; // single-flight token refresh
   }
@@ -394,6 +397,7 @@ class App {
 
     // Netlify Identity event handlers
     if (window.netlifyIdentity) {
+      if (window.netlifyIdentitySettings) netlifyIdentity.init(window.netlifyIdentitySettings);
       netlifyIdentity.on('login', (user) => {
         this._onIdentityLogin(user);
       });

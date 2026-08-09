@@ -1,4 +1,5 @@
 {% assign lang = page.lang %}
+{% assign langUrl = '/' | append: lang | append: '/' %}
 
 {% assign langHighlights = 'highlights_' | append: lang %}
 {% assign sortedHighlights = collections[langHighlights] | sort: 'date' | reverse %}
@@ -12,7 +13,7 @@
   <div class="highlights-grid highlights-grid--large reveal-group">
     {% if sortedHighlights.size > 0 %}
       {% for highlight in sortedHighlights %}
-        <a href="{{ highlight.url }}" class="highlight-card reveal{% if highlight.data.featured %} highlight-card--featured{% endif %}{% unless highlight.data.image and highlight.data.image != '' %} highlight-card--noimg{% endunless %}" {% unless highlight.data.image and highlight.data.image != '' %}data-initial="{{ highlight.data.title | strip | slice: 0, 1 | upcase }}"{% endunless %}>
+        <a href="/highlights/{{ lang }}/{{ highlight.inputPath | split: '/' | last | replace: '.md', '' }}/" class="highlight-card reveal{% if highlight.data.featured %} highlight-card--featured{% endif %}{% unless highlight.data.image and highlight.data.image != '' %} highlight-card--noimg{% endunless %}" {% unless highlight.data.image and highlight.data.image != '' %}data-initial="{{ highlight.data.title | strip | slice: 0, 1 | upcase }}"{% endunless %}>
           {% if highlight.data.image and highlight.data.image != '' %}
             {% progressiveImage highlight.data.image, highlight.data.title %}
           {% endif %}

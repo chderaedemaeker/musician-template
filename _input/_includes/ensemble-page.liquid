@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="{{ page.lang }}" dir="{{ languages[page.lang].dir | default: 'ltr' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ title }}">
+    <title>{{ title }} — {{ languages[page.lang].site_title }}</title>
+    {% include "css.liquid" %}
+</head>
+<body>
+
+{% assign lang = "" %}
+{% if page.url contains '/en/' %}
+  {% assign lang = "en" %}
+{% elsif page.url contains '/nl/' %}
+  {% assign lang = "nl" %}
+{% elsif page.url contains '/fr/' %}
+  {% assign lang = "fr" %}
+{% elsif page.url contains '/de/' %}
+  {% assign lang = "de" %}
+{% else %}
+  {% assign lang = "en" %}
+{% endif %}
+
+{% include "navigation.liquid" %}
+
+<main>
+  <div class="detail-page">
+    <div class="detail-top">
+      <a class="btn btn--back" href="/{{ lang }}/ensembles/"><span aria-hidden="true">&#8592;</span> {{ languages[lang].back_to_overview }}</a>
+      {% include "share-actions.liquid" %}
+    </div>
+
+    <h1>{{ title }}</h1>
+
+    {% if collaborators %}
+    <div class="meta">
+      <span>{{ collaborators }}</span>
+    </div>
+    {% endif %}
+
+    {% if image %}
+      <div class="featured-image">
+        {% progressiveImage image, title %}
+      </div>
+    {% endif %}
+
+    <div class="content">
+      {{ content }}
+    </div>
+
+    {% if links and links.size > 0 %}
+      <div class="content-actions">
+        {% for l in links %}<a class="btn" href="{{ l.url }}" target="_blank" rel="noopener">{{ l.label }}</a>{% endfor %}
+      </div>
+    {% endif %}
+
+    {% comment %} Concerts belonging to this project, matched on the
+       project's match words (falling back to its title) {% endcomment %}
+    {% assign langUrl = '/' | append: lang | append: '/' %}
+    {% assign matchWords = match | default: title | downcase | split: "," %}
+    {% assign nowTs = "now" | date: "%s" %}
+    {% assign upcomingConcerts = "" | split: "" %}
+    {% assign pastConcerts = "" | split: "" %}
+    {% assign allConcerts = collections.concerts | sort: "date" %}
+    {% for c in allConcerts %}
+      {% assign hay = c.data.collaborators | append: " " | append: c.data.title | downcase %}
+      {% assign hit = false %}
+      {% for w in matchWords %}
+        {% assign wt = w | strip %}
+        {% if wt != "" and hay contains wt %}{% assign hit = true %}{% endif %}
+      {% endfor %}
+      {% if hit %}
+        {% assign cTs = c.date | date: "%s" %}
+        {% if cTs >= nowTs %}
+          {% assign upcomingConcerts = upcomingConcerts | push: c %}
+        {% else %}
+          {% assign pastConcerts = pastConcerts | push: c %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+    {% if upcomingConcerts.size > 0 or pastConcerts.size > 0 %}
+    <section class="project-concerts">
+      <h2>{{ languages[lang].concerts_title }}</h2>
+      {% if upcomingConcerts.size > 0 %}
+        <p class="label project-concerts-label">{{ languages[lang].upcoming_concerts }}</p>
+        <ul class="upcoming-list">
+          {% for c in upcomingConcerts %}
+          <li><a class="upcoming-item" href="{{ c.url | replace_first: '/en/', langUrl }}">
+            <span class="upcoming-item-date">{{ c.date | concertDate: c.data.date_end, c.data.month_only, lang }}</span>
+            <span class="upcoming-item-title">{{ c.data.title }}</span>
+            {% if c.data.place %}<span class="upcoming-item-place">{{ c.data.place }}</span>{% endif %}
+          </a></li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+      {% if pastConcerts.size > 0 %}
+        <details class="project-archive">
+          <summary class="label project-concerts-label">{{ languages[lang].archive }} ({{ pastConcerts.size }})</summary>
+          {% assign pastRecent = pastConcerts | reverse %}
+          <ul class="upcoming-list upcoming-list--past">
+            {% for c in pastRecent limit: 5 %}
+            <li><a class="upcoming-item" href="{{ c.url | replace_first: '/en/', langUrl }}">
+              <span class="upcoming-item-date">{{ c.date | concertDate: c.data.date_end, c.data.month_only, lang }}</span>
+              <span class="upcoming-item-title">{{ c.data.title }}</span>
+              {% if c.data.place %}<span class="upcoming-item-place">{{ c.data.place }}</span>{% endif %}
+            </a></li>
+            {% endfor %}
+          </ul>
+          {% if pastConcerts.size > 5 %}
+            <p class="project-concerts-more"><a class="back-link" href="/{{ lang }}/concerts/">{{ languages[lang].archive }} <span aria-hidden="true">&#8594;</span></a></p>
+          {% endif %}
+        </details>
+      {% endif %}
+    </section>
+    {% endif %}
+
+    {% assign detailItems = collections.projects_en | sort: 'date' | reverse %}
+    {% assign detailLangSwap = '/' | append: lang | append: '/' %}
+    {% include "detail-nav.liquid" %}
+  </div>
+</main>
+
+{% include "footer.liquid" %}
+{% include "progressive-loader.liquid" %}
+</body>
+</html>

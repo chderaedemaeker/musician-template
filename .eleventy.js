@@ -178,6 +178,22 @@ module.exports = function (eleventyConfig) {
         catch (e) { return ''; }
     });
 
+    // Localized sibling of an English source file (same filename in the
+    // language folder), falling back to the English file itself.
+    function localizedRead(enInputPath, lang) {
+        const p = enInputPath.replace('/en/', `/${lang}/`);
+        try { return matter.read(p); }
+        catch (e) { return matter.read(enInputPath); }
+    }
+    eleventyConfig.addFilter('localizedFront', function(enInputPath, lang) {
+        try { return localizedRead(enInputPath, lang).data; }
+        catch (e) { return {}; }
+    });
+    eleventyConfig.addFilter('localizedBody', function(enInputPath, lang) {
+        try { return mdLib.render(localizedRead(enInputPath, lang).content); }
+        catch (e) { return ''; }
+    });
+
     eleventyConfig.addCollection("concerts", function(collectionApi) {
         return collectionApi.getFilteredByGlob("./_input/en/concerts/*.md").filter(notHidden);
     });

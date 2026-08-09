@@ -672,3 +672,13 @@ main {
 .nav-transparent.is-scrolled {
   border-color: transparent;
 }
+
+/* The bar's name never shines through the open menu overlay */
+.nav-brand {
+  transition: opacity var(--dur-med) var(--ease);
+}
+
+.menu-open .nav-brand {
+  opacity: 0;
+  pointer-events: none;
+}

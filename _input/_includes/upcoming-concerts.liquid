@@ -4,6 +4,9 @@
 document.addEventListener('DOMContentLoaded', function() {
   var concerts = {% concertsJson collections.concerts %};
   var lang = '{{ page.lang }}';
+  concerts.forEach(function (c) {
+    if (c.link && lang !== 'en') c.link = c.link.replace(/^\/en\//, '/' + lang + '/');
+  });
 
   function endOf(c) {
     var d = new Date(c.dateEnd || c.date);

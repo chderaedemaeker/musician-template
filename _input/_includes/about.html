@@ -12,6 +12,7 @@
 {% include "navigation.liquid" %}
 
 {% assign lang = page.lang %}
+{% assign langUrl = '/' | append: lang | append: '/' %}
 
 <main>
   <div class="about-page">
@@ -52,7 +53,7 @@
 
       <div class="highlights-grid">
         {% for project in sortedProjects %}
-          <a href="{{ project.url }}" class="highlight-card{% if project.data.featured %} highlight-card--featured{% endif %}{% unless project.data.image and project.data.image != '' %} highlight-card--noimg{% endunless %}" {% unless project.data.image and project.data.image != '' %}data-initial="{{ project.data.title | strip | slice: 0, 1 | upcase }}"{% endunless %}>
+          <a href="/ensembles/{{ lang }}/{{ project.inputPath | split: '/' | last | replace: '.md', '' }}/" class="highlight-card{% if project.data.featured %} highlight-card--featured{% endif %}{% unless project.data.image and project.data.image != '' %} highlight-card--noimg{% endunless %}" {% unless project.data.image and project.data.image != '' %}data-initial="{{ project.data.title | strip | slice: 0, 1 | upcase }}"{% endunless %}>
             {% if project.data.image and project.data.image != '' %}
               <img src="{{ project.data.image }}" alt="{{ project.data.title }}">
             {% endif %}

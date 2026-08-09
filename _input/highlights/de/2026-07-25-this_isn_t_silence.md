@@ -2,19 +2,18 @@
 title: This isn't Silence
 slug: this-isnt-silence
 date: "2021-07-16T00:00"
-type: Live recording
+type: Live-Aufnahme
 image: /images/silence.jpeg
 link: ""
-place: HfMT Cologne, Germany
+place: HfMT Köln, Deutschland
 collaborators: ""
-featured: true
 layout: highlight.html
 tags: highlights
 lang: de
 ---
-Final exam recital “Neue Musik” at the HfMT Cologne, recorded live on 16 July 2021 by Philipp Knaak.
+Abschlusskonzert „Neue Musik" an der HfMT Köln, live aufgenommen am 16. Juli 2021 von Philipp Knaak.
 
-**Luciano Berio — Sequenza VIII for violin solo**
+**Luciano Berio — Sequenza VIII für Violine solo**
 
 <audio controls preload="none" src="/audio/berio-sequenza-viii-live-2021.mp3"></audio>
 

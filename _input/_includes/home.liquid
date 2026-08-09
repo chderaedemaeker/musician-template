@@ -2,6 +2,7 @@
 {% include "navigation.liquid" %}
 
 {% assign lang = page.lang %}
+{% assign langUrl = '/' | append: lang | append: '/' %}
 
 <main>
 
@@ -24,7 +25,7 @@
         <span class="bento-note-title">{{ latestNote.data.title }}</span>
         <span class="bento-note-excerpt">{{ latestNote.templateContent | strip_html | truncate: 150 }}</span>
       </a>
-      <a class="bento-cell-link" href="/en/notes/">{{ languages[lang].notes_title }} <span aria-hidden="true">&#8594;</span></a>
+      <a class="bento-cell-link" href="/{{ lang }}/notes/">{{ languages[lang].notes_title }} <span aria-hidden="true">&#8594;</span></a>
     </div>
     {% endif %}
 
@@ -40,7 +41,7 @@
     {% endfor %}
     {% if latestFound == false %}{% assign latestHighlight = sortedHighlightsHome | first %}{% endif %}
     {% if latestHighlight %}
-    <a href="{{ latestHighlight.url }}" class="bento-cell bento-highlight reveal{% unless latestHighlight.data.image and latestHighlight.data.image != '' %} bento-highlight--noimg{% endunless %}" {% unless latestHighlight.data.image and latestHighlight.data.image != '' %}data-initial="{{ latestHighlight.data.title | strip | slice: 0, 1 | upcase }}"{% endunless %}>
+    <a href="/highlights/{{ lang }}/{{ latestHighlight.inputPath | split: '/' | last | replace: '.md', '' }}/" class="bento-cell bento-highlight reveal{% unless latestHighlight.data.image and latestHighlight.data.image != '' %} bento-highlight--noimg{% endunless %}" {% unless latestHighlight.data.image and latestHighlight.data.image != '' %}data-initial="{{ latestHighlight.data.title | strip | slice: 0, 1 | upcase }}"{% endunless %}>
       {% if latestHighlight.data.image and latestHighlight.data.image != '' %}
         {% progressiveImage latestHighlight.data.image, latestHighlight.data.title %}
       {% endif %}
@@ -56,14 +57,14 @@
     <div class="bento-cell bento-concerts reveal" id="upcoming-section">
       <h2 class="label">{{ languages[lang].upcoming_concerts }}</h2>
       {% include "upcoming-concerts.liquid" %}
-      <a class="bento-cell-link" href="/en/concerts/">{{ languages[lang].see_all_concerts }} <span aria-hidden="true">&#8594;</span></a>
+      <a class="bento-cell-link" href="/{{ lang }}/concerts/">{{ languages[lang].see_all_concerts }} <span aria-hidden="true">&#8594;</span></a>
     </div>
 
     <!-- Contact -->
     <div class="bento-cell bento-contact reveal">
       <h2 class="label">{{ languages[lang].contact_title }}</h2>
       <p class="bento-contact-text">{{ languages[lang].contact_intro }}</p>
-      <a class="btn" href="/en/contact/">{{ languages[lang].contact_title }} <span aria-hidden="true">&#8594;</span></a>
+      <a class="btn" href="/{{ lang }}/contact/">{{ languages[lang].contact_title }} <span aria-hidden="true">&#8594;</span></a>
     </div>
 
   </div>

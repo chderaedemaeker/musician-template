@@ -48,6 +48,7 @@
 
     {% comment %} If the collaborators match a project's match words,
        the collaborator line links to that project {% endcomment %}
+    {% assign langUrl = '/' | append: lang | append: '/' %}
     {% assign collabProjectUrl = "" %}
     {% if collaborators %}
       {% assign collabDown = collaborators | downcase %}
@@ -56,7 +57,7 @@
           {% assign projWords = proj.data.match | default: proj.data.title | downcase | split: "," %}
           {% for w in projWords %}
             {% assign wt = w | strip %}
-            {% if wt != "" and collabDown contains wt %}{% assign collabProjectUrl = proj.url %}{% endif %}
+            {% if wt != "" and collabDown contains wt %}{% assign collabProjectUrl = proj.url | replace_first: '/en/', langUrl %}{% endif %}
           {% endfor %}
         {% endif %}
       {% endfor %}

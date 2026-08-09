@@ -28,6 +28,7 @@
     if (!hamburger || !mobileNav) return;
     var open = mobileNav.classList.toggle('open');
     hamburger.classList.toggle('open', open);
+    document.body.classList.toggle('menu-open', open);
     hamburger.setAttribute('aria-expanded', open ? 'true' : 'false');
     document.body.style.overflow = open ? 'hidden' : '';
   };

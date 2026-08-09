@@ -1,0 +1,20 @@
+---
+pagination:
+  data: collections.projects_en
+  size: 1
+  alias: item
+permalink: "{{ item.url | replace_first: '/en/', '/fr/' }}"
+eleventyExcludeFromCollections: true
+---
+{% assign loc = item.inputPath | localizedFront: "fr" %}
+{% assign title = loc.title | default: item.data.title %}
+{% assign type = loc.type | default: item.data.type %}
+{% assign place = loc.place | default: item.data.place %}
+{% assign collaborators = loc.collaborators | default: item.data.collaborators %}
+{% assign date = item.data.date %}
+{% assign image = item.data.image %}
+{% assign link = loc.link | default: item.data.link %}
+{% assign links = loc.links | default: item.data.links %}
+{% assign match = item.data.match %}
+{% assign content = item.inputPath | localizedBody: "fr" %}
+{% include "ensemble-page.liquid" %}
