@@ -683,7 +683,15 @@ class App {
           <button class="btn btn-primary btn-sm" id="new-row-btn">+ New</button>
         </div>
       </div>
-      <div class="collection-filter"><input type="text" id="table-search" placeholder="Search concerts..." /></div>
+      <div class="collection-filter" style="display:flex;gap:.75rem;align-items:center;">
+        <input type="text" id="table-search" placeholder="Search concerts..." style="flex:1;" />
+        <select id="table-limit" class="table-limit" title="How many concerts to load">
+          <option value="30">Show 30</option>
+          <option value="50">Show 50</option>
+          <option value="100">Show 100</option>
+          <option value="0">Show all</option>
+        </select>
+      </div>
       <div id="bulk-bar" class="bulk-bar" style="display:none;"><span id="bulk-count">0</span><button class="btn btn-sm" id="bulk-delete-btn">Delete</button></div>
       <div class="notion-table-wrap">
         <div class="notion-table" id="notion-table" style="grid-template-columns: ${gridCols};">
@@ -695,35 +703,60 @@ class App {
       </div>`;
     this._bindTopbar();
 
-    this._concertTableState = { entries: [], col, columns, gridCols, sortKey: 'date', sortDir: 'desc', saveTimers: {} };
+    const savedLimit = parseInt(localStorage.getItem('concertTableLimit') || '30', 10);
+    this._concertTableState = { entries: [], files: [], loadedCount: 0, limit: savedLimit, col, columns, gridCols, sortKey: 'date', sortDir: 'desc', saveTimers: {} };
+    const limitSel = document.getElementById('table-limit');
+    limitSel.value = String(savedLimit);
+    limitSel.addEventListener('change', () => {
+      const n = parseInt(limitSel.value, 10);
+      localStorage.setItem('concertTableLimit', String(n));
+      this._concertTableState.limit = n;
+      this._loadConcertRows();
+    });
 
     try {
       // One tree request gives every file's path AND blob sha — the sha must
       // always be known, or saving a row fails with "sha wasn't supplied".
       const tree = await this.api.getTree(col.folder);
-      const files = tree.filter(f => f.name.endsWith('.md')).sort((a, b) => b.name.localeCompare(a.name));
+      // Filenames start with the date, so this is newest-first
+      this._concertTableState.files = tree.filter(f => f.name.endsWith('.md')).sort((a, b) => b.name.localeCompare(a.name));
       const bodyEl = document.getElementById('notion-body');
+      if (!this._concertTableState.files.length) { bodyEl.innerHTML = '<div class="empty-state">No concerts yet.</div>'; return; }
 
-      if (!files.length) { bodyEl.innerHTML = '<div class="empty-state">No concerts yet.</div>'; return; }
-
-      const entries = await pMap(files, async f => {
-        try {
-          const parsed = FrontMatter.parse(await this.api.getBlob(f.sha));
-          return { name: f.name, data: parsed.data, body: parsed.body, path: f.path, sha: f.sha, dirty: false, loadFailed: false };
-        } catch { return { name: f.name, data: { title: f.name }, body: '', path: f.path, sha: f.sha, dirty: false, loadFailed: true }; }
-      });
-
-      this._concertTableState.entries = entries;
-      this._renderTableRows();
+      await this._loadConcertRows();
       this._bindTableEvents();
     } catch (e) {
       document.getElementById('notion-body').innerHTML = `<div class="empty-state" style="color:var(--danger);">${esc(e.message)}</div>`;
     }
   }
 
+  // Fetch only as many concert files as the limit asks for; already-loaded
+  // rows are kept, so raising the limit only fetches the difference.
+  async _loadConcertRows() {
+    const state = this._concertTableState;
+    const wanted = state.limit === 0 ? state.files.length : Math.min(state.limit, state.files.length);
+    if (state.loadedCount < wanted) {
+      const toLoad = state.files.slice(state.loadedCount, wanted);
+      const bodyEl = document.getElementById('notion-body');
+      if (!state.entries.length) bodyEl.innerHTML = '<div class="loading-state"><span class="spinner"></span> Loading...</div>';
+      const fresh = await pMap(toLoad, async f => {
+        try {
+          const parsed = FrontMatter.parse(await this.api.getBlob(f.sha));
+          return { name: f.name, data: parsed.data, body: parsed.body, path: f.path, sha: f.sha, dirty: false, loadFailed: false };
+        } catch { return { name: f.name, data: { title: f.name }, body: '', path: f.path, sha: f.sha, dirty: false, loadFailed: true }; }
+      });
+      state.entries.push(...fresh);
+      state.loadedCount = wanted;
+    }
+    state.visibleCount = wanted;
+    this._renderTableRows();
+    this._bindTableRowEvents();
+  }
+
   _renderTableRows() {
     const state = this._concertTableState;
-    const { entries, columns, gridCols, sortKey, sortDir } = state;
+    const { columns, gridCols, sortKey, sortDir } = state;
+    const entries = state.visibleCount ? state.entries.slice(0, state.visibleCount) : state.entries;
 
     const sorted = [...entries].sort((a, b) => {
       const va = (a.data[sortKey] || '').toLowerCase();
@@ -750,7 +783,7 @@ class App {
         <div class="notion-cell" data-field="place" data-idx="${idx}" contenteditable="true">${esc(entry.data.place || '')}</div>
         <div class="notion-cell" data-field="composers" data-idx="${idx}" contenteditable="true">${esc(entry.data.composers || '')}</div>
         <div class="notion-cell" data-field="collaborators" data-idx="${idx}" contenteditable="true">${esc(entry.data.collaborators || '')}</div>
-        <div class="notion-cell notion-cell-actions"><button class="notion-archive-btn" data-idx="${idx}" title="${entry.data.status === 'archived' ? 'Put back on the site' : 'Move to the archive (hidden from the site)'}">${entry.data.status === 'archived' ? '&#8634;' : '&#9660;'}</button><button class="notion-dup-btn" data-idx="${idx}" title="Duplicate">&#x2398;</button><button class="notion-open-btn" data-file="${esc(entry.name)}" title="Open full editor">&#8599;</button></div>
+        <div class="notion-cell notion-cell-actions"><button class="notion-dup-btn" data-idx="${idx}" title="Duplicate">&#x2398;</button><button class="notion-open-btn" data-file="${esc(entry.name)}" title="Open full editor">&#8599;</button></div>
       </div>`;
     }).join('');
 
@@ -788,9 +821,22 @@ class App {
 
     this._bindTableRowEvents();
 
-    // Search
+    // Search covers every concert — typing while only a slice is loaded
+    // fetches the rest once in the background
+    const self = this;
     document.getElementById('table-search').addEventListener('input', function() {
       const q = this.value.toLowerCase().trim();
+      if (q && state.loadedCount < state.files.length && !state._loadingAll) {
+        state._loadingAll = true;
+        const prevLimit = state.limit;
+        state.limit = 0;
+        self._loadConcertRows().then(() => {
+          state.limit = prevLimit;
+          state._loadingAll = false;
+          const ev = new Event('input');
+          document.getElementById('table-search').dispatchEvent(ev);
+        });
+      }
       bodyEl.querySelectorAll('.notion-row').forEach(row => {
         if (!q) { row.style.display = ''; return; }
         const idx = parseInt(row.dataset.idx);
@@ -944,20 +990,6 @@ class App {
     });
 
     // Duplicate button
-    bodyEl.querySelectorAll('.notion-archive-btn').forEach(btn => {
-      btn.addEventListener('click', async (e) => {
-        e.stopPropagation();
-        const idx = parseInt(btn.dataset.idx);
-        const entry = state.entries[idx];
-        if (entry.data.status === 'archived') delete entry.data.status;
-        else entry.data.status = 'archived';
-        entry.dirty = true;
-        this._renderTableRows();
-        this._bindTableRowEvents();
-        await this._saveTableRow(idx);
-      });
-    });
-
     bodyEl.querySelectorAll('.notion-dup-btn').forEach(btn => {
       btn.addEventListener('click', async (e) => {
         e.stopPropagation();
@@ -980,6 +1012,8 @@ class App {
           const content = FrontMatter.serialize(newData, entry.body || '');
           const result = await this.api.createOrUpdateFile(newPath, content, `Duplicate concert: ${newData.title}`);
           state.entries.push({ name: newName, data: newData, body: entry.body || '', path: newPath, sha: result.content.sha, dirty: false });
+          if (state.visibleCount) state.visibleCount++;
+          state.loadedCount++;
           this._renderTableRows();
           this._bindTableRowEvents();
           showStatus('saved', 'Duplicated');
@@ -1139,7 +1173,9 @@ class App {
       <div class="editor-split">
         <div id="editor-form"><div class="loading-state"><span class="spinner"></span> Loading...</div></div>
         <div class="live-preview-panel" id="live-preview">
-          <div class="live-preview-header">Preview</div>
+          <div class="live-preview-header">Preview
+            ${isI18n ? `<span class="lp-langs">${locales.map(l => `<button type="button" class="lang-pill lp-lang${l === 'en' ? ' active' : ''}" data-preview-locale="${l}">${l.toUpperCase()}</button>`).join('')}</span>` : ''}
+          </div>
           <div class="live-preview-content" id="live-preview-content">
             <div class="live-preview-empty">Start editing to see a preview</div>
           </div>
@@ -1194,6 +1230,15 @@ class App {
     }
 
     this._renderEditorForm(state);
+
+    // Preview language switcher
+    document.querySelectorAll('.lp-lang').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.previewLocale = btn.dataset.previewLocale;
+        document.querySelectorAll('.lp-lang').forEach(b => b.classList.toggle('active', b === btn));
+        this._updateLivePreview(state);
+      });
+    });
 
     // Save
     document.getElementById('save-btn').addEventListener('click', () => this._saveEntry(state));
@@ -1757,9 +1802,21 @@ class App {
     const el = document.getElementById('live-preview-content');
     if (!el) return;
     this._collectFormData(state);
-    const loc = state.activeLocale || state.locales[0];
-    const data = state.data[loc] || {};
-    const body = state.body[loc] || '';
+    const loc = state.previewLocale || state.activeLocale || state.locales[0];
+    let data = state.data[loc] || {};
+    let body = state.body[loc] || '';
+    // Translated collections: preview what the site will show — the
+    // language's own text where translated, English everywhere else
+    const isI18n = !!(state.col.i18n || state.col.i18nStructure);
+    if (isI18n && loc !== 'en') {
+      const eff = { ...state.data['en'] };
+      for (const k of Object.keys(state.data[loc] || {})) {
+        const inh = state.inherit[loc] && state.inherit[loc][k];
+        if (!inh && state.data[loc][k]) eff[k] = state.data[loc][k];
+      }
+      data = eff;
+      body = (state.inherit[loc] && state.inherit[loc]['body']) ? state.body['en'] : (state.body[loc] || state.body['en']);
+    }
     const colName = state.col.name;
 
     let html = '<div class="lp-page">';

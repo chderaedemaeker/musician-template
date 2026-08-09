@@ -1482,3 +1482,27 @@ body { letter-spacing: -0.01em; }
 .inherit-reset:hover {
   color: var(--near-black);
 }
+
+/* Preview language switcher + concerts limit selector */
+.live-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+}
+
+.lp-langs {
+  display: inline-flex;
+  gap: .25rem;
+}
+
+.table-limit {
+  font-family: inherit;
+  font-size: .78rem;
+  color: var(--near-black);
+  background: transparent;
+  border: 1px solid var(--warm-grey);
+  border-radius: 999px;
+  padding: .3rem .7rem;
+  cursor: pointer;
+}
