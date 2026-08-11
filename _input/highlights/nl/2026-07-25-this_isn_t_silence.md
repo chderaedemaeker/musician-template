@@ -3,6 +3,7 @@ title: This isn't Silence
 date: "2021-07-16T00:00"
 type: Live-opname
 image: /images/img2.jpg
+hide_image: true
 link: ""
 place: HfMT Keulen, Duitsland
 collaborators: ""
