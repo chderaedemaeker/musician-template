@@ -47,7 +47,7 @@
       <div class="video-wrap">
         <iframe src="https://www.youtube.com/embed/{{ link }}" title="{{ title }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
       </div>
-    {% elsif image and image != "" %}
+    {% elsif image and image != "" and hide_image != true and hide_image != "true" %}
       <div class="featured-image">
         {% progressiveImage image, title %}
       </div>

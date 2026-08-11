@@ -26,16 +26,37 @@ function placeholderOptions() {
     };
 }
 
+// Sources at or below this size are already light enough — recompressing
+// them only costs visible quality. Serve them untouched.
+const OPTIMIZE_ABOVE_BYTES = 400 * 1024;
+
+// The original's public URL if the file is small enough to serve as-is,
+// otherwise null (→ run it through the optimizer).
+function passthroughUrl(inputPath) {
+    try {
+        if (inputPath.startsWith('_input/') && fs.statSync(inputPath).size <= OPTIMIZE_ABOVE_BYTES) {
+            return inputPath.slice('_input'.length);
+        }
+    } catch (e) { /* let the optimizer deal with it */ }
+    return null;
+}
+
 async function buildProgressiveImg(inputPath, alt) {
     const thumbMeta = await Image(inputPath, placeholderOptions());
     const thumbB64 = fs.readFileSync(thumbMeta.jpeg[0].outputPath).toString('base64');
     const placeholder = `data:image/jpeg;base64,${thumbB64}`;
 
+    const altEsc = (alt || '').replace(/"/g, '&quot;');
+
+    const original = passthroughUrl(inputPath);
+    if (original) {
+        return `<div class="prog-img-wrap"><img class="prog-img" src="${placeholder}" data-src="${original}" alt="${altEsc}" /></div>`;
+    }
+
     const fullMeta = await Image(inputPath, imageOptions());
     const jpegSrcset = fullMeta.jpeg.map(i => `${i.url} ${i.width}w`).join(', ');
     const fullSrc = fullMeta.jpeg[fullMeta.jpeg.length - 1].url;
 
-    const altEsc = (alt || '').replace(/"/g, '&quot;');
     return `<div class="prog-img-wrap"><img class="prog-img" src="${placeholder}" data-src="${fullSrc}" data-srcset="${jpegSrcset}" alt="${altEsc}" /></div>`;
 }
 
@@ -64,6 +85,8 @@ module.exports = function (eleventyConfig) {
     eleventyConfig.addShortcode("image", async function(src, alt = "") {
         if (!src) return "";
         let inputPath = src.startsWith("/") ? `_input${src}` : src;
+        const original = passthroughUrl(inputPath);
+        if (original) return `<img src="${original}" alt="${alt}" style="max-width: 100%; height: auto;" loading="lazy" decoding="async">`;
         try {
         let metadata = await Image(inputPath, imageOptions());
         let imageAttributes = {
@@ -94,6 +117,8 @@ module.exports = function (eleventyConfig) {
     eleventyConfig.addFilter("optimizedImageUrl", async function(src) {
         if (!src) return "";
         let inputPath = src.startsWith("/") ? `_input${src}` : src;
+        const original = passthroughUrl(inputPath);
+        if (original) return original;
         try {
             let metadata = await Image(inputPath, imageOptions([1200]));
             return metadata.jpeg[0].url;

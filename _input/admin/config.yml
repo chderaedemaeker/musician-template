@@ -92,6 +92,7 @@ collections:
       - {label: "Date", name: "date", widget: "datetime", required: true, format: "YYYY-MM-DDTHH:mm:ss", time_format: false, picker_utc: false, i18n: duplicate, hint: "Highlights are shown newest first — the date decides the order."}
       - {label: "Type", name: "type", widget: "string", required: false, i18n: duplicate, hint: "A short word for what this is: \"Video\", \"Recording\", \"CD release\"…"}
       - {label: "Thumbnail", name: "image", widget: "image", required: true, i18n: duplicate, hint: "The photo on the highlight card. Required — highlights without a photo look empty."}
+      - {label: "Hide photo on the page", name: "hide_image", widget: "boolean", required: false, default: false, i18n: duplicate, hint: "The photo stays on the highlight card, but is not shown on the highlight's own page — handy when the page is mainly audio or text."}
       - {label: "Youtube ID", name: "link", widget: "string", required: false, i18n: duplicate, hint: "Only the code after watch?v= in a YouTube address, e.g. \"XSOi7_MJnqI\". The video then replaces the photo on the page."}
       - {label: "Place", name: "place", widget: "string", required: false, i18n: duplicate}
       - {label: "Collaborators", name: "collaborators", widget: "string", required: false, i18n: duplicate}

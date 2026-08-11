@@ -2499,7 +2499,7 @@ class App {
       if (data.link) {
         html += `<div class="lp-video"><div class="lp-video-placeholder">YouTube: ${esc(data.link)}</div></div>`;
       }
-      if (data.image) {
+      if (data.image && !data.link && String(data.hide_image) !== 'true') {
         html += `<div class="lp-featured-image"><img src="${data.image.startsWith('/') ? data.image : '/images/' + data.image}" alt="${esc(data.title || '')}" onerror="this.parentElement.innerHTML='<div class=\\'lp-img-placeholder\\'>Image</div>'" /></div>`;
       }
       html += `<h1 class="lp-title">${esc(data.title || 'Untitled')}</h1>`;
