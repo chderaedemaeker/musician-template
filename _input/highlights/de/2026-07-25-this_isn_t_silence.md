@@ -1,12 +1,13 @@
 ---
 title: This isn't Silence
-slug: this-isnt-silence
 date: "2021-07-16T00:00"
 type: Live-Aufnahme
-image: /images/silence.jpeg
+image: /images/IMG2.JPG
 link: ""
 place: HfMT Köln, Deutschland
 collaborators: ""
+featured: false
+slug: this-isnt-silence
 layout: highlight.html
 tags: highlights
 lang: de
