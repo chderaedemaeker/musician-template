@@ -132,20 +132,6 @@ class GitGatewayAPI {
     return decodeBase64UTF8(data.content);
   }
 
-  // Raw base64 of a blob — for copying binary files (images, audio)
-  async getBlobBase64(sha) {
-    const data = await this._request('GET', `/git/blobs/${sha}`);
-    return data.content.replace(/\n/g, '');
-  }
-
-  // Every file under a prefix, any depth
-  async getTreeRecursive(prefix) {
-    const branch = await this._request('GET', `/branches/${this.branch}`);
-    const tree = await this._request('GET', `/git/trees/${branch.commit.commit.tree.sha}?recursive=1`);
-    const p = prefix.endsWith('/') ? prefix : prefix + '/';
-    return tree.tree.filter(f => f.type === 'blob' && f.path.startsWith(p));
-  }
-
   async deleteFile(path, sha, message) {
     return this._request('DELETE', `/contents/${path}`, {
       message, sha, branch: this.branch,
@@ -3117,7 +3103,6 @@ class App {
           ${item.size ? `<div class="media-item-size">${formatFileSize(item.size)}</div>` : ''}
           <div class="media-item-actions">
             <button class="btn btn-ghost btn-sm media-copy-btn">Copy</button>
-            <button class="btn btn-ghost btn-sm media-rename-btn">Rename</button>
             <button class="btn btn-danger btn-sm media-delete-btn">Delete</button>
           </div>
         </div>
@@ -3135,12 +3120,6 @@ class App {
         const item = btn.closest('.media-item');
         const p = item.dataset.kind === 'audio' ? `/audio/${item.dataset.name}` : `/images/${item.dataset.name}`;
         navigator.clipboard.writeText(p).then(() => showStatus('saved', `Copied: ${p}`));
-      }));
-
-      // Rename
-      gridEl.querySelectorAll('.media-rename-btn').forEach(btn => btn.addEventListener('click', e => {
-        e.stopPropagation();
-        this._renameMediaFile(btn.closest('.media-item').dataset);
       }));
 
       // Delete
@@ -3185,70 +3164,6 @@ class App {
     showStatus('saved', `Uploaded ${uploaded} file${uploaded !== 1 ? 's' : ''}`);
     this._imageCache = null; this._audioCache = null;
     this.renderMedia();
-  }
-
-  // Rename a media file: copy the binary to the new name, update every
-  // page that references it, then delete the old file.
-  async _renameMediaFile(ds) {
-    const { name: oldName, kind, path, sha } = ds;
-    const ext = (oldName.match(/\.[a-z0-9]+$/i) || [''])[0];
-    const typed = prompt('New name for this file:', oldName);
-    if (typed == null) return;
-    let newName = typed.trim();
-    if (!newName || newName === oldName) return;
-    if (!newName.toLowerCase().endsWith(ext.toLowerCase())) newName += ext;
-    if (!/^[A-Za-z0-9._-]+$/.test(newName)) {
-      showStatus('error', 'Use only letters, numbers, dots, dashes and underscores in the name.');
-      return;
-    }
-    const folder = path.substring(0, path.lastIndexOf('/'));
-    const newPath = `${folder}/${newName}`;
-    try {
-      let exists = true;
-      try { await this.api.getFileInfo(newPath); } catch (e) { exists = false; }
-      if (exists) { showStatus('error', `A file called "${newName}" already exists.`); return; }
-
-      showStatus('saving', 'Renaming…');
-      const b64 = await this.api.getBlobBase64(sha);
-      await this.api.uploadImage(newPath, b64, `Rename ${oldName} to ${newName}`);
-
-      showStatus('saving', 'Updating pages that use this file…');
-      const pub = n => kind === 'audio' ? `/audio/${n}` : `/images/${n}`;
-      const updated = await this._updateMediaReferences(oldName, newName, pub(oldName), pub(newName));
-
-      await this.api.deleteFile(path, sha, `Delete ${oldName} (renamed to ${newName})`);
-      showStatus('saved', updated ? `Renamed — updated ${updated} page${updated > 1 ? 's' : ''}` : 'Renamed');
-      this._imageCache = null; this._audioCache = null;
-      this.renderMedia();
-    } catch (e) {
-      showStatus('error', `Rename failed: ${e.message}`);
-    }
-  }
-
-  // Rewrite references to a renamed media file in all content files.
-  // Handles both full public paths (/images/x.jpg) and bare filenames
-  // (image: x.jpg), with boundaries so "a.jpg" never matches inside "ba.jpg".
-  async _updateMediaReferences(oldName, newName, oldPublic, newPublic) {
-    const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const pathRe = new RegExp(escRe(oldPublic), 'g');
-    const bareRe = new RegExp(`(^|[\\s"'(:/=\\[])${escRe(oldName)}(?=$|[\\s"')?#\\]])`, 'gm');
-
-    const files = (await this.api.getTreeRecursive('_input'))
-      .filter(f => /\.(md|json)$/i.test(f.path) && !f.path.startsWith('_input/images/') && !f.path.startsWith('_input/audio/'));
-
-    const changes = [];
-    await pMap(files, async f => {
-      let text;
-      try { text = await this.api.getBlob(f.sha); } catch (e) { return; }
-      if (!text.includes(oldName)) return;
-      const replaced = text.replace(pathRe, newPublic).replace(bareRe, (m, pre) => pre + newName);
-      if (replaced !== text) changes.push({ path: f.path, content: replaced });
-    });
-
-    if (changes.length) {
-      await this.api.commitFiles(changes, `Update references: ${oldName} → ${newName}`);
-    }
-    return changes.length;
   }
 
   _showLightbox(name, path) {
