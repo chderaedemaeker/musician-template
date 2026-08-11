@@ -380,25 +380,57 @@ function renderMarkdown(md) {
     if (line.trim() === '') { i++; continue; }
     const p = []; while (i < lines.length && lines[i].trim() !== '' && !lines[i].match(/^#{1,6}\s/) && !lines[i].trimStart().startsWith('> ') && !/^\s*[-*+]\s+/.test(lines[i]) && !/^\s*\d+\.\s+/.test(lines[i]) && !/^(-{3,}|_{3,}|\*{3,})$/.test(lines[i].trim()) && !lines[i].match(/^%%PRE\d+%%$/)) { p.push(lines[i]); i++; }
     if (p.length) {
-      // A line ending in two spaces is a hard break (markdown-it renders
-      // it as <br> on the site) — keep it visible here too
-      const joined = p.map((line, idx) => {
-        const hard = / {2,}$/.test(line);
-        return inlineMd(line.replace(/\s+$/, '')) + (idx < p.length - 1 ? (hard ? '<br>' : ' ') : '');
-      }).join('');
-      result.push(`<p>${joined}</p>`);
+      // The site renders markdown with breaks:true — every newline inside
+      // a paragraph is a visible line break. Mirror that here.
+      result.push(`<p>${p.map(line => inlineMd(line.replace(/\s+$/, ''))).join('<br>')}</p>`);
     }
   }
   return result.join('\n');
 }
 
+// In the visual editor, a bare <audio> tag becomes a small widget with an
+// editable title field, so the title is visible and changeable without
+// touching HTML. The serializer turns it back into the plain tag.
+function decorateRichAudio(rich) {
+  rich.querySelectorAll('audio').forEach(a => {
+    if (a.closest('.re-audio')) return;
+    const src = a.getAttribute('src') || (a.querySelector('source') && a.querySelector('source').getAttribute('src')) || '';
+    const title = a.getAttribute('data-title') || '';
+    const box = document.createElement('div');
+    box.className = 're-audio';
+    box.contentEditable = 'false';
+    box.setAttribute('data-src', src);
+    box.innerHTML = `<div class="re-audio-head"><span class="re-audio-icon">&#9835;</span><input class="re-audio-title" placeholder="Title shown on the player" value="${esc(title)}" /></div>`;
+    const player = document.createElement('audio');
+    player.controls = true; player.preload = 'none'; player.src = src;
+    box.appendChild(player);
+    // An audio alone in its paragraph replaces the whole paragraph
+    const p = a.parentElement;
+    const target = (p && p.tagName === 'P' && p.textContent.trim() === '' && p.querySelectorAll('audio,img').length === 1) ? p : a;
+    target.replaceWith(box);
+    const inp = box.querySelector('.re-audio-title');
+    // Mirror typed text into the attribute: the serializer works on clones,
+    // and a clone only carries the attribute, not the live value
+    inp.addEventListener('input', () => inp.setAttribute('value', inp.value));
+  });
+}
+
 // --------------- HTML → Markdown (for the rich editor) ---------------
 function htmlToMarkdown(root) {
   const audioMd = el => {
-    const src = el.getAttribute('src') || (el.querySelector('source') && el.querySelector('source').getAttribute('src')) || '';
-    const title = el.getAttribute('data-title');
+    let src, title;
+    if (el.tagName === 'AUDIO') {
+      src = el.getAttribute('src') || (el.querySelector('source') && el.querySelector('source').getAttribute('src')) || '';
+      title = el.getAttribute('data-title') || '';
+    } else { // .re-audio widget
+      const a = el.querySelector('audio');
+      src = (a && a.getAttribute('src')) || el.getAttribute('data-src') || '';
+      const inp = el.querySelector('.re-audio-title');
+      title = inp ? inp.value.trim() : '';
+    }
     return `<audio controls src="${src}"${title ? ` data-title="${title.replace(/"/g, '&quot;')}"` : ''}></audio>`;
   };
+  const isAudioWidget = el => el.classList && el.classList.contains('re-audio');
 
   const inline = (node) => {
     let out = '';
@@ -406,12 +438,12 @@ function htmlToMarkdown(root) {
       if (child.nodeType === Node.TEXT_NODE) { out += child.nodeValue.replace(/ /g, ' ').replace(/\n/g, ' '); continue; }
       if (child.nodeType !== Node.ELEMENT_NODE) continue;
       const t = child.tagName;
-      if (t === 'BR') out += '  \n';
+      if (t === 'BR') out += '\n';
       else if (t === 'STRONG' || t === 'B') { const s = inline(child); if (s.trim()) out += `**${s.trim()}**`; }
       else if (t === 'EM' || t === 'I') { const s = inline(child); if (s.trim()) out += `*${s.trim()}*`; }
       else if (t === 'A') out += `[${inline(child).trim() || child.getAttribute('href') || ''}](${child.getAttribute('href') || ''})`;
       else if (t === 'IMG') out += `![${child.getAttribute('alt') || ''}](${child.getAttribute('src') || ''})`;
-      else if (t === 'AUDIO') out += audioMd(child);
+      else if (t === 'AUDIO' || isAudioWidget(child)) out += audioMd(child);
       else if (t === 'CODE') out += '`' + child.textContent + '`';
       else out += inline(child);
     }
@@ -425,13 +457,18 @@ function htmlToMarkdown(root) {
     if (!run.length) return;
     const frag = document.createElement('div');
     run.forEach(n => frag.appendChild(n.cloneNode(true)));
-    const md = inline(frag).replace(/^[ \n]+|[ \n]+$/g, '').replace(/(  \n)+$/g, '');
+    const md = inline(frag).replace(/^[ \n]+|[ \n]+$/g, '');
     if (md) blocks.push(md);
     run = [];
   };
 
   const walk = (node) => {
     for (const child of node.childNodes) {
+      if (child.nodeType === Node.ELEMENT_NODE && isAudioWidget(child)) {
+        flushRun();
+        blocks.push(audioMd(child));
+        continue;
+      }
       if (child.nodeType === Node.ELEMENT_NODE && BLOCK.has(child.tagName)) {
         flushRun();
         const t = child.tagName;
@@ -451,7 +488,7 @@ function htmlToMarkdown(root) {
         }
         // P or DIV: a div holding further blocks recurses; otherwise it's a paragraph
         if ([...child.children].some(el => BLOCK.has(el.tagName))) { walk(child); continue; }
-        const s = inline(child).replace(/^[ \n]+|[ \n]+$/g, '').replace(/(  \n)+$/g, '');
+        const s = inline(child).replace(/^[ \n]+|[ \n]+$/g, '');
         if (s) blocks.push(s);
         continue;
       }
@@ -2265,23 +2302,43 @@ class App {
       textarea.value = md;
       textarea.dispatchEvent(new Event('input', { bubbles: true }));
     };
-    const syncToRich = () => { rich.innerHTML = renderMarkdown(textarea.value); };
+    const syncToRich = () => { rich.innerHTML = renderMarkdown(textarea.value); decorateRichAudio(rich); };
     // The language-inherit mirroring writes into the hidden textarea —
     // this hook keeps the visible editor in step
     textarea._syncRich = syncToRich;
+    decorateRichAudio(rich);
 
     // Visual editing
     rich.addEventListener('input', () => syncFromRich());
     rich.addEventListener('blur', () => syncFromRich());
     rich.addEventListener('keydown', (e) => {
-      // Enter is a line break (<br> on the site); an empty line starts a new paragraph
-      if (e.key === 'Enter' && !e.shiftKey) {
+      if (e.target.closest && e.target.closest('.re-audio')) return; // typing in an audio title
+      // Enter is a line break (<br> on the site); an empty line starts a new
+      // paragraph. Inserted by hand — execCommand('insertLineBreak') leaves an
+      // invisible trailing <br> in some browsers, which looks like Enter did nothing.
+      if (e.key === 'Enter') {
         e.preventDefault();
-        document.execCommand('insertLineBreak');
+        const sel = window.getSelection();
+        if (!sel || !sel.rangeCount) return;
+        const range = sel.getRangeAt(0);
+        range.deleteContents();
+        const br = document.createElement('br');
+        range.insertNode(br);
+        // A <br> at the very end of a block doesn't render — pad it so the
+        // caret visibly lands on the new line
+        const next = br.nextSibling;
+        if (!next || (next.nodeType === Node.TEXT_NODE && next.nodeValue === '')) {
+          br.after(document.createElement('br'));
+        }
+        range.setStartAfter(br);
+        range.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(range);
         syncFromRich();
       }
     });
     rich.addEventListener('paste', (e) => {
+      if (e.target.closest && e.target.closest('.re-audio')) return; // pasting into an audio title
       e.preventDefault();
       const text = (e.clipboardData || window.clipboardData).getData('text/plain');
       document.execCommand('insertText', false, text);
@@ -2354,6 +2411,7 @@ class App {
       const rich = wrap.querySelector('.rich-editor');
       rich.focus();
       document.execCommand('insertHTML', false, html);
+      decorateRichAudio(rich);
       textarea.value = htmlToMarkdown(rich);
     }
     textarea.dispatchEvent(new Event('input', { bubbles: true }));

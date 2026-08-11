@@ -172,7 +172,9 @@ module.exports = function (eleventyConfig) {
     // localized concert pages, which reuse the English source content
     // without depending on template render order.
     const matter = require('gray-matter');
-    const mdLib = require('markdown-it')({ html: true });
+    // breaks: true — a single Enter in the CMS is a visible line break on the site
+    const mdLib = require('markdown-it')({ html: true, breaks: true, linkify: true });
+    eleventyConfig.setLibrary('md', mdLib);
     eleventyConfig.addFilter('fileBody', function(inputPath) {
         try { return mdLib.render(matter.read(inputPath).content); }
         catch (e) { return ''; }

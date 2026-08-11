@@ -2029,3 +2029,19 @@ body { letter-spacing: -0.01em; }
 .media-audio-icon { font-size: 1.6rem; color: var(--dark-grey); }
 .media-audio-thumb audio { width: 100%; height: 30px; }
 .media-item-audio .media-thumb { cursor: default; }
+
+/* Audio widget inside the rich editor — visible, editable title */
+.re-audio {
+  border: 1px solid var(--warm-grey); background: var(--off-white);
+  padding: .55rem .7rem; margin: .6rem 0; max-width: 440px;
+}
+.re-audio-head { display: flex; align-items: center; gap: .5rem; margin-bottom: .4rem; }
+.re-audio-icon { color: var(--dark-grey); }
+.re-audio-title {
+  flex: 1; border: none; border-bottom: 1px dashed var(--warm-grey);
+  background: transparent; outline: none; padding: .15rem 0;
+  font-family: var(--font-serif); font-size: .95rem; color: var(--near-black);
+}
+.re-audio-title:focus { border-bottom-color: var(--near-black); }
+.re-audio-title::placeholder { color: var(--mid-grey); font-style: italic; }
+.re-audio audio { display: block; width: 100%; height: 32px; }
