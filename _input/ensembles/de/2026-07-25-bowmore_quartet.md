@@ -1,7 +1,7 @@
 ---
 title: Bowmore Quartet
 collaborators: ""
-image: /images/BOWMORE_DRIESLUYTEN-73.jpg
+image: /images/BOWMORE_DRIESLUYTEN-78.jpg
 match: bowmore
 featured: false
 links:
