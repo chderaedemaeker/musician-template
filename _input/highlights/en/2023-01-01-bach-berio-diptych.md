@@ -1,15 +1,16 @@
 ---
-title: "Bach and Berio — a diptych"
-slug: "bach-berio-diptych"
-date: 2023-01-01T00:00:00
-type: "Recording"
-image: "/images/12.jpeg"
-link: ""
+title: Bach and Berio — a diptych
+date: "2023-01-01T00:00"
+type: Recording
+image: /images/12.jpeg
+hide_image: false
+link: RDAbZxSocrvvs
 place: ""
 collaborators: ""
+featured: false
+slug: bach-berio-diptych
 layout: highlight.html
 tags: highlights
 lang: en
 ---
-
 A recording exploring the dialogue between Bach's Partita and Berio's Sequenza VIII. Published as a single on Etcetera Records in 2023.
