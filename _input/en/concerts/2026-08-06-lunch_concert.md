@@ -1,11 +1,11 @@
 ---
 title: Lunch Concert
-date: "2026-11-21T20:00"
+date: "2026-11-18T20:00"
 date_end: ""
 month_only: false
 place: Den Bosch, The Netherlands
-composers: Bach, Brahms, Messiaen
-collaborators: Duo Altiler (Alexander Declercq - Piano)
+composers: Haynd, Ligeti, Glass
+collaborators: Bowmore Quartet
 link: ""
 featured: false
 layout: concert.html
