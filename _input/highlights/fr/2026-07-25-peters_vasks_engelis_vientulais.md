@@ -14,4 +14,7 @@ lang: fr
 ---
 Enregistrement de *Vientulais Engelis* (L'ange solitaire) de Peteris Vasks, une méditation pour violon et cordes.
 
-<audio controls src="/audio/pv2.mp3" data-title="pv2"></audio>
+<br>
+
+
+<audio controls src="/audio/pv2.mp3" data-title=Peteris Vasks - Vientulais Engelis"></audio>
