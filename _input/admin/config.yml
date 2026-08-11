@@ -5,6 +5,8 @@ local_backend: true
 
 media_folder: '_input/images'
 public_folder: '/images'
+audio_folder: '_input/audio'
+public_audio_folder: '/audio'
 locale: 'en'
 show_preview_links: true
 

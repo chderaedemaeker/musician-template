@@ -1961,3 +1961,71 @@ body { letter-spacing: -0.01em; }
 .notion-row-notime .notion-date-input {
   background: #fdf3d7;
 }
+
+/* ===== Rich text editor (visual by default) ===== */
+.rich-editor {
+  flex: 1; min-height: 280px; max-height: 640px; overflow-y: auto;
+  padding: .9rem 1rem; outline: none;
+  font-family: var(--font-serif); font-size: 1.05rem; line-height: 1.7;
+  color: var(--near-black); background: var(--white);
+  cursor: text;
+}
+.rich-editor:empty::before {
+  content: 'Write here\2026';
+  color: var(--mid-grey); font-style: italic;
+}
+.rich-editor h1 { font-size: 1.6rem; margin: .75rem 0 .5rem; font-weight: 500; }
+.rich-editor h2 { font-size: 1.35rem; margin: .65rem 0 .4rem; font-weight: 500; }
+.rich-editor h3 { font-size: 1.15rem; margin: .55rem 0 .35rem; font-weight: 500; }
+.rich-editor p { margin: .5rem 0; }
+.rich-editor p:first-child { margin-top: 0; }
+.rich-editor strong, .rich-editor b { font-weight: 700; }
+.rich-editor em, .rich-editor i { font-style: italic; }
+.rich-editor a { color: var(--near-black); text-decoration: underline; }
+.rich-editor img { max-width: 100%; display: block; margin: .5rem 0; }
+.rich-editor audio { display: block; width: 100%; max-width: 420px; margin: .6rem 0; }
+.rich-editor ul, .rich-editor ol { margin: .5rem 0; padding-left: 1.5rem; }
+.rich-editor li { margin: .2rem 0; }
+.rich-editor blockquote {
+  border-left: 2px solid var(--near-black); padding: .5rem 1rem;
+  margin: .5rem 0; color: var(--dark-grey); font-style: italic;
+}
+.rich-editor hr { border: none; border-top: 1px solid var(--warm-grey); margin: 1rem 0; }
+.rich-editor pre {
+  background: var(--near-black); color: var(--off-white); padding: .75rem 1rem;
+  overflow-x: auto; margin: .5rem 0; font-family: var(--font-mono); font-size: .82rem;
+}
+
+/* Mode switching: visual is the default; "Text mode" reveals the markdown */
+.md-editor-wrap .md-textarea { display: none; }
+.md-editor-wrap.md-mode-text .md-textarea { display: block; }
+.md-editor-wrap.md-mode-text .rich-editor { display: none; }
+.md-editor-wrap:not(.md-mode-text) .md-text-only,
+.md-editor-wrap:not(.md-mode-text) .toolbar-sep-text { display: none; }
+.md-toolbar .toolbar-spring { flex: 1; }
+.md-toolbar .md-mode-btn { color: var(--mid-grey); font-size: .7rem; }
+.md-toolbar .md-mode-btn:hover { color: var(--near-black); }
+.md-editor-wrap.md-mode-text .md-mode-btn { background: var(--warm-grey); color: var(--near-black); }
+
+/* ===== Audio picker (insert into rich text) ===== */
+.audio-picker-list { display: flex; flex-direction: column; gap: .6rem; max-height: 50vh; overflow-y: auto; }
+.audio-picker-item {
+  border: 1px solid var(--warm-grey); padding: .6rem .75rem; background: var(--white);
+}
+.audio-picker-item-main { display: flex; align-items: center; gap: .6rem; margin-bottom: .45rem; }
+.audio-picker-icon { color: var(--dark-grey); font-size: 1.1rem; }
+.audio-picker-item-name {
+  flex: 1; font-family: var(--font-serif); font-size: .95rem; color: var(--near-black);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.audio-picker-item audio { width: 100%; height: 32px; }
+
+/* ===== Audio in the media library ===== */
+.media-audio-thumb {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: .4rem; width: 100%; height: 100%; padding: .5rem;
+  background: var(--off-white);
+}
+.media-audio-icon { font-size: 1.6rem; color: var(--dark-grey); }
+.media-audio-thumb audio { width: 100%; height: 30px; }
+.media-item-audio .media-thumb { cursor: default; }

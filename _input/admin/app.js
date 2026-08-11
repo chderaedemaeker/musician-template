@@ -189,6 +189,7 @@ class ConfigParser {
     this.config = jsyaml.load(yamlText);
   }
   getMediaFolder() { return this.config.media_folder || '_input/images'; }
+  getAudioFolder() { return this.config.audio_folder || '_input/audio'; }
   getLocales() { return this.config.i18n?.locales || ['en']; }
   getCollections() {
     return (this.config.collections || []).map(c => ({
@@ -287,6 +288,15 @@ function generateFilename(title) {
 
 function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
+// File-type tests shared by the media library and the pickers
+const IMAGE_EXT_RE = /\.(jpg|jpeg|png|gif|webp|svg|avif)$/i;
+const AUDIO_EXT_RE = /\.(mp3|m4a|wav|ogg|oga|aac|flac|opus)$/i;
+
+// A human title from a filename: "berio-sequenza_viii live.mp3" → "berio sequenza viii live"
+function titleFromFilename(name) {
+  return name.replace(/\.[a-z0-9]+$/i, '').replace(/[-_]+/g, ' ').trim();
+}
+
 // Map over items with at most `limit` calls in flight — firing hundreds of
 // requests at once gets rate-limited by git-gateway.
 async function pMap(items, fn, limit = 8) {
@@ -369,9 +379,89 @@ function renderMarkdown(md) {
     if (/^\s*\d+\.\s+/.test(line)) { const items = []; while (i < lines.length && /^\s*\d+\.\s+/.test(lines[i])) { items.push(lines[i].replace(/^\s*\d+\.\s+/, '')); i++; } result.push('<ol>' + items.map(x => `<li>${inlineMd(x)}</li>`).join('') + '</ol>'); continue; }
     if (line.trim() === '') { i++; continue; }
     const p = []; while (i < lines.length && lines[i].trim() !== '' && !lines[i].match(/^#{1,6}\s/) && !lines[i].trimStart().startsWith('> ') && !/^\s*[-*+]\s+/.test(lines[i]) && !/^\s*\d+\.\s+/.test(lines[i]) && !/^(-{3,}|_{3,}|\*{3,})$/.test(lines[i].trim()) && !lines[i].match(/^%%PRE\d+%%$/)) { p.push(lines[i]); i++; }
-    if (p.length) result.push(`<p>${inlineMd(p.join(' '))}</p>`);
+    if (p.length) {
+      // A line ending in two spaces is a hard break (markdown-it renders
+      // it as <br> on the site) — keep it visible here too
+      const joined = p.map((line, idx) => {
+        const hard = / {2,}$/.test(line);
+        return inlineMd(line.replace(/\s+$/, '')) + (idx < p.length - 1 ? (hard ? '<br>' : ' ') : '');
+      }).join('');
+      result.push(`<p>${joined}</p>`);
+    }
   }
   return result.join('\n');
+}
+
+// --------------- HTML → Markdown (for the rich editor) ---------------
+function htmlToMarkdown(root) {
+  const audioMd = el => {
+    const src = el.getAttribute('src') || (el.querySelector('source') && el.querySelector('source').getAttribute('src')) || '';
+    const title = el.getAttribute('data-title');
+    return `<audio controls src="${src}"${title ? ` data-title="${title.replace(/"/g, '&quot;')}"` : ''}></audio>`;
+  };
+
+  const inline = (node) => {
+    let out = '';
+    for (const child of node.childNodes) {
+      if (child.nodeType === Node.TEXT_NODE) { out += child.nodeValue.replace(/ /g, ' ').replace(/\n/g, ' '); continue; }
+      if (child.nodeType !== Node.ELEMENT_NODE) continue;
+      const t = child.tagName;
+      if (t === 'BR') out += '  \n';
+      else if (t === 'STRONG' || t === 'B') { const s = inline(child); if (s.trim()) out += `**${s.trim()}**`; }
+      else if (t === 'EM' || t === 'I') { const s = inline(child); if (s.trim()) out += `*${s.trim()}*`; }
+      else if (t === 'A') out += `[${inline(child).trim() || child.getAttribute('href') || ''}](${child.getAttribute('href') || ''})`;
+      else if (t === 'IMG') out += `![${child.getAttribute('alt') || ''}](${child.getAttribute('src') || ''})`;
+      else if (t === 'AUDIO') out += audioMd(child);
+      else if (t === 'CODE') out += '`' + child.textContent + '`';
+      else out += inline(child);
+    }
+    return out;
+  };
+
+  const BLOCK = new Set(['P', 'DIV', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'UL', 'OL', 'BLOCKQUOTE', 'PRE', 'HR']);
+  const blocks = [];
+  let run = [];
+  const flushRun = () => {
+    if (!run.length) return;
+    const frag = document.createElement('div');
+    run.forEach(n => frag.appendChild(n.cloneNode(true)));
+    const md = inline(frag).replace(/^[ \n]+|[ \n]+$/g, '').replace(/(  \n)+$/g, '');
+    if (md) blocks.push(md);
+    run = [];
+  };
+
+  const walk = (node) => {
+    for (const child of node.childNodes) {
+      if (child.nodeType === Node.ELEMENT_NODE && BLOCK.has(child.tagName)) {
+        flushRun();
+        const t = child.tagName;
+        if (t === 'HR') { blocks.push('---'); continue; }
+        if (t === 'PRE') { blocks.push('```\n' + child.textContent.replace(/\n$/, '') + '\n```'); continue; }
+        if (/^H[1-6]$/.test(t)) { const s = inline(child).trim(); if (s) blocks.push('#'.repeat(parseInt(t[1], 10)) + ' ' + s); continue; }
+        if (t === 'UL' || t === 'OL') {
+          const items = [...child.children].filter(li => li.tagName === 'LI')
+            .map((li, i) => (t === 'UL' ? '- ' : `${i + 1}. `) + inline(li).trim());
+          if (items.length) blocks.push(items.join('\n'));
+          continue;
+        }
+        if (t === 'BLOCKQUOTE') {
+          const s = inline(child).trim();
+          if (s) blocks.push(s.split('\n').map(l => '> ' + l.replace(/ +$/, '')).join('\n'));
+          continue;
+        }
+        // P or DIV: a div holding further blocks recurses; otherwise it's a paragraph
+        if ([...child.children].some(el => BLOCK.has(el.tagName))) { walk(child); continue; }
+        const s = inline(child).replace(/^[ \n]+|[ \n]+$/g, '').replace(/(  \n)+$/g, '');
+        if (s) blocks.push(s);
+        continue;
+      }
+      run.push(child);
+    }
+    flushRun();
+  };
+
+  walk(root);
+  return blocks.join('\n\n');
 }
 
 function inlineMd(text) {
@@ -1732,7 +1822,7 @@ class App {
         if (loc === 'en') {
           group.querySelectorAll('.locale-input-wrap[data-inherit="1"]').forEach(w => {
             const sib = inputOf(w);
-            if (sib) sib.value = input.value;
+            if (sib) { sib.value = input.value; if (sib._syncRich) sib._syncRich(); }
           });
           return;
         }
@@ -1757,7 +1847,7 @@ class App {
         const enWrap = group.querySelector('.locale-input-wrap[data-wrap-locale="en"]');
         const input = inputOf(wrap);
         const enInput = inputOf(enWrap);
-        if (input && enInput) input.value = enInput.value;
+        if (input && enInput) { input.value = enInput.value; if (input._syncRich) input._syncRich(); }
         wrap.dataset.inherit = '1';
         wrap.classList.add('inherited');
         state.inherit[loc][field] = true;
@@ -1922,14 +2012,18 @@ class App {
         <button type="button" title="Heading" data-md-action="heading">H</button>
         <span class="toolbar-sep"></span>
         <button type="button" title="Link" data-md-action="link">Link</button>
-        <button type="button" title="Insert Image" data-md-action="image">Image</button>
+        <button type="button" title="Insert an image" data-md-action="image">Image</button>
+        <button type="button" title="Insert an audio file" data-md-action="audio">Audio</button>
         <span class="toolbar-sep"></span>
         <button type="button" title="List" data-md-action="ul">List</button>
         <button type="button" title="Quote" data-md-action="quote">Quote</button>
-        <span class="toolbar-sep"></span>
-        <button type="button" title="Preview" data-md-action="preview">Preview</button>
+        <span class="toolbar-sep toolbar-sep-text"></span>
+        <button type="button" title="Preview" data-md-action="preview" class="md-text-only">Preview</button>
+        <span class="toolbar-spring"></span>
+        <button type="button" title="Switch between visual editing and raw text" data-md-action="mode" class="md-mode-btn">Text mode</button>
       </div>
       <div class="md-editor-body">
+        <div class="rich-editor" contenteditable="true" data-rich-for="${fieldName}" data-rich-locale="${locale}">${renderMarkdown(value)}</div>
         <textarea class="md-textarea" data-field="${fieldName}" data-locale="${locale}">${esc(value)}</textarea>
       </div>
     </div>`;
@@ -2154,29 +2248,115 @@ class App {
       });
     });
 
-    // Markdown editors
-    formEl.querySelectorAll('[data-md-editor]').forEach(wrap => {
-      const textarea = wrap.querySelector('.md-textarea');
-      const toolbar = wrap.querySelector('.md-toolbar');
+    // Markdown editors — visual (rich) by default, raw text on demand
+    formEl.querySelectorAll('[data-md-editor]').forEach(wrap => this._bindMdEditor(wrap));
+  }
 
-      textarea.addEventListener('keydown', (e) => {
-        if (e.key === 'Tab') { e.preventDefault(); const s = textarea.selectionStart; textarea.value = textarea.value.substring(0, s) + '  ' + textarea.value.substring(textarea.selectionEnd); textarea.selectionStart = textarea.selectionEnd = s + 2; this._markDirty(); }
-        if ((e.ctrlKey || e.metaKey) && e.key === 'b') { e.preventDefault(); this._mdAction(textarea, 'bold'); }
-        if ((e.ctrlKey || e.metaKey) && e.key === 'i') { e.preventDefault(); this._mdAction(textarea, 'italic'); }
-      });
+  _bindMdEditor(wrap) {
+    const textarea = wrap.querySelector('.md-textarea');
+    const rich = wrap.querySelector('.rich-editor');
+    const toolbar = wrap.querySelector('.md-toolbar');
+    const modeBtn = toolbar.querySelector('.md-mode-btn');
+    const inTextMode = () => wrap.classList.contains('md-mode-text');
 
-      textarea.addEventListener('input', () => { clearTimeout(this._previewTimer); this._previewTimer = setTimeout(() => this._updatePreview(wrap), 300); });
+    const syncFromRich = () => {
+      const md = htmlToMarkdown(rich);
+      if (md === textarea.value) return;
+      textarea.value = md;
+      textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    };
+    const syncToRich = () => { rich.innerHTML = renderMarkdown(textarea.value); };
+    // The language-inherit mirroring writes into the hidden textarea —
+    // this hook keeps the visible editor in step
+    textarea._syncRich = syncToRich;
 
-      toolbar.addEventListener('click', (e) => {
-        const btn = e.target.closest('[data-md-action]');
-        if (!btn) return;
-        const action = btn.dataset.mdAction;
-        if (action === 'preview') { this._togglePreview(wrap, btn); return; }
-        if (action === 'image') { this._showImagePickerForEditor(textarea, wrap); return; }
-        this._mdAction(textarea, action);
-        textarea.focus();
-      });
+    // Visual editing
+    rich.addEventListener('input', () => syncFromRich());
+    rich.addEventListener('blur', () => syncFromRich());
+    rich.addEventListener('keydown', (e) => {
+      // Enter is a line break (<br> on the site); an empty line starts a new paragraph
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        document.execCommand('insertLineBreak');
+        syncFromRich();
+      }
     });
+    rich.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+      document.execCommand('insertText', false, text);
+    });
+
+    // Raw text editing
+    textarea.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab') { e.preventDefault(); const s = textarea.selectionStart; textarea.value = textarea.value.substring(0, s) + '  ' + textarea.value.substring(textarea.selectionEnd); textarea.selectionStart = textarea.selectionEnd = s + 2; this._markDirty(); }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'b') { e.preventDefault(); this._mdAction(textarea, 'bold'); }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'i') { e.preventDefault(); this._mdAction(textarea, 'italic'); }
+    });
+    textarea.addEventListener('input', () => { clearTimeout(this._previewTimer); this._previewTimer = setTimeout(() => this._updatePreview(wrap), 300); });
+
+    toolbar.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-md-action]');
+      if (!btn) return;
+      const action = btn.dataset.mdAction;
+
+      if (action === 'mode') {
+        if (inTextMode()) {
+          syncToRich();
+          wrap.classList.remove('md-mode-text');
+          modeBtn.textContent = 'Text mode';
+          const preview = wrap.querySelector('.md-preview');
+          if (preview) { preview.remove(); toolbar.querySelector('[data-md-action="preview"]').classList.remove('active'); }
+        } else {
+          syncFromRich();
+          wrap.classList.add('md-mode-text');
+          modeBtn.textContent = 'Visual mode';
+        }
+        return;
+      }
+      if (action === 'preview') { this._togglePreview(wrap, btn); return; }
+      if (action === 'image' || action === 'audio') { this._showMediaPickerForEditor(wrap, action); return; }
+
+      if (inTextMode()) { this._mdAction(textarea, action); textarea.focus(); return; }
+
+      // Visual mode: real formatting on the selection
+      rich.focus();
+      if (action === 'bold') document.execCommand('bold');
+      else if (action === 'italic') document.execCommand('italic');
+      else if (action === 'heading') {
+        const block = document.queryCommandValue('formatBlock');
+        document.execCommand('formatBlock', false, /h2/i.test(block) ? 'p' : 'h2');
+      } else if (action === 'ul') document.execCommand('insertUnorderedList');
+      else if (action === 'quote') {
+        const block = document.queryCommandValue('formatBlock');
+        document.execCommand('formatBlock', false, /blockquote/i.test(block) ? 'p' : 'blockquote');
+      } else if (action === 'link') {
+        const url = prompt('Web address for the link (https://…)');
+        if (url) {
+          const sel = window.getSelection();
+          if (sel && !sel.isCollapsed) document.execCommand('createLink', false, url);
+          else document.execCommand('insertHTML', false, `<a href="${esc(url)}">${esc(url)}</a>`);
+        }
+      }
+      syncFromRich();
+    });
+  }
+
+  // Insert a snippet at the caret of a markdown editor, whichever mode it is in
+  _insertIntoMdEditor(wrap, md, html) {
+    const textarea = wrap.querySelector('.md-textarea');
+    if (wrap.classList.contains('md-mode-text')) {
+      const pos = textarea.selectionStart;
+      textarea.value = textarea.value.substring(0, pos) + md + textarea.value.substring(textarea.selectionEnd);
+      textarea.selectionStart = textarea.selectionEnd = pos + md.length;
+      this._updatePreview(wrap);
+    } else {
+      const rich = wrap.querySelector('.rich-editor');
+      rich.focus();
+      document.execCommand('insertHTML', false, html);
+      textarea.value = htmlToMarkdown(rich);
+    }
+    textarea.dispatchEvent(new Event('input', { bubbles: true }));
   }
 
   _mdAction(textarea, action) {
@@ -2363,20 +2543,45 @@ class App {
     overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
   }
 
-  // Image picker for markdown editor (insert syntax)
-  async _showImagePickerForEditor(textarea, wrap) {
-    await this._loadImageCache();
+  // Snippets inserted into a markdown editor for a media file.
+  // Audio is raw HTML (markdown passes it through) so the site's player
+  // enhancement picks it up; images are plain markdown.
+  _mediaSnippets(kind, name) {
+    if (kind === 'audio') {
+      const src = `/audio/${name}`;
+      const title = titleFromFilename(name);
+      const tag = `<audio controls src="${src}" data-title="${esc(title)}"></audio>`;
+      return { md: `\n${tag}\n`, html: tag };
+    }
+    const src = `/images/${name}`;
+    return { md: `![${name}](${src})`, html: `<img src="${src}" alt="${esc(name)}" />` };
+  }
+
+  // Media picker for markdown editors — kind is 'image' or 'audio'
+  async _showMediaPickerForEditor(wrap, kind) {
+    const isAudio = kind === 'audio';
+    if (isAudio) await this._loadAudioCache(); else await this._loadImageCache();
+    const files = isAudio ? this._audioCache : this._imageCache;
+
     const overlay = document.createElement('div');
     overlay.className = 'image-picker-overlay visible';
-    overlay.innerHTML = `<div class="image-picker">
-      <h3>Insert an image</h3>
-      <div class="media-filter" style="margin-bottom:1rem;"><input type="text" id="picker-search" placeholder="Search..." style="width:100%;padding:.5rem 0;border:none;border-bottom:1px solid var(--warm-grey);font-family:var(--font-serif);font-size:.9rem;color:var(--near-black);background:transparent;" /></div>
-      <div class="image-picker-grid" id="picker-grid">
-        ${this._imageCache.map(img => `<div class="image-picker-item" data-name="${esc(img.name)}" data-path="${esc(img.path)}">
+    const itemsHtml = isAudio
+      ? (files.length ? files.map(f => `<div class="audio-picker-item" data-name="${esc(f.name)}">
+          <div class="audio-picker-item-main">
+            <span class="audio-picker-icon">&#9835;</span>
+            <span class="audio-picker-item-name">${esc(titleFromFilename(f.name))}</span>
+            <button type="button" class="btn btn-primary btn-sm audio-picker-insert">Insert</button>
+          </div>
+          <audio controls preload="none" src="/audio/${esc(f.name)}"></audio>
+        </div>`).join('') : '<div class="empty-state">No audio files yet — upload one below.</div>')
+      : files.map(img => `<div class="image-picker-item" data-name="${esc(img.name)}" data-path="${esc(img.path)}">
           <img src="/images/${img.name}" alt="${esc(img.name)}" loading="lazy" />
           <div class="image-picker-item-name">${esc(img.name)}</div>
-        </div>`).join('')}
-      </div>
+        </div>`).join('');
+    overlay.innerHTML = `<div class="image-picker">
+      <h3>${isAudio ? 'Insert an audio file' : 'Insert an image'}</h3>
+      <div class="media-filter" style="margin-bottom:1rem;"><input type="text" id="picker-search" placeholder="Search..." style="width:100%;padding:.5rem 0;border:none;border-bottom:1px solid var(--warm-grey);font-family:var(--font-serif);font-size:.9rem;color:var(--near-black);background:transparent;" /></div>
+      <div class="${isAudio ? 'audio-picker-list' : 'image-picker-grid'}" id="picker-grid">${itemsHtml}</div>
       <div class="image-picker-actions">
         <button class="btn btn-ghost btn-sm" id="picker-upload-new">Upload new</button>
         <button class="btn btn-ghost btn-sm" id="picker-cancel">Cancel</button>
@@ -2384,46 +2589,41 @@ class App {
     </div>`;
     document.body.appendChild(overlay);
 
+    const insert = (name) => {
+      const { md, html } = this._mediaSnippets(kind, name);
+      overlay.remove();
+      this._insertIntoMdEditor(wrap, md, html);
+    };
+
     overlay.querySelector('#picker-search').addEventListener('input', function() {
       const q = this.value.toLowerCase().trim();
-      overlay.querySelectorAll('.image-picker-item').forEach(item => {
+      overlay.querySelectorAll('.image-picker-item, .audio-picker-item').forEach(item => {
         item.style.display = (!q || item.dataset.name.toLowerCase().includes(q)) ? '' : 'none';
       });
     });
 
     overlay.querySelectorAll('.image-picker-item').forEach(item => {
-      item.addEventListener('click', () => {
-        const publicPath = `/images/${item.dataset.name}`;
-        const md = `![${item.dataset.name}](${publicPath})`;
-        const pos = textarea.selectionStart;
-        textarea.value = textarea.value.substring(0, pos) + md + textarea.value.substring(pos);
-        textarea.selectionStart = textarea.selectionEnd = pos + md.length;
-        this._markDirty();
-        this._updatePreview(wrap);
-        overlay.remove();
-      });
+      item.addEventListener('click', () => insert(item.dataset.name));
+    });
+    overlay.querySelectorAll('.audio-picker-insert').forEach(btn => {
+      btn.addEventListener('click', () => insert(btn.closest('.audio-picker-item').dataset.name));
     });
 
     overlay.querySelector('#picker-upload-new').addEventListener('click', () => {
       overlay.remove();
       const input = document.createElement('input');
-      input.type = 'file'; input.accept = 'image/*';
+      input.type = 'file'; input.accept = isAudio ? 'audio/*' : 'image/*';
       input.addEventListener('change', async () => {
         if (!input.files[0]) return;
         const file = input.files[0];
         showStatus('saving', 'Uploading...');
         try {
+          const folder = isAudio ? this.config.getAudioFolder() : this.config.getMediaFolder();
           const reader = new FileReader();
           const b64 = await new Promise((res, rej) => { reader.onload = () => res(reader.result.split(',')[1]); reader.onerror = rej; reader.readAsDataURL(file); });
-          await this.api.uploadImage(`${this.config.getMediaFolder()}/${file.name}`, b64, `Upload ${file.name}`);
-          this._imageCache = null;
-          const publicPath = `/images/${file.name}`;
-          const md = `![${file.name}](${publicPath})`;
-          const pos = textarea.selectionStart;
-          textarea.value = textarea.value.substring(0, pos) + md + textarea.value.substring(pos);
-          textarea.selectionStart = textarea.selectionEnd = pos + md.length;
-          this._markDirty();
-          this._updatePreview(wrap);
+          await this.api.uploadImage(`${folder}/${file.name}`, b64, `Upload ${file.name}`);
+          if (isAudio) this._audioCache = null; else this._imageCache = null;
+          this._insertIntoMdEditor(wrap, this._mediaSnippets(kind, file.name).md, this._mediaSnippets(kind, file.name).html);
           showStatus('saved', 'Uploaded & inserted');
         } catch (e) { showStatus('error', e.message); }
       });
@@ -2436,19 +2636,29 @@ class App {
 
   async _loadImageCache() {
     if (this._imageCache) return;
-    const mediaFolder = this.config.getMediaFolder();
+    this._imageCache = await this._loadMediaFolder(this.config.getMediaFolder(), IMAGE_EXT_RE);
+  }
+
+  async _loadAudioCache() {
+    if (this._audioCache) return;
+    this._audioCache = await this._loadMediaFolder(this.config.getAudioFolder(), AUDIO_EXT_RE);
+  }
+
+  async _loadMediaFolder(folder, extRe) {
     try {
-      const contents = await this.api.getContents(mediaFolder);
-      this._imageCache = contents.filter(f => f.type === 'file' && /\.(jpg|jpeg|png|gif|webp|svg|avif)$/i.test(f.name)).sort((a, b) => a.name.localeCompare(b.name));
+      const contents = await this.api.getContents(folder);
+      return contents.filter(f => f.type === 'file' && extRe.test(f.name)).sort((a, b) => a.name.localeCompare(b.name));
     } catch (e) {
-      console.warn('getContents failed for', mediaFolder, '- trying tree API:', e.message);
+      console.warn('getContents failed for', folder, '- trying tree API:', e.message);
       try {
-        const files = await this.api.getTree(mediaFolder);
-        this._imageCache = files.filter(f => /\.(jpg|jpeg|png|gif|webp|svg|avif)$/i.test(f.name)).sort((a, b) => a.name.localeCompare(b.name));
+        const files = await this.api.getTree(folder);
+        return files.filter(f => extRe.test(f.name)).sort((a, b) => a.name.localeCompare(b.name));
       } catch (e2) {
-        console.error('Both methods failed to load images:', e2);
-        showToast('error', 'Could not load images: ' + e2.message);
-        this._imageCache = [];
+        // A folder that simply doesn't exist yet is not an error worth a toast
+        if (e2.status === 404) return [];
+        console.error('Both methods failed to load media:', e2);
+        showToast('error', 'Could not load media: ' + e2.message);
+        return [];
       }
     }
   }
@@ -2783,7 +2993,6 @@ class App {
 
   // ---- Media Library ----
   async renderMedia() {
-    const mediaFolder = this.config ? this.config.getMediaFolder() : '_input/images';
     this.el.innerHTML = `
       ${this._topbar()}
       <nav class="breadcrumb"><a href="#/">Dashboard</a><span class="sep">/</span><span>Media</span></nav>
@@ -2791,40 +3000,49 @@ class App {
         <h2>Media</h2>
         <div class="media-actions"><button class="btn btn-primary btn-sm" id="upload-media-btn">Upload</button></div>
       </div>
-      <div class="media-dropzone" id="media-dropzone">Drag & drop images here</div>
-      <div class="media-filter"><input type="text" id="media-search" placeholder="Search images..." /></div>
+      <div class="media-dropzone" id="media-dropzone">Drag & drop images or audio files here</div>
+      <div class="media-filter"><input type="text" id="media-search" placeholder="Search images and audio..." /></div>
       <div class="media-info" id="media-info"></div>
       <div class="media-grid" id="media-grid"><div class="loading-state"><span class="spinner"></span> Loading...</div></div>`;
     this._bindTopbar();
 
     const fileInput = document.createElement('input');
-    fileInput.type = 'file'; fileInput.accept = 'image/*'; fileInput.multiple = true; fileInput.style.display = 'none';
+    fileInput.type = 'file'; fileInput.accept = 'image/*,audio/*'; fileInput.multiple = true; fileInput.style.display = 'none';
     this.el.appendChild(fileInput);
     document.getElementById('upload-media-btn').addEventListener('click', () => fileInput.click());
-    fileInput.addEventListener('change', () => { if (fileInput.files.length) this._uploadMediaFiles(fileInput.files, mediaFolder); });
+    fileInput.addEventListener('change', () => { if (fileInput.files.length) this._uploadMediaFiles(fileInput.files); });
 
     const dropzone = document.getElementById('media-dropzone');
     dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
     dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
-    dropzone.addEventListener('drop', e => { e.preventDefault(); dropzone.classList.remove('dragover'); if (e.dataTransfer.files.length) this._uploadMediaFiles(e.dataTransfer.files, mediaFolder); });
+    dropzone.addEventListener('drop', e => { e.preventDefault(); dropzone.classList.remove('dragover'); if (e.dataTransfer.files.length) this._uploadMediaFiles(e.dataTransfer.files); });
 
     try {
-      let contents;
-      try { contents = await this.api.getContents(mediaFolder); }
-      catch (e) { contents = await this.api.getTree(mediaFolder); }
-      const images = contents.filter(f => f.type === 'file' && /\.(jpg|jpeg|png|gif|webp|svg|avif)$/i.test(f.name)).sort((a, b) => a.name.localeCompare(b.name));
-      this._imageCache = images;
+      this._imageCache = null; this._audioCache = null;
+      await Promise.all([this._loadImageCache(), this._loadAudioCache()]);
+      const images = this._imageCache;
+      const audio = this._audioCache;
 
       const gridEl = document.getElementById('media-grid');
-      document.getElementById('media-info').textContent = `${images.length} images`;
+      const counts = [`${images.length} image${images.length !== 1 ? 's' : ''}`];
+      if (audio.length) counts.push(`${audio.length} audio file${audio.length !== 1 ? 's' : ''}`);
+      document.getElementById('media-info').textContent = counts.join(' · ');
 
-      if (!images.length) { gridEl.innerHTML = '<div class="empty-state">No images yet.</div>'; return; }
+      if (!images.length && !audio.length) { gridEl.innerHTML = '<div class="empty-state">No media yet.</div>'; return; }
 
-      gridEl.innerHTML = images.map(img => `<div class="media-item" data-name="${esc(img.name)}" data-sha="${img.sha}" data-path="${esc(img.path)}">
-        <div class="media-thumb"><img src="/images/${img.name}" alt="${esc(img.name)}" loading="lazy" /></div>
+      const publicPath = item => item.kind === 'audio' ? `/audio/${item.name}` : `/images/${item.name}`;
+      const items = [
+        ...audio.map(f => ({ ...f, kind: 'audio' })),
+        ...images.map(f => ({ ...f, kind: 'image' })),
+      ];
+
+      gridEl.innerHTML = items.map(item => `<div class="media-item${item.kind === 'audio' ? ' media-item-audio' : ''}" data-name="${esc(item.name)}" data-kind="${item.kind}" data-sha="${item.sha}" data-path="${esc(item.path)}">
+        <div class="media-thumb">${item.kind === 'audio'
+          ? `<div class="media-audio-thumb"><span class="media-audio-icon">&#9835;</span><audio controls preload="none" src="/audio/${esc(item.name)}"></audio></div>`
+          : `<img src="/images/${item.name}" alt="${esc(item.name)}" loading="lazy" />`}</div>
         <div class="media-item-info">
-          <div class="media-item-name" title="${esc(img.name)}">${esc(img.name)}</div>
-          ${img.size ? `<div class="media-item-size">${formatFileSize(img.size)}</div>` : ''}
+          <div class="media-item-name" title="${esc(item.name)}">${esc(item.name)}</div>
+          ${item.size ? `<div class="media-item-size">${formatFileSize(item.size)}</div>` : ''}
           <div class="media-item-actions">
             <button class="btn btn-ghost btn-sm media-copy-btn">Copy</button>
             <button class="btn btn-danger btn-sm media-delete-btn">Delete</button>
@@ -2841,8 +3059,9 @@ class App {
       // Copy
       gridEl.querySelectorAll('.media-copy-btn').forEach(btn => btn.addEventListener('click', e => {
         e.stopPropagation();
-        const name = btn.closest('.media-item').dataset.name;
-        navigator.clipboard.writeText(`/images/${name}`).then(() => showStatus('saved', `Copied: /images/${name}`));
+        const item = btn.closest('.media-item');
+        const p = item.dataset.kind === 'audio' ? `/audio/${item.dataset.name}` : `/images/${item.dataset.name}`;
+        navigator.clipboard.writeText(p).then(() => showStatus('saved', `Copied: ${p}`));
       }));
 
       // Delete
@@ -2854,13 +3073,13 @@ class App {
         showStatus('saving', 'Deleting...');
         try {
           await this.api.deleteFile(item.dataset.path, item.dataset.sha, `Delete ${item.dataset.name}`);
-          item.remove(); this._imageCache = null;
+          item.remove(); this._imageCache = null; this._audioCache = null;
           showStatus('saved', 'Deleted');
         } catch (e) { showStatus('error', e.message); }
       }));
 
-      // Click to preview
-      gridEl.querySelectorAll('.media-item').forEach(item => item.addEventListener('click', e => {
+      // Click to preview (images — audio plays inline in its tile)
+      gridEl.querySelectorAll('.media-item[data-kind="image"]').forEach(item => item.addEventListener('click', e => {
         if (e.target.closest('button')) return;
         this._showLightbox(item.dataset.name, item.dataset.path);
       }));
@@ -2869,19 +3088,23 @@ class App {
     }
   }
 
-  async _uploadMediaFiles(files, mediaFolder) {
+  async _uploadMediaFiles(files) {
+    const mediaFolder = this.config.getMediaFolder();
+    const audioFolder = this.config.getAudioFolder();
     let uploaded = 0;
     showStatus('saving', `Uploading 0/${files.length}...`);
     for (const file of files) {
       try {
+        const isAudio = (file.type && file.type.startsWith('audio/')) || AUDIO_EXT_RE.test(file.name);
+        const folder = isAudio ? audioFolder : mediaFolder;
         const b64 = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result.split(',')[1]); r.onerror = rej; r.readAsDataURL(file); });
-        await this.api.uploadImage(`${mediaFolder}/${file.name}`, b64, `Upload ${file.name}`);
+        await this.api.uploadImage(`${folder}/${file.name}`, b64, `Upload ${file.name}`);
         uploaded++;
         showStatus('saving', `Uploading ${uploaded}/${files.length}...`);
       } catch (e) { showStatus('error', `Failed: ${file.name}`); return; }
     }
-    showStatus('saved', `Uploaded ${uploaded} image${uploaded !== 1 ? 's' : ''}`);
-    this._imageCache = null;
+    showStatus('saved', `Uploaded ${uploaded} file${uploaded !== 1 ? 's' : ''}`);
+    this._imageCache = null; this._audioCache = null;
     this.renderMedia();
   }
 

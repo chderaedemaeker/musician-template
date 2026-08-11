@@ -1030,3 +1030,143 @@ body.modal-open {
     border-radius: 0;
   }
 }
+
+/* ============================================
+   AUDIO PLAYER — quiet hairline card; the pill
+   play button is the one rounded element, per
+   the button rule.
+   ============================================ */
+.audio-player {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin: var(--space-md) 0;
+  padding: var(--space-sm) var(--space-md2);
+  border: 1px solid var(--warm-grey);
+  background-color: transparent;
+  max-width: var(--width-prose);
+}
+
+.audio-player-toggle {
+  flex: 0 0 auto;
+  width: 3rem;
+  height: 3rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--near-black);
+  border-radius: 999px;
+  background-color: transparent;
+  color: var(--near-black);
+  cursor: pointer;
+  padding: 0;
+  transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+
+.audio-player-toggle:hover {
+  background-color: var(--near-black);
+  color: var(--off-white);
+}
+
+.audio-player-toggle svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: currentColor;
+}
+
+.audio-player-toggle .icon-play { margin-left: 2px; } /* optical centering of the triangle */
+.audio-player-toggle .icon-pause { display: none; }
+.audio-player.playing .icon-pause { display: block; }
+.audio-player.playing .icon-play { display: none; }
+
+.audio-player-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.audio-player-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-bottom: 0.55rem;
+}
+
+.audio-player-title {
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  line-height: var(--leading-snug);
+  color: var(--near-black);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.audio-player-time {
+  font-family: var(--font-sans);
+  font-size: var(--text-label);
+  color: var(--dark-grey);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.audio-player-seek {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 2px;
+  margin: 0;
+  border: none;
+  background: linear-gradient(to right, var(--accent) var(--progress, 0%), var(--warm-grey) var(--progress, 0%));
+  cursor: pointer;
+}
+
+.audio-player-seek::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  background-color: var(--near-black);
+  transition: transform var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease);
+}
+
+.audio-player-seek::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  background-color: var(--near-black);
+  transition: transform var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease);
+}
+
+.audio-player-seek:hover::-webkit-slider-thumb,
+.audio-player-seek:focus-visible::-webkit-slider-thumb {
+  transform: scale(1.25);
+  background-color: var(--accent-deep);
+}
+
+.audio-player-seek:hover::-moz-range-thumb,
+.audio-player-seek:focus-visible::-moz-range-thumb {
+  transform: scale(1.25);
+  background-color: var(--accent-deep);
+}
+
+.audio-player-seek:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+@media (max-width: 480px) {
+  .audio-player {
+    padding: var(--space-sm);
+    gap: 0.75rem;
+  }
+  .audio-player-toggle {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}

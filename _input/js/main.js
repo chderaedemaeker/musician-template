@@ -281,3 +281,125 @@
     }
   };
 })();
+
+/* ============================================
+   Audio player — replaces native <audio controls>
+   elements (inserted via the CMS) with the site's
+   own quiet, hairline player.
+   ============================================ */
+(function () {
+  'use strict';
+
+  function fmt(t) {
+    if (!isFinite(t) || isNaN(t)) return '0:00';
+    var m = Math.floor(t / 60);
+    var s = Math.floor(t % 60);
+    return m + ':' + (s < 10 ? '0' : '') + s;
+  }
+
+  function titleFor(audio) {
+    var explicit = audio.getAttribute('data-title');
+    if (explicit) return explicit;
+    var src = audio.getAttribute('src') || (audio.querySelector('source') && audio.querySelector('source').getAttribute('src')) || '';
+    var name = src.split('/').pop() || '';
+    try { name = decodeURIComponent(name); } catch (e) { /* keep as-is */ }
+    return name.replace(/\.[a-z0-9]+$/i, '').replace(/[-_]+/g, ' ').trim();
+  }
+
+  function enhance(audio) {
+    if (audio.closest('.audio-player') || audio.hasAttribute('data-no-enhance')) return;
+
+    var wrap = document.createElement('div');
+    wrap.className = 'audio-player';
+    wrap.innerHTML =
+      '<button type="button" class="audio-player-toggle" aria-label="Play">' +
+        '<svg class="icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>' +
+        '<svg class="icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg>' +
+      '</button>' +
+      '<div class="audio-player-body">' +
+        '<div class="audio-player-row">' +
+          '<span class="audio-player-title"></span>' +
+          '<span class="audio-player-time"><span class="t-cur">0:00</span><span class="t-sep"> / </span><span class="t-dur">–:––</span></span>' +
+        '</div>' +
+        '<input class="audio-player-seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Seek" />' +
+      '</div>';
+
+    var title = titleFor(audio);
+    var titleEl = wrap.querySelector('.audio-player-title');
+    titleEl.textContent = title;
+    if (!title) titleEl.style.display = 'none';
+
+    audio.parentNode.insertBefore(wrap, audio);
+    wrap.appendChild(audio);
+    audio.removeAttribute('controls');
+    if (!audio.getAttribute('preload')) audio.preload = 'metadata';
+
+    var toggle = wrap.querySelector('.audio-player-toggle');
+    var seek = wrap.querySelector('.audio-player-seek');
+    var curEl = wrap.querySelector('.t-cur');
+    var durEl = wrap.querySelector('.t-dur');
+    var seeking = false;
+
+    function setProgress(pct) {
+      seek.style.setProperty('--progress', pct + '%');
+    }
+
+    toggle.addEventListener('click', function () {
+      if (audio.paused) { audio.play(); } else { audio.pause(); }
+    });
+
+    audio.addEventListener('play', function () {
+      wrap.classList.add('playing');
+      toggle.setAttribute('aria-label', 'Pause');
+      // one voice at a time
+      document.querySelectorAll('audio').forEach(function (other) {
+        if (other !== audio) other.pause();
+      });
+    });
+    audio.addEventListener('pause', function () {
+      wrap.classList.remove('playing');
+      toggle.setAttribute('aria-label', 'Play');
+    });
+    audio.addEventListener('ended', function () {
+      wrap.classList.remove('playing');
+      toggle.setAttribute('aria-label', 'Play');
+    });
+
+    function showDuration() { if (isFinite(audio.duration)) durEl.textContent = fmt(audio.duration); }
+    audio.addEventListener('loadedmetadata', showDuration);
+    audio.addEventListener('durationchange', showDuration);
+    showDuration();
+
+    audio.addEventListener('timeupdate', function () {
+      curEl.textContent = fmt(audio.currentTime);
+      if (!seeking && isFinite(audio.duration) && audio.duration > 0) {
+        var pct = (audio.currentTime / audio.duration) * 100;
+        seek.value = Math.round(pct * 10);
+        setProgress(pct);
+      }
+    });
+
+    seek.addEventListener('input', function () {
+      seeking = true;
+      var pct = seek.value / 10;
+      setProgress(pct);
+      if (isFinite(audio.duration)) curEl.textContent = fmt((pct / 100) * audio.duration);
+    });
+    seek.addEventListener('change', function () {
+      if (isFinite(audio.duration)) audio.currentTime = (seek.value / 1000) * audio.duration;
+      seeking = false;
+    });
+
+    setProgress(0);
+  }
+
+  function initAudioPlayers() {
+    document.querySelectorAll('audio').forEach(enhance);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAudioPlayers);
+  } else {
+    initAudioPlayers();
+  }
+})();
