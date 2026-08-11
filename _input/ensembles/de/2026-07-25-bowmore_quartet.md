@@ -2,7 +2,11 @@
 title: Bowmore Quartet
 collaborators: ""
 image: /images/BOWMORE_DRIESLUYTEN-73.jpg
-match: "bowmore"
+match: bowmore
+featured: false
+links:
+  - label: bowmorequartet.com
+    url: "https://www.bowmorequartet.com"
 layout: project.html
 tags: projects
 lang: de
