@@ -14,6 +14,4 @@ lang: nl
 ---
 Opname van *Vientulais Engelis* (De eenzame engel) van Peteris Vasks, een meditatie voor viool en strijkers.
 
-
-<br>
-<audio controls src="/audio/pv2.mp3" data-title=Peteris Vasks - Vientulais Engelis"></audio>
+<audio controls src="/audio/pv2.mp3" data-title="Peteris Vasks - Vientulais Engelis"></audio>
