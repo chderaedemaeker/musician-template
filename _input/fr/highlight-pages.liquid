@@ -13,6 +13,7 @@ eleventyExcludeFromCollections: true
 {% assign collaborators = loc.collaborators | default: item.data.collaborators %}
 {% assign date = item.data.date %}
 {% assign image = item.data.image %}
+{% assign hide_image = loc.hide_image | default: item.data.hide_image %}
 {% assign link = loc.link | default: item.data.link %}
 {% assign links = loc.links | default: item.data.links %}
 {% assign match = item.data.match %}

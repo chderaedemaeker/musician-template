@@ -438,12 +438,13 @@ function htmlToMarkdown(root) {
       if (child.nodeType === Node.TEXT_NODE) { out += child.nodeValue.replace(/ /g, ' ').replace(/\n/g, ' '); continue; }
       if (child.nodeType !== Node.ELEMENT_NODE) continue;
       const t = child.tagName;
-      if (t === 'BR') out += '\n';
+      if (t === 'BR') out += '<br>';
       else if (t === 'STRONG' || t === 'B') { const s = inline(child); if (s.trim()) out += `**${s.trim()}**`; }
       else if (t === 'EM' || t === 'I') { const s = inline(child); if (s.trim()) out += `*${s.trim()}*`; }
       else if (t === 'A') out += `[${inline(child).trim() || child.getAttribute('href') || ''}](${child.getAttribute('href') || ''})`;
       else if (t === 'IMG') out += `![${child.getAttribute('alt') || ''}](${child.getAttribute('src') || ''})`;
       else if (t === 'AUDIO' || isAudioWidget(child)) out += audioMd(child);
+      else if (t === 'IFRAME' || t === 'EMBED' || t === 'OBJECT' || t === 'VIDEO') out += child.outerHTML;
       else if (t === 'CODE') out += '`' + child.textContent + '`';
       else out += inline(child);
     }
@@ -452,13 +453,20 @@ function htmlToMarkdown(root) {
 
   const BLOCK = new Set(['P', 'DIV', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'UL', 'OL', 'BLOCKQUOTE', 'PRE', 'HR']);
   const blocks = [];
+  // A single Enter is a literal <br>; two Enters in a row become a real
+  // paragraph break. Stray breaks at a paragraph's edges are dropped.
+  const pushParagraph = (md) => {
+    md.split(/(?:\s*<br>\s*){2,}/).forEach(part => {
+      const t = part.replace(/^(?:<br>|[ \n])+|(?:<br>|[ \n])+$/g, '');
+      if (t) blocks.push(t);
+    });
+  };
   let run = [];
   const flushRun = () => {
     if (!run.length) return;
     const frag = document.createElement('div');
     run.forEach(n => frag.appendChild(n.cloneNode(true)));
-    const md = inline(frag).replace(/^[ \n]+|[ \n]+$/g, '');
-    if (md) blocks.push(md);
+    pushParagraph(inline(frag));
     run = [];
   };
 
@@ -486,10 +494,15 @@ function htmlToMarkdown(root) {
           if (s) blocks.push(s.split('\n').map(l => '> ' + l.replace(/ +$/, '')).join('\n'));
           continue;
         }
+        // A styled or embed-bearing DIV (e.g. a SoundCloud attribution block)
+        // is preserved exactly as it is
+        if (t === 'DIV' && (child.getAttribute('style') || child.querySelector('iframe,embed,object,video'))) {
+          blocks.push(child.outerHTML);
+          continue;
+        }
         // P or DIV: a div holding further blocks recurses; otherwise it's a paragraph
         if ([...child.children].some(el => BLOCK.has(el.tagName))) { walk(child); continue; }
-        const s = inline(child).replace(/^[ \n]+|[ \n]+$/g, '');
-        if (s) blocks.push(s);
+        pushParagraph(inline(child));
         continue;
       }
       run.push(child);
