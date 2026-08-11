@@ -1,7 +1,7 @@
 ---
 title: Concert
-date: "2026-08-12T20:00"
-date_end: ""
+date: "2026-08-09T20:30"
+date_end: "2026-08-12T20:00"
 month_only: false
 place: Bozen, Italy
 composers: J.S. Bach, Honneger, Martin
