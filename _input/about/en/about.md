@@ -19,11 +19,9 @@ Veronique began her violin studies with Francis Reusens at the Academy for Music
 
 In parallel, she learned from renowned musicians such as Philippe Graffin at the Royal Conservatoire of Brussels, Ivry Gitlis, Julia Fisher, Tatiana Samouil, David Quiggle, Frank Peter Zimmerman, Pavel Vernikov, Paulo Álvares, Görgyi Pauk, Kristóf Baráti, Jonian Ilias Kadesha and András Keller and participated in master classes and concerts at the Verbier Festival, Lugano Festival, Luzerne Festival, Schiermonnikoog Young Talent Festival, Festival Académie Ravel, Budapest Festival Academy, Musica Mundi and others.
 
-## Performances
 
 Over the past years, Veronique has been invited to perform at the Klavierfestival Ruhr, Arte Amanti Festival, Festival Rencontres musicales internationales Enghien and Acht Brücken Festival Köln. Recent solo performances include works by Beethoven, Schubert, Mendelssohn and Brahms, concerts featuring with the Köln Sinfonietta, Gödölö Symphony Orchestra, East Flanders Symphony Orchestra and the Russian Chamber Philharmonic St. Petersburg. She has performed in concert halls such as Flagey & Bozar Brussels, Amuz Antwerp, Miry & De Bijloke Ghent, Philharmonie Cologne, WDR Funkhaus and Tonhalle Düsseldorf. In November 2023, she played Beethoven's Triple Concerto at the Elisabeth Hall in Antwerp.
 
-## Chamber music & recordings
 
 A passionate chamber musician, she performs regularly with her own ensembles — Trio Gilu, Oreneta Kammerensemble, ÉRMA Ensemble and in duo with pianist Alexander Declercq (Duo Altiler) and with harpist Mathilde Wauters.
 
@@ -33,9 +31,8 @@ Her CD Malinconia with works by Prokofiev and Ysaÿe was awarded in 2020 by the 
 
 In 2022, together with her Trio Gilu, she released the CD "Garland — Songs for Soprano, Violin and Harp" and in 2023 she published the single "Bach and Berio — a diptych". All of her publications are released by Etcetera Records.
 
-## New music
 
-Her fascination with new music has allowed her to collaborate with contemporary composers such as Unsuk Chin, Helmut Lachenmann, Heinz Holliger and many others. She is a founding member of the ÉRMA Ensemble supported by Deutscher Musikrat, which specializes in the performance of new music.
+Her fascination with new music has allowed her to collaborate with contemporary composers such as Unsuk Chin, Helmut Lachenmann, Heinz Holliger amongst others. She is a founding member of the ÉRMA Ensemble, which specializes in the performance of new music.
 
 Veronique plays on a violin by Stefan-Peter Greiner. In 2024, she was featured on the program of "The Twintigers" on Klara.
 
