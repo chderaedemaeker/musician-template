@@ -1,18 +1,17 @@
 ---
 title: This isn't Silence
-slug: this-isnt-silence
-date: "2021-07-16T00:00:00"
+date: "2021-07-16T00:00"
 type: Live-opname
-image: /images/silence.jpeg
+image: /images/IMG2.JPG
 link: ""
 place: HfMT Keulen, Duitsland
 collaborators: ""
-featured: true
+featured: false
+slug: this-isnt-silence
 layout: highlight.html
 tags: highlights
 lang: nl
 ---
-
 Eindexamenrecital “Neue Musik” aan de HfMT Keulen, live opgenomen op 16 juli 2021 door Philipp Knaak.
 
 **Luciano Berio — Sequenza VIII voor viool solo**
