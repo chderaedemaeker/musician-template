@@ -9,5 +9,4 @@ collaborators: Streicherakademie Bozen & Holliger
 link: "https://streicherakademie.it/de/konzerte/"
 featured: false
 layout: concert.html
-status: archived
 ---
