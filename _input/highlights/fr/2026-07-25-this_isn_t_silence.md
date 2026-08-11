@@ -3,6 +3,7 @@ title: This isn't Silence
 date: "2021-07-16T00:00"
 type: Enregistrement live
 image: /images/img2.jpg
+hide_image: true
 link: ""
 place: HfMT Cologne, Allemagne
 collaborators: ""
