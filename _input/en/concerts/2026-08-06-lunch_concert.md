@@ -1,6 +1,6 @@
 ---
 title: Lunch Concert
-date: "2026-11-18T20:00"
+date: "2026-12-03T20:00"
 date_end: ""
 month_only: false
 place: Den Bosch, The Netherlands
