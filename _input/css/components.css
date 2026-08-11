@@ -1044,7 +1044,7 @@ body.modal-open {
   padding: var(--space-sm) var(--space-md2);
   border: 1px solid var(--warm-grey);
   background-color: transparent;
-  max-width: var(--width-prose);
+  width: 100%;
 }
 
 .audio-player-toggle {
