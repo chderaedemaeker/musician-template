@@ -10,7 +10,6 @@ tags: about
 lang: nl
 permalink: nl/about/index.html
 ---
-
 Veronique De Raedemaeker (geboren 1996) is een Belgische violiste woonachtig in Keulen.
 
 ## Prijzen & steun
