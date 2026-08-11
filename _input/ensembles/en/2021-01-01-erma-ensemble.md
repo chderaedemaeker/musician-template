@@ -13,7 +13,7 @@ links:
     url: "https://substack.com/@ermaensemble"
   - label: Instagram
     url: "https://www.instagram.com/erma.ensemble"
-order: 3
+order: 4
 ---
 The ÉRMA Ensemble is a young, Cologne-based ensemble that has come together to explore the music of the second half of the 20th century and the 21st century in all its virtuosity and timbres. A diverse range of instruments, including the mandolin, guitar, and harp, offers ÉRMA unique sonic possibilities.
 
