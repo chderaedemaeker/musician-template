@@ -8,8 +8,8 @@
     {% for note in sortedNotes %}
     <section class="note-drift note-drift--page">
       <a class="note-drift-link" href="{{ note.url }}" aria-label="{{ note.data.title }}">
+        <span class="note-drift-meta note-drift-meta--top"><span class="note-drift-date">{{ note.date | shortDate }} &middot; {{ note.data.title }}</span></span>
         <p class="note-drift-text">{{ note.templateContent | strip_html | truncate: 220 }}</p>
-        <span class="note-drift-meta"><span class="note-drift-date">{{ note.date | shortDate }} &middot; {{ note.data.title }}</span></span>
       </a>
       {% assign photos = note.data.photos %}
       {% assign title = note.data.title %}

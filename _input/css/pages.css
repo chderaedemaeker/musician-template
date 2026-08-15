@@ -863,6 +863,17 @@ li:last-child > .upcoming-item {
   margin-top: var(--space-xs);
 }
 
+/* date and title lead each note on the overview */
+.notes-float .note-drift-meta--top {
+  margin: 0 0 var(--space-sm);
+}
+
+/* a quiet hairline announces every next note */
+.notes-float .note-drift + .note-drift {
+  border-top: 1px solid var(--warm-grey);
+  padding-top: clamp(4rem, 9vh, 6.5rem);
+}
+
 /* On the overview and note pages the movement stays gentler than on
    the home page — floating, not swaying */
 @keyframes nw-float-soft {
