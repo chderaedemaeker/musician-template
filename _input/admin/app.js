@@ -81,6 +81,7 @@ class GitGatewayAPI {
   async createOrUpdateFile(path, content, message, sha) {
     const body = { message, content: encodeBase64UTF8(content), branch: this.branch };
     if (sha) body.sha = sha;
+    if (this.author) { body.author = this.author; body.committer = this.author; }
     return this._request('PUT', `/contents/${path}`, body);
   }
 
@@ -118,11 +119,9 @@ class GitGatewayAPI {
       base_tree: branch.commit.commit.tree.sha,
       tree: changes.map(c => ({ path: c.path, mode: '100644', type: 'blob', content: c.content })),
     });
-    const commit = await this._request('POST', '/git/commits', {
-      message,
-      tree: tree.sha,
-      parents: [branch.commit.sha],
-    });
+    const commitBody = { message, tree: tree.sha, parents: [branch.commit.sha] };
+    if (this.author) { commitBody.author = this.author; commitBody.committer = this.author; }
+    const commit = await this._request('POST', '/git/commits', commitBody);
     await this._request('PATCH', `/git/refs/heads/${this.branch}`, { sha: commit.sha });
     return commit;
   }
@@ -133,9 +132,9 @@ class GitGatewayAPI {
   }
 
   async deleteFile(path, sha, message) {
-    return this._request('DELETE', `/contents/${path}`, {
-      message, sha, branch: this.branch,
-    });
+    const body = { message, sha, branch: this.branch };
+    if (this.author) { body.author = this.author; body.committer = this.author; }
+    return this._request('DELETE', `/contents/${path}`, body);
   }
 
   async uploadImage(path, base64content, message) {
@@ -146,6 +145,7 @@ class GitGatewayAPI {
     } catch (e) { /* new file */ }
     const body = { message, content: base64content, branch: this.branch };
     if (sha) body.sha = sha;
+    if (this.author) { body.author = this.author; body.committer = this.author; }
     return this._request('PUT', `/contents/${path}`, body);
   }
 
@@ -592,6 +592,11 @@ class App {
       // back 401 (rate-limited if called for every request in parallel).
       return this._identityUser.jwt(force === true);
     });
+    // Commits on GitHub carry who actually made the edit
+    this.api.author = {
+      name: (user.user_metadata && user.user_metadata.full_name) || user.email,
+      email: user.email,
+    };
     netlifyIdentity.close();
     this.loadConfig().then(() => this.route());
   }
@@ -718,6 +723,10 @@ class App {
           <div class="card-label">Hero Image</div>
           <div class="card-count">Homepage photo</div>
         </div>
+      </div>
+      <div class="recent-edits">
+        <h3>Latest changes</h3>
+        <div id="recent-edits-list"><div class="loading-state"><span class="spinner"></span> Loading...</div></div>
       </div>`;
     this.el.querySelectorAll('.card[data-col]').forEach(card => card.addEventListener('click', () => {
       // About is a single page — skip the list and open the editor directly
@@ -727,6 +736,28 @@ class App {
     document.getElementById('hero-card').addEventListener('click', () => { location.hash = '#/hero'; });
     this._bindTopbar();
     for (const col of this.collections) this._fetchEntryCount(col);
+    this._loadRecentEdits();
+  }
+
+  // Who changed what, straight from the branch history
+  async _loadRecentEdits() {
+    const el = document.getElementById('recent-edits-list');
+    if (!el) return;
+    try {
+      const commits = await this.api._request('GET', `/commits?per_page=14&sha=${this.api.branch}`);
+      el.innerHTML = commits.map(c => {
+        const msg = esc((c.commit.message || '').split('\n')[0]);
+        const a = c.commit.author || {};
+        const who = esc(a.email || a.name || 'unknown');
+        const when = a.date ? new Date(a.date).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
+        return `<div class="recent-edit-row">
+          <span class="recent-edit-msg">${msg}</span>
+          <span class="recent-edit-meta">${who}${when ? ' &middot; ' + when : ''}</span>
+        </div>`;
+      }).join('') || '<div class="empty-state">No changes yet.</div>';
+    } catch (e) {
+      el.innerHTML = '<div class="empty-state">Could not load the history.</div>';
+    }
   }
 
   async _fetchEntryCount(col) {
@@ -806,10 +837,18 @@ class App {
             : status === 'archived'
             ? '<span class="entry-status-badge status-archived">Archived</span>'
             : '';
+          const showThumb = ['projects', 'highlights'].includes(col.name);
+          const thumbSrc = e.data.image ? (String(e.data.image).startsWith('/') ? e.data.image : '/images/' + e.data.image) : '';
+          const thumbHtml = showThumb
+            ? (thumbSrc
+              ? `<img class="entry-thumb" src="${esc(thumbSrc)}" alt="" loading="lazy" onerror="this.classList.add('entry-thumb--empty');this.removeAttribute('src');" />`
+              : '<span class="entry-thumb entry-thumb--empty"></span>')
+            : '';
           return `<div class="entry-row" data-file="${esc(e.name)}" data-title="${esc(title)}" data-sha="${esc(e.sha||'')}" data-path="${esc(e.path)}">
             <div class="entry-row-left">
               ${col.name === 'projects' ? '<span class="drag-handle" title="Drag to reorder">&#8801;</span>' : ''}
               <input type="checkbox" class="entry-checkbox entry-select" data-file="${esc(e.name)}" />
+              ${thumbHtml}
               <div style="min-width:0;"><div class="entry-title${status === 'archived' ? ' entry-title--archived' : ''}">${esc(title)}${badgeHtml}</div>${date ? `<div class="entry-meta">${esc(date)}</div>` : ''}</div>
             </div>
           </div>`;
@@ -2925,6 +2964,11 @@ class App {
     this._audioCache = await this._loadMediaFolder(this.config.getAudioFolder(), AUDIO_EXT_RE);
   }
 
+  async _loadVideoCache() {
+    if (this._videoCache) return;
+    this._videoCache = await this._loadMediaFolder(this.config.getVideoFolder(), VIDEO_EXT_RE);
+  }
+
   async _loadMediaFolder(folder, extRe) {
     try {
       const contents = await this.api.getContents(folder);
@@ -3367,14 +3411,20 @@ class App {
         <h2>Media</h2>
         <div class="media-actions"><button class="btn btn-primary btn-sm" id="upload-media-btn">Upload</button></div>
       </div>
-      <div class="media-dropzone" id="media-dropzone">Drag & drop images or audio files here</div>
-      <div class="media-filter"><input type="text" id="media-search" placeholder="Search images and audio..." /></div>
+      <div class="media-dropzone" id="media-dropzone">Drag & drop images, audio or video here</div>
+      <div class="media-tabs" id="media-tabs">
+        <button type="button" class="media-tab active" data-kind="all">All</button>
+        <button type="button" class="media-tab" data-kind="image">Images</button>
+        <button type="button" class="media-tab" data-kind="audio">Audio</button>
+        <button type="button" class="media-tab" data-kind="video">Video</button>
+      </div>
+      <div class="media-filter"><input type="text" id="media-search" placeholder="Search media..." /></div>
       <div class="media-info" id="media-info"></div>
       <div class="media-grid" id="media-grid"><div class="loading-state"><span class="spinner"></span> Loading...</div></div>`;
     this._bindTopbar();
 
     const fileInput = document.createElement('input');
-    fileInput.type = 'file'; fileInput.accept = 'image/*,audio/*'; fileInput.multiple = true; fileInput.style.display = 'none';
+    fileInput.type = 'file'; fileInput.accept = 'image/*,audio/*,video/*'; fileInput.multiple = true; fileInput.style.display = 'none';
     this.el.appendChild(fileInput);
     document.getElementById('upload-media-btn').addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', () => { if (fileInput.files.length) this._uploadMediaFiles(fileInput.files); });
@@ -3385,20 +3435,22 @@ class App {
     dropzone.addEventListener('drop', e => { e.preventDefault(); dropzone.classList.remove('dragover'); if (e.dataTransfer.files.length) this._uploadMediaFiles(e.dataTransfer.files); });
 
     try {
-      this._imageCache = null; this._audioCache = null;
-      await Promise.all([this._loadImageCache(), this._loadAudioCache()]);
+      this._imageCache = null; this._audioCache = null; this._videoCache = null;
+      await Promise.all([this._loadImageCache(), this._loadAudioCache(), this._loadVideoCache()]);
       const images = this._imageCache;
       const audio = this._audioCache;
+      const video = this._videoCache;
 
       const gridEl = document.getElementById('media-grid');
       const counts = [`${images.length} image${images.length !== 1 ? 's' : ''}`];
       if (audio.length) counts.push(`${audio.length} audio file${audio.length !== 1 ? 's' : ''}`);
+      if (video.length) counts.push(`${video.length} video${video.length !== 1 ? 's' : ''}`);
       document.getElementById('media-info').textContent = counts.join(' · ');
 
-      if (!images.length && !audio.length) { gridEl.innerHTML = '<div class="empty-state">No media yet.</div>'; return; }
+      if (!images.length && !audio.length && !video.length) { gridEl.innerHTML = '<div class="empty-state">No media yet.</div>'; return; }
 
-      const publicPath = item => item.kind === 'audio' ? `/audio/${item.name}` : `/images/${item.name}`;
       const items = [
+        ...video.map(f => ({ ...f, kind: 'video' })),
         ...audio.map(f => ({ ...f, kind: 'audio' })),
         ...images.map(f => ({ ...f, kind: 'image' })),
       ];
@@ -3406,10 +3458,13 @@ class App {
       gridEl.innerHTML = items.map(item => `<div class="media-item${item.kind === 'audio' ? ' media-item-audio' : ''}" data-name="${esc(item.name)}" data-kind="${item.kind}" data-sha="${item.sha}" data-path="${esc(item.path)}">
         <div class="media-thumb">${item.kind === 'audio'
           ? `<div class="media-audio-thumb"><span class="media-audio-icon">&#9835;</span><audio controls preload="none" src="/audio/${esc(item.name)}"></audio></div>`
+          : item.kind === 'video'
+          ? `<video controls preload="metadata" src="/video/${esc(item.name)}"></video>`
           : `<img src="/images/${item.name}" alt="${esc(item.name)}" loading="lazy" />`}</div>
         <div class="media-item-info">
           <div class="media-item-name" title="${esc(item.name)}">${esc(item.name)}</div>
           ${item.size ? `<div class="media-item-size">${formatFileSize(item.size)}</div>` : ''}
+          <div class="media-item-date" title="When this file was uploaded">&nbsp;</div>
           <div class="media-item-actions">
             <button class="btn btn-ghost btn-sm media-copy-btn">Copy</button>
             <button class="btn btn-danger btn-sm media-delete-btn">Delete</button>
@@ -3417,17 +3472,33 @@ class App {
         </div>
       </div>`).join('');
 
-      // Search
-      document.getElementById('media-search').addEventListener('input', function() {
-        const q = this.value.toLowerCase().trim();
-        gridEl.querySelectorAll('.media-item').forEach(item => item.classList.toggle('hidden', q && !item.dataset.name.toLowerCase().includes(q)));
+      // Search + kind tabs filter together
+      let mediaKind = 'all';
+      const applyMediaFilter = () => {
+        const q = document.getElementById('media-search').value.toLowerCase().trim();
+        gridEl.querySelectorAll('.media-item').forEach(item => {
+          const matchKind = mediaKind === 'all' || item.dataset.kind === mediaKind;
+          const matchText = !q || item.dataset.name.toLowerCase().includes(q);
+          item.classList.toggle('hidden', !(matchKind && matchText));
+        });
+      };
+      document.getElementById('media-search').addEventListener('input', applyMediaFilter);
+      document.querySelectorAll('#media-tabs .media-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          mediaKind = tab.dataset.kind;
+          document.querySelectorAll('#media-tabs .media-tab').forEach(t => t.classList.toggle('active', t === tab));
+          applyMediaFilter();
+        });
       });
+
+      // Upload dates arrive in the background, newest info first
+      this._fillMediaDates(gridEl, items);
 
       // Copy
       gridEl.querySelectorAll('.media-copy-btn').forEach(btn => btn.addEventListener('click', e => {
         e.stopPropagation();
         const item = btn.closest('.media-item');
-        const p = item.dataset.kind === 'audio' ? `/audio/${item.dataset.name}` : `/images/${item.dataset.name}`;
+        const p = item.dataset.kind === 'audio' ? `/audio/${item.dataset.name}` : item.dataset.kind === 'video' ? `/video/${item.dataset.name}` : `/images/${item.dataset.name}`;
         navigator.clipboard.writeText(p).then(() => showStatus('saved', `Copied: ${p}`));
       }));
 
@@ -3440,7 +3511,7 @@ class App {
         showStatus('saving', 'Deleting...');
         try {
           await this.api.deleteFile(item.dataset.path, item.dataset.sha, `Delete ${item.dataset.name}`);
-          item.remove(); this._imageCache = null; this._audioCache = null;
+          item.remove(); this._imageCache = null; this._audioCache = null; this._videoCache = null;
           showStatus('saved', 'Deleted');
         } catch (e) { showStatus('error', e.message); }
       }));
@@ -3458,12 +3529,14 @@ class App {
   async _uploadMediaFiles(files) {
     const mediaFolder = this.config.getMediaFolder();
     const audioFolder = this.config.getAudioFolder();
+    const videoFolder = this.config.getVideoFolder();
     let uploaded = 0;
     showStatus('saving', `Uploading 0/${files.length}...`);
     for (const file of files) {
       try {
         const isAudio = (file.type && file.type.startsWith('audio/')) || AUDIO_EXT_RE.test(file.name);
-        const folder = isAudio ? audioFolder : mediaFolder;
+        const isVideo = (file.type && file.type.startsWith('video/')) || VIDEO_EXT_RE.test(file.name);
+        const folder = isAudio ? audioFolder : isVideo ? videoFolder : mediaFolder;
         const b64 = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result.split(',')[1]); r.onerror = rej; r.readAsDataURL(file); });
         await this.api.uploadImage(`${folder}/${file.name}`, b64, `Upload ${file.name}`);
         uploaded++;
@@ -3471,8 +3544,25 @@ class App {
       } catch (e) { showStatus('error', `Failed: ${file.name}`); return; }
     }
     showStatus('saved', `Uploaded ${uploaded} file${uploaded !== 1 ? 's' : ''}`);
-    this._imageCache = null; this._audioCache = null;
+    this._imageCache = null; this._audioCache = null; this._videoCache = null;
     this.renderMedia();
+  }
+
+  // Each file's upload date, from its last commit — fetched lazily and cached
+  async _fillMediaDates(gridEl, items) {
+    this._mediaDateCache = this._mediaDateCache || {};
+    await pMap(items, async item => {
+      if (!(item.path in this._mediaDateCache)) {
+        try {
+          const commits = await this.api._request('GET', `/commits?path=${encodeURIComponent(item.path)}&per_page=1&sha=${this.api.branch}`);
+          this._mediaDateCache[item.path] = (commits && commits[0] && commits[0].commit.author.date) || null;
+        } catch (e) { this._mediaDateCache[item.path] = null; }
+      }
+      const d = this._mediaDateCache[item.path];
+      if (!d || !gridEl.isConnected) return;
+      const tile = gridEl.querySelector(`.media-item[data-path="${CSS.escape(item.path)}"] .media-item-date`);
+      if (tile) tile.textContent = new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    }, 6);
   }
 
   _showLightbox(name, path) {
