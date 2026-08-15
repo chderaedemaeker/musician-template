@@ -45,6 +45,18 @@
   pointer-events: none;
 }
 
+/* Grain on the hero — same texture recipe as every other photo */
+.hero-fullscreen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('/images/Texture.jpg') repeat;
+  background-size: 600px auto;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 1;
+}
+
 .hero-content {
   position: relative;
   z-index: 2;
@@ -711,4 +723,85 @@ li:last-child > .upcoming-item {
 
 .project-archive > summary:hover {
   color: var(--near-black);
+}
+
+/* ── Note drift — the latest note as a quiet centred thought above the
+   bento: words fade in one by one, the whole thought breathes slowly,
+   then recedes a little once it has been said. ── */
+.note-drift {
+  max-width: var(--width-prose);
+  margin: var(--space-xl) auto calc(-1 * var(--space-sm));
+  padding: 0 var(--gutter);
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.note-drift-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  animation: note-drift-breathe 11s var(--ease) infinite alternate;
+}
+
+@keyframes note-drift-breathe {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-7px); }
+}
+
+.note-drift-text {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: var(--text-lede);
+  font-weight: 300;
+  line-height: 1.5;
+  color: var(--charcoal);
+  margin: 0 0 var(--space-xs);
+  transition: opacity 3s var(--ease);
+}
+
+.note-drift-text .nw {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.35em);
+  filter: blur(6px);
+  transition: opacity 1.2s var(--ease), transform 1.2s var(--ease), filter 1.2s var(--ease);
+}
+
+.note-drift.is-live .nw {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
+}
+
+/* said — now it recedes a little, like a thought drifting off */
+.note-drift.is-settled .note-drift-text {
+  opacity: 0.55;
+}
+
+.note-drift-meta {
+  font-family: var(--font-sans);
+  font-size: var(--text-label);
+  letter-spacing: 0.04em;
+  color: var(--dark-grey);
+  opacity: 0;
+  transition: opacity 1.6s var(--ease) 0.9s, color var(--dur-fast) var(--ease);
+}
+
+.note-drift.is-live .note-drift-meta {
+  opacity: 1;
+}
+
+.note-drift-link:hover .note-drift-text {
+  opacity: 1;
+}
+
+.note-drift-link:hover .note-drift-meta {
+  color: var(--near-black);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .note-drift-link { animation: none; }
+  .note-drift-text .nw { transition: none; opacity: 1; transform: none; filter: none; }
+  .note-drift-meta { transition: none; opacity: 1; }
 }

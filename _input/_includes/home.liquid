@@ -10,24 +10,51 @@
   {% assign heroAlt = languages[lang].site_title %}{% progressiveImage site.hero_image, heroAlt %}
 </div>
 
+<!-- Latest note — a quiet thought drifting above the grid -->
+{% assign latestNote = collections.notes | sort: 'date' | reverse | first %}
+{% if latestNote %}
+<section class="note-drift" aria-label="{{ languages[lang].notes_title }}">
+  <a class="note-drift-link" href="{{ latestNote.url }}">
+    <p class="note-drift-text">{{ latestNote.templateContent | strip_html | strip_newlines | truncate: 180 }}</p>
+    <span class="note-drift-meta">{{ latestNote.date | shortDate }} &middot; {{ languages[lang].notes_title }} <span aria-hidden="true">&#8594;</span></span>
+  </a>
+</section>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var box = document.querySelector('.note-drift');
+  if (!box) return;
+  var textEl = box.querySelector('.note-drift-text');
+  var words = textEl.textContent.trim().split(/\s+/);
+  textEl.textContent = '';
+  words.forEach(function (w, i) {
+    var span = document.createElement('span');
+    span.className = 'nw';
+    span.style.transitionDelay = (i * 0.13) + 's';
+    span.textContent = w;
+    textEl.appendChild(span);
+    textEl.appendChild(document.createTextNode(' '));
+  });
+  var reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function start() {
+    box.classList.add('is-live');
+    if (!reduced) {
+      /* once every word has arrived, let the whole thought recede a little */
+      setTimeout(function () { box.classList.add('is-settled'); }, words.length * 130 + 2300);
+    }
+  }
+  if ('IntersectionObserver' in window && !reduced) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { start(); io.disconnect(); } });
+    }, { threshold: 0.3 });
+    io.observe(box);
+  } else { start(); }
+});
+</script>
+{% endif %}
+
 <!-- Bento: everything at a glance -->
 <section class="section container">
-  {% assign showNotes = true %}
-  <div class="bento reveal-group{% unless showNotes %} bento--nonotes{% endunless %}">
-
-    <!-- Latest note — first cell -->
-    {% assign latestNote = collections.notes | sort: 'date' | reverse | first %}
-    {% if latestNote and showNotes %}
-    <div class="bento-cell bento-notes reveal">
-      <h2 class="label">{{ languages[lang].notes_title }}</h2>
-      <a class="bento-note-link" href="{{ latestNote.url }}">
-        <span class="upcoming-item-date">{{ latestNote.date | shortDate }}</span>
-        <span class="bento-note-title">{{ latestNote.data.title }}</span>
-        <span class="bento-note-excerpt">{{ latestNote.templateContent | strip_html | truncate: 150 }}</span>
-      </a>
-      <a class="bento-cell-link" href="/en/notes/">{{ languages[lang].notes_title }} <span aria-hidden="true">&#8594;</span></a>
-    </div>
-    {% endif %}
+  <div class="bento reveal-group bento--nonotes">
 
     <!-- Latest highlight — newest entry that has a real date -->
     {% assign langHighlights = 'highlights_en' %}
