@@ -1086,7 +1086,10 @@ li:last-child > .upcoming-item {
   align-items: center;
   justify-content: center;
   padding: clamp(1rem, 5vw, 3rem);
-  background: rgba(26, 26, 25, 0.82);
+  /* no dark veil — a light frosted breath of the site's own ground */
+  background: rgba(246, 246, 244, 0.72);
+  -webkit-backdrop-filter: blur(7px);
+  backdrop-filter: blur(7px);
   opacity: 0;
   transition: opacity 0.4s var(--ease);
   cursor: zoom-out;
@@ -1097,15 +1100,41 @@ li:last-child > .upcoming-item {
 }
 
 .photo-lightbox-frame {
+  position: relative;
   background: #fff;
   padding: 0.5rem;
   box-shadow:
-    0 6px 18px rgba(13, 13, 12, 0.18),
-    0 30px 80px rgba(13, 13, 12, 0.28);
-  max-width: min(92vw, 72rem);
-  max-height: 90vh;
+    0 4px 14px rgba(13, 13, 12, 0.10),
+    0 22px 60px rgba(13, 13, 12, 0.14);
+  max-width: min(78vw, 54rem);
+  max-height: 80vh;
   transform: scale(0.95);
   transition: transform 0.4s var(--ease);
+  cursor: default;
+}
+
+.photo-lightbox-close {
+  position: absolute;
+  top: -0.8rem;
+  right: -0.8rem;
+  width: 1.9rem;
+  height: 1.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--near-black);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--near-black);
+  font-size: 1.05rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+
+.photo-lightbox-close:hover {
+  background: var(--near-black);
+  color: #fff;
 }
 
 .photo-lightbox.is-open .photo-lightbox-frame {
@@ -1115,7 +1144,7 @@ li:last-child > .upcoming-item {
 .photo-lightbox-frame img {
   display: block;
   max-width: 100%;
-  max-height: calc(90vh - 1.6rem);
+  max-height: calc(80vh - 1.6rem);
   width: auto;
   height: auto;
   object-fit: contain;

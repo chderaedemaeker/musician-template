@@ -531,6 +531,12 @@
     }
     big.src = img.dataset.src || img.currentSrc || img.src;
     frame.appendChild(big);
+    var closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.className = 'photo-lightbox-close';
+    closeBtn.setAttribute('aria-label', 'Close');
+    closeBtn.innerHTML = '&#215;';
+    frame.appendChild(closeBtn);
     overlay.appendChild(frame);
     document.body.appendChild(overlay);
     requestAnimationFrame(function () { overlay.classList.add('is-open'); });
@@ -540,6 +546,8 @@
       document.removeEventListener('keydown', onKey);
       setTimeout(function () { overlay.remove(); }, 400);
     }
+    frame.addEventListener('click', function (e) { e.stopPropagation(); });
+    closeBtn.addEventListener('click', close);
     overlay.addEventListener('click', close);
     document.addEventListener('keydown', onKey);
   }
