@@ -3,9 +3,7 @@ title: Duo Altiler
 collaborators: Alexander Declercq - Piano
 image: /images/duo-altiler.jpeg
 match: duo altiler, altiler
-layout: project.html
-tags: projects
-lang: en
+featured: false
 links:
   - label: duoaltiler.com
     url: "https://www.duoaltiler.com"
@@ -15,6 +13,9 @@ links:
     url: "https://instagram.com/duoaltiler"
   - label: Facebook
     url: "https://www.facebook.com/profile.php?id=61552079672263"
+layout: project.html
+tags: projects
+lang: en
 order: 1
 ---
 Duo Altiler is a Belgian violin-piano duo featuring Veronique De Raedemaeker and Alexander Declercq.
@@ -37,6 +38,4 @@ Concertgebouw Brugge on Klara's Studio Toots concert broadcast, 1 March 2024:
 
 Cultuurpakt, 18 October 2023, about their performance in Klankdomein, a festival presenting works by Belgian composers:
 
-> "The 1926 Sonatine by Marcel Poot (1901–1988) was also a nice surprise. Performed by violinist Veronique De Raedemaeker and pianist Alexander Declercq. ... this Sonatine has everything a good piece of music should contain. Despite being a short piece, it contains everything. It fits and was beautifully performed."
-
-image by Anna Tena
+> "The 1926 Sonatine by Marcel Poot (1901–1988) was also a nice surprise. Performed by violinist Veronique De Raedemaeker and pianist Alexander Declercq. ... this Sonatine has everything a good piece of music should contain. Despite being a short piece, it contains everything. It fits and was beautifully performed.
