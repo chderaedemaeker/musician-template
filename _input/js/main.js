@@ -473,9 +473,16 @@
       var textEl = box.querySelector('.note-drift-text');
       if (!textEl) return;
       var count = splitWords(textEl);
-      if (reduced) { box.classList.add('is-live'); return; }
+      /* the note's photo stack (inside the box, or right after it) fades
+         in once half the words have arrived */
+      var photoBlocks = Array.prototype.slice.call(box.querySelectorAll('.note-photos:not(.note-photos--peek)'));
+      var sib = box.nextElementSibling;
+      if (sib && sib.classList && sib.classList.contains('note-photos') && !sib.classList.contains('note-photos--peek')) photoBlocks.push(sib);
+      function showPhotos() { photoBlocks.forEach(function (b) { b.classList.add('note-photos--in'); }); }
+      if (reduced) { box.classList.add('is-live'); showPhotos(); return; }
       function start() {
         box.classList.add('is-live');
+        setTimeout(showPhotos, Math.min(count * 150, 6000) / 2 + 500);
         if (box.hasAttribute('data-settle')) {
           setTimeout(function () { box.classList.add('is-settled'); }, Math.min(count * 150, 6000) + 2300);
         }
@@ -501,6 +508,48 @@
       if (w && h && h > w) np.classList.add('note-photo--portrait');
     });
   }
+
+  /* Clicking a note photo expands it — the frame carries the photo's
+     dominant colour while the large version loads, like everywhere else */
+  function openPhotoLightbox(photo) {
+    var img = photo.querySelector('img');
+    if (!img) return;
+    var wrap = photo.querySelector('.prog-img-wrap');
+    var overlay = document.createElement('div');
+    overlay.className = 'photo-lightbox';
+    var frame = document.createElement('div');
+    frame.className = 'photo-lightbox-frame';
+    var big = document.createElement('img');
+    big.alt = img.alt || '';
+    if (wrap) big.style.backgroundColor = getComputedStyle(wrap).backgroundColor;
+    if (img.getAttribute('width')) big.width = img.getAttribute('width');
+    if (img.getAttribute('height')) big.height = img.getAttribute('height');
+    if (img.srcset || img.dataset.srcset) {
+      big.srcset = img.srcset || img.dataset.srcset;
+      big.sizes = '92vw';
+    }
+    big.src = img.dataset.src || img.currentSrc || img.src;
+    frame.appendChild(big);
+    overlay.appendChild(frame);
+    document.body.appendChild(overlay);
+    requestAnimationFrame(function () { overlay.classList.add('is-open'); });
+    function onKey(e) { if (e.key === 'Escape') close(); }
+    function close() {
+      overlay.classList.remove('is-open');
+      document.removeEventListener('keydown', onKey);
+      setTimeout(function () { overlay.remove(); }, 400);
+    }
+    overlay.addEventListener('click', close);
+    document.addEventListener('keydown', onKey);
+  }
+
+  document.addEventListener('click', function (e) {
+    var photo = e.target.closest('.note-photo');
+    if (!photo || photo.closest('.note-photos--peek')) return;
+    e.preventDefault();
+    e.stopPropagation();
+    openPhotoLightbox(photo);
+  });
 
   function initAll() {
     initNoteDrifts();

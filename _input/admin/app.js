@@ -190,6 +190,7 @@ class ConfigParser {
   }
   getMediaFolder() { return this.config.media_folder || '_input/images'; }
   getAudioFolder() { return this.config.audio_folder || '_input/audio'; }
+  getVideoFolder() { return this.config.video_folder || '_input/video'; }
   getLocales() { return this.config.i18n?.locales || ['en']; }
   getCollections() {
     return (this.config.collections || []).map(c => ({
@@ -291,6 +292,7 @@ function esc(s) { const d = document.createElement('div'); d.textContent = s; re
 // File-type tests shared by the media library and the pickers
 const IMAGE_EXT_RE = /\.(jpg|jpeg|png|gif|webp|svg|avif)$/i;
 const AUDIO_EXT_RE = /\.(mp3|m4a|wav|ogg|oga|aac|flac|opus)$/i;
+const VIDEO_EXT_RE = /\.(mp4|m4v|mov|webm)$/i;
 
 // A human title from a filename: "berio-sequenza_viii live.mp3" → "berio sequenza viii live"
 function titleFromFilename(name) {
@@ -2002,6 +2004,25 @@ class App {
         </div>`;
       }
 
+      case 'audiofile':
+      case 'videofile': {
+        const kind = field.widget === 'audiofile' ? 'audio' : 'video';
+        const preview = value
+          ? (kind === 'audio'
+            ? `<audio controls preload="none" src="${escaped}" style="width:100%;margin-top:.5rem;height:32px;"></audio>`
+            : `<video controls preload="metadata" src="${escaped}" style="max-width:100%;margin-top:.5rem;max-height:220px;"></video>`)
+          : '';
+        return `<div class="file-field" data-file-kind="${kind}">
+          <input type="text" class="form-input file-path-input" ${dataAttr} value="${escaped}" placeholder="/${kind}/file" />
+          <div style="display:flex;gap:.4rem;margin-top:.4rem;flex-wrap:wrap;">
+            ${kind === 'audio' ? '<button type="button" class="btn btn-ghost btn-sm file-pick-btn">Pick from the site</button>' : ''}
+            <button type="button" class="btn btn-ghost btn-sm file-upload-btn">Upload new</button>
+            <button type="button" class="btn btn-ghost btn-sm file-clear-btn">Clear</button>
+          </div>
+          <div class="file-preview">${preview}</div>
+        </div>`;
+      }
+
       case 'images': {
         const items = Array.isArray(value) ? value : [];
         const rows = items.map(ph => {
@@ -2298,6 +2319,26 @@ class App {
         if (rm) { rm.closest('.links-row').remove(); this._markDirty(); }
       });
       editor.addEventListener('input', () => this._markDirty());
+    });
+
+    // Single-file fields (audio / video)
+    formEl.querySelectorAll('.file-field').forEach(fieldEl => {
+      const kind = fieldEl.dataset.fileKind;
+      const input = fieldEl.querySelector('.file-path-input');
+      const previewEl = fieldEl.querySelector('.file-preview');
+      const setVal = (path) => {
+        input.value = path;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        previewEl.innerHTML = path
+          ? (kind === 'audio'
+            ? `<audio controls preload="none" src="${esc(path)}" style="width:100%;margin-top:.5rem;height:32px;"></audio>`
+            : `<video controls preload="metadata" src="${esc(path)}" style="max-width:100%;margin-top:.5rem;max-height:220px;"></video>`)
+          : '';
+      };
+      const pickBtn = fieldEl.querySelector('.file-pick-btn');
+      if (pickBtn) pickBtn.addEventListener('click', () => this._pickAudioFile(setVal));
+      fieldEl.querySelector('.file-upload-btn').addEventListener('click', () => this._uploadMediaFileFor(kind, setVal));
+      fieldEl.querySelector('.file-clear-btn').addEventListener('click', () => setVal(''));
     });
 
     // Images editor (photo stacks) — add, pick, upload, remove rows
@@ -2610,6 +2651,59 @@ class App {
 
     html += '</div>';
     el.innerHTML = html;
+  }
+
+  // Audio chooser for note audio fields
+  async _pickAudioFile(cb) {
+    await this._loadAudioCache();
+    const files = this._audioCache;
+    const overlay = document.createElement('div');
+    overlay.className = 'image-picker-overlay visible';
+    overlay.innerHTML = `<div class="image-picker">
+      <h3>Choose an audio file</h3>
+      <div class="audio-picker-list">
+        ${files.length ? files.map(f => `<div class="audio-picker-item" data-name="${esc(f.name)}">
+          <div class="audio-picker-item-main">
+            <span class="audio-picker-icon">&#9835;</span>
+            <span class="audio-picker-item-name">${esc(titleFromFilename(f.name))}</span>
+            <button type="button" class="btn btn-primary btn-sm audio-picker-insert">Choose</button>
+          </div>
+          <audio controls preload="none" src="/audio/${esc(f.name)}"></audio>
+        </div>`).join('') : '<div class="empty-state">No audio files yet.</div>'}
+      </div>
+      <div class="image-picker-actions"><button class="btn btn-ghost btn-sm" id="picker-cancel">Cancel</button></div>
+    </div>`;
+    document.body.appendChild(overlay);
+    overlay.querySelectorAll('.audio-picker-insert').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const name = btn.closest('.audio-picker-item').dataset.name;
+        overlay.remove();
+        cb(`/audio/${name}`);
+      });
+    });
+    overlay.querySelector('#picker-cancel').addEventListener('click', () => overlay.remove());
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  }
+
+  // Upload an audio or video file, call back with its public path
+  _uploadMediaFileFor(kind, cb) {
+    const input = document.createElement('input');
+    input.type = 'file'; input.accept = kind === 'audio' ? 'audio/*' : 'video/*';
+    input.addEventListener('change', async () => {
+      if (!input.files[0]) return;
+      const file = input.files[0];
+      showStatus('saving', 'Uploading...');
+      try {
+        const folder = kind === 'audio' ? this.config.getAudioFolder() : this.config.getVideoFolder();
+        const reader = new FileReader();
+        const b64 = await new Promise((res, rej) => { reader.onload = () => res(reader.result.split(',')[1]); reader.onerror = rej; reader.readAsDataURL(file); });
+        await this.api.uploadImage(`${folder}/${file.name}`, b64, `Upload ${file.name}`);
+        if (kind === 'audio') this._audioCache = null;
+        showStatus('saved', 'Uploaded');
+        cb(`/${kind}/${file.name}`);
+      } catch (e) { showStatus('error', e.message); }
+    });
+    input.click();
   }
 
   // Generic image chooser: shows the site's images, calls back with the

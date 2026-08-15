@@ -171,6 +171,7 @@ module.exports = function (eleventyConfig) {
     eleventyConfig.addPassthroughCopy("_input/css");
     eleventyConfig.addPassthroughCopy("_input/js");
     eleventyConfig.addPassthroughCopy("_input/audio");
+    eleventyConfig.addPassthroughCopy("_input/video");
     eleventyConfig.addPassthroughCopy({ "_input/icons": "/" });
 
     // Helper: get collection with English fallback

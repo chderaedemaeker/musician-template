@@ -30,9 +30,25 @@
 
     {% include "note-photos.liquid" %}
 
+    {% if audio and audio != "" %}
+    <div class="note-media note-media--audio">
+      <div class="note-media-sway">
+        <audio controls src="{{ audio }}" data-title="{{ title }}"></audio>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if video and video != "" %}
+    <div class="note-media note-media--video">
+      <div class="note-media-sway">
+        <video controls playsinline preload="metadata" src="{{ video }}"></video>
+      </div>
+    </div>
+    {% endif %}
+
     {% if links and links.size > 0 %}
-      <div class="content-actions content-actions--centered">
-        {% for l in links %}<a class="btn" href="{{ l.url }}" target="_blank" rel="noopener">{{ l.label }}</a>{% endfor %}
+      <div class="note-links">
+        {% for l in links %}<a class="note-link-float" href="{{ l.url }}" target="_blank" rel="noopener">{{ l.label }} <span class="note-link-arrow" aria-hidden="true">&#8599;</span></a>{% endfor %}
       </div>
     {% endif %}
 

@@ -1037,3 +1037,154 @@ li:last-child > .upcoming-item {
 @media (prefers-reduced-motion: reduce) {
   .note-photo-sway { animation: none; }
 }
+
+/* Photos wait for the words: hidden until half the text has arrived */
+.note-photos:not(.note-photos--peek) {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 1.4s var(--ease), transform 1.4s var(--ease);
+}
+
+.note-photos--in {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+.note-photo {
+  cursor: zoom-in;
+}
+
+.note-photos--peek .note-photo {
+  cursor: inherit;
+}
+
+/* ── Photo lightbox — click to expand; the frame keeps the picture's
+   dominant colour while the large version loads ── */
+.photo-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1rem, 5vw, 3rem);
+  background: rgba(26, 26, 25, 0.82);
+  opacity: 0;
+  transition: opacity 0.4s var(--ease);
+  cursor: zoom-out;
+}
+
+.photo-lightbox.is-open {
+  opacity: 1;
+}
+
+.photo-lightbox-frame {
+  background: #fff;
+  padding: 0.5rem;
+  box-shadow:
+    0 6px 18px rgba(13, 13, 12, 0.18),
+    0 30px 80px rgba(13, 13, 12, 0.28);
+  max-width: min(92vw, 72rem);
+  max-height: 90vh;
+  transform: scale(0.95);
+  transition: transform 0.4s var(--ease);
+}
+
+.photo-lightbox.is-open .photo-lightbox-frame {
+  transform: scale(1);
+}
+
+.photo-lightbox-frame img {
+  display: block;
+  max-width: 100%;
+  max-height: calc(90vh - 1.6rem);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border: 1px solid var(--near-black);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .note-photos:not(.note-photos--peek) { opacity: 1; transform: none; transition: none; }
+}
+
+/* ── Note media — audio and video floating like the photos ── */
+.note-media {
+  max-width: 34rem;
+  margin: var(--space-lg) auto var(--space-md);
+  transition: transform 0.55s var(--ease);
+}
+
+.note-media:hover {
+  transform: scale(1.02);
+}
+
+.note-media .note-media-sway {
+  animation: note-photo-sway 8s ease-in-out infinite alternate;
+}
+
+.note-media--audio .audio-player {
+  background: var(--white);
+  box-shadow:
+    0 3px 9px rgba(13, 13, 12, 0.07),
+    0 20px 46px rgba(13, 13, 12, 0.09);
+}
+
+.note-media--video .note-media-sway {
+  background: #fff;
+  padding: 0.45rem;
+  box-shadow:
+    0 3px 9px rgba(13, 13, 12, 0.07),
+    0 20px 46px rgba(13, 13, 12, 0.09);
+}
+
+.note-media--video video {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--near-black);
+  background: var(--near-black);
+}
+
+/* ── Note links — quiet floating links instead of buttons ── */
+.note-links {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  margin: var(--space-lg) auto var(--space-md);
+}
+
+.note-link-float {
+  display: inline-block;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.25rem;
+  color: var(--charcoal);
+  text-decoration: underline;
+  text-decoration-color: var(--warm-grey);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 6px;
+  animation: note-drift-breathe-soft 9s ease-in-out infinite alternate;
+  transition: transform 0.5s var(--ease), color var(--dur-fast) var(--ease), text-decoration-color var(--dur-fast) var(--ease);
+}
+
+.note-link-float:nth-child(even) { animation-delay: -4.5s; }
+.note-link-float:nth-child(3n) { animation-delay: -2.5s; }
+
+.note-link-float:hover {
+  transform: translateY(-3px) scale(1.06);
+  color: var(--near-black);
+  text-decoration-color: var(--near-black);
+}
+
+.note-link-arrow {
+  font-size: 0.8em;
+  color: var(--dark-grey);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .note-media .note-media-sway,
+  .note-link-float { animation: none; }
+}

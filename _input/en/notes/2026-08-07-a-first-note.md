@@ -5,6 +5,7 @@ links:
   - label: YouTube
     url: test
 layout: note.html
+audio: /audio/pv2.mp3
 photos:
   - image: /images/veronique-21.jpg
 ---

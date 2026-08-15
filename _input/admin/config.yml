@@ -7,6 +7,8 @@ media_folder: '_input/images'
 public_folder: '/images'
 audio_folder: '_input/audio'
 public_audio_folder: '/audio'
+video_folder: '_input/video'
+public_video_folder: '/video'
 locale: 'en'
 show_preview_links: true
 
@@ -63,7 +65,9 @@ collections:
       - {label: "Date", name: "date", widget: "datetime", required: true, default: "", format: "YYYY-MM-DDTHH:mm:ss", picker_utc: false, hint: "When you wrote it — notes are shown newest first."}
       - {label: "Text", name: "body", widget: "markdown", required: true, hint: "Your note — as short or long as you like. Personal, in your own words."}
       - {label: "Photos", name: "photos", widget: "images", required: false, hint: "Optional photos for this note — they appear as a loose stack of pictures under the text. One photo is shown on its own."}
-      - {label: "Extra links", name: "links", widget: "links", required: false, hint: "Optional buttons at the bottom of the note."}
+      - {label: "Audio", name: "audio", widget: "audiofile", required: false, hint: "Optional recording for this note — shown as a floating player under the text."}
+      - {label: "Video", name: "video", widget: "videofile", required: false, hint: "Optional short video for this note — shown floating like the photos."}
+      - {label: "Extra links", name: "links", widget: "links", required: false, hint: "Optional links at the bottom of the note — shown as floating links, not buttons."}
 
   - label: "Ensembles"
     name: "projects"
