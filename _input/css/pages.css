@@ -958,9 +958,17 @@ li:last-child > .upcoming-item {
   margin: var(--space-lg) auto var(--space-md);
 }
 
+/* the stack is expansive — twice the old size, breaking out well beyond
+   the text column (the hover peek on the index keeps its own size) */
+.note-photos:not(.note-photos--peek) {
+  width: min(92vw, 72rem);
+  max-width: none;
+  margin: var(--space-lg) calc(50% - min(46vw, 36rem)) var(--space-md);
+}
+
 .note-photo {
-  width: min(44%, 15rem);
-  margin: -1.4rem -1.1rem;
+  width: min(44%, 30rem);
+  margin: -2.6rem -2rem;
   transform: rotate(var(--pr, 0deg));
   /* the z-index swap waits a beat, so the size change leads the layering */
   transition: transform 0.55s var(--ease), z-index 0s 0.12s;
@@ -969,7 +977,7 @@ li:last-child > .upcoming-item {
 
 /* portrait photos narrower, so both orientations read as the same size */
 .note-photo--portrait {
-  width: min(33%, 10.8rem);
+  width: min(33%, 21.5rem);
 }
 
 .note-photo:hover {
@@ -1001,13 +1009,13 @@ li:last-child > .upcoming-item {
 
 /* one photo stands alone, straight and centred */
 .note-photos--one .note-photo {
-  width: min(80%, 22rem);
+  width: min(92%, 44rem);
   margin: 0;
   transform: none;
 }
 
 .note-photos--one .note-photo--portrait {
-  width: min(58%, 15.5rem);
+  width: min(64%, 30rem);
 }
 
 .note-photos--one .note-photo:hover {
@@ -1035,10 +1043,10 @@ li:last-child > .upcoming-item {
 }
 
 @media (max-width: 600px) {
-  .note-photo { width: 58%; margin: -1rem -1.6rem; }
-  .note-photo--portrait { width: 44%; }
-  .note-photos--one .note-photo { width: 88%; }
-  .note-photos--one .note-photo--portrait { width: 66%; }
+  .note-photo { width: 64%; margin: -1.2rem -1.8rem; }
+  .note-photo--portrait { width: 48%; }
+  .note-photos--one .note-photo { width: 94%; }
+  .note-photos--one .note-photo--portrait { width: 70%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
