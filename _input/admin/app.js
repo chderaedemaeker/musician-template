@@ -3095,7 +3095,26 @@ class App {
     const noteUrl = siteBase + (this._siteUrlFor(state.col, state.filename) || '/en/notes/');
     const subject = data.title ? `${data.title} \u2014 a note from Veronique` : 'A note from Veronique';
     const html = this._newsletterHtml(data, body, noteUrl, siteBase);
-    const ok = await showModal('Send newsletter', `Send \u201C${data.title}\u201D to all newsletter subscribers? This cannot be undone.`, { okLabel: 'Send', okClass: 'btn-primary' });
+    // Preview exactly what subscribers will receive before anything goes out
+    const ok = await new Promise(resolve => {
+      const overlay = document.createElement('div');
+      overlay.className = 'image-picker-overlay visible';
+      overlay.innerHTML = `<div class="image-picker newsletter-preview">
+        <h3>Newsletter preview</h3>
+        <p class="newsletter-preview-subject">Subject: <strong>${esc(subject)}</strong></p>
+        <iframe class="newsletter-preview-frame" title="Newsletter preview"></iframe>
+        <div class="image-picker-actions">
+          <button class="btn btn-primary btn-sm" id="nl-send">Send to all subscribers</button>
+          <button class="btn btn-ghost btn-sm" id="nl-cancel">Cancel</button>
+        </div>
+      </div>`;
+      document.body.appendChild(overlay);
+      overlay.querySelector('.newsletter-preview-frame').srcdoc = html;
+      const done = val => { overlay.remove(); resolve(val); };
+      overlay.querySelector('#nl-send').addEventListener('click', () => done(true));
+      overlay.querySelector('#nl-cancel').addEventListener('click', () => done(false));
+      overlay.addEventListener('click', e => { if (e.target === overlay) done(false); });
+    });
     if (!ok) return;
     showStatus('saving', 'Sending newsletter\u2026');
     try {
