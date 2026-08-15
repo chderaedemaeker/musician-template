@@ -975,10 +975,6 @@ li:last-child > .upcoming-item {
 .note-photo-sway {
   background: #fff;
   padding: 0.45rem;
-  /* two soft layers of shadow: close contact and distant depth */
-  box-shadow:
-    0 3px 9px rgba(13, 13, 12, 0.07),
-    0 20px 46px rgba(13, 13, 12, 0.09);
   animation: note-photo-sway 7s ease-in-out infinite alternate;
 }
 
@@ -1038,14 +1034,17 @@ li:last-child > .upcoming-item {
   .note-photo-sway { animation: none; }
 }
 
-/* Photos wait for the words: hidden until half the text has arrived */
-.note-photos:not(.note-photos--peek) {
+/* Photos, media and links wait for the words: hidden until half the
+   text has arrived */
+.note-photos:not(.note-photos--peek),
+.note-media,
+.note-links {
   opacity: 0;
   transform: translateY(16px);
   transition: opacity 1.4s var(--ease), transform 1.4s var(--ease);
 }
 
-.note-photos--in {
+.note-attach--in {
   opacity: 1 !important;
   transform: none !important;
 }
@@ -1105,7 +1104,9 @@ li:last-child > .upcoming-item {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .note-photos:not(.note-photos--peek) { opacity: 1; transform: none; transition: none; }
+  .note-photos:not(.note-photos--peek),
+  .note-media,
+  .note-links { opacity: 1; transform: none; transition: none; }
 }
 
 /* ── Note media — audio and video floating like the photos ── */
@@ -1115,8 +1116,8 @@ li:last-child > .upcoming-item {
   transition: transform 0.55s var(--ease);
 }
 
-.note-media:hover {
-  transform: scale(1.02);
+.note-media.note-attach--in:hover {
+  transform: scale(1.02) !important;
 }
 
 .note-media .note-media-sway {
@@ -1125,17 +1126,11 @@ li:last-child > .upcoming-item {
 
 .note-media--audio .audio-player {
   background: var(--white);
-  box-shadow:
-    0 3px 9px rgba(13, 13, 12, 0.07),
-    0 20px 46px rgba(13, 13, 12, 0.09);
 }
 
 .note-media--video .note-media-sway {
   background: #fff;
   padding: 0.45rem;
-  box-shadow:
-    0 3px 9px rgba(13, 13, 12, 0.07),
-    0 20px 46px rgba(13, 13, 12, 0.09);
 }
 
 .note-media--video video {

@@ -10,10 +10,22 @@
       <a class="note-drift-link" href="{{ note.url }}" aria-label="{{ note.data.title }}">
         <p class="note-drift-text">{{ note.templateContent | strip_html | truncate: 220 }}</p>
         <span class="note-drift-meta"><span class="note-drift-date">{{ note.date | shortDate }} &middot; {{ note.data.title }}</span></span>
-        {% assign photos = note.data.photos %}
-        {% assign title = note.data.title %}
-        {% include "note-photos.liquid" %}
       </a>
+      {% assign photos = note.data.photos %}
+      {% assign title = note.data.title %}
+      {% include "note-photos.liquid" %}
+      {% if note.data.audio and note.data.audio != "" %}
+      <div class="note-media note-media--audio">
+        <div class="note-media-sway">
+          <audio controls src="{{ note.data.audio }}" data-title="{{ note.data.title }}"></audio>
+        </div>
+      </div>
+      {% endif %}
+      {% if note.data.links and note.data.links.size > 0 %}
+      <div class="note-links">
+        {% for l in note.data.links %}<a class="note-link-float" href="{{ l.url }}" target="_blank" rel="noopener">{{ l.label }} <span class="note-link-arrow" aria-hidden="true">&#8599;</span></a>{% endfor %}
+      </div>
+      {% endif %}
     </section>
     {% endfor %}
   </div>

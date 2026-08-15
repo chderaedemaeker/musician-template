@@ -1354,6 +1354,7 @@ class App {
         <h2>${isNew ? `New ${esc(col.label.replace(/s$/, ''))}` : 'Edit'}</h2>
         <div class="editor-actions">
           ${siteUrl ? `<a class="btn btn-ghost" href="${siteUrl}" target="_blank" rel="noopener" title="Opens the live page — recent saves can take a minute to appear">View on site</a>` : ''}
+          ${(!isNew && col.name === 'notes') ? '<button class="btn btn-ghost" id="newsletter-btn" title="Email this note to everyone subscribed to the newsletter">Send as newsletter</button>' : ''}
           <button class="btn btn-ghost" id="cancel-btn">Cancel edits</button>
           <button class="btn btn-primary" id="save-btn">Save</button>
           ${!isNew ? '<button class="btn btn-danger" id="delete-btn">Delete</button>' : ''}
@@ -1439,6 +1440,10 @@ class App {
 
     // Save
     document.getElementById('save-btn').addEventListener('click', () => this._saveEntry(state));
+
+    // Newsletter (notes only)
+    const nlBtn = document.getElementById('newsletter-btn');
+    if (nlBtn) nlBtn.addEventListener('click', () => this._sendNewsletter(state));
 
     // Cancel — discard unsaved changes and go back to the list
     document.getElementById('cancel-btn').addEventListener('click', () => {
@@ -3076,6 +3081,64 @@ class App {
         state.isNew = false;
       }
     } catch (e) { showStatus('error', 'Save failed: ' + e.message); }
+  }
+
+  // ---- Newsletter ----
+  // Email the note to every newsletter subscriber, styled like the site.
+  async _sendNewsletter(state) {
+    this._collectFormData(state);
+    if (this._unsavedChanges) { showStatus('error', 'Save the note first, then send it.'); return; }
+    const data = state.data[state.activeLocale];
+    const body = state.body[state.activeLocale] || '';
+    const siteBase = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+      ? 'https://vdr-staging.netlify.app' : location.origin;
+    const noteUrl = siteBase + (this._siteUrlFor(state.col, state.filename) || '/en/notes/');
+    const subject = data.title ? `${data.title} \u2014 a note from Veronique` : 'A note from Veronique';
+    const html = this._newsletterHtml(data, body, noteUrl, siteBase);
+    const ok = await showModal('Send newsletter', `Send \u201C${data.title}\u201D to all newsletter subscribers? This cannot be undone.`, { okLabel: 'Send', okClass: 'btn-primary' });
+    if (!ok) return;
+    showStatus('saving', 'Sending newsletter\u2026');
+    try {
+      const jwt = await this._identityUser.jwt();
+      const res = await fetch(siteBase + '/.netlify/functions/newsletter', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + jwt, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subject, html, text: body }),
+      });
+      const out = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(out.error || ('Sending failed (' + res.status + ')'));
+      showStatus('saved', out.sent ? `Newsletter sent to ${out.sent} subscriber${out.sent === 1 ? '' : 's'}` : (out.message || 'Nothing sent'));
+    } catch (e) { showStatus('error', e.message); }
+  }
+
+  _newsletterHtml(data, bodyMd, noteUrl, siteBase) {
+    const abs = h => h.replace(/(src|href)="\//g, `$1="${siteBase}/`);
+    let bodyHtml = renderMarkdown(bodyMd || '');
+    bodyHtml = bodyHtml.replace(/<audio[^>]*>([\s\S]*?)<\/audio>/g,
+      `<a href="${noteUrl}" style="color:#33322f;">&#9654;&#xFE0E; Listen on the site</a>`);
+    bodyHtml = abs(bodyHtml);
+    const photos = Array.isArray(data.photos) ? data.photos.filter(p => p.image) : [];
+    const photosHtml = photos.map(p => {
+      const src = p.image.startsWith('/') ? p.image : '/images/' + p.image;
+      return `<img src="${siteBase}${src}" width="520" style="width:100%;max-width:520px;height:auto;border:1px solid #33322f;display:block;margin:0 auto 16px;" alt="" />`;
+    }).join('');
+    const dateStr = data.date ? new Date(data.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+    return `<!doctype html><html><body style="margin:0;padding:0;background:#f5f4f2;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f5f4f2;padding:36px 12px;">
+    <tr><td align="center">
+      <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
+        <tr><td style="font-family:Helvetica,Arial,sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#8a847a;padding-bottom:20px;" align="center">${esc(dateStr)}${data.title ? ' &middot; ' + esc(data.title) : ''}</td></tr>
+        <tr><td style="font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:22px;line-height:1.65;color:#4d4841;padding-bottom:26px;" align="center">${bodyHtml}</td></tr>
+        ${photosHtml ? `<tr><td align="center" style="padding-bottom:14px;">${photosHtml}</td></tr>` : ''}
+        <tr><td align="center" style="padding:10px 0 30px;">
+          <a href="${noteUrl}" style="font-family:Helvetica,Arial,sans-serif;font-size:14px;color:#f5f4f2;background:#33322f;text-decoration:none;padding:12px 26px;border-radius:999px;display:inline-block;">Read on the site</a>
+        </td></tr>
+        <tr><td style="border-top:1px solid #e8e6e1;padding-top:20px;font-family:Helvetica,Arial,sans-serif;font-size:11px;color:#8a847a;line-height:1.7;" align="center">
+          You are receiving this because you subscribed to Veronique De Raedemaeker&#8217;s newsletter.<br/>Reply to this email to unsubscribe.
+        </td></tr>
+      </table>
+    </td></tr>
+  </table></body></html>`;
   }
 
   // ---- Status (draft / archived / online) ----

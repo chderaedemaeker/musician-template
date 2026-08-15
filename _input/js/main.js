@@ -475,10 +475,11 @@
       var count = splitWords(textEl);
       /* the note's photo stack (inside the box, or right after it) fades
          in once half the words have arrived */
-      var photoBlocks = Array.prototype.slice.call(box.querySelectorAll('.note-photos:not(.note-photos--peek)'));
+      var ATTACH = '.note-photos:not(.note-photos--peek), .note-media, .note-links';
+      var photoBlocks = Array.prototype.slice.call(box.querySelectorAll(ATTACH));
       var sib = box.nextElementSibling;
-      if (sib && sib.classList && sib.classList.contains('note-photos') && !sib.classList.contains('note-photos--peek')) photoBlocks.push(sib);
-      function showPhotos() { photoBlocks.forEach(function (b) { b.classList.add('note-photos--in'); }); }
+      while (sib && sib.matches && sib.matches(ATTACH)) { photoBlocks.push(sib); sib = sib.nextElementSibling; }
+      function showPhotos() { photoBlocks.forEach(function (b) { b.classList.add('note-attach--in'); }); }
       if (reduced) { box.classList.add('is-live'); showPhotos(); return; }
       function start() {
         box.classList.add('is-live');
