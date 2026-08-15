@@ -4,7 +4,7 @@ date: "2023-01-01T00:00"
 type: Recording
 image: /images/12.jpeg
 hide_image: false
-link: X_5QvakHn0mhK7t7
+link: AbZxSocrvvs?si=XHgzOasBtHxfpcS2
 place: ""
 collaborators: ""
 featured: false
