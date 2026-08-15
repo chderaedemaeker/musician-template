@@ -15,7 +15,7 @@
 {% if latestNote %}
 <section class="note-drift" aria-label="{{ languages[lang].notes_title }}">
   <a class="note-drift-link" href="{{ latestNote.url }}">
-    <p class="note-drift-text">{{ latestNote.templateContent | strip_html | strip_newlines | truncate: 180 }}</p>
+    <p class="note-drift-text">&ldquo;{{ latestNote.templateContent | strip_html | strip_newlines | truncate: 180 }}&rdquo;</p>
     <span class="note-drift-meta">{{ latestNote.date | shortDate }} &middot; {{ languages[lang].notes_title }} <span aria-hidden="true">&#8594;</span></span>
   </a>
 </section>
@@ -27,11 +27,18 @@ document.addEventListener('DOMContentLoaded', function () {
   var words = textEl.textContent.trim().split(/\s+/);
   textEl.textContent = '';
   words.forEach(function (w, i) {
-    var span = document.createElement('span');
-    span.className = 'nw';
-    span.style.transitionDelay = (i * 0.13) + 's';
-    span.textContent = w;
-    textEl.appendChild(span);
+    /* outer span: one-time entrance; inner span: perpetual float and pulse,
+       each word on its own rhythm */
+    var outer = document.createElement('span');
+    outer.className = 'nw';
+    outer.style.transitionDelay = (i * 0.15) + 's';
+    var inner = document.createElement('span');
+    inner.className = 'nw-i';
+    inner.style.animationDuration = (3.4 + (i % 5) * 0.5) + 's';
+    inner.style.animationDelay = '-' + ((i * 0.73) % 3.4).toFixed(2) + 's';
+    inner.textContent = w;
+    outer.appendChild(inner);
+    textEl.appendChild(outer);
     textEl.appendChild(document.createTextNode(' '));
   });
   var reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -98,3 +105,5 @@ document.addEventListener('DOMContentLoaded', function () {
 </section>
 
 </main>
+
+{% include "concert-modal.liquid" %}

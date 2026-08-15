@@ -40,7 +40,6 @@ document.addEventListener('DOMContentLoaded', function() {
   concerts.forEach(function (c) {
     if (c.link && lang !== 'en') c.link = c.link.replace(/^\/en\//, '/' + lang + '/');
   });
-  var ticketsLabel = '{{ languages[lang].tickets }}';
 
   /* Collaborators in the modal link to their project page */
   window.projectLinks = [
@@ -115,10 +114,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     var aside = '';
     if (c.composers) aside += '<p class="concert-row-detail">' + c.composers + '</p>';
-    if (c.ticket && !isArchive) {
-      aside += '<a class="concert-row-ticket" href="' + c.ticket + '" target="_blank" rel="noopener">' +
-        ticketsLabel + '</a>';
-    }
     var searchText = [d, c.title, c.place, c.composers, c.collaborators].join(' ').toLowerCase().replace(/"/g, '&quot;');
     return '<li class="concert-row reveal' + (isArchive ? ' concert-row--archive' : '') + (c.featured ? ' concert-row--featured' : '') + '" data-search="' + searchText + '">' +
       '<div class="concert-row-when">' +

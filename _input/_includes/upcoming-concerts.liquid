@@ -75,6 +75,16 @@ document.addEventListener('DOMContentLoaded', function() {
         '</a>' +
       '</li>';
     }).join('');
+
+    /* Modal first — the full page stays one click away inside it */
+    window.concertNavOrder = upcoming;
+    Array.prototype.forEach.call(list.querySelectorAll('a.upcoming-item'), function (a, i) {
+      a.addEventListener('click', function (e) {
+        if (!window.openConcertModal || e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+        e.preventDefault();
+        openConcertModal(upcoming[i]);
+      });
+    });
   }
 });
 </script>
