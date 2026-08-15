@@ -20,11 +20,6 @@ img.prog-img.prog-loaded {
   opacity: 1;
 }
 
-/* Image came straight from cache — no long reveal, just a quick blink */
-img.prog-img.prog-instant {
-  transition: opacity 0.2s ease, transform 400ms var(--ease);
-}
-
 .prog-img-wrap {
   position: relative;
   display: block;

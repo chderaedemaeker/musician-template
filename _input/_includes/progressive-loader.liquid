@@ -10,13 +10,18 @@
       img.src = src;
 
       /* Fade in only once the frame is fully decoded — no half-painted pop.
-         Images straight from cache skip the long reveal. */
+         The colour tile always shows for a beat first, even when the image
+         arrives instantly from cache, so the reveal is always a soft fade. */
+      var MIN_COLOUR_MS = 350;
       function onLoaded() {
-        if (started && performance.now() - started < 80) img.classList.add('prog-instant');
-        /* two frames so the browser commits the decoded frame before the fade starts */
-        requestAnimationFrame(function () {
-          requestAnimationFrame(function () { img.classList.add('prog-loaded'); });
-        });
+        var elapsed = started ? (performance.now() - started) : 0;
+        var wait = Math.max(0, MIN_COLOUR_MS - elapsed);
+        setTimeout(function () {
+          /* two frames so the browser commits the decoded frame before the fade starts */
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () { img.classList.add('prog-loaded'); });
+          });
+        }, wait);
       }
       function fallback() {
         if (img.complete && img.naturalWidth) onLoaded();
