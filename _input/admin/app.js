@@ -14,6 +14,12 @@ class GitGatewayAPI {
     this._refreshing = null; // single-flight token refresh
   }
 
+  // Git Gateway signs commits with the site's GitHub connection, so the
+  // real editor is recorded in the message itself
+  _msg(message) {
+    return this.author && this.author.email ? `${message}\n\nEdited by: ${this.author.email}` : message;
+  }
+
   async _headers(forceRefresh) {
     const token = await this._tokenFn(forceRefresh);
     return {
@@ -79,7 +85,7 @@ class GitGatewayAPI {
   }
 
   async createOrUpdateFile(path, content, message, sha) {
-    const body = { message, content: encodeBase64UTF8(content), branch: this.branch };
+    const body = { message: this._msg(message), content: encodeBase64UTF8(content), branch: this.branch };
     if (sha) body.sha = sha;
     if (this.author) { body.author = this.author; body.committer = this.author; }
     return this._request('PUT', `/contents/${path}`, body);
@@ -119,7 +125,7 @@ class GitGatewayAPI {
       base_tree: branch.commit.commit.tree.sha,
       tree: changes.map(c => ({ path: c.path, mode: '100644', type: 'blob', content: c.content })),
     });
-    const commitBody = { message, tree: tree.sha, parents: [branch.commit.sha] };
+    const commitBody = { message: this._msg(message), tree: tree.sha, parents: [branch.commit.sha] };
     if (this.author) { commitBody.author = this.author; commitBody.committer = this.author; }
     const commit = await this._request('POST', '/git/commits', commitBody);
     await this._request('PATCH', `/git/refs/heads/${this.branch}`, { sha: commit.sha });
@@ -132,7 +138,7 @@ class GitGatewayAPI {
   }
 
   async deleteFile(path, sha, message) {
-    const body = { message, sha, branch: this.branch };
+    const body = { message: this._msg(message), sha, branch: this.branch };
     if (this.author) { body.author = this.author; body.committer = this.author; }
     return this._request('DELETE', `/contents/${path}`, body);
   }
@@ -143,7 +149,7 @@ class GitGatewayAPI {
       const existing = await this._request('GET', `/contents/${path}?ref=${this.branch}`);
       sha = existing.sha;
     } catch (e) { /* new file */ }
-    const body = { message, content: base64content, branch: this.branch };
+    const body = { message: this._msg(message), content: base64content, branch: this.branch };
     if (sha) body.sha = sha;
     if (this.author) { body.author = this.author; body.committer = this.author; }
     return this._request('PUT', `/contents/${path}`, body);
@@ -755,9 +761,11 @@ class App {
     try {
       const commits = await this.api._request('GET', `/commits?per_page=14&sha=${this.api.branch}`);
       el.innerHTML = commits.map(c => {
-        const msg = esc((c.commit.message || '').split('\n')[0]);
+        const full = c.commit.message || '';
+        const msg = esc(full.split('\n')[0]);
         const a = c.commit.author || {};
-        const who = esc(a.email || a.name || 'unknown');
+        const stamped = full.match(/^Edited by: (.+)$/m);
+        const who = esc((stamped && stamped[1]) || a.email || a.name || 'unknown');
         const when = a.date ? new Date(a.date).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
         return `<div class="recent-edit-row">
           <span class="recent-edit-msg">${msg}</span>
