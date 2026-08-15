@@ -2,10 +2,6 @@
 
 <div class="container-content">
 
-  <header class="page-header">
-    <h1>{{ languages[lang].notes_title }}</h1>
-  </header>
-
   {% assign sortedNotes = collections.notes | sort: 'date' | reverse %}
 
   <div class="notes-float">

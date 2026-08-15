@@ -790,9 +790,13 @@ li:last-child > .upcoming-item {
 }
 
 /* Each word keeps floating and softly pulsating on its own rhythm —
-   duration and phase are set per word inline, so no two move together */
+   duration and phase are set per word inline, so no two move together.
+   The padding (undone by the negative margin) gives italic glyphs room
+   to overhang inside the animated box instead of being cut off. */
 .note-drift-text .nw-i {
   display: inline-block;
+  padding: 0.12em 0.16em;
+  margin: -0.12em -0.16em;
   animation: nw-float 4s ease-in-out infinite alternate;
 }
 
