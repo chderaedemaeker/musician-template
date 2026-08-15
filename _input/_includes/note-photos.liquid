@@ -1,0 +1,13 @@
+{% if photos and photos.size > 0 %}
+{% assign rots = "-6|4|-3|8|-8|3|6|-5" | split: "|" %}
+<div class="note-photos{{ notePhotosExtra }}{% if photos.size == 1 %} note-photos--one{% endif %}">
+  {% for ph in photos %}
+  {% assign ri = forloop.index0 | modulo: 8 %}
+  <div class="note-photo" style="--pr: {{ rots[ri] }}deg;">
+    <div class="note-photo-sway" style="animation-duration: {{ forloop.index0 | modulo: 3 | times: 1.3 | plus: 6 }}s; animation-delay: -{{ forloop.index0 | times: 1.7 }}s;">
+      {% progressiveImage ph.image, title %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}

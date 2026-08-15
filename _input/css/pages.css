@@ -951,20 +951,40 @@ li:last-child > .upcoming-item {
   width: min(44%, 15rem);
   margin: -1.4rem -1.1rem;
   transform: rotate(var(--pr, 0deg));
-  transition: transform 0.5s var(--ease);
+  /* the z-index swap waits a beat, so the size change leads the layering */
+  transition: transform 0.55s var(--ease), z-index 0s 0.12s;
   z-index: 1;
+}
+
+/* portrait photos narrower, so both orientations read as the same size */
+.note-photo--portrait {
+  width: min(33%, 10.8rem);
 }
 
 .note-photo:hover {
   transform: rotate(0deg) scale(1.07);
   z-index: 5;
+  transition: transform 0.55s var(--ease), z-index 0s 0s;
+}
+
+/* while one photo comes forward, the others lean back */
+.note-photos:hover .note-photo:not(:hover) {
+  transform: rotate(var(--pr, 0deg)) scale(0.95);
 }
 
 .note-photo-sway {
   background: #fff;
   padding: 0.45rem;
-  box-shadow: 0 12px 32px rgba(13, 13, 12, 0.16);
+  /* two soft layers of shadow: close contact and distant depth */
+  box-shadow:
+    0 3px 9px rgba(13, 13, 12, 0.07),
+    0 20px 46px rgba(13, 13, 12, 0.09);
   animation: note-photo-sway 7s ease-in-out infinite alternate;
+}
+
+/* picture → black border → white mat → shadow */
+.note-photo-sway .prog-img-wrap {
+  border: 1px solid var(--near-black);
 }
 
 @keyframes note-photo-sway {
@@ -979,13 +999,39 @@ li:last-child > .upcoming-item {
   transform: none;
 }
 
+.note-photos--one .note-photo--portrait {
+  width: min(58%, 15.5rem);
+}
+
 .note-photos--one .note-photo:hover {
   transform: scale(1.03);
 }
 
+/* Index: the latest note's photos stay tucked away until the quote is
+   hovered — then they drift up beneath it */
+.note-photos--peek {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: min(90vw, 34rem);
+  transform: translateX(-50%) translateY(10px) scale(0.97);
+  margin: var(--space-sm) 0 0;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 6;
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+}
+
+.note-drift-link:hover + .note-photos--peek {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+
 @media (max-width: 600px) {
   .note-photo { width: 58%; margin: -1rem -1.6rem; }
+  .note-photo--portrait { width: 44%; }
   .note-photos--one .note-photo { width: 88%; }
+  .note-photos--one .note-photo--portrait { width: 66%; }
 }
 
 @media (prefers-reduced-motion: reduce) {

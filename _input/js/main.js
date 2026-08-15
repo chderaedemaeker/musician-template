@@ -435,26 +435,32 @@
       q.textContent = char;
       return q;
     }
+    function appendWord(p, w) {
+      var outer = document.createElement('span');
+      outer.className = 'nw';
+      /* stagger caps at six seconds so long notes don't take forever */
+      outer.style.transitionDelay = Math.min(gi * 0.15, 6).toFixed(2) + 's';
+      var inner = document.createElement('span');
+      inner.className = 'nw-i';
+      inner.style.animationDuration = (3.4 + (gi % 5) * 0.5) + 's';
+      inner.style.animationDelay = '-' + ((gi * 0.73) % 3.4).toFixed(2) + 's';
+      inner.textContent = w;
+      outer.appendChild(inner);
+      p.appendChild(outer);
+      p.appendChild(document.createTextNode(' '));
+      gi++;
+    }
     targets.forEach(function (p) {
-      var words = p.textContent.trim().split(/\s+/).filter(Boolean);
+      /* newlines in the text are the note's own line breaks — keep them */
+      var raw = p.textContent.replace(/^\s+|\s+$/g, '');
       p.textContent = '';
-      if (isQuote) p.appendChild(makeQuoteMark('“ ', 0));
-      words.forEach(function (w) {
-        var outer = document.createElement('span');
-        outer.className = 'nw';
-        /* stagger caps at six seconds so long notes don't take forever */
-        outer.style.transitionDelay = Math.min(gi * 0.15, 6).toFixed(2) + 's';
-        var inner = document.createElement('span');
-        inner.className = 'nw-i';
-        inner.style.animationDuration = (3.4 + (gi % 5) * 0.5) + 's';
-        inner.style.animationDelay = '-' + ((gi * 0.73) % 3.4).toFixed(2) + 's';
-        inner.textContent = w;
-        outer.appendChild(inner);
-        p.appendChild(outer);
-        p.appendChild(document.createTextNode(' '));
-        gi++;
+      if (isQuote) p.appendChild(makeQuoteMark('\u201C ', 0));
+      raw.split(/(\n+)/).forEach(function (seg) {
+        if (!seg) return;
+        if (/^\n+$/.test(seg)) { p.appendChild(document.createElement('br')); return; }
+        seg.split(/\s+/).filter(Boolean).forEach(function (w) { appendWord(p, w); });
       });
-      if (isQuote) p.appendChild(makeQuoteMark(' ”', Math.min(gi * 0.15, 6) + 0.2));
+      if (isQuote) p.appendChild(makeQuoteMark(' \u201D', Math.min(gi * 0.15, 6) + 0.2));
     });
     return gi;
   }
@@ -483,9 +489,27 @@
     });
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initNoteDrifts);
-  } else {
+  /* Portrait photos in a note stack get a narrower box so both
+     orientations read as the same visual size (width/height attributes
+     are server-rendered, so this runs before any image loads) */
+  function classifyNotePhotos() {
+    document.querySelectorAll('.note-photo').forEach(function (np) {
+      var img = np.querySelector('img');
+      if (!img) return;
+      var w = parseInt(img.getAttribute('width'), 10);
+      var h = parseInt(img.getAttribute('height'), 10);
+      if (w && h && h > w) np.classList.add('note-photo--portrait');
+    });
+  }
+
+  function initAll() {
     initNoteDrifts();
+    classifyNotePhotos();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAll);
+  } else {
+    initAll();
   }
 })();
