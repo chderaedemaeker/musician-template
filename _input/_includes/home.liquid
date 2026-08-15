@@ -15,9 +15,9 @@
 {% assign latestNote = collections.notes | sort: 'date' | reverse | first %}
 {% if latestNote %}
 <section class="note-drift" aria-label="{{ languages[lang].notes_title }}">
-  <a class="note-drift-link" href="{{ latestNote.url }}" aria-label="{{ latestNote.data.title }} — {{ languages[lang].notes_title }}">
+  <a class="note-drift-link" href="/en/notes/" aria-label="{{ languages[lang].notes_title }}">
     <p class="note-drift-text">{{ latestNote.templateContent | strip_html | strip_newlines | truncate: 180 }}</p>
-    <span class="note-drift-meta"><span class="note-drift-date">{{ latestNote.date | shortDate }}</span></span>
+    <span class="note-drift-meta"><span class="note-drift-date">{{ latestNote.date | shortDate }} &middot; {{ latestNote.data.title }}</span></span>
   </a>
 </section>
 {% endif %}

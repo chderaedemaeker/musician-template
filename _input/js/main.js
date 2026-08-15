@@ -416,20 +416,29 @@
   'use strict';
 
   function splitWords(container) {
-    /* a <p> is split directly; a block of paragraphs (note page) splits each
-       plain paragraph, leaving embedded elements (audio, links) untouched */
+    /* a <p> is split directly (and gets its quotation marks); a block of
+       paragraphs (note page) splits each plain paragraph, leaving embedded
+       elements (audio, links) untouched and adding no quotes */
+    var isQuote = container.tagName === 'P';
     var targets;
-    if (container.tagName === 'P') targets = [container];
+    if (isQuote) targets = [container];
     else {
       targets = Array.prototype.filter.call(container.querySelectorAll('p'), function (p) {
         return p.children.length === 0;
       });
-      if (!targets.length) targets = [];
     }
     var gi = 0;
+    function makeQuoteMark(char, delay) {
+      var q = document.createElement('span');
+      q.className = 'nw nq';
+      q.style.transitionDelay = delay.toFixed(2) + 's';
+      q.textContent = char;
+      return q;
+    }
     targets.forEach(function (p) {
       var words = p.textContent.trim().split(/\s+/).filter(Boolean);
       p.textContent = '';
+      if (isQuote) p.appendChild(makeQuoteMark('“ ', 0));
       words.forEach(function (w) {
         var outer = document.createElement('span');
         outer.className = 'nw';
@@ -445,6 +454,7 @@
         p.appendChild(document.createTextNode(' '));
         gi++;
       });
+      if (isQuote) p.appendChild(makeQuoteMark(' ”', Math.min(gi * 0.15, 6) + 0.2));
     });
     return gi;
   }
@@ -456,8 +466,8 @@
     Array.prototype.forEach.call(boxes, function (box) {
       var textEl = box.querySelector('.note-drift-text');
       if (!textEl) return;
-      if (reduced) { box.classList.add('is-live'); return; }
       var count = splitWords(textEl);
+      if (reduced) { box.classList.add('is-live'); return; }
       function start() {
         box.classList.add('is-live');
         if (box.hasAttribute('data-settle')) {

@@ -9,7 +9,7 @@
     <section class="note-drift note-drift--page">
       <a class="note-drift-link" href="{{ note.url }}" aria-label="{{ note.data.title }}">
         <p class="note-drift-text">{{ note.templateContent | strip_html | strip_newlines | truncate: 220 }}</p>
-        <span class="note-drift-meta"><span class="note-drift-date">{{ note.date | shortDate }}</span></span>
+        <span class="note-drift-meta"><span class="note-drift-date">{{ note.date | shortDate }} &middot; {{ note.data.title }}</span></span>
       </a>
     </section>
     {% endfor %}

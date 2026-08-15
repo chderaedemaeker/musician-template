@@ -760,18 +760,15 @@ li:last-child > .upcoming-item {
   transition: opacity 3s var(--ease);
 }
 
-/* The quotation marks live outside the animated word spans, so they can
-   never be clipped by them — they fade in with the thought */
-.note-drift-text::before { content: '\201C\2009'; }
-.note-drift-text::after { content: '\2009\201D'; }
-.note-drift-text::before,
-.note-drift-text::after {
-  color: var(--mid-grey); /* very light — the words carry the weight */
-  opacity: 0;
-  transition: opacity 1.6s var(--ease) 0.2s;
+/* The quotation marks are their own spans with the same ink-room padding
+   as the words, so they can never be clipped — very light, the words
+   carry the weight */
+.note-drift-text .nq {
+  color: var(--mid-grey);
+  padding: 0.12em 0.16em;
+  margin: -0.12em -0.16em;
 }
-.note-drift.is-live .note-drift-text::before,
-.note-drift.is-live .note-drift-text::after {
+.note-drift.is-live .nw.nq {
   opacity: 0.85;
 }
 
@@ -902,11 +899,6 @@ li:last-child > .upcoming-item {
   padding: 0;
 }
 
-/* the note page IS the note — no quotation marks around it */
-.note-drift--full .note-drift-text::before,
-.note-drift--full .note-drift-text::after {
-  content: none;
-}
 
 .note-drift--full .note-drift-text {
   animation: note-drift-breathe-soft 14s var(--ease) infinite alternate;
