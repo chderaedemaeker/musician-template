@@ -667,6 +667,13 @@
   display: none;
 }
 
+/* The .btn display rule would defeat the hidden attribute on the action
+   buttons — a hidden Tickets & Info must actually disappear */
+.concert-modal-actions [hidden],
+.concert-modal-nav [hidden] {
+  display: none !important;
+}
+
 .concert-modal-backdrop {
   position: absolute;
   inset: 0;

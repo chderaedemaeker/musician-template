@@ -87,7 +87,7 @@
         <p class="label project-concerts-label">{{ languages[lang].upcoming_concerts }}</p>
         <ul class="upcoming-list">
           {% for c in upcomingConcerts %}
-          <li><a class="upcoming-item" href="{{ c.url | replace_first: '/en/', langUrl }}">
+          <li><a class="upcoming-item" href="{{ c.url | replace_first: '/en/', langUrl }}" data-concert-url="{{ c.url }}">
             <span class="upcoming-item-date">{{ c.date | concertDate: c.data.date_end, c.data.month_only, lang }}</span>
             <span class="upcoming-item-title">{{ c.data.title }}</span>
             {% if c.data.place %}<span class="upcoming-item-place">{{ c.data.place }}</span>{% endif %}
@@ -101,7 +101,7 @@
           {% assign pastRecent = pastConcerts | reverse %}
           <ul class="upcoming-list upcoming-list--past">
             {% for c in pastRecent limit: 5 %}
-            <li><a class="upcoming-item" href="{{ c.url | replace_first: '/en/', langUrl }}">
+            <li><a class="upcoming-item" href="{{ c.url | replace_first: '/en/', langUrl }}" data-concert-url="{{ c.url }}">
               <span class="upcoming-item-date">{{ c.date | concertDate: c.data.date_end, c.data.month_only, lang }}</span>
               <span class="upcoming-item-title">{{ c.data.title }}</span>
               {% if c.data.place %}<span class="upcoming-item-place">{{ c.data.place }}</span>{% endif %}
@@ -121,6 +121,33 @@
     {% include "detail-nav.liquid" %}
   </div>
 </main>
+
+{% include "concert-modal.liquid" %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  /* Concert rows open the modal first; the full page stays one click away
+     (the modal's own button), and modified clicks still open in a new tab */
+  var concerts = {% concertsJson collections.concerts %};
+  var lang = '{{ lang }}';
+  var byUrl = {};
+  concerts.forEach(function (c) { byUrl[c.link] = c; });
+  if (lang !== 'en') {
+    concerts.forEach(function (c) { if (c.link) c.link = c.link.replace(/^\/en\//, '/' + lang + '/'); });
+  }
+  var rows = document.querySelectorAll('.project-concerts a.upcoming-item[data-concert-url]');
+  window.concertNavOrder = Array.prototype.map.call(rows, function (a) {
+    return byUrl[a.getAttribute('data-concert-url')];
+  }).filter(Boolean);
+  Array.prototype.forEach.call(rows, function (a) {
+    a.addEventListener('click', function (e) {
+      var c = byUrl[a.getAttribute('data-concert-url')];
+      if (!c || e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+      e.preventDefault();
+      openConcertModal(c);
+    });
+  });
+});
+</script>
 
 {% include "footer.liquid" %}
 {% include "progressive-loader.liquid" %}

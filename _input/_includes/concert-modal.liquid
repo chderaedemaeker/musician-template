@@ -1,4 +1,4 @@
-{% assign lang = page.lang %}
+{% assign lang = lang | default: page.lang | default: "en" %}
 <div class="concert-modal" id="concert-modal" hidden>
   <div class="concert-modal-backdrop" onclick="closeConcertModal()"></div>
   <div class="concert-modal-panel" role="dialog" aria-modal="true" aria-labelledby="cm-title" tabindex="-1">

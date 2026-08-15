@@ -12,10 +12,10 @@
 
 <!-- Bento: everything at a glance -->
 <section class="section container">
-  {% assign showNotes = false %}
+  {% assign showNotes = true %}
   <div class="bento reveal-group{% unless showNotes %} bento--nonotes{% endunless %}">
 
-    <!-- Latest note — first cell (hidden for now; set showNotes to true to bring back) -->
+    <!-- Latest note — first cell -->
     {% assign latestNote = collections.notes | sort: 'date' | reverse | first %}
     {% if latestNote and showNotes %}
     <div class="bento-cell bento-notes reveal">
@@ -25,7 +25,7 @@
         <span class="bento-note-title">{{ latestNote.data.title }}</span>
         <span class="bento-note-excerpt">{{ latestNote.templateContent | strip_html | truncate: 150 }}</span>
       </a>
-      <a class="bento-cell-link" href="/{{ lang }}/notes/">{{ languages[lang].notes_title }} <span aria-hidden="true">&#8594;</span></a>
+      <a class="bento-cell-link" href="/en/notes/">{{ languages[lang].notes_title }} <span aria-hidden="true">&#8594;</span></a>
     </div>
     {% endif %}
 
