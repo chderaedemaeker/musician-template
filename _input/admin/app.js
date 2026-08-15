@@ -2002,6 +2002,26 @@ class App {
         </div>`;
       }
 
+      case 'images': {
+        const items = Array.isArray(value) ? value : [];
+        const rows = items.map(ph => {
+          const p = ph.image || '';
+          return `<div class="images-row">
+            <img class="images-thumb" src="${p.startsWith('/') ? esc(p) : '/images/' + esc(p)}" onerror="this.style.visibility='hidden'" alt="" />
+            <input type="text" class="form-input images-path" value="${esc(p)}" placeholder="/images/photo.jpg" />
+            <button type="button" class="btn btn-ghost btn-sm images-pick">Pick</button>
+            <button type="button" class="btn btn-ghost btn-sm images-remove" aria-label="Remove photo">&#215;</button>
+          </div>`;
+        }).join('');
+        return `<div class="images-editor" data-images-field="${field.name}" data-locale="${locale}">
+          <div class="images-rows">${rows}</div>
+          <div style="display:flex;gap:.4rem;flex-wrap:wrap;">
+            <button type="button" class="btn btn-ghost btn-sm images-add-pick">+ Pick from the site</button>
+            <button type="button" class="btn btn-ghost btn-sm images-add-upload">+ Upload new</button>
+          </div>
+        </div>`;
+      }
+
       case 'datetime': {
         let dtVal = value;
         if (dtVal && dtVal.length > 16) dtVal = dtVal.substring(0, 16);
@@ -2280,6 +2300,44 @@ class App {
       editor.addEventListener('input', () => this._markDirty());
     });
 
+    // Images editor (photo stacks) — add, pick, upload, remove rows
+    formEl.querySelectorAll('.images-editor').forEach(editor => {
+      const rowsEl = editor.querySelector('.images-rows');
+      const addRow = (path) => {
+        const row = document.createElement('div');
+        row.className = 'images-row';
+        row.innerHTML = `<img class="images-thumb" src="${path.startsWith('/') ? esc(path) : '/images/' + esc(path)}" onerror="this.style.visibility='hidden'" alt="" />
+          <input type="text" class="form-input images-path" value="${esc(path)}" placeholder="/images/photo.jpg" />
+          <button type="button" class="btn btn-ghost btn-sm images-pick">Pick</button>
+          <button type="button" class="btn btn-ghost btn-sm images-remove" aria-label="Remove photo">&#215;</button>`;
+        rowsEl.appendChild(row);
+        this._markDirty();
+      };
+      editor.querySelector('.images-add-pick').addEventListener('click', () => this._pickImage(path => addRow(path)));
+      editor.querySelector('.images-add-upload').addEventListener('click', () => this._uploadPickedImage(path => addRow(path)));
+      editor.addEventListener('click', e => {
+        const rm = e.target.closest('.images-remove');
+        if (rm) { rm.closest('.images-row').remove(); this._markDirty(); return; }
+        const pick = e.target.closest('.images-pick');
+        if (pick) {
+          const row = pick.closest('.images-row');
+          this._pickImage(path => {
+            row.querySelector('.images-path').value = path;
+            const th = row.querySelector('.images-thumb');
+            th.src = path; th.style.visibility = '';
+            this._markDirty();
+          });
+        }
+      });
+      editor.addEventListener('input', e => {
+        if (e.target.classList.contains('images-path')) {
+          const th = e.target.closest('.images-row').querySelector('.images-thumb');
+          th.src = e.target.value; th.style.visibility = '';
+          this._markDirty();
+        }
+      });
+    });
+
     // Image drop zones — drag a photo straight onto the field
     formEl.querySelectorAll('.image-dropzone').forEach(zone => {
       ['dragover', 'dragenter'].forEach(ev => zone.addEventListener(ev, e => {
@@ -2554,6 +2612,59 @@ class App {
     el.innerHTML = html;
   }
 
+  // Generic image chooser: shows the site's images, calls back with the
+  // chosen public path
+  async _pickImage(cb) {
+    await this._loadImageCache();
+    const overlay = document.createElement('div');
+    overlay.className = 'image-picker-overlay visible';
+    overlay.innerHTML = `<div class="image-picker">
+      <h3>Choose a photo</h3>
+      <div class="media-filter" style="margin-bottom:1rem;"><input type="text" id="picker-search" placeholder="Search..." style="width:100%;padding:.5rem 0;border:none;border-bottom:1px solid var(--warm-grey);font-family:var(--font-serif);font-size:.9rem;color:var(--near-black);background:transparent;" /></div>
+      <div class="image-picker-grid">
+        ${this._imageCache.map(img => `<div class="image-picker-item" data-name="${esc(img.name)}">
+          <img src="/images/${img.name}" alt="${esc(img.name)}" loading="lazy" />
+          <div class="image-picker-item-name">${esc(img.name)}</div>
+        </div>`).join('')}
+      </div>
+      <div class="image-picker-actions">
+        <button class="btn btn-ghost btn-sm" id="picker-cancel">Cancel</button>
+      </div>
+    </div>`;
+    document.body.appendChild(overlay);
+    overlay.querySelector('#picker-search').addEventListener('input', function() {
+      const q = this.value.toLowerCase().trim();
+      overlay.querySelectorAll('.image-picker-item').forEach(item => {
+        item.style.display = (!q || item.dataset.name.toLowerCase().includes(q)) ? '' : 'none';
+      });
+    });
+    overlay.querySelectorAll('.image-picker-item').forEach(item => {
+      item.addEventListener('click', () => { overlay.remove(); cb(`/images/${item.dataset.name}`); });
+    });
+    overlay.querySelector('#picker-cancel').addEventListener('click', () => overlay.remove());
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  }
+
+  // Upload a new image, then call back with its public path
+  _uploadPickedImage(cb) {
+    const input = document.createElement('input');
+    input.type = 'file'; input.accept = 'image/*';
+    input.addEventListener('change', async () => {
+      if (!input.files[0]) return;
+      const file = input.files[0];
+      showStatus('saving', 'Uploading...');
+      try {
+        const reader = new FileReader();
+        const b64 = await new Promise((res, rej) => { reader.onload = () => res(reader.result.split(',')[1]); reader.onerror = rej; reader.readAsDataURL(file); });
+        await this.api.uploadImage(`${this.config.getMediaFolder()}/${file.name}`, b64, `Upload ${file.name}`);
+        this._imageCache = null;
+        showStatus('saved', 'Uploaded');
+        cb(`/images/${file.name}`);
+      } catch (e) { showStatus('error', e.message); }
+    });
+    input.click();
+  }
+
   // ---- Image Picker (browse existing images) ----
   async _showImagePicker(fieldName, locale, state) {
     await this._loadImageCache();
@@ -2777,6 +2888,15 @@ class App {
         label: row.querySelector('.link-label').value.trim(),
         url: row.querySelector('.link-url').value.trim(),
       })).filter(l => l.label || l.url);
+    });
+    // Images editors serialize to arrays of {image}
+    formEl.querySelectorAll('.images-editor').forEach(editor => {
+      const loc = editor.dataset.locale;
+      const name = editor.dataset.imagesField;
+      if (!state.data[loc]) return;
+      state.data[loc][name] = Array.from(editor.querySelectorAll('.images-path'))
+        .map(inp => ({ image: inp.value.trim() }))
+        .filter(ph => ph.image);
     });
   }
 

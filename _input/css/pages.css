@@ -849,9 +849,9 @@ li:last-child > .upcoming-item {
 .notes-float {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2xl);
+  gap: clamp(7rem, 16vh, 11rem);
   max-width: var(--width-prose);
-  margin: var(--space-lg) auto var(--space-xl);
+  margin: var(--space-2xl) auto var(--space-2xl);
 }
 
 .notes-float .note-drift {
@@ -934,4 +934,60 @@ li:last-child > .upcoming-item {
 
 @media (prefers-reduced-motion: reduce) {
   .note-drift--full .note-drift-text { animation: none; }
+}
+
+/* ── Note photos — a loose stack of pictures: slightly rotated, gently
+   swaying against each other; hovering brings one forward ── */
+.note-photos {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  max-width: 42rem;
+  margin: var(--space-lg) auto var(--space-md);
+}
+
+.note-photo {
+  width: min(44%, 15rem);
+  margin: -1.4rem -1.1rem;
+  transform: rotate(var(--pr, 0deg));
+  transition: transform 0.5s var(--ease);
+  z-index: 1;
+}
+
+.note-photo:hover {
+  transform: rotate(0deg) scale(1.07);
+  z-index: 5;
+}
+
+.note-photo-sway {
+  background: #fff;
+  padding: 0.45rem;
+  box-shadow: 0 12px 32px rgba(13, 13, 12, 0.16);
+  animation: note-photo-sway 7s ease-in-out infinite alternate;
+}
+
+@keyframes note-photo-sway {
+  from { transform: translateY(3px) rotate(0.4deg); }
+  to   { transform: translateY(-4px) rotate(-0.5deg); }
+}
+
+/* one photo stands alone, straight and centred */
+.note-photos--one .note-photo {
+  width: min(80%, 22rem);
+  margin: 0;
+  transform: none;
+}
+
+.note-photos--one .note-photo:hover {
+  transform: scale(1.03);
+}
+
+@media (max-width: 600px) {
+  .note-photo { width: 58%; margin: -1rem -1.6rem; }
+  .note-photos--one .note-photo { width: 88%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .note-photo-sway { animation: none; }
 }
