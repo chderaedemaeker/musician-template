@@ -760,6 +760,20 @@ li:last-child > .upcoming-item {
   transition: opacity 3s var(--ease);
 }
 
+/* The quotation marks live outside the animated word spans, so they can
+   never be clipped by them — they fade in with the thought */
+.note-drift-text::before { content: '\201C\2009'; }
+.note-drift-text::after { content: '\2009\201D'; }
+.note-drift-text::before,
+.note-drift-text::after {
+  opacity: 0;
+  transition: opacity 1.6s var(--ease) 0.2s;
+}
+.note-drift.is-live .note-drift-text::before,
+.note-drift.is-live .note-drift-text::after {
+  opacity: 1;
+}
+
 .note-drift-text .nw {
   display: inline-block;
   opacity: 0;
@@ -790,6 +804,13 @@ li:last-child > .upcoming-item {
 .note-drift.is-settled .note-drift-text {
   opacity: 0.3;
   transition: opacity 5s var(--ease);
+}
+
+/* making room for the next thought */
+.note-drift.is-leaving .note-drift-text,
+.note-drift.is-leaving .note-drift-meta {
+  opacity: 0;
+  transition: opacity 1.5s var(--ease);
 }
 
 .note-drift-meta {

@@ -10,51 +10,90 @@
   {% assign heroAlt = languages[lang].site_title %}{% progressiveImage site.hero_image, heroAlt %}
 </div>
 
-<!-- Latest note — a quiet thought drifting above the grid -->
-{% assign latestNote = collections.notes | sort: 'date' | reverse | first %}
+<!-- Notes — quiet thoughts drifting above the grid, one after another -->
+{% assign notesSorted = collections.notes | sort: 'date' | reverse %}
+{% assign latestNote = notesSorted | first %}
 {% if latestNote %}
 <section class="note-drift" aria-label="{{ languages[lang].notes_title }}">
   <a class="note-drift-link" href="{{ latestNote.url }}">
-    <p class="note-drift-text">&ldquo;{{ latestNote.templateContent | strip_html | strip_newlines | truncate: 180 }}&rdquo;</p>
-    <span class="note-drift-meta">{{ latestNote.date | shortDate }} &middot; {{ languages[lang].notes_title }} <span aria-hidden="true">&#8594;</span></span>
+    <p class="note-drift-text">{{ latestNote.templateContent | strip_html | strip_newlines | truncate: 180 }}</p>
+    <span class="note-drift-meta"><span class="note-drift-date">{{ latestNote.date | shortDate }}</span> &middot; {{ languages[lang].notes_title }} <span aria-hidden="true">&#8594;</span></span>
   </a>
+  <div class="note-drift-data" hidden aria-hidden="true">
+    {%- for n in notesSorted -%}
+    <span data-url="{{ n.url }}" data-date="{{ n.date | shortDate }}">{{ n.templateContent | strip_html | strip_newlines | truncate: 180 }}</span>
+    {%- endfor -%}
+  </div>
 </section>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   var box = document.querySelector('.note-drift');
   if (!box) return;
+  var link = box.querySelector('.note-drift-link');
   var textEl = box.querySelector('.note-drift-text');
-  var words = textEl.textContent.trim().split(/\s+/);
-  textEl.textContent = '';
-  words.forEach(function (w, i) {
-    /* outer span: one-time entrance; inner span: perpetual float and pulse,
-       each word on its own rhythm */
-    var outer = document.createElement('span');
-    outer.className = 'nw';
-    outer.style.transitionDelay = (i * 0.15) + 's';
-    var inner = document.createElement('span');
-    inner.className = 'nw-i';
-    inner.style.animationDuration = (3.4 + (i % 5) * 0.5) + 's';
-    inner.style.animationDelay = '-' + ((i * 0.73) % 3.4).toFixed(2) + 's';
-    inner.textContent = w;
-    outer.appendChild(inner);
-    textEl.appendChild(outer);
-    textEl.appendChild(document.createTextNode(' '));
+  var dateEl = box.querySelector('.note-drift-date');
+  var notes = Array.prototype.map.call(box.querySelectorAll('.note-drift-data span'), function (s) {
+    return { text: s.textContent.trim(), url: s.getAttribute('data-url'), date: s.getAttribute('data-date') };
   });
+  if (!notes.length) return;
   var reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  function start() {
-    box.classList.add('is-live');
-    if (!reduced) {
-      /* once every word has arrived, let the whole thought recede a little */
-      setTimeout(function () { box.classList.add('is-settled'); }, words.length * 130 + 2300);
-    }
+  var current = 0;
+  var wordCount = 0;
+
+  /* outer span: one-time entrance; inner span: perpetual float and pulse,
+     each word on its own rhythm */
+  function build(text) {
+    textEl.textContent = '';
+    var words = text.split(/\s+/);
+    wordCount = words.length;
+    words.forEach(function (w, i) {
+      var outer = document.createElement('span');
+      outer.className = 'nw';
+      outer.style.transitionDelay = (i * 0.15) + 's';
+      var inner = document.createElement('span');
+      inner.className = 'nw-i';
+      inner.style.animationDuration = (3.4 + (i % 5) * 0.5) + 's';
+      inner.style.animationDelay = '-' + ((i * 0.73) % 3.4).toFixed(2) + 's';
+      inner.textContent = w;
+      outer.appendChild(inner);
+      textEl.appendChild(outer);
+      textEl.appendChild(document.createTextNode(' '));
+    });
   }
-  if ('IntersectionObserver' in window && !reduced) {
+
+  function play(i) {
+    var n = notes[i];
+    link.href = n.url;
+    if (dateEl) dateEl.textContent = n.date;
+    build(n.text);
+    box.classList.remove('is-live', 'is-settled', 'is-leaving');
+    void box.offsetWidth;
+    requestAnimationFrame(function () {
+      box.classList.add('is-live');
+      setTimeout(function () {
+        box.classList.add('is-settled');
+        /* hold the faded thought, then let the next one drift in */
+        if (notes.length > 1) setTimeout(leave, 6000);
+      }, wordCount * 150 + 2300);
+    });
+  }
+
+  function leave() {
+    box.classList.add('is-leaving');
+    setTimeout(function () {
+      current = (current + 1) % notes.length;
+      play(current);
+    }, 1700);
+  }
+
+  if (reduced) { box.classList.add('is-live'); return; }
+  build(notes[0].text);
+  if ('IntersectionObserver' in window) {
     var io = new IntersectionObserver(function (es) {
-      es.forEach(function (e) { if (e.isIntersecting) { start(); io.disconnect(); } });
+      es.forEach(function (e) { if (e.isIntersecting) { play(0); io.disconnect(); } });
     }, { threshold: 0.3 });
     io.observe(box);
-  } else { start(); }
+  } else { play(0); }
 });
 </script>
 {% endif %}

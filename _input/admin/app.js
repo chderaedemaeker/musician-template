@@ -2841,7 +2841,7 @@ class App {
           data.lang = loc;
           if (col.name === 'about') data.permalink = `${loc}/about/index.html`;
         } else {
-          if (!data.layout) data.layout = 'concert.html';
+          if (!data.layout) data.layout = col.name === 'notes' ? 'note.html' : 'concert.html';
         }
         if (isI18n && loc !== 'en') {
           // Any field still empty in this locale falls back to the English value
