@@ -766,12 +766,13 @@ li:last-child > .upcoming-item {
 .note-drift-text::after { content: '\2009\201D'; }
 .note-drift-text::before,
 .note-drift-text::after {
+  color: var(--mid-grey); /* very light — the words carry the weight */
   opacity: 0;
   transition: opacity 1.6s var(--ease) 0.2s;
 }
 .note-drift.is-live .note-drift-text::before,
 .note-drift.is-live .note-drift-text::after {
-  opacity: 1;
+  opacity: 0.85;
 }
 
 .note-drift-text .nw {
@@ -856,17 +857,30 @@ li:last-child > .upcoming-item {
   margin: 0;
 }
 
-.notes-float .note-drift:nth-child(odd) { transform: translateX(-4%); }
-.notes-float .note-drift:nth-child(even) { transform: translateX(5%); }
-.notes-float .note-drift:nth-child(3n) { transform: translateX(1%); }
-
 .notes-float .note-drift-meta {
   display: block;
   margin-top: var(--space-xs);
 }
 
-@media (max-width: 700px) {
-  .notes-float .note-drift:nth-child(n) { transform: none; }
+/* On the overview and note pages the movement stays gentler than on
+   the home page — floating, not swaying */
+@keyframes nw-float-soft {
+  from { transform: translateY(0.03em); opacity: 1; }
+  to   { transform: translateY(-0.05em); opacity: 0.85; }
+}
+
+.note-drift--page .nw-i {
+  animation-name: nw-float-soft;
+}
+
+@keyframes note-drift-breathe-soft {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-5px); }
+}
+
+.note-drift--page .note-drift-link {
+  animation-name: note-drift-breathe-soft;
+  animation-duration: 14s;
 }
 
 /* ── Note detail page — the note itself keeps floating ── */
@@ -891,7 +905,7 @@ li:last-child > .upcoming-item {
 }
 
 .note-drift--full .note-drift-text {
-  animation: note-drift-breathe 13s var(--ease) infinite alternate;
+  animation: note-drift-breathe-soft 14s var(--ease) infinite alternate;
 }
 
 .note-page-date {
