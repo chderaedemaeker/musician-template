@@ -28,7 +28,7 @@
       <div class="lang-picker-menu" hidden>
         {% assign langCodes = "en|nl|fr|de" | split: "|" %}
         {% for code in langCodes %}
-          <a href="/{{ code }}/" {% if lang == code %}class="active" aria-current="true"{% endif %} onclick="switchLanguage('{{ code }}'); return false;">{{ code }}</a>
+          <a href="/{{ code }}/" {% if lang == code %}class="active" aria-current="true"{% endif %} onclick="switchLanguage('{{ code }}'); return false;">{{ languages[code].native_name }}</a>
         {% endfor %}
       </div>
     </div>

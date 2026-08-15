@@ -36,6 +36,15 @@
           <li><a href="/{{ lang }}/contact/">{{ languages[lang].send_message }}</a></li>
         </ul>
       </div>
+      <div class="footer-col">
+        <p class="footer-heading">{{ languages[lang].footer_language }}</p>
+        <ul>
+          {% assign langCodes = "en|nl|fr|de" | split: "|" %}
+          {% for code in langCodes %}
+          <li><a href="/{{ code }}/"{% if lang == code %} class="active" aria-current="true"{% endif %} onclick="switchLanguage('{{ code }}'); return false;">{{ languages[code].native_name }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
       <div class="footer-news">
         <p class="footer-news-title">{{ languages[lang].newsletter_hint }}</p>
         <form name="newsletter" method="POST" data-netlify="true" action="/en/contact/success/" class="footer-news-row">
@@ -50,12 +59,6 @@
 
     <div class="footer-bottom">
       <p>&copy; {{ "now" | date: "%Y" }} {{ languages[lang].site_title }}. {{ languages[lang].copyright }}</p>
-      <nav class="footer-lang" aria-label="Language">
-        {% assign langCodes = "en|nl|fr|de" | split: "|" %}
-        {% for code in langCodes %}
-          <a href="/{{ code }}/" {% if lang == code %}class="active" aria-current="true"{% endif %} onclick="switchLanguage('{{ code }}'); return false;">{{ code }}</a>
-        {% endfor %}
-      </nav>
       <p>{{ languages[lang].footer_based }}</p>
     </div>
   </div>

@@ -1,5 +1,7 @@
 module.exports = {
   en: {
+    native_name: 'English',
+    footer_language: 'Language',
     notes_title: "Notes",
     footer_based: "Based in Cologne, Germany",
     footer_navigate: "Navigate",
@@ -49,6 +51,8 @@ module.exports = {
     no_projects: "No projects found."
   },
   nl: {
+    native_name: 'Nederlands',
+    footer_language: 'Taal',
     notes_title: "Notities",
     footer_based: "Gevestigd in Keulen, Duitsland",
     footer_navigate: "Navigatie",
@@ -98,6 +102,8 @@ module.exports = {
     no_projects: "Geen projecten gevonden."
   },
   fr: {
+    native_name: 'Français',
+    footer_language: 'Langue',
     notes_title: "Notes",
     footer_based: "Basée à Cologne, Allemagne",
     footer_navigate: "Navigation",
@@ -147,6 +153,8 @@ module.exports = {
     no_projects: "Aucun projet trouvé."
   },
   de: {
+    native_name: 'Deutsch',
+    footer_language: 'Sprache',
     notes_title: "Notizen",
     footer_based: "Ansässig in Köln, Deutschland",
     footer_navigate: "Navigation",

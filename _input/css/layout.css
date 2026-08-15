@@ -202,9 +202,13 @@ main {
   box-shadow: 0 12px 30px rgba(13, 13, 12, 0.08);
   display: flex;
   flex-direction: column;
-  min-width: 4.5rem;
+  min-width: 8rem;
   padding: 0.35rem 0;
   z-index: 110;
+}
+
+.lang-picker-menu a {
+  white-space: nowrap;
 }
 
 .lang-picker-menu {
@@ -533,7 +537,7 @@ main {
 
 .footer-grid {
   display: grid;
-  grid-template-columns: max-content max-content max-content 1fr;
+  grid-template-columns: max-content max-content max-content max-content 1fr;
   gap: var(--space-lg2);
   margin-bottom: var(--space-md);
 }
@@ -652,29 +656,9 @@ main {
   margin: 0;
 }
 
-/* Language picker — styled exactly like the other footer-bottom text */
-.footer-lang {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-}
-
-.footer-lang a {
-  font-size: var(--text-caption);
-  color: #2c3a55;
-  text-decoration: underline;
-  text-decoration-color: transparent;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 4px;
-  transition: color var(--dur-fast) var(--ease), text-decoration-color var(--dur-fast) var(--ease);
-}
-
-.footer-lang a:hover {
-  text-decoration-color: #2c3a55;
-}
-
-.footer-lang a.active {
-  text-decoration-color: #2c3a55;
+/* Current language in the footer's language column stays underlined */
+.footer-col a.active {
+  text-decoration-color: var(--accent-deep);
 }
 
 @media (max-width: 900px) {
