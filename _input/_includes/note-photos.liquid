@@ -1,5 +1,5 @@
 {% if photos and photos.size > 0 %}
-{% assign rots = "-6|4|-3|8|-8|3|6|-5" | split: "|" %}
+{% assign rots = "-3|2|-2|4|-4|1.5|3|-2.5" | split: "|" %}
 <div class="note-photos{{ notePhotosExtra }}{% if photos.size == 1 %} note-photos--one{% endif %}">
   {% for ph in photos %}
   {% assign ri = forloop.index0 | modulo: 8 %}
