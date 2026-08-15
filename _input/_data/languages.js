@@ -94,7 +94,7 @@ module.exports = {
     add_to_calendar: "Zet in agenda",
     print: "Afdrukken",
     link_copied: "Link gekopieerd",
-    newsletter_hint: "Blijf op de hoogte van de nieuwste concerten, opnames en hoogtepunten — rechtstreeks van Veronique.",
+    newsletter_hint: "Blijf op de hoogte van de nieuwste concerten, opnames en hoogtepunten.",
     no_projects: "Geen projecten gevonden."
   },
   fr: {
@@ -143,7 +143,7 @@ module.exports = {
     add_to_calendar: "Ajouter au calendrier",
     print: "Imprimer",
     link_copied: "Lien copié",
-    newsletter_hint: "Restez au courant des derniers concerts, enregistrements et moments forts — directement de Veronique.",
+    newsletter_hint: "Restez au courant des derniers concerts, enregistrements et moments forts.",
     no_projects: "Aucun projet trouvé."
   },
   de: {
@@ -192,7 +192,7 @@ module.exports = {
     add_to_calendar: "In den Kalender",
     print: "Drucken",
     link_copied: "Link kopiert",
-    newsletter_hint: "Bleiben Sie auf dem Laufenden über die neuesten Konzerte, Aufnahmen und Highlights — direkt von Veronique.",
+    newsletter_hint: "Bleiben Sie auf dem Laufenden über die neuesten Konzerte, Aufnahmen und Highlights.",
     no_projects: "Keine Projekte gefunden.",
   }
 };

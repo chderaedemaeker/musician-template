@@ -50,6 +50,12 @@
 
     <div class="footer-bottom">
       <p>&copy; {{ "now" | date: "%Y" }} {{ languages[lang].site_title }}. {{ languages[lang].copyright }}</p>
+      <nav class="footer-lang" aria-label="Language">
+        {% assign langCodes = "en|nl|fr|de" | split: "|" %}
+        {% for code in langCodes %}
+          <a href="/{{ code }}/" {% if lang == code %}class="active" aria-current="true"{% endif %} onclick="switchLanguage('{{ code }}'); return false;">{{ code }}</a>
+        {% endfor %}
+      </nav>
       <p>{{ languages[lang].footer_based }}</p>
     </div>
   </div>

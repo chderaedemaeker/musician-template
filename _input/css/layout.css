@@ -652,6 +652,34 @@ main {
   margin: 0;
 }
 
+.footer-lang {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.footer-lang a {
+  font-size: var(--text-caption);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #2c3a55;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  transition: color var(--dur-fast) var(--ease), text-decoration-color var(--dur-fast) var(--ease);
+}
+
+.footer-lang a:hover {
+  color: var(--accent-deep);
+}
+
+.footer-lang a.active {
+  color: var(--accent-deep);
+  font-weight: 600;
+  text-decoration-color: var(--accent-deep);
+}
+
 @media (max-width: 900px) {
   .footer-grid {
     grid-template-columns: 1fr 1fr;

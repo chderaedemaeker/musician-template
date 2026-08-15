@@ -14,16 +14,21 @@ function randomHash(src, width, format) {
     return `${hash}.${format}`;
 }
 
-// Tiny placeholder options (20px wide, very low quality — used as inline data URI)
-function placeholderOptions() {
-    return {
-        widths: [20],
-        formats: ["jpeg"],
-        sharpJpegOptions: { quality: 20 },
-        outputDir: "./_site/images/optimized/",
-        urlPath: "/images/optimized/",
-        filenameFormat: (id, src, width, format) => randomHash(src + '_thumb', width, format),
-    };
+// Dominant colour + dimensions of a source image, memoized per build.
+// The colour becomes the loading placeholder; the dimensions reserve the
+// layout space so nothing jumps when the photo arrives.
+const sharp = require("sharp");
+const imageInfoCache = {};
+function imageInfo(inputPath) {
+    if (!imageInfoCache[inputPath]) {
+        imageInfoCache[inputPath] = (async () => {
+            const img = sharp(inputPath);
+            const [meta, stats] = await Promise.all([img.metadata(), img.stats()]);
+            const d = stats.dominant;
+            return { color: `rgb(${d.r},${d.g},${d.b})`, width: meta.width, height: meta.height };
+        })();
+    }
+    return imageInfoCache[inputPath];
 }
 
 // Sources at or below this size are already light enough — recompressing
@@ -42,22 +47,22 @@ function passthroughUrl(inputPath) {
 }
 
 async function buildProgressiveImg(inputPath, alt) {
-    const thumbMeta = await Image(inputPath, placeholderOptions());
-    const thumbB64 = fs.readFileSync(thumbMeta.jpeg[0].outputPath).toString('base64');
-    const placeholder = `data:image/jpeg;base64,${thumbB64}`;
-
+    const info = await imageInfo(inputPath);
     const altEsc = (alt || '').replace(/"/g, '&quot;');
+    // A blank SVG at the photo's size keeps the aspect ratio reserved
+    const holder = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='${info.width}' height='${info.height}'%3E%3C/svg%3E`;
+    const imgAttrs = `class="prog-img" src="${holder}" width="${info.width}" height="${info.height}" alt="${altEsc}"`;
 
     const original = passthroughUrl(inputPath);
     if (original) {
-        return `<div class="prog-img-wrap"><img class="prog-img" src="${placeholder}" data-src="${original}" alt="${altEsc}" /></div>`;
+        return `<div class="prog-img-wrap" style="background-color:${info.color}"><img ${imgAttrs} data-src="${original}" /></div>`;
     }
 
     const fullMeta = await Image(inputPath, imageOptions());
     const jpegSrcset = fullMeta.jpeg.map(i => `${i.url} ${i.width}w`).join(', ');
     const fullSrc = fullMeta.jpeg[fullMeta.jpeg.length - 1].url;
 
-    return `<div class="prog-img-wrap"><img class="prog-img" src="${placeholder}" data-src="${fullSrc}" data-srcset="${jpegSrcset}" alt="${altEsc}" /></div>`;
+    return `<div class="prog-img-wrap" style="background-color:${info.color}"><img ${imgAttrs} data-src="${fullSrc}" data-srcset="${jpegSrcset}" /></div>`;
 }
 
 // Shared image processing options — progressive JPEG, high quality

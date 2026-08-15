@@ -1,7 +1,7 @@
 /* ============================================
    PROGRESSIVE IMAGE LOADING
-   Tiny placeholder → progressive JPEG scan passes → full quality
-   Native JPEG interlacing handles the pixelated→crisp transition.
+   The wrapper carries the photo's dominant colour (inline style,
+   computed at build time); the photo fades in over it once loaded.
    ============================================ */
 
 img.prog-img {
@@ -9,30 +9,21 @@ img.prog-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* Start invisible, blurred, and desaturated — white wrapper shows behind */
+  /* Invisible until loaded — the wrapper's dominant colour shows behind */
   opacity: 0;
-  filter: blur(10px) saturate(40%);
-  /* Scale up enough to push blurred edges outside the overflow:hidden clip */
-  transform: scale(1.05);
-  transition: opacity 0.8s ease, filter 0.9s ease, transform 0.9s ease;
+  transition: opacity 0.9s ease;
 }
 
-/* Step 1 — fade in the blurry desaturated placeholder (white → blurry grey) */
-img.prog-img.prog-reveal {
-  opacity: 1;
-}
-
-/* Step 2 — full image loaded: blur and desaturation both fade to normal */
+/* Full image loaded: fade in over the colour */
 img.prog-img.prog-loaded {
-  filter: blur(0) saturate(100%);
-  transform: scale(1);
+  opacity: 1;
 }
 
 .prog-img-wrap {
   position: relative;
   display: block;
   overflow: hidden;
-  background: #f5f4f0; /* off-white while loading */
+  background: #f5f4f0; /* fallback while loading — inline style carries the dominant colour */
 }
 
 /* Texture overlay — overlay blend */
