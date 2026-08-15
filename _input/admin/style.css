@@ -816,6 +816,11 @@ a:hover { opacity: 0.6; }
   overflow: hidden; text-overflow: ellipsis; margin-bottom: .1rem;
 }
 .media-item-size { font-size: .6rem; color: var(--dark-grey); margin-bottom: .4rem; }
+.media-item-credit {
+  font-size: .65rem; color: var(--dark-grey); margin-bottom: .4rem;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.media-credit-empty { color: var(--mid-grey); font-style: italic; }
 .media-item-actions { display: flex; gap: .25rem; flex-wrap: wrap; }
 
 /* ===== Lightbox ===== */
@@ -838,6 +843,14 @@ a:hover { opacity: 0.6; }
   padding: .3rem .6rem; color: var(--dark-grey);
 }
 .lightbox-dimensions { font-size: .7rem; color: var(--dark-grey); }
+.lightbox-credit { display: flex; flex-direction: column; gap: .35rem; margin-top: .5rem; }
+.lightbox-credit-label {
+  font-size: .65rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: .06em; color: var(--dark-grey);
+}
+.lightbox-credit-row { display: flex; gap: .5rem; align-items: center; }
+.lightbox-credit-row .form-input { flex: 1; }
+.lightbox-credit-hint { font-size: .65rem; color: var(--mid-grey); }
 .lightbox-actions { display: flex; gap: .5rem; margin-top: .5rem; flex-wrap: wrap; }
 
 /* ===== Live Preview Panel ===== */

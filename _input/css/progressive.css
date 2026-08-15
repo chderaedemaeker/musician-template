@@ -39,3 +39,21 @@ img.prog-img.prog-loaded {
   pointer-events: none;
   z-index: 1;
 }
+
+/* Photographer credit — a quiet line pinned to the photo's bottom-right
+   corner, above the texture overlay. Works in every layout, including
+   the covers (hero, cards) where a caption below the photo can't exist. */
+.img-credit {
+  position: absolute;
+  right: 0.6rem;
+  bottom: 0.45rem;
+  z-index: 2;
+  font-family: var(--font-inter);
+  font-size: 0.625rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.8);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
+  pointer-events: none;
+  white-space: nowrap;
+}

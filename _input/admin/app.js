@@ -294,6 +294,15 @@ const IMAGE_EXT_RE = /\.(jpg|jpeg|png|gif|webp|svg|avif)$/i;
 const AUDIO_EXT_RE = /\.(mp3|m4a|wav|ogg|oga|aac|flac|opus)$/i;
 const VIDEO_EXT_RE = /\.(mp4|m4v|mov|webm)$/i;
 
+// Photographer credits: public image path → name, read by the site build
+const CREDITS_FILE_PATH = '_input/_data/image_credits.json';
+// One spelling per filename — macOS writes accents decomposed (NFD),
+// so keys and lookups both go through NFC before comparing
+function normalizePathKey(s) {
+  try { s = decodeURIComponent(s); } catch (e) { /* keep raw */ }
+  return s.normalize ? s.normalize('NFC') : s;
+}
+
 // A human title from a filename: "berio-sequenza_viii live.mp3" → "berio sequenza viii live"
 function titleFromFilename(name) {
   return name.replace(/\.[a-z0-9]+$/i, '').replace(/[-_]+/g, ' ').trim();
@@ -3435,11 +3444,12 @@ class App {
     dropzone.addEventListener('drop', e => { e.preventDefault(); dropzone.classList.remove('dragover'); if (e.dataTransfer.files.length) this._uploadMediaFiles(e.dataTransfer.files); });
 
     try {
-      this._imageCache = null; this._audioCache = null; this._videoCache = null;
-      await Promise.all([this._loadImageCache(), this._loadAudioCache(), this._loadVideoCache()]);
+      this._imageCache = null; this._audioCache = null; this._videoCache = null; this._imageCredits = null;
+      await Promise.all([this._loadImageCache(), this._loadAudioCache(), this._loadVideoCache(), this._loadImageCredits()]);
       const images = this._imageCache;
       const audio = this._audioCache;
       const video = this._videoCache;
+      const credits = this._imageCredits.data;
 
       const gridEl = document.getElementById('media-grid');
       const counts = [`${images.length} image${images.length !== 1 ? 's' : ''}`];
@@ -3465,6 +3475,7 @@ class App {
           <div class="media-item-name" title="${esc(item.name)}">${esc(item.name)}</div>
           ${item.size ? `<div class="media-item-size">${formatFileSize(item.size)}</div>` : ''}
           <div class="media-item-date" title="When this file was uploaded">&nbsp;</div>
+          ${item.kind === 'image' ? `<div class="media-item-credit" title="Photographer — shown under this photo everywhere on the site">${credits[normalizePathKey(`/images/${item.name}`)] ? '&copy; ' + esc(credits[normalizePathKey(`/images/${item.name}`)]) : '<span class="media-credit-empty">Add photographer</span>'}</div>` : ''}
           <div class="media-item-actions">
             <button class="btn btn-ghost btn-sm media-copy-btn">Copy</button>
             <button class="btn btn-danger btn-sm media-delete-btn">Delete</button>
@@ -3565,15 +3576,58 @@ class App {
     }, 6);
   }
 
-  _showLightbox(name, path) {
+  // ---- Photographer credits ----
+  // One JSON file maps each image's public path to its photographer; the
+  // site build prints the name under the photo everywhere it appears.
+  async _loadImageCredits() {
+    if (!this._imageCredits) {
+      try {
+        const f = await this.api.getFile(CREDITS_FILE_PATH);
+        const raw = JSON.parse(f.content) || {};
+        const data = {};
+        for (const k of Object.keys(raw)) data[normalizePathKey(k)] = raw[k];
+        this._imageCredits = { data, sha: f.sha };
+      } catch (e) {
+        this._imageCredits = { data: {}, sha: undefined };
+      }
+    }
+    return this._imageCredits;
+  }
+
+  async _saveImageCredit(publicPath, name) {
+    const store = await this._loadImageCredits();
+    publicPath = normalizePathKey(publicPath);
+    const trimmed = (name || '').trim();
+    if (trimmed) store.data[publicPath] = trimmed;
+    else delete store.data[publicPath];
+    const message = trimmed
+      ? `Set photographer for ${publicPath}: ${trimmed}`
+      : `Remove photographer for ${publicPath}`;
+    const res = await this.api.saveFile(CREDITS_FILE_PATH, JSON.stringify(store.data, null, 2) + '\n', message, store.sha);
+    if (res && res.content && res.content.sha) store.sha = res.content.sha;
+    return trimmed;
+  }
+
+  async _showLightbox(name, path) {
     const overlay = document.createElement('div');
     overlay.className = 'image-lightbox visible';
     const imgUrl = `/images/${name}`;
+    const publicPath = normalizePathKey(`/images/${name}`);
+    let credit = '';
+    try { credit = (await this._loadImageCredits()).data[publicPath] || ''; } catch (e) { /* field starts empty */ }
     overlay.innerHTML = `<div class="lightbox-content">
       <img src="${imgUrl}" alt="${esc(name)}" />
       <div class="lightbox-info">
         <strong>${esc(name)}</strong>
         <code>/images/${esc(name)}</code>
+        <div class="lightbox-credit">
+          <label class="lightbox-credit-label" for="lightbox-credit-input">Photographer</label>
+          <div class="lightbox-credit-row">
+            <input type="text" class="form-input" id="lightbox-credit-input" value="${esc(credit)}" placeholder="Name of the photographer" />
+            <button class="btn btn-primary btn-sm lightbox-credit-save">Save</button>
+          </div>
+          <div class="lightbox-credit-hint">Shown as &copy; Name on this photo everywhere it appears on the site. Leave empty for no credit.</div>
+        </div>
         <div class="lightbox-actions">
           <button class="btn btn-primary btn-sm lightbox-copy">Copy Path</button>
           <button class="btn btn-ghost btn-sm lightbox-close">Close</button>
@@ -3581,6 +3635,19 @@ class App {
       </div>
     </div>`;
     document.body.appendChild(overlay);
+    const creditInput = overlay.querySelector('#lightbox-credit-input');
+    const saveCredit = async () => {
+      showStatus('saving', 'Saving...');
+      try {
+        const saved = await this._saveImageCredit(publicPath, creditInput.value);
+        // Reflect the change on the grid tile behind the lightbox
+        const tile = document.querySelector(`.media-item[data-name="${CSS.escape(name)}"] .media-item-credit`);
+        if (tile) tile.innerHTML = saved ? '&copy; ' + esc(saved) : '<span class="media-credit-empty">Add photographer</span>';
+        showStatus('saved', 'Saved — site will rebuild');
+      } catch (e) { showStatus('error', e.message); }
+    };
+    overlay.querySelector('.lightbox-credit-save').addEventListener('click', saveCredit);
+    creditInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); saveCredit(); } });
     overlay.querySelector('.lightbox-copy').addEventListener('click', () => navigator.clipboard.writeText(`/images/${name}`).then(() => showStatus('saved', 'Copied')));
     overlay.querySelector('.lightbox-close').addEventListener('click', () => overlay.remove());
     overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });

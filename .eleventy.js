@@ -79,23 +79,54 @@ function passthroughUrl(inputPath) {
     return null;
 }
 
+// Photographer credits, keyed by public image path ("/images/foo.jpg").
+// Maintained from the admin media manager (_data/image_credits.json);
+// read fresh on every lookup so --serve picks up edits without a restart.
+const CREDITS_FILE = path.join(__dirname, "_input", "_data", "image_credits.json");
+// URL-decode and Unicode-normalize a path so lookups survive the many
+// spellings of one filename (encoded srcs, macOS decomposed accents)
+function normalizePathKey(s) {
+    try { s = decodeURIComponent(s); } catch (e) { /* keep raw */ }
+    return s.normalize('NFC');
+}
+
+function imageCredit(publicSrc) {
+    let credits;
+    try { credits = JSON.parse(fs.readFileSync(CREDITS_FILE, "utf8")); }
+    catch (e) { return null; }
+    const wanted = normalizePathKey(publicSrc);
+    for (const key of Object.keys(credits)) {
+        if (normalizePathKey(key) === wanted) return credits[key];
+    }
+    return null;
+}
+
+function creditHtml(inputPath) {
+    if (!inputPath.startsWith('_input/')) return '';
+    const name = imageCredit(inputPath.slice('_input'.length));
+    if (!name) return '';
+    const esc = String(name).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+    return `<span class="img-credit">&copy;&nbsp;${esc}</span>`;
+}
+
 async function buildProgressiveImg(inputPath, alt) {
     const info = await imageInfo(inputPath);
     const altEsc = (alt || '').replace(/"/g, '&quot;');
     // A blank SVG at the photo's size keeps the aspect ratio reserved
     const holder = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='${info.width}' height='${info.height}'%3E%3C/svg%3E`;
     const imgAttrs = `class="prog-img" src="${holder}" width="${info.width}" height="${info.height}" alt="${altEsc}"`;
+    const credit = creditHtml(inputPath);
 
     const original = passthroughUrl(inputPath);
     if (original) {
-        return `<div class="prog-img-wrap" style="background-color:${info.color}"><img ${imgAttrs} data-src="${original}" /></div>`;
+        return `<div class="prog-img-wrap" style="background-color:${info.color}"><img ${imgAttrs} data-src="${original}" />${credit}</div>`;
     }
 
     const fullMeta = await Image(inputPath, imageOptions());
     const jpegSrcset = fullMeta.jpeg.map(i => `${i.url} ${i.width}w`).join(', ');
     const fullSrc = fullMeta.jpeg[fullMeta.jpeg.length - 1].url;
 
-    return `<div class="prog-img-wrap" style="background-color:${info.color}"><img ${imgAttrs} data-src="${fullSrc}" data-srcset="${jpegSrcset}" /></div>`;
+    return `<div class="prog-img-wrap" style="background-color:${info.color}"><img ${imgAttrs} data-src="${fullSrc}" data-srcset="${jpegSrcset}" />${credit}</div>`;
 }
 
 // Shared image processing options — progressive JPEG, high quality
@@ -149,6 +180,12 @@ module.exports = function (eleventyConfig) {
         } catch(e) {
             return `<img src="${src}" alt="${alt}" style="max-width:100%;height:auto;" loading="lazy">`;
         }
+    });
+
+    // Photographer credit tag for images rendered without an <img> element
+    // (e.g. the about-page gallery's background-image slides)
+    eleventyConfig.addShortcode("imageCredit", function(src) {
+        return src ? creditHtml(`_input${src}`) : '';
     });
 
     // Filter for optimized image URL (for background-image etc.)
