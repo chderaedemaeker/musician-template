@@ -14,21 +14,22 @@
 {% include "navigation.liquid" %}
 
 <main>
-  <div class="detail-page">
+  <div class="detail-page note-page">
     <div class="detail-top">
       <a class="btn btn--back" href="/en/notes/"><span aria-hidden="true">&#8592;</span> {{ languages[lang].back_to_overview }}</a>
       {% include "share-actions.liquid" %}
     </div>
 
-    {% if date %}<p class="date note-date">{{ date | shortDate }}</p>{% endif %}
-    <h1>{{ title }}</h1>
-
-    <div class="content">
-      {{ content }}
-    </div>
+    <section class="note-drift note-drift--page note-drift--full">
+      {% if date %}<p class="note-page-date">{{ date | shortDate }}</p>{% endif %}
+      <h1 class="note-page-title">{{ title }}</h1>
+      <div class="note-drift-text note-page-body">
+        {{ content }}
+      </div>
+    </section>
 
     {% if links and links.size > 0 %}
-      <div class="content-actions">
+      <div class="content-actions content-actions--centered">
         {% for l in links %}<a class="btn" href="{{ l.url }}" target="_blank" rel="noopener">{{ l.label }}</a>{% endfor %}
       </div>
     {% endif %}

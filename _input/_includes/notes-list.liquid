@@ -8,14 +8,15 @@
 
   {% assign sortedNotes = collections.notes | sort: 'date' | reverse %}
 
-  <ul class="upcoming-list notes-list">
+  <div class="notes-float">
     {% for note in sortedNotes %}
-    <li><a class="upcoming-item" href="{{ note.url }}">
-      <span class="upcoming-item-date">{{ note.date | shortDate }}</span>
-      <span class="upcoming-item-title">{{ note.data.title }}</span>
-      <span class="upcoming-item-place">{{ note.templateContent | strip_html | truncate: 140 }}</span>
-    </a></li>
+    <section class="note-drift note-drift--page">
+      <a class="note-drift-link" href="{{ note.url }}" aria-label="{{ note.data.title }}">
+        <p class="note-drift-text">{{ note.templateContent | strip_html | strip_newlines | truncate: 220 }}</p>
+        <span class="note-drift-meta"><span class="note-drift-date">{{ note.date | shortDate }}</span></span>
+      </a>
+    </section>
     {% endfor %}
-  </ul>
+  </div>
 
 </div>

@@ -841,3 +841,87 @@ li:last-child > .upcoming-item {
   .note-drift-text .nw-i { animation: none; }
   .note-drift-meta { transition: none; opacity: 1; }
 }
+
+/* ── Notes overview — every note floats, loosely off-axis so the page
+   reads as drifting thoughts rather than a list ── */
+.notes-float {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xl);
+  max-width: var(--width-prose);
+  margin: var(--space-lg) auto var(--space-xl);
+}
+
+.notes-float .note-drift {
+  margin: 0;
+}
+
+.notes-float .note-drift:nth-child(odd) { transform: translateX(-4%); }
+.notes-float .note-drift:nth-child(even) { transform: translateX(5%); }
+.notes-float .note-drift:nth-child(3n) { transform: translateX(1%); }
+
+.notes-float .note-drift-meta {
+  display: block;
+  margin-top: var(--space-xs);
+}
+
+@media (max-width: 700px) {
+  .notes-float .note-drift:nth-child(n) { transform: none; }
+}
+
+/* ── Note detail page — the note itself keeps floating ── */
+.note-page {
+  text-align: center;
+}
+
+.note-page .detail-top {
+  text-align: left;
+}
+
+.note-drift--full {
+  margin: var(--space-lg) auto 0;
+  max-width: var(--width-prose);
+  padding: 0;
+}
+
+/* the note page IS the note — no quotation marks around it */
+.note-drift--full .note-drift-text::before,
+.note-drift--full .note-drift-text::after {
+  content: none;
+}
+
+.note-drift--full .note-drift-text {
+  animation: note-drift-breathe 13s var(--ease) infinite alternate;
+}
+
+.note-page-date {
+  font-family: var(--font-sans);
+  font-size: var(--text-label);
+  letter-spacing: 0.05em;
+  color: var(--dark-grey);
+  margin: 0 0 var(--space-xs);
+}
+
+.note-page-title {
+  font-weight: 300;
+  font-size: var(--text-h2);
+  margin-bottom: var(--space-md);
+}
+
+.note-page-body p {
+  margin: 0 0 var(--space-sm);
+}
+
+.note-page-body audio,
+.note-page-body .audio-player {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.content-actions--centered {
+  justify-content: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .note-drift--full .note-drift-text { animation: none; }
+}

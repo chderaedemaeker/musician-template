@@ -403,3 +403,79 @@
     initAudioPlayers();
   }
 })();
+
+/* ============================================
+   Note drift — floating, word-by-word notes.
+   Any .note-drift element gets the treatment:
+   words rise out of a blur one by one, then
+   keep floating and pulsating individually.
+   data-settle makes the thought recede after
+   it has been said (used on the home page).
+   ============================================ */
+(function () {
+  'use strict';
+
+  function splitWords(container) {
+    /* a <p> is split directly; a block of paragraphs (note page) splits each
+       plain paragraph, leaving embedded elements (audio, links) untouched */
+    var targets;
+    if (container.tagName === 'P') targets = [container];
+    else {
+      targets = Array.prototype.filter.call(container.querySelectorAll('p'), function (p) {
+        return p.children.length === 0;
+      });
+      if (!targets.length) targets = [];
+    }
+    var gi = 0;
+    targets.forEach(function (p) {
+      var words = p.textContent.trim().split(/\s+/).filter(Boolean);
+      p.textContent = '';
+      words.forEach(function (w) {
+        var outer = document.createElement('span');
+        outer.className = 'nw';
+        /* stagger caps at six seconds so long notes don't take forever */
+        outer.style.transitionDelay = Math.min(gi * 0.15, 6).toFixed(2) + 's';
+        var inner = document.createElement('span');
+        inner.className = 'nw-i';
+        inner.style.animationDuration = (3.4 + (gi % 5) * 0.5) + 's';
+        inner.style.animationDelay = '-' + ((gi * 0.73) % 3.4).toFixed(2) + 's';
+        inner.textContent = w;
+        outer.appendChild(inner);
+        p.appendChild(outer);
+        p.appendChild(document.createTextNode(' '));
+        gi++;
+      });
+    });
+    return gi;
+  }
+
+  function initNoteDrifts() {
+    var boxes = document.querySelectorAll('.note-drift');
+    if (!boxes.length) return;
+    var reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    Array.prototype.forEach.call(boxes, function (box) {
+      var textEl = box.querySelector('.note-drift-text');
+      if (!textEl) return;
+      if (reduced) { box.classList.add('is-live'); return; }
+      var count = splitWords(textEl);
+      function start() {
+        box.classList.add('is-live');
+        if (box.hasAttribute('data-settle')) {
+          setTimeout(function () { box.classList.add('is-settled'); }, Math.min(count * 150, 6000) + 2300);
+        }
+      }
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (es) {
+          es.forEach(function (e) { if (e.isIntersecting) { start(); io.disconnect(); } });
+        }, { threshold: 0.25 });
+        io.observe(box);
+      } else { start(); }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initNoteDrifts);
+  } else {
+    initNoteDrifts();
+  }
+})();
