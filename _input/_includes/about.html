@@ -33,7 +33,7 @@
     <div class="about-gallery">
       <div class="about-gallery-track">
         {% for g in galleryList %}
-        <div class="gallery-slide{% if forloop.first %} is-active{% endif %}" style="background-image: url('{{ g }}')" role="img" aria-label="{{ languages[lang].site_title }}">{% imageCredit g %}</div>
+        <div class="gallery-slide{% if forloop.first %} is-active{% endif %}" style="background-image: url('{{ g }}')" role="img" aria-label="{{ languages[lang].site_title }}"></div>
         {% endfor %}
       </div>
     </div>

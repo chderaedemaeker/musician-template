@@ -2115,3 +2115,5 @@ body { letter-spacing: -0.01em; }
   margin-left: .4rem;
 }
 .entry-thumb--empty { display: inline-block; }
+
+.recent-edits-more-wrap { padding-top: .75rem; text-align: center; }

@@ -106,7 +106,7 @@ function creditHtml(inputPath) {
     const name = imageCredit(inputPath.slice('_input'.length));
     if (!name) return '';
     const esc = String(name).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
-    return `<span class="img-credit">&copy;&nbsp;${esc}</span>`;
+    return `<span class="img-credit-line">&copy;&nbsp;${esc}</span>`;
 }
 
 async function buildProgressiveImg(inputPath, alt) {
@@ -119,14 +119,14 @@ async function buildProgressiveImg(inputPath, alt) {
 
     const original = passthroughUrl(inputPath);
     if (original) {
-        return `<div class="prog-img-wrap" style="background-color:${info.color}"><img ${imgAttrs} data-src="${original}" />${credit}</div>`;
+        return `<div class="prog-img-wrap" style="background-color:${info.color}"><img ${imgAttrs} data-src="${original}" /></div>${credit}`;
     }
 
     const fullMeta = await Image(inputPath, imageOptions());
     const jpegSrcset = fullMeta.jpeg.map(i => `${i.url} ${i.width}w`).join(', ');
     const fullSrc = fullMeta.jpeg[fullMeta.jpeg.length - 1].url;
 
-    return `<div class="prog-img-wrap" style="background-color:${info.color}"><img ${imgAttrs} data-src="${fullSrc}" data-srcset="${jpegSrcset}" />${credit}</div>`;
+    return `<div class="prog-img-wrap" style="background-color:${info.color}"><img ${imgAttrs} data-src="${fullSrc}" data-srcset="${jpegSrcset}" /></div>${credit}`;
 }
 
 // Shared image processing options — progressive JPEG, high quality

@@ -754,13 +754,16 @@ class App {
     this._loadRecentEdits();
   }
 
-  // Who changed what, straight from the branch history
-  async _loadRecentEdits() {
+  // Who changed what, straight from the branch history — paged,
+  // "Show more" appends the next page
+  async _loadRecentEdits(page) {
     const el = document.getElementById('recent-edits-list');
     if (!el) return;
+    const perPage = 14;
+    page = page || 1;
     try {
-      const commits = await this.api._request('GET', `/commits?per_page=14&sha=${this.api.branch}`);
-      el.innerHTML = commits.map(c => {
+      const commits = await this.api._request('GET', `/commits?per_page=${perPage}&page=${page}&sha=${this.api.branch}`);
+      const rows = commits.map(c => {
         const full = c.commit.message || '';
         const msg = esc(full.split('\n')[0]);
         const a = c.commit.author || {};
@@ -771,9 +774,18 @@ class App {
           <span class="recent-edit-msg">${msg}</span>
           <span class="recent-edit-meta">${who}${when ? ' &middot; ' + when : ''}</span>
         </div>`;
-      }).join('') || '<div class="empty-state">No changes yet.</div>';
+      }).join('');
+      const moreBtn = document.getElementById('recent-edits-more');
+      if (moreBtn) moreBtn.remove();
+      if (page === 1) el.innerHTML = rows || '<div class="empty-state">No changes yet.</div>';
+      else el.insertAdjacentHTML('beforeend', rows);
+      if (commits.length === perPage) {
+        el.insertAdjacentHTML('beforeend', '<div class="recent-edits-more-wrap"><button type="button" class="btn btn-ghost btn-sm" id="recent-edits-more">Show more</button></div>');
+        document.getElementById('recent-edits-more').addEventListener('click', () => this._loadRecentEdits(page + 1));
+      }
     } catch (e) {
-      el.innerHTML = '<div class="empty-state">Could not load the history.</div>';
+      if (page === 1) el.innerHTML = '<div class="empty-state">Could not load the history.</div>';
+      else showStatus('error', 'Could not load more history.');
     }
   }
 
