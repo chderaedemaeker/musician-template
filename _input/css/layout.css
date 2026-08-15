@@ -652,6 +652,7 @@ main {
   margin: 0;
 }
 
+/* Language picker — styled exactly like the other footer-bottom text */
 .footer-lang {
   display: flex;
   align-items: center;
@@ -660,8 +661,6 @@ main {
 
 .footer-lang a {
   font-size: var(--text-caption);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
   color: #2c3a55;
   text-decoration: underline;
   text-decoration-color: transparent;
@@ -671,13 +670,11 @@ main {
 }
 
 .footer-lang a:hover {
-  color: var(--accent-deep);
+  text-decoration-color: #2c3a55;
 }
 
 .footer-lang a.active {
-  color: var(--accent-deep);
-  font-weight: 600;
-  text-decoration-color: var(--accent-deep);
+  text-decoration-color: #2c3a55;
 }
 
 @media (max-width: 900px) {

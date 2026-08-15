@@ -18,14 +18,47 @@ function randomHash(src, width, format) {
 // The colour becomes the loading placeholder; the dimensions reserve the
 // layout space so nothing jumps when the photo arrives.
 const sharp = require("sharp");
+
+// The colour a viewer would name when asked "what colour is this photo?".
+// sharp's stats().dominant is a pure pixel-count mode, so dark backgrounds
+// always win; instead, score coarse colour bins by saturation and
+// mid-lightness (the node-vibrant idea) so a bright dress or red curtain
+// beats a big black background. Monochrome photos fall back to their
+// most common tone.
+function vibrantColor(data, channels) {
+    const bins = new Map();
+    for (let i = 0; i < data.length; i += channels) {
+        const r = data[i], g = data[i + 1], b = data[i + 2];
+        const max = Math.max(r, g, b), min = Math.min(r, g, b);
+        const lightness = (max + min) / 510;
+        const sat = max === min ? 0 : (max - min) / (255 - Math.abs(max + min - 255));
+        const colourfulness = sat * sat * Math.max(0, 1 - Math.abs(lightness - 0.5) * 1.6);
+        const score = 0.02 + colourfulness;
+        const key = ((r >> 5) << 6) | ((g >> 5) << 3) | (b >> 5);
+        let bin = bins.get(key);
+        if (!bin) { bin = { score: 0, r: 0, g: 0, b: 0, n: 0 }; bins.set(key, bin); }
+        bin.score += score; bin.r += r; bin.g += g; bin.b += b; bin.n++;
+    }
+    let best = null;
+    for (const bin of bins.values()) if (!best || bin.score > best.score) best = bin;
+    return {
+        r: Math.round(best.r / best.n),
+        g: Math.round(best.g / best.n),
+        b: Math.round(best.b / best.n),
+    };
+}
+
 const imageInfoCache = {};
 function imageInfo(inputPath) {
     if (!imageInfoCache[inputPath]) {
         imageInfoCache[inputPath] = (async () => {
             const img = sharp(inputPath);
-            const [meta, stats] = await Promise.all([img.metadata(), img.stats()]);
-            const d = stats.dominant;
-            return { color: `rgb(${d.r},${d.g},${d.b})`, width: meta.width, height: meta.height };
+            const [meta, raw] = await Promise.all([
+                img.metadata(),
+                img.clone().resize(32, 32, { fit: "inside" }).removeAlpha().raw().toBuffer({ resolveWithObject: true }),
+            ]);
+            const c = vibrantColor(raw.data, raw.info.channels);
+            return { color: `rgb(${c.r},${c.g},${c.b})`, width: meta.width, height: meta.height };
         })();
     }
     return imageInfoCache[inputPath];

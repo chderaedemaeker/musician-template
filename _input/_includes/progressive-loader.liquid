@@ -1,22 +1,31 @@
 <script>
   (function () {
     function loadFull(img) {
-      /* Step 1: fade in the blurry placeholder (white → blurry) */
-      img.classList.add('prog-reveal');
-
-      /* Step 2: start loading the full image */
+      /* Start loading the full image over the dominant-colour tile */
       var src = img.dataset.src;
+      var started = (window.performance && performance.now) ? performance.now() : 0;
       if (img.dataset.srcset) img.srcset = img.dataset.srcset;
       img.removeAttribute('data-src');
       img.removeAttribute('data-srcset');
       img.src = src;
 
-      /* Step 3: when full image is decoded, blur transitions to crisp */
-      function onLoaded() { img.classList.add('prog-loaded'); }
-      if (img.complete && img.naturalWidth) {
-        onLoaded();
+      /* Fade in only once the frame is fully decoded — no half-painted pop.
+         Images straight from cache skip the long reveal. */
+      function onLoaded() {
+        if (started && performance.now() - started < 80) img.classList.add('prog-instant');
+        /* two frames so the browser commits the decoded frame before the fade starts */
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () { img.classList.add('prog-loaded'); });
+        });
+      }
+      function fallback() {
+        if (img.complete && img.naturalWidth) onLoaded();
+        else img.addEventListener('load', onLoaded, { once: true });
+      }
+      if (img.decode) {
+        img.decode().then(onLoaded, fallback);
       } else {
-        img.addEventListener('load', onLoaded, { once: true });
+        fallback();
       }
     }
 
