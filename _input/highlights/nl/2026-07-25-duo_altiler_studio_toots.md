@@ -2,7 +2,7 @@
 title: Duo Altiler in Studio Toots
 date: "2024-06-01T00:00"
 type: Studio-opname
-image: /images/De twintigers-4.jpeg
+image: /images/De twintigers-13 (2).jpeg
 hide_image: false
 link: woFVpDa_csI
 place: Studio Toots, Brussel
