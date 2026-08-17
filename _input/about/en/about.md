@@ -34,4 +34,4 @@ Her fascination with new music has allowed her to collaborate with contemporary 
 
 Veronique plays on a violin by Stefan-Peter Greiner. In 2024, she was featured on the program of "The Twintigers" on Klara.
 
-[Press kit](https://drive.google.com/drive/folders/10JwfYTSOn1MJtgt9THW4HzrtER7Nq5Ye) [Repertoire](https://drive.google.com/drive/folders/1-8P87yl21E9Urwilq09JQ_omojNFYXTy)
+[Press kit](https://drive.google.com/drive/folders/10JwfYTSOn1MJtgt9THW4HzrtER7Nq5Ye)
