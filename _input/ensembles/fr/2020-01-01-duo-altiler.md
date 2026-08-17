@@ -11,8 +11,6 @@ links:
     url: "https://youtube.com/playlist?list=PLtwkuCWGEOLR3teT564bbHc0XOUfQolA9"
   - label: Instagram
     url: "https://instagram.com/duoaltiler"
-  - label: Facebook
-    url: "https://www.facebook.com/profile.php?id=61552079672263"
   - label: Studio Toots recording
     url: "https://youtu.be/woFVpDa_csI?si=lfS3UblFGO380Wnn"
 layout: project.html
