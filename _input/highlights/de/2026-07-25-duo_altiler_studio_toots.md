@@ -1,12 +1,14 @@
 ---
-title: "Duo Altiler im Studio Toots"
-slug: "duo-altiler-studio-toots"
-date: 2024-06-01T00:00:00
-type: "Studioaufnahme"
-image: "/images/duo-altiler.jpeg"
-link: "woFVpDa_csI"
-place: "Studio Toots, Brüssel"
-collaborators: "Duo Altiler (Alexander Declercq — Klavier)"
+title: Duo Altiler im Studio Toots
+date: "2024-06-01T00:00"
+type: Studioaufnahme
+image: /images/De twintigers-4.jpeg
+hide_image: false
+link: woFVpDa_csI
+place: Studio Toots, Brüssel
+collaborators: Duo Altiler (Alexander Declercq — Klavier)
+featured: false
+slug: duo-altiler-studio-toots
 layout: highlight.html
 tags: highlights
 lang: de
