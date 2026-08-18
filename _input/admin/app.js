@@ -296,7 +296,7 @@ function generateFilename(title) {
 function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
 // File-type tests shared by the media library and the pickers
-const IMAGE_EXT_RE = /\.(jpg|jpeg|png|gif|webp|svg|avif)$/i;
+const IMAGE_EXT_RE = /\.(jpg|jpeg|png|gif|webp|svg|avif|heic|heif)$/i;
 const AUDIO_EXT_RE = /\.(mp3|m4a|wav|ogg|oga|aac|flac|opus)$/i;
 const VIDEO_EXT_RE = /\.(mp4|m4v|mov|webm)$/i;
 
@@ -2779,6 +2779,38 @@ class App {
     input.click();
   }
 
+  // iPhone photos arrive as HEIC, which most browsers cannot display —
+  // convert them to JPEG before uploading. Tries the browser's own decoder
+  // first (Safari), then a converter library, and only gives up loudly.
+  async _prepareImageFile(file) {
+    const isHeic = /\.(heic|heif)$/i.test(file.name) || /heic|heif/i.test(file.type || '');
+    if (!isHeic) return file;
+    const jpegName = file.name.replace(/\.(heic|heif)$/i, '') + '.jpg';
+    try {
+      const bmp = await createImageBitmap(file);
+      const canvas = document.createElement('canvas');
+      canvas.width = bmp.width; canvas.height = bmp.height;
+      canvas.getContext('2d').drawImage(bmp, 0, 0);
+      const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.88));
+      if (blob) return new File([blob], jpegName, { type: 'image/jpeg' });
+    } catch (e) { /* this browser can't decode HEIC natively */ }
+    try {
+      if (!window.heic2any) {
+        await new Promise((res, rej) => {
+          const sc = document.createElement('script');
+          sc.src = 'https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js';
+          sc.onload = res; sc.onerror = rej;
+          document.head.appendChild(sc);
+        });
+      }
+      const blob = await window.heic2any({ blob: file, toType: 'image/jpeg', quality: 0.88 });
+      return new File([Array.isArray(blob) ? blob[0] : blob], jpegName, { type: 'image/jpeg' });
+    } catch (e) {
+      showToast('error', 'This iPhone photo (HEIC) could not be converted — it will not display for every visitor. Best export it as JPEG and upload that instead.');
+      return file;
+    }
+  }
+
   // Generic image chooser: shows the site's images, calls back with the
   // chosen public path
   async _pickImage(cb) {
@@ -2818,8 +2850,8 @@ class App {
     input.type = 'file'; input.accept = 'image/*';
     input.addEventListener('change', async () => {
       if (!input.files[0]) return;
-      const file = input.files[0];
       showStatus('saving', 'Uploading...');
+      const file = await this._prepareImageFile(input.files[0]);
       try {
         const reader = new FileReader();
         const b64 = await new Promise((res, rej) => { reader.onload = () => res(reader.result.split(',')[1]); reader.onerror = rej; reader.readAsDataURL(file); });
@@ -2964,8 +2996,8 @@ class App {
       input.type = 'file'; input.accept = isAudio ? 'audio/*' : 'image/*';
       input.addEventListener('change', async () => {
         if (!input.files[0]) return;
-        const file = input.files[0];
         showStatus('saving', 'Uploading...');
+        const file = isAudio ? input.files[0] : await this._prepareImageFile(input.files[0]);
         try {
           const folder = isAudio ? this.config.getAudioFolder() : this.config.getMediaFolder();
           const reader = new FileReader();
@@ -3020,6 +3052,7 @@ class App {
   async _handleImageUpload(file, fieldName, locale, state) {
     if (!file) return;
     showStatus('saving', 'Uploading...');
+    file = await this._prepareImageFile(file);
     try {
       const reader = new FileReader();
       const b64 = await new Promise((res, rej) => { reader.onload = () => res(reader.result.split(',')[1]); reader.onerror = rej; reader.readAsDataURL(file); });
@@ -3563,11 +3596,12 @@ class App {
     const videoFolder = this.config.getVideoFolder();
     let uploaded = 0;
     showStatus('saving', `Uploading 0/${files.length}...`);
-    for (const file of files) {
+    for (let file of files) {
       try {
         const isAudio = (file.type && file.type.startsWith('audio/')) || AUDIO_EXT_RE.test(file.name);
         const isVideo = (file.type && file.type.startsWith('video/')) || VIDEO_EXT_RE.test(file.name);
         const folder = isAudio ? audioFolder : isVideo ? videoFolder : mediaFolder;
+        if (!isAudio && !isVideo) file = await this._prepareImageFile(file);
         const b64 = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result.split(',')[1]); r.onerror = rej; r.readAsDataURL(file); });
         await this.api.uploadImage(`${folder}/${file.name}`, b64, `Upload ${file.name}`);
         uploaded++;
