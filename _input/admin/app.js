@@ -938,8 +938,8 @@ class App {
       </div>
       <div class="table-pills">
         <div class="pill-group" id="scope-pills" role="group" aria-label="Which concerts to show">
-          <button type="button" class="table-pill active" data-scope="all">All</button>
-          <button type="button" class="table-pill" data-scope="upcoming">Upcoming</button>
+          <button type="button" class="table-pill" data-scope="all">All</button>
+          <button type="button" class="table-pill active" data-scope="upcoming">Upcoming</button>
           <button type="button" class="table-pill" data-scope="archive">Archive</button>
         </div>
         <div class="pill-group" id="issue-pills" role="group" aria-label="Find incomplete concerts">
@@ -959,7 +959,7 @@ class App {
     this._bindTopbar();
 
     const savedLimit = parseInt(localStorage.getItem('concertTableLimit') || '30', 10);
-    this._concertTableState = { entries: [], files: [], loadedCount: 0, limit: savedLimit, col, columns, gridCols, sortKey: 'date', sortDir: 'desc', saveTimers: {}, scope: 'all', filterNoHour: false, filterNoLink: false };
+    this._concertTableState = { entries: [], files: [], loadedCount: 0, limit: savedLimit, col, columns, gridCols, sortKey: 'date', sortDir: 'desc', saveTimers: {}, scope: 'upcoming', filterNoHour: false, filterNoLink: false };
     const limitSel = document.getElementById('table-limit');
     limitSel.value = String(savedLimit);
     limitSel.addEventListener('change', () => {
@@ -980,6 +980,19 @@ class App {
 
       await this._loadConcertRows();
       this._bindTableEvents();
+      // The table opens on Upcoming — quietly fetch the rest so the view
+      // is complete even when many concerts lie ahead
+      const st = this._concertTableState;
+      if (st.scope !== 'all' && st.loadedCount < st.files.length && !st._loadingAll) {
+        st._loadingAll = true;
+        const prevLimit = st.limit;
+        st.limit = 0;
+        this._loadConcertRows().then(() => {
+          st.limit = prevLimit;
+          st._loadingAll = false;
+          this._applyConcertFilters();
+        });
+      }
     } catch (e) {
       document.getElementById('notion-body').innerHTML = `<div class="empty-state" style="color:var(--danger);">${esc(e.message)}</div>`;
     }
