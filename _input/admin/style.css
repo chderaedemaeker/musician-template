@@ -617,34 +617,36 @@ a:hover { opacity: 0.6; }
 .notion-th-check { cursor: default; justify-content: center; }
 .sort-icon { font-size: .7rem; }
 
-#notion-body { min-width: 800px; }
+/* The whole table is ONE grid: rows are transparent wrappers
+   (display: contents), so every column sizes to its longest content
+   across all rows while staying perfectly aligned. */
+#notion-body { display: contents; }
 
-.notion-row {
-  display: grid;
+#notion-body > .loading-state,
+#notion-body > .empty-state { grid-column: 1 / -1; }
+
+.notion-row { display: contents; }
+
+.notion-row > .notion-cell {
   border-bottom: 1px solid var(--warm-grey);
   background: var(--white);
-  transition: background 0.15s ease;
 }
 
-.notion-row:hover { background: #fafaf8; }
+.notion-row:hover > .notion-cell { background: #fafaf8; }
 
-.notion-row-dirty {
-  background: #fffdf5;
-}
-.notion-row-dirty:hover { background: #fffbec; }
+.notion-row-dirty > .notion-cell { background: #fffdf5; }
+.notion-row-dirty:hover > .notion-cell { background: #fffbec; }
 
-.notion-row-saving {
+.notion-row-saving > .notion-cell {
   background: #f9f8f0;
   opacity: 0.7;
   pointer-events: none;
 }
 
-.notion-row-loadfailed {
-  background: #fdf5f3;
-}
-.notion-row-loadfailed:hover { background: #fbedea; }
+.notion-row-loadfailed > .notion-cell { background: #fdf5f3; }
+.notion-row-loadfailed:hover > .notion-cell { background: #fbedea; }
 
-.notion-row-saved {
+.notion-row-saved > .notion-cell {
   animation: row-saved-flash 1.5s ease;
 }
 
@@ -664,9 +666,9 @@ a:hover { opacity: 0.6; }
   outline: none;
   border-right: 1px solid transparent;
   cursor: text;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.35;
   transition: background 0.1s ease, box-shadow 0.1s ease;
 }
 
@@ -696,8 +698,26 @@ a:hover { opacity: 0.6; }
   cursor: default;
 }
 
+.notion-time-input {
+  flex: 0 0 auto;
+  width: 5.4rem;
+  height: 100%;
+  padding: .45rem .4rem;
+  border: none;
+  border-left: 1px dashed var(--warm-grey);
+  background: transparent;
+  font-size: .8rem;
+  font-family: var(--font-sans);
+  color: var(--near-black);
+  outline: none;
+  cursor: pointer;
+}
+
+.notion-time-input:hover { background: var(--off-white); }
+
 .notion-date-input {
-  width: 100%;
+  flex: 0 0 auto;
+  width: auto;
   height: 100%;
   padding: .45rem .6rem;
   border: none;

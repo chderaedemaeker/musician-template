@@ -908,11 +908,11 @@ class App {
   // ---- Notion-style Concert Table ----
   async renderConcertTable(col) {
     const columns = [
-      { key: 'title', label: 'Title', width: 'minmax(200px, 2fr)' },
-      { key: 'date', label: 'Date', width: 'minmax(140px, 1fr)', type: 'date' },
-      { key: 'place', label: 'Place', width: 'minmax(140px, 1fr)' },
-      { key: 'composers', label: 'Composers', width: 'minmax(120px, 1fr)' },
-      { key: 'collaborators', label: 'Collaborators', width: 'minmax(120px, 1fr)' },
+      { key: 'title', label: 'Title', width: 'fit-content(26rem)' },
+      { key: 'date', label: 'Date', width: 'max-content', type: 'date' },
+      { key: 'place', label: 'Place', width: 'fit-content(15rem)' },
+      { key: 'composers', label: 'Composers', width: 'fit-content(15rem)' },
+      { key: 'collaborators', label: 'Collaborators', width: 'minmax(10rem, auto)' },
     ];
     const colWidths = columns.map(c => c.width).join(' ');
     const gridCols = '0px 96px ' + colWidths;
@@ -953,8 +953,8 @@ class App {
           <div class="notion-th notion-th-check"><input type="checkbox" id="select-all-checkbox" class="entry-checkbox" /></div>
           <div class="notion-th"></div>
           ${columns.map(c => `<div class="notion-th" data-sort="${c.key}">${esc(c.label)}<span class="sort-icon"></span></div>`).join('')}
+          <div id="notion-body"><div class="loading-state"><span class="spinner"></span> Loading concerts...</div></div>
         </div>
-        <div id="notion-body"><div class="loading-state"><span class="spinner"></span> Loading concerts...</div></div>
       </div>`;
     this._bindTopbar();
 
@@ -1048,11 +1048,12 @@ class App {
     bodyEl.innerHTML = sorted.map((entry, i) => {
       const idx = entries.indexOf(entry);
       const dateVal = entry.data.date ? entry.data.date.substring(0, 10) : '';
-      return `<div class="notion-row${entry.dirty ? ' notion-row-dirty' : ''}${entry.loadFailed ? ' notion-row-loadfailed' : ''}${entry.data.status === 'archived' ? ' notion-row-archived' : ''}${!entry.data.date ? ' notion-row-nodate' : (String(entry.data.month_only) === 'true' || !/T(?!00:00)\d\d:\d\d/.test(entry.data.date) ? ' notion-row-notime' : '')}" data-idx="${idx}" style="grid-template-columns: ${gridCols};"${entry.loadFailed ? ' title="This row failed to load — its saved data is safe and will reappear after you edit and save, or reload the page."' : ''}>
+      const timeVal = entry.data.date ? entry.data.date.substring(11, 16) : '';
+      return `<div class="notion-row${entry.dirty ? ' notion-row-dirty' : ''}${entry.loadFailed ? ' notion-row-loadfailed' : ''}${entry.data.status === 'archived' ? ' notion-row-archived' : ''}${!entry.data.date ? ' notion-row-nodate' : (String(entry.data.month_only) === 'true' || !/T(?!00:00)\d\d:\d\d/.test(entry.data.date) ? ' notion-row-notime' : '')}" data-idx="${idx}"${entry.loadFailed ? ' title="This row failed to load — its saved data is safe and will reappear after you edit and save, or reload the page."' : ''}>
         <div class="notion-cell notion-cell-check"><input type="checkbox" class="entry-checkbox entry-select" data-idx="${idx}" data-file="${esc(entry.name)}" /></div>
         <div class="notion-cell notion-cell-actions"><button class="notion-open-btn" data-file="${esc(entry.name)}" title="Open the full editor">Open</button><button class="notion-dup-btn" data-idx="${idx}" title="Duplicate this concert">&#x2398;</button></div>
         <div class="notion-cell notion-cell-title" data-field="title" data-idx="${idx}" contenteditable="true">${esc(entry.data.title || '')}</div>
-        <div class="notion-cell notion-cell-date" data-field="date" data-idx="${idx}"><input type="date" class="notion-date-input" value="${esc(dateVal)}" data-idx="${idx}" /></div>
+        <div class="notion-cell notion-cell-date" data-field="date" data-idx="${idx}"><input type="date" class="notion-date-input" value="${esc(dateVal)}" data-idx="${idx}" /><input type="time" class="notion-time-input" value="${timeVal === '00:00' ? '' : esc(timeVal)}" data-idx="${idx}" title="Hour — leave empty for 00:00 (no hour shown on the site)" /></div>
         <div class="notion-cell" data-field="place" data-idx="${idx}" contenteditable="true">${esc(entry.data.place || '')}</div>
         <div class="notion-cell" data-field="composers" data-idx="${idx}" contenteditable="true">${esc(entry.data.composers || '')}</div>
         <div class="notion-cell" data-field="collaborators" data-idx="${idx}" contenteditable="true">${esc(entry.data.collaborators || '')}</div>
@@ -1167,7 +1168,6 @@ class App {
       const cols = (selecting ? '36px' : '0px') + ' 96px ' + state.columns.map(c => c.width).join(' ');
       document.getElementById('notion-table').style.gridTemplateColumns = cols;
       state.gridCols = cols;
-      wrap.querySelectorAll('.notion-row').forEach(r => { r.style.gridTemplateColumns = cols; });
       if (!selecting) {
         wrap.querySelectorAll('.entry-select, #select-all-checkbox').forEach(cb => { cb.checked = false; });
         document.getElementById('bulk-bar').style.display = 'none';
@@ -1236,7 +1236,7 @@ class App {
         if (e.key === 'Tab') {
           e.preventDefault();
           const row = cell.closest('.notion-row');
-          const cells = [...row.querySelectorAll('[contenteditable], .notion-date-input')];
+          const cells = [...row.querySelectorAll('[contenteditable], .notion-date-input, .notion-time-input')];
           const currentIdx = cells.indexOf(cell);
           const nextIdx = e.shiftKey ? currentIdx - 1 : currentIdx + 1;
           if (nextIdx >= 0 && nextIdx < cells.length) {
@@ -1256,25 +1256,27 @@ class App {
       });
     });
 
-    // Date inputs
-    bodyEl.querySelectorAll('.notion-date-input').forEach(input => {
+    // Date and time inputs — either edit recomposes the concert's datetime
+    bodyEl.querySelectorAll('.notion-date-input, .notion-time-input').forEach(input => {
       input.addEventListener('change', () => {
         const idx = parseInt(input.dataset.idx);
         const entry = state.entries[idx];
-        if (entry) {
-          entry.data.date = input.value ? input.value + 'T00:00:00' : '';
-          entry.dirty = true;
-          (entry.editedFields || (entry.editedFields = new Set())).add('date');
-          input.closest('.notion-row').classList.add('notion-row-dirty');
-          this._debounceSaveRow(idx);
-        }
+        if (!entry) return;
+        const cell = input.closest('.notion-cell-date');
+        const dateVal = cell.querySelector('.notion-date-input').value;
+        const timeVal = cell.querySelector('.notion-time-input').value;
+        entry.data.date = dateVal ? `${dateVal}T${timeVal || '00:00'}` : '';
+        entry.dirty = true;
+        (entry.editedFields || (entry.editedFields = new Set())).add('date');
+        input.closest('.notion-row').classList.add('notion-row-dirty');
+        this._debounceSaveRow(idx);
       });
 
       input.addEventListener('keydown', (e) => {
         if (e.key === 'Tab') {
           e.preventDefault();
           const row = input.closest('.notion-row');
-          const cells = [...row.querySelectorAll('[contenteditable], .notion-date-input')];
+          const cells = [...row.querySelectorAll('[contenteditable], .notion-date-input, .notion-time-input')];
           const currentIdx = cells.indexOf(input);
           const nextIdx = e.shiftKey ? currentIdx - 1 : currentIdx + 1;
           if (nextIdx >= 0 && nextIdx < cells.length) {
