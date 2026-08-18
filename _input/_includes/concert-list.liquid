@@ -114,11 +114,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     var aside = '';
     if (c.composers) aside += '<p class="concert-row-detail">' + c.composers + '</p>';
+    /* the hour joins the place, same as in the modal */
+    var rowTime = '';
+    if (!c.monthOnly && c.date && /T(?!00:00)\d\d:\d\d/.test(c.date)) {
+      rowTime = new Date(c.date).toLocaleTimeString(lang, { hour: '2-digit', minute: '2-digit', hour12: false });
+    }
+    var whereText = [rowTime, c.place].filter(Boolean).join(' \u2014 ');
     var searchText = [d, c.title, c.place, c.composers, c.collaborators].join(' ').toLowerCase().replace(/"/g, '&quot;');
     return '<li class="concert-row reveal' + (isArchive ? ' concert-row--archive' : '') + (c.featured ? ' concert-row--featured' : '') + '" data-search="' + searchText + '">' +
       '<div class="concert-row-when">' +
         '<p class="concert-row-date">' + dateHtml + '</p>' +
-        (c.place ? '<p class="concert-row-where">' + c.place + '</p>' : '') +
+        (whereText ? '<p class="concert-row-where">' + whereText + '</p>' : '') +
       '</div>' +
       '<div class="concert-row-main">' +
         '<h3><button type="button" class="concert-row-trigger" data-ci="' + concerts.indexOf(c) + '">' + c.title + '</button></h3>' +

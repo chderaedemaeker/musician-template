@@ -2153,3 +2153,9 @@ body { letter-spacing: -0.01em; }
 .table-pill:hover { color: var(--near-black); }
 .table-pill.active { background: var(--near-black); border-color: var(--near-black); color: var(--white); }
 .table-pill--issue.active { background: #fdf3d7; border-color: #d9c46b; color: var(--near-black); }
+
+/* On small screens the table gives up its fixed width — columns compress
+   and wrap, the page itself scrolls instead of the table trapping it */
+@media (max-width: 700px) {
+  .notion-table { min-width: 0; }
+}

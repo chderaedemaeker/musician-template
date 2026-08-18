@@ -674,10 +674,21 @@ li:last-child > .upcoming-item {
   position: absolute;
   inset: 0;
   z-index: 0;
-  background-size: cover;
-  background-position: 50% 22%;
   opacity: 0;
   transition: opacity 1.2s var(--ease);
+}
+
+/* slides carry the site's progressive image: colour tile first, photo
+   fades in — no more top-to-bottom trickle */
+.gallery-slide .prog-img-wrap {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.gallery-slide .prog-img-wrap img {
+  object-position: 50% 22%;
 }
 
 /* Dissolve: the outgoing slide holds at full opacity underneath
@@ -746,7 +757,7 @@ li:last-child > .upcoming-item {
 
 @keyframes note-drift-breathe {
   from { transform: translateY(0); }
-  to   { transform: translateY(-12px); }
+  to   { transform: translateY(-7px); }
 }
 
 .note-drift-text {
@@ -798,8 +809,8 @@ li:last-child > .upcoming-item {
 }
 
 @keyframes nw-float {
-  from { transform: translateY(0.06em); opacity: 1; }
-  to   { transform: translateY(-0.11em); opacity: 0.6; }
+  from { transform: translateY(0.03em); opacity: 1; }
+  to   { transform: translateY(-0.06em); opacity: 0.78; }
 }
 
 /* said — now it really drifts off */
@@ -986,6 +997,21 @@ li:last-child > .upcoming-item {
   transition: transform 0.55s var(--ease), z-index 0s 0s;
 }
 
+/* while hovered, the whole stack rises above neighbouring sections,
+   players and hairlines instead of sliding underneath them */
+.note-photos {
+  position: relative;
+}
+
+.note-photos:hover,
+.note-media:hover {
+  z-index: 60;
+}
+
+.note-drift:hover {
+  z-index: 30;
+}
+
 /* while one photo comes forward, the others lean back */
 .note-photos:hover .note-photo:not(:hover) {
   transform: rotate(var(--pr, 0deg)) scale(0.95);
@@ -1159,6 +1185,7 @@ li:last-child > .upcoming-item {
 
 /* ── Note media — audio and video floating like the photos ── */
 .note-media {
+  position: relative;
   max-width: 34rem;
   margin: var(--space-lg) auto var(--space-md);
   transition: transform 0.55s var(--ease);
