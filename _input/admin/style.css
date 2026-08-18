@@ -2117,3 +2117,19 @@ body { letter-spacing: -0.01em; }
 .entry-thumb--empty { display: inline-block; }
 
 .recent-edits-more-wrap { padding-top: .75rem; text-align: center; }
+
+/* ===== Concert table filter pills ===== */
+.table-pills {
+  display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap;
+  margin: .6rem 0 .9rem;
+}
+.pill-group { display: flex; gap: .25rem; }
+.table-pill {
+  border: 1px solid var(--warm-grey); background: none; cursor: pointer;
+  padding: .32rem .85rem; font-family: var(--font-sans); font-size: .75rem;
+  color: var(--dark-grey); border-radius: 999px;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+.table-pill:hover { color: var(--near-black); }
+.table-pill.active { background: var(--near-black); border-color: var(--near-black); color: var(--white); }
+.table-pill--issue.active { background: #fdf3d7; border-color: #d9c46b; color: var(--near-black); }

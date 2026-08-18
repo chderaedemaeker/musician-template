@@ -936,6 +936,17 @@ class App {
           <option value="0">Show all</option>
         </select>
       </div>
+      <div class="table-pills">
+        <div class="pill-group" id="scope-pills" role="group" aria-label="Which concerts to show">
+          <button type="button" class="table-pill active" data-scope="all">All</button>
+          <button type="button" class="table-pill" data-scope="upcoming">Upcoming</button>
+          <button type="button" class="table-pill" data-scope="archive">Archive</button>
+        </div>
+        <div class="pill-group" id="issue-pills" role="group" aria-label="Find incomplete concerts">
+          <button type="button" class="table-pill table-pill--issue" data-issue="nohour" title="Concerts whose time is still 00:00 (month-only concerts don't count)">No hour</button>
+          <button type="button" class="table-pill table-pill--issue" data-issue="nolink" title="Concerts without a tickets/info link">No link</button>
+        </div>
+      </div>
       <div id="bulk-bar" class="bulk-bar" style="display:none;"><span id="bulk-count">0</span><button class="btn btn-sm" id="bulk-delete-btn">Delete</button></div>
       <div class="notion-table-wrap">
         <div class="notion-table" id="notion-table" style="grid-template-columns: ${gridCols};">
@@ -948,7 +959,7 @@ class App {
     this._bindTopbar();
 
     const savedLimit = parseInt(localStorage.getItem('concertTableLimit') || '30', 10);
-    this._concertTableState = { entries: [], files: [], loadedCount: 0, limit: savedLimit, col, columns, gridCols, sortKey: 'date', sortDir: 'desc', saveTimers: {} };
+    this._concertTableState = { entries: [], files: [], loadedCount: 0, limit: savedLimit, col, columns, gridCols, sortKey: 'date', sortDir: 'desc', saveTimers: {}, scope: 'all', filterNoHour: false, filterNoLink: false };
     const limitSel = document.getElementById('table-limit');
     limitSel.value = String(savedLimit);
     limitSel.addEventListener('change', () => {
@@ -1069,28 +1080,36 @@ class App {
 
     this._bindTableRowEvents();
 
-    // Search covers every concert — typing while only a slice is loaded
-    // fetches the rest once in the background
+    // Search and filters cover every concert — the first use fetches the
+    // rest of the list once in the background
     const self = this;
-    document.getElementById('table-search').addEventListener('input', function() {
-      const q = this.value.toLowerCase().trim();
-      if (q && state.loadedCount < state.files.length && !state._loadingAll) {
+    const ensureAllThenFilter = () => {
+      if (state.loadedCount < state.files.length && !state._loadingAll) {
         state._loadingAll = true;
         const prevLimit = state.limit;
         state.limit = 0;
         self._loadConcertRows().then(() => {
           state.limit = prevLimit;
           state._loadingAll = false;
-          const ev = new Event('input');
-          document.getElementById('table-search').dispatchEvent(ev);
+          self._applyConcertFilters();
         });
       }
-      bodyEl.querySelectorAll('.notion-row').forEach(row => {
-        if (!q) { row.style.display = ''; return; }
-        const idx = parseInt(row.dataset.idx);
-        const entry = state.entries[idx];
-        const match = Object.values(entry.data).some(v => (v || '').toString().toLowerCase().includes(q));
-        row.style.display = match ? '' : 'none';
+      self._applyConcertFilters();
+    };
+    document.getElementById('table-search').addEventListener('input', ensureAllThenFilter);
+    document.querySelectorAll('#scope-pills .table-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        state.scope = pill.dataset.scope;
+        document.querySelectorAll('#scope-pills .table-pill').forEach(pl => pl.classList.toggle('active', pl === pill));
+        ensureAllThenFilter();
+      });
+    });
+    document.querySelectorAll('#issue-pills .table-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        const on = pill.classList.toggle('active');
+        if (pill.dataset.issue === 'nohour') state.filterNoHour = on;
+        if (pill.dataset.issue === 'nolink') state.filterNoLink = on;
+        ensureAllThenFilter();
       });
     });
 
@@ -1297,6 +1316,41 @@ class App {
     // Checkbox change
     bodyEl.querySelectorAll('.entry-select').forEach(cb => {
       cb.addEventListener('change', () => this._updateBulkBar());
+    });
+
+    // Sorting or loading re-rendered the rows — the active filters still apply
+    this._applyConcertFilters();
+  }
+
+  // One place decides which concert rows are visible: search text,
+  // All/Upcoming/Archive scope, and the incompleteness filters
+  _applyConcertFilters() {
+    const state = this._concertTableState;
+    if (!state) return;
+    const searchEl = document.getElementById('table-search');
+    const q = searchEl ? searchEl.value.toLowerCase().trim() : '';
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    document.querySelectorAll('#notion-body .notion-row').forEach(row => {
+      const entry = state.entries[parseInt(row.dataset.idx, 10)];
+      if (!entry) return;
+      let show = true;
+      if (q) show = Object.values(entry.data).some(v => (v || '').toString().toLowerCase().includes(q));
+      if (show && state.scope !== 'all') {
+        const dstr = entry.data.date_end || entry.data.date;
+        const d = dstr ? new Date(dstr) : null;
+        const hasDate = d && !isNaN(d);
+        if (state.scope === 'upcoming') show = hasDate && d >= today;
+        else show = hasDate && d < today;
+      }
+      if (show && state.filterNoHour) {
+        const dt = entry.data.date || '';
+        const monthOnly = String(entry.data.month_only) === 'true';
+        show = !dt || (!monthOnly && !/T(?!00:00)\d\d:\d\d/.test(dt));
+      }
+      if (show && state.filterNoLink) {
+        show = !(entry.data.link || '').trim();
+      }
+      row.style.display = show ? '' : 'none';
     });
   }
 
