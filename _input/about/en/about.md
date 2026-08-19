@@ -14,7 +14,7 @@ Veronique De Raedemaeker is a a prize winner of several national and internation
 
 Veronique began her violin studies with Francis Reusens at the Academy for Music, Word and Dance in Lier. After studying Greek–Mathematics, which she combined with "Young Conservatory," she graduated from the Royal Conservatory of Antwerp with a Bachelor of Music with Alissa Margulis. Under the tuition of Barnabás Kelemen, she obtained the highest distinction for the Master's degree in Violin Solo and Neue Musik at the Hochschule für Musik und Tanz Köln where, in the class of Mikhail Ovrutsky, she completed the Konzertexamen degree with "summa cum laude."
 
-In parallel, she learned from renowned musicians such as Philippe Graffin at the Royal Conservatoire of Brussels, Ivry Gitlis, Julia Fisher, Abdel Rahman El Bacha, Tatiana Samouil, David Quiggle, Frank Peter Zimmerman, Pavel Vernikov, Paulo Álvares, Görgyi Pauk, Kristóf Baráti, Jonian Ilias Kadesha and András Keller.
+In parallel, she learned from renowned musicians such as Philippe Graffin at the Royal Conservatoire of Brussels, Ivry Gitlis, Julia Fisher, Abdel Rahman El Bacha, Piet Kuijken, Tatiana Samouil, David Quiggle, Frank Peter Zimmerman, Pavel Vernikov, Paulo Álvares, Görgyi Pauk, Kristóf Baráti, Jonian Ilias Kadesha and András Keller.
 
 Over the past years, Veronique has performed at the Klavierfestival Ruhr, Festival Academy Budapest, Klara Festival, Festival Musiq3, Iedereen Klassiek Brugge, Kortrijk Festival, Arte Amanti Festival, Festival Rencontres musicales internationales Enghien, Acht Brücken Festival Köln, Verbier Festival, Lugano Festival, Luzerne Festival, Schiermonnikoog Young Talent Festival, Festival Académie Ravel, Musica Mundi and others.
 
