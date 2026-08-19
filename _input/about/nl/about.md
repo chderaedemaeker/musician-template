@@ -3,7 +3,7 @@ title: Over
 gallery1: /images/klvero.png
 gallery2: /images/veronique-18.jpeg
 gallery3: /images/veronique-25copy.jpeg
-gallery4: /images/De twintigers.jpeg
+gallery4: /images/De twintigers-4.jpeg
 summaryabout: Belgische violiste woonachtig in Keulen, geprezen om haar rijkdom in klank en instinctief mooie frasering. Laureate van verscheidene internationale wedstrijden en bursaal van de Werner Richard Dr. Carl Dörken Stiftung.
 layout: about.html
 tags: about
