@@ -3,7 +3,7 @@ title: Über
 gallery1: /images/klvero.png
 gallery2: /images/veronique-18.jpeg
 gallery3: /images/veronique-25copy.jpeg
-gallery4: /images/De twintigers.jpeg
+gallery4: /images/De twintigers-4.jpeg
 summaryabout: Belgische Geigerin in Köln, gewürdigt für ihren Klangreichtum und ihre instinktiv schöne Phrasierung.
 layout: about.html
 tags: about
