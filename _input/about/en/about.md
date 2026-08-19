@@ -24,9 +24,9 @@ A passionate chamber musician, she regularly performs with her own ensembles —
 
 > "Richness in sound and instinctively beautiful phrasing."
 
-Her CD Malinconia with works by Prokofiev, De Gheselle and Ysaÿe was awarded in 2020 by the Flemish classical radio with the Choice of Klara.
+Her CD Malinconia with works by Prokofiev, De Gheselle and Ysaÿe was awarded by the Flemish classical radio with the Choice of Klara.
 
-In 2022 she released the CD "Garland — Songs for Soprano, Violin and Harp" with her Trio Gilu and in 2023 she published the single "Bach and Berio — a diptych". All of her publications are released by Etcetera Records.
+She released the CD "Garland — Songs for Soprano, Violin and Harp" with her Trio Gilu and she published the solo single "Bach and Berio — a diptych". All of her publications are released by Etcetera Records.
 
 Her fascination with new music has allowed her to collaborate with contemporary composers such as Unsuk Chin, Helmut Lachenmann, Heinz Holliger, and makes it possible to regularly work closely with young composers such as Helena Cánovas I Parés, Ruben De Gheselle, Martín Letelier, Emile Daems e.a. of whom she has premiered their works. She is a founding member of the ÉRMA Ensemble, which specializes in the performance of new music.
 
