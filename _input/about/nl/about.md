@@ -10,17 +10,11 @@ tags: about
 lang: nl
 permalink: nl/about/index.html
 ---
-Veronique De Raedemaeker (geboren 1996) is een Belgische violiste woonachtig in Keulen.
+Veronique De Raedemaeker (1996) is een belgische violiste woonachtig in Keulen, geprezen om haar rijkdom in klank en instinctief mooie frasering.
 
-## Prijzen & steun
+Veronique De Raedemaeker is prijswinnares van diverse nationale en internationale viool- en kamermuziekwedstrijden, waaronder Supernova, Young Belgian Talent, de Internationale Anton Rubinstein-wedstrijd, het Concours Breughel, Belfius Classics, de interne kamermuziekwedstrijd van de HfMT Keulen, de Internationale Vioolwedstrijd van de Kulturstiftung Hohenlohe en het Vieuxtemps Concours. Van 2020 tot 2022 werd ze ondersteund door de Werner Richard Dr. Carl Dörken Stiftung, die haar selecteerde voor de concerttournee „Best of NRW“, en in 2022–2023 was ze artist in residence bij SWUK. Door de jaren heen heeft ze steun gekregen van Young Belgian Talent, waarvoor ze erg dankbaar is.
 
-Ze is laureate van verscheidene nationale en internationale viool- en kamermuziekwedstrijden, waaronder Young Belgian Talent, Internationaler Anton Rubinstein Wettbewerb, Concours Breughel, Belfius Classics, interner Kammermusikwettbewerb HfMT Köln, Internationaler Violinwettbewerb der Kulturstiftung Hohenlohe en Vieuxtemps Concours. Van 2020 tot 2022 was ze bursaal van de Werner Richard Dr. Carl Dörken Stiftung, die haar selecteerde voor de concerttournee "Best of NRW", en ze was artist in residence van SWUK in 2022–2023. Door de jaren heen is ze op verschillende gebieden ondersteund door YBT, waarvoor ze zeer dankbaar is.
-
-## Opleiding
-
-Veronique begon haar vioolstudies bij Francis Reusens aan de Academie voor Muziek, Woord en Dans in Lier. Na haar studie Grieks-Wiskunde, die ze combineerde met "Jong Conservatorium," studeerde ze in 2016 af aan het Koninklijk Conservatorium van Antwerpen met een Bachelor of Music bij Alissa Margulis. Onder de leiding van Barnabás Kelemen behaalde ze de hoogste onderscheiding voor de masteropleiding Violin Solo en Neue Musik aan de Hochschule für Musik und Tanz Köln, waar ze in 2023, in de klas van Mikhail Ovrutsky, het Konzertexamen afsloot met "summa cum laude."
-
-Daarnaast leerde ze van gerenommeerde muzikanten zoals Philippe Graffin aan het Koninklijk Conservatorium van Brussel, Ivry Gitlis, Julia Fisher, Tatiana Samouil, David Quiggle, Frank Peter Zimmerman, Pavel Vernikov, Paulo Álvares, Görgyi Pauk, Kristóf Baráti, Jonian Ilias Kadesha en András Keller en nam ze deel aan masterclasses en concerten op het Verbier Festival, Lugano Festival, Luzerne Festival, Schiermonnikoog Young Talent Festival, Festival Académie Ravel, Budapest Festival Academy, Musica Mundi en andere.
+## Veronique begon haar vioolstudie bij Francis Reusens aan de Academie voor Muziek, Woord en Dans in Lier. Na haar studie Grieks-Wiskunde, die ze combineerde met het „Jong Conservatorium“ studeerde ze af aan het Koninklijk Conservatorium van Antwerpen met een Bachelor of Music bij Alissa Margulis. Bij Barnabás Kelemen behaalde ze de hoogste onderscheiding voor de masteropleiding vioolsolo en Neue Musik aan de Hochschule für Musik und Tanz Köln, waar ze in de klas van Mikhail Ovrutsky het Konzertexamen-diploma met „summa cum laude“ afrondde.<br><br>Daarnaast leerde ze van gerenommeerde muzikanten zoals Philippe Graffin aan het Koninklijk Conservatorium van Brussel, Ivry Gitlis, Julia Fisher, Tatiana Samouil, David Quiggle, Frank Peter Zimmerman, Pavel Vernikov, Paulo Álvares, Görgyi Pauk, Kristóf Baráti, Jonian Ilias Kadesha en András Keller en nam ze deel aan masterclasses en concerten op het Verbier Festival, Lugano Festival, Luzerne Festival, Schiermonnikoog Young Talent Festival, Festival Académie Ravel, Budapest Festival Academy, Musica Mundi en andere.<br>
 
 ## Optredens
 
@@ -42,4 +36,4 @@ Haar fascinatie voor nieuwe muziek heeft haar in staat gesteld samen te werken m
 
 Veronique speelt op een viool van Stefan-Peter Greiner. In 2024 was ze te gast in het programma "De Twintigers" op Klara.
 
-<div class="about-actions"><a class="btn" href="https://drive.google.com/drive/folders/10JwfYTSOn1MJtgt9THW4HzrtER7Nq5Ye" target="_blank" rel="noopener">Perskit</a> <a class="btn" href="https://drive.google.com/drive/folders/1-8P87yl21E9Urwilq09JQ_omojNFYXTy" target="_blank" rel="noopener">Repertoire</a></div>
+[Perskit](https://drive.google.com/drive/folders/10JwfYTSOn1MJtgt9THW4HzrtER7Nq5Ye) [Repertoire](https://drive.google.com/drive/folders/1-8P87yl21E9Urwilq09JQ_omojNFYXTy)
