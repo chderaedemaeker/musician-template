@@ -10,7 +10,9 @@ tags: about
 lang: de
 permalink: de/about/index.html
 ---
-Veronique De Raedemaeker ist Preisträgerin verschiedener nationaler und internationaler Violin- und Kammermusikwettbewerbe, darunter Supernova, Young Belgian Talent, der Internationale Anton-Rubinstein-Wettbewerb, der Concours Breughel, Belfius Classics, der Interne Kammermusikwettbewerb der HfMT Köln, der Internationale Violinwettbewerb der Kulturstiftung Hohenlohe und der Vieuxtemps-Wettbewerb.
+Veronique De Raedemaeker (geb. 1996 in Belgien) lebt in Köln, und wird als Geigerin für ihren klangvollen Ton und ihre instinktiv schöne Phrasierung gelobt.
+
+Sie ist Preisträgerin verschiedener nationaler und internationaler Violin- und Kammermusikwettbewerbe, darunter Supernova, Young Belgian Talent, der Internationale Anton-Rubinstein-Wettbewerb, der Concours Breughel, Belfius Classics, der Interne Kammermusikwettbewerb der HfMT Köln, der Internationale Violinwettbewerb der Kulturstiftung Hohenlohe und der Vieuxtemps-Wettbewerb.
 
 Veronique begann ihr Violinstudium bei Francis Reusens an der Akademie für Musik, Wort und Tanz in Lier. Nach ihrem Studium Griechisch - Mathematik, das sie mit dem „Jungen Konservatorium“ kombinierte, schloss sie ihr Studium am Königlichen Konservatorium Antwerpen bei Alissa Margulis mit einem Bachelor of Music ab. <br>Bei Barnabás Kelemen bekam sie die höchste Auszeichnung für den Master-Abschluss in Violinsolo und Neue Musik an der Hochschule für Musik und Tanz Köln, wo sie in der Klasse von Mikhail Ovrutsky das Konzertexamen mit „summa cum laude“ abschloss.
 
