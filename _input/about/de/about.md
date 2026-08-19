@@ -12,11 +12,7 @@ permalink: de/about/index.html
 ---
 Veronique De Raedemaeker (geboren 1996) ist eine belgische Geigerin und lebt in Köln.
 
-## Preise & Förderung
-
-Sie ist Preisträgerin mehrerer nationaler und internationaler Violin- und Kammermusikwettbewerbe, darunter Young Belgian Talent, Internationaler Anton Rubinstein Wettbewerb, Concours Breughel, Belfius Classics, interner Kammermusikwettbewerb der HfMT Köln, Internationaler Violinwettbewerb der Kulturstiftung Hohenlohe und Vieuxtemps Concours. Von 2020 bis 2022 war sie Stipendiatin der Werner Richard Dr. Carl Dörken Stiftung, die sie für die Konzerttournee „Best of NRW" auswählte, und 2022–2023 Artist in Residence von SWUK. Über die Jahre wurde sie in verschiedenen Bereichen von YBT unterstützt, wofür sie sehr dankbar ist.
-
-## Studium
+Veronique De Raedemaeker ist Preisträgerin verschiedener nationaler und internationaler Violin- und Kammermusikwettbewerbe, darunter Supernova, Young Belgian Talent, der Internationale Anton-Rubinstein-Wettbewerb, der Concours Breughel, Belfius Classics, der Interne Kammermusikwettbewerb der HfMT Köln, der Internationale Violinwettbewerb der Kulturstiftung Hohenlohe und der Vieuxtemps-Wettbewerb.
 
 Veronique begann ihre Violinausbildung bei Francis Reusens an der Akademie für Musik, Wort und Tanz in Lier. Nach einem Schulabschluss in Griechisch–Mathematik, den sie mit dem „Jong Conservatory" verband, schloss sie 2016 ihr Bachelorstudium am Königlichen Konservatorium Antwerpen bei Alissa Margulis ab. Unter der Anleitung von Barnabás Kelemen erhielt sie die höchste Auszeichnung für den Master in Violine solo und Neue Musik an der Hochschule für Musik und Tanz Köln, wo sie 2023 in der Klasse von Mikhail Ovrutsky das Konzertexamen mit „summa cum laude" abschloss.
 
@@ -42,4 +38,4 @@ Ihre Faszination für Neue Musik führte zur Zusammenarbeit mit zeitgenössische
 
 Veronique spielt eine Violine von Stefan-Peter Greiner. 2024 war sie im Programm „The Twintigers" auf Klara zu hören.
 
-<div class="about-actions"><a class="btn" href="https://drive.google.com/drive/folders/10JwfYTSOn1MJtgt9THW4HzrtER7Nq5Ye" target="_blank" rel="noopener">Pressemappe</a> <a class="btn" href="https://drive.google.com/drive/folders/1-8P87yl21E9Urwilq09JQ_omojNFYXTy" target="_blank" rel="noopener">Repertoire</a></div>
+[Pressemappe](https://drive.google.com/drive/folders/10JwfYTSOn1MJtgt9THW4HzrtER7Nq5Ye) [Repertoire](https://drive.google.com/drive/folders/1-8P87yl21E9Urwilq09JQ_omojNFYXTy)
