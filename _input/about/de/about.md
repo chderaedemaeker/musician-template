@@ -20,13 +20,11 @@ Parallel lernte sie von renommierten Musikern wie Philippe Graffin am Königlich
 
 Im Laufe der letzten Jahre trat Veronique unter anderem beim Klavierfestival Ruhr, Festival Academy Budapest, Klara Festival, Festival Musiq3, Iedereen Klassiek Brugge, Kortrijk Festival, Arte Amanti Festival, Festival Rencontres musicales internationales Enghien, Acht-Brücken-Festival Köln, Verbier Festival, Lugano Festival, Luzerner Festival, Schiermonnikoog Young Talent Festival, Festival Académie Ravel & Musica Mundi auf.
 
-In den vergangenen Jahren wurde Veronique zum Klavierfestival Ruhr, zum Arte Amanti Festival, zum Festival Rencontres musicales internationales Enghien und zum Acht Brücken Festival Köln eingeladen. Zu ihren jüngsten Soloauftritten zählen Werke von Beethoven, Schubert, Mendelssohn und Brahms sowie Konzerte mit der Köln Sinfonietta, dem Gödöllö Symphony Orchestra, dem East Flanders Symphony Orchestra und der Russischen Kammerphilharmonie St. Petersburg. Sie konzertierte in Sälen wie Flagey & Bozar in Brüssel, Amuz in Antwerpen, Miry & De Bijloke in Gent, der Kölner Philharmonie, dem WDR Funkhaus und der Tonhalle Düsseldorf. Im November 2023 spielte sie Beethovens Tripelkonzert in der Elisabethzaal in Antwerpen.
+Zu ihren Soloauftritten zählen Werke von Beethoven, Bartók, Schubert, Brahms, Harvey, Bach, Vivaldi, Vasks und Mendelssohn, die sie mit dem Brussels Philharmonic, der Köln Sinfonietta, dem Orchester La Passione, dem Symphonieorchester Gödölö, dem Symphonieorchester Ostflandern und der Russischen Kammerphilharmonie St. Petersburg aufführte. Sie trat als Solistin oder in kammermusikalischen Besetzungen in Konzertsälen wie Flagey und Bozar in Brüssel, im Concertgebouw in Brügge, in Amuz und der Queen-Elisabeth-Halle in Antwerpen, in Miry und De Bijloke in Gent, in der Philharmonie Köln, im WDR-Funkhaus und in der Tonhalle Düsseldorf auf.
 
-## Kammermusik & Aufnahmen
+Als leidenschaftliche Kammermusikerin tritt sie regelmäßig mit ihren eigenen Ensembles auf – dem Trio Gilu, dem Bowmore Quartett, dem Oreneta Kammerensemble, dem ÉRMA Ensemble, im Duo mit dem Pianisten Alexander Declercq (Duo Altiler) und mit der Harfenistin Mathilde Wauters.
 
-Als leidenschaftliche Kammermusikerin tritt sie regelmäßig mit ihren eigenen Ensembles auf — Trio Gilu, Oreneta Kammerensemble, ÉRMA Ensemble sowie im Duo mit dem Pianisten Alexander Declercq (Duo Altiler) und mit der Harfenistin Mathilde Wauters.
-
-> "Richness in sound and instinctively beautiful phrasing."
+*„Klangfülle und instinktiv schöne Phrasierung.“<br>*
 
 Ihre CD Malinconia mit Werken von Prokofjew und Ysaÿe wurde 2020 vom flämischen Klassiksender mit dem „Choice of Klara" ausgezeichnet.
 
