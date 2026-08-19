@@ -4,7 +4,7 @@ gallery1: /images/klvero.png
 gallery2: /images/veronique-18.jpeg
 gallery3: /images/veronique-25copy.jpeg
 gallery4: /images/De twintigers-4.jpeg
-summaryabout: Belgische Geigerin in Köln, gewürdigt für ihren Klangreichtum und ihre instinktiv schöne Phrasierung.
+summaryabout: Veronique De Raedemaeker (geb. 1996 in Belgien) lebt in Köln, und wird als Geigerin für ihren klangvollen Ton und ihre instinktiv schöne Phrasierung gelobt.
 layout: about.html
 tags: about
 lang: de
