@@ -26,14 +26,10 @@ Als leidenschaftliche Kammermusikerin tritt sie regelmäßig mit ihren eigenen E
 
 *„Klangfülle und instinktiv schöne Phrasierung.“<br>*
 
-Ihre CD Malinconia mit Werken von Prokofjew und Ysaÿe wurde 2020 vom flämischen Klassiksender mit dem „Choice of Klara" ausgezeichnet.
+Ihre CD „Malinconia“ mit Werken von Prokofjew, De Gheselle und Ysaÿe wurde vom flämischen Klassikradio mit dem Preis „Choice of Klara“ ausgezeichnet.
 
-2022 veröffentlichte sie gemeinsam mit ihrem Trio Gilu die CD „Garland — Songs for Soprano, Violin and Harp", 2023 folgte die Single „Bach and Berio — a diptych". Alle ihre Aufnahmen erscheinen bei Etcetera Records.
+Sie veröffentlichte mit ihrem Trio Gilu die CD „Garland – Songs for Soprano, Violin and Harp“ und als solo die Single „Bach und Berio – ein Diptychon“. Alle ihre Veröffentlichungen werden von Etcetera Records herausgebracht.
 
-## Neue Musik
+Ihre Faszination für Neue Musik hat ihr die Zusammenarbeit mit zeitgenössischen Komponist:innen wie Unsuk Chin, Helmut Lachenmann und Heinz Holliger ermöglicht und erlaubt es ihr, regelmäßig eng mit jungen Komponist:innen wie Helena Cánovas I Parés, Ruben De Gheselle, Martín Letelier, Emile Daems u. a. zusammenzuarbeiten, deren Werke sie uraufgeführt hat. Sie ist Gründungsmitglied des ÉRMA-Ensembles, das sich auf die Aufführung von Neuer Musik spezialisiert hat.
 
-Ihre Faszination für Neue Musik führte zur Zusammenarbeit mit zeitgenössischen Komponistinnen und Komponisten wie Unsuk Chin, Helmut Lachenmann, Heinz Holliger und vielen anderen. Sie ist Gründungsmitglied des vom Deutschen Musikrat geförderten ÉRMA Ensembles, das sich auf die Aufführung Neuer Musik spezialisiert hat.
-
-Veronique spielt eine Violine von Stefan-Peter Greiner. 2024 war sie im Programm „The Twintigers" auf Klara zu hören.
-
-[Pressemappe](https://drive.google.com/drive/folders/10JwfYTSOn1MJtgt9THW4HzrtER7Nq5Ye) [Repertoire](https://drive.google.com/drive/folders/1-8P87yl21E9Urwilq09JQ_omojNFYXTy)
+Veronique spielt auf einer Violine von Stefan-Peter Greiner. Im Jahr 2024 war sie zu Gast in der Sendung „De Twintigers“ auf Klara.
