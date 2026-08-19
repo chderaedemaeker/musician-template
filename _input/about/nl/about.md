@@ -4,7 +4,7 @@ gallery1: /images/klvero.png
 gallery2: /images/veronique-18.jpeg
 gallery3: /images/veronique-25copy.jpeg
 gallery4: /images/De twintigers-4.jpeg
-summaryabout: Belgische violiste woonachtig in Keulen, geprezen om haar rijkdom in klank en instinctief mooie frasering. Laureate van verscheidene internationale wedstrijden en bursaal van de Werner Richard Dr. Carl Dörken Stiftung.
+summaryabout: Veronique De Raedemaeker (1996) is een belgische violiste woonachtig in Keulen, geprezen om haar rijkdom in klank en instinctief mooie frasering.
 layout: about.html
 tags: about
 lang: nl
