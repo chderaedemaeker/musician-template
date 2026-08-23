@@ -28,7 +28,7 @@ Her CD Malinconia with works by Prokofiev, De Gheselle and Ysaÿe was awarded by
 
 She released the CD "Garland — Songs for Soprano, Violin and Harp" with her Trio Gilu and she published the solo single "Bach and Berio — a diptych". All of her publications are released by Etcetera Records.
 
-Her fascination with new music has allowed her to collaborate with contemporary composers such as Unsuk Chin, Helmut Lachenmann, Heinz Holliger, and makes it possible to regularly work closely with young composers such as Helena Cánovas I Parés, Ruben De Gheselle, Martín Letelier, Emile Daems e.a. of whom she has premiered their works. She is a founding member of the ÉRMA Ensemble, which specializes in the performance of new music.
+Her fascination with new music has allowed her to collaborate with contemporary composers such as Unsuk Chin, Helmut Lachenmann, Heinz Holliger, and makes it possible to regularly work closely with young composers such as Helena Cánovas i Parés, Ruben De Gheselle, Martín Letelier, Emile Daems e.a. of whom she has premiered their works. Together with Anton Gerzenberg and Yorgos Ziavras, she is a founding member of the ÉRMA Ensemble, which specializes in the performance of new music.
 
 Veronique plays on a violin by Stefan-Peter Greiner. In 2024, she was featured on the program of "The Twintigers" on Klara.
 
