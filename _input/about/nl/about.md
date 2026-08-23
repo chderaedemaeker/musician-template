@@ -28,13 +28,11 @@ Veronique De Raedemaeker is prijswinnares van diverse nationale en international
 
 > "Rijkdom in klank en instinctief mooie frasering."
 
-Haar cd Malinconia met werken van Prokofiev en Ysaÿe werd in 2020 door de Vlaamse klassieke radio bekroond met de Keuze van Klara.
+Haar cd Malinconia met werken van Prokofiev en Ysaÿe werd door de Vlaamse klassieke radio bekroond met de Keuze van Klara.
 
-In 2022 bracht ze samen met haar Trio Gilu de cd "Garland — Songs for Soprano, Violin and Harp" uit en in 2023 publiceerde ze de single "Bach and Berio — a diptych". Al haar publicaties verschijnen bij Etcetera Records.
+Samen met haar Trio Gilu de cd "Garland — Songs for Soprano, Violin and Harp" uit en ze publiceerde de single "Bach and Berio — a diptych". Al haar publicaties verschenen bij Etcetera Records.
 
-## <br>
-
-Haar fascinatie voor nieuwe muziek heeft haar in staat gesteld samen te werken met hedendaagse componisten zoals Unsuk Chin, Helmut Lachenmann, Heinz Holliger en vele anderen. Ze is medeoprichter van het ÉRMA Ensemble, gesteund door de Deutscher Musikrat, dat gespecialiseerd is in het uitvoeren van nieuwe muziek.
+Haar fascinatie voor nieuwe muziek gaf haar de mogelijkheid om samen te werken met hedendaagse componisten zoals Unsuk Chin, Helmut Lachenmann, Heinz Holliger en vele anderen. Ze is medeoprichter van het ÉRMA Ensemble, gesteund door de Deutscher Musikrat, dat gespecialiseerd is in het uitvoeren van nieuwe muziek.
 
 Veronique speelt op een viool van Stefan-Peter Greiner. In 2024 was ze te gast in het programma "De Twintigers" op Klara.
 
