@@ -30,7 +30,7 @@ Haar cd Malinconia met werken van Prokofiev en Ysaÿe werd door de Vlaamse klass
 
 Met haar Trio Gilu bracht ze de cd "Garland — Songs for Soprano, Violin and Harp" uit en ze publiceerde de solo single "Bach and Berio — a diptych". Al haar publicaties verschenen bij Etcetera Records.
 
-Haar fascinatie voor nieuwe muziek geeft haar de mogelijkheid om samen te werken met hedendaagse componisten zoals Unsuk Chin, Helmut Lachenmann, Heinz Holliger en vele anderen. Ze is medeoprichter van het ÉRMA Ensemble, gesteund door de Deutscher Musikrat, dat gespecialiseerd is in het uitvoeren van nieuwe muziek.
+Haar fascinatie voor nieuwe muziek bracht haar in contact met hedendaagse componisten zoals Unsuk Chin, Helmut Lachenmann, Heinz Holliger en vele anderen en geeft haar de mogelijkheid om regelmatig nauw samen te werken met jonge componisten zoals Helena Cánovas i Parés, Ruben De Gheselle, Martín Letelier, Emile Daems e.a., van wie zij werken in première heeft gebracht. Veronique is samen met Anton Gerzenberg en Yorgos Ziavras medeoprichter van het ÉRMA Ensemble, dat gespecialiseerd is in het uitvoeren van nieuwe muziek.
 
 Veronique speelt op een viool van Stefan-Peter Greiner. In 2024 was ze te gast in het programma "De Twintigers" op Klara.
 
