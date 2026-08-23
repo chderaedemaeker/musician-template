@@ -24,7 +24,7 @@ Veronique De Raedemaeker is prijswinnares van diverse nationale en international
 
 ## <br>
 
-## Als gepassioneerd kamermuzikante treedt ze regelmatig op met haar eigen ensembles — Trio Gilu, Oreneta Kammerensemble, ÉRMA Ensemble en in duo met pianist Alexander Declercq (Duo Altiler) en met harpiste Mathilde Wauters.<br>
+## Als gepassioneerd kamermuzikante treedt ze regelmatig op met haar eigen ensembles — Trio Gilu, Oreneta Kammerensemble, ÉRMA Ensemble, Bowmore Quartet en in duo met pianist Alexander Declercq (Duo Altiler) en met harpiste Mathilde Wauters.<br>
 
 > "Rijkdom in klank en instinctief mooie frasering."
 
