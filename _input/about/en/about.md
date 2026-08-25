@@ -10,6 +10,8 @@ tags: about
 lang: en
 permalink: en/about/index.html
 ---
+Veronique De Raedemaeker (1996) is a Belgian violinist based in Cologne, praised for her richness in sound and instinctively beautiful phrasing. She is drawn to music from a wide variety of classical genres and has a diverse repertoire in her fingers, ranging from Berio and Biber to Beethoven, Auerbach, Bartók and Harvey.
+
 Veronique De Raedemaeker is a a prize winner of several national and international violin and chamber music competitions, including Supernova, Young Belgian Talent, Internationaler Anton Rubinstein Wettbewerb, Concours Breughel, Belfius Classics, interner Kammermusikwettbewerb HfMT Köln, Internationaler Violinwettbewerb der Kulturstiftung Hohenlohe and Vieuxtemps Concours. From 2020–2022 she was a scholarship holder of the Werner Richard Dr. Carl Dörken Stiftung, which selected her for the concert tour "Best of NRW", and she was artist in residence of SWUK in 2022–2023. Over the years, she has been supported by Young Belgian Talent, for which she is very grateful.
 
 Veronique began her violin studies with Francis Reusens at the Academy for Music, Word and Dance in Lier. After studying Greek–Mathematics, which she combined with "Young Conservatory," she graduated from the Royal Conservatory of Antwerp with a Bachelor of Music with Alissa Margulis. Under the tuition of Barnabás Kelemen, she obtained the highest distinction for the Master's degree in Violin Solo and Neue Musik at the Hochschule für Musik und Tanz Köln where, in the class of Mikhail Ovrutsky, she completed the Konzertexamen degree with "summa cum laude."
