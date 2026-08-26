@@ -12,4 +12,4 @@ layout: highlight.html
 tags: highlights
 lang: de
 ---
-Works by Lili Boulanger, Debussy, Daems, Poot & Bartók. <br>Generously supported by Muziekcentrum Track.<br>More info about release date coming soon.
+Works by Lili Boulanger, Debussy, Daems, Poot & Bartók. <br>Generously supported by Muziekcentrum Track en Wilde Westen.<br>More info about release date coming soon.
