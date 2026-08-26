@@ -1,5 +1,5 @@
 ---
-title: CD recording 
+title: CD recording
 date: "2025-10-21T00:00"
 type: ""
 image: /images/duo-altiler_54354350188_o.JPEG
@@ -12,4 +12,4 @@ layout: highlight.html
 tags: highlights
 lang: fr
 ---
-Works by Lili Boulanger, Debussy, Daems, Poot & Bartók. <br>Generously supported by Muziekcentrum Track en Wilde Westen.<br>More info about release date coming soon.
+Works by Lili Boulanger, Debussy, Daems, Poot & Bartók. <br>Generously supported by Muziekcentrum Track & Wilde Westen.<br>More info about release date coming soon.
