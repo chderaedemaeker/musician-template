@@ -1,5 +1,5 @@
 ---
-title: Jonathan Harvey 
+title: Jonathan Harvey
 date: "2026-03-18T00:00"
 type: solo
 image: /images/DSC_1089.jpg
@@ -12,4 +12,4 @@ layout: highlight.html
 tags: highlights
 lang: fr
 ---
-![DSC_1163.jpg](/images/DSC_1163.jpg)
+![DSC_1163.jpg](/images/DSC_1163.jpg)Images by Jay Raissis
