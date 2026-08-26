@@ -6,7 +6,7 @@ image: /images/duo-altiler_54354350188_o.JPEG
 hide_image: false
 link: "https://www.youtube.com/watch?v=kZ6C1GMgPV0&t=12s"
 place: Kortrijk
-collaborators: ""
+collaborators: Duo Altiler
 featured: false
 layout: highlight.html
 tags: highlights
