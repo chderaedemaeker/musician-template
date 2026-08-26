@@ -17,7 +17,7 @@ layout: project.html
 tags: projects
 lang: de
 ---
-Das ÉRMA Ensemble ist ein junges, in Köln ansässiges Ensemble, das sich zusammengeschlossen hat, um die Musik in der zweiten Hälfte des 20. Jahrhunderts sowie des 21. Jahrhunderts in all ihrer Virtuosität und all ihren Klangfarben zu erkunden. Ein vielfältiges Instrumentarium, u.A. mit Mandoline, Gitarre und Harfe, bietet ÉRMA ganz besondere klangliche Möglichkeiten.
+Das ÉRMA Ensemble ist ein junges, in Köln ansässiges Ensemble, das sich zusammengeschlossen hat, um die Musik in der zweiten Hälfte des 20. Jahrhunderts sowie des 21. Jahrhunderts in all ihrer Virtuosität und all ihren Klangfarben zu erkunden. Ein vielfältiges Instrumentarium, u.A. mit Mandoline, Gitarre und Trompete, bietet ÉRMA ganz besondere klangliche Möglichkeiten.
 
 Ziel des Ensembles ist es, dem Publikum zeitgenössische Musik näherzubringen wobei Publikum in diesem Zusammenhang heißt “jede*r, die/der bereit ist, zuzuhören“. Aus diesem Grund experimentiert ÉRMA erfolgreich mit alternativen Konzertformaten, wie beispielsweise im umjubelten Auftakt der Konzertreihe Panorama, bei dem das Ensemble im März 2026 sein Publikum in Kabinett der Sinne zu einem immersiven Erlebnis zwischen Konzert und Kunstausstellung einlud.
 
