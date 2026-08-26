@@ -1,5 +1,5 @@
 ---
-title: Concert
+title: Concerts
 date: "2026-08-09T20:30"
 date_end: "2026-08-12T20:00"
 month_only: false
