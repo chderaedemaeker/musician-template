@@ -1,5 +1,5 @@
 ---
-title: CD recording Muziekcentrum Track
+title: CD recording 
 date: "2025-10-21T00:00"
 type: ""
 image: /images/duo-altiler_54354350188_o.JPEG
@@ -12,3 +12,4 @@ layout: highlight.html
 tags: highlights
 lang: fr
 ---
+Works by Lili Boulanger, Debussy, Daems, Poot & Bartók. <br>Generously supported by Muziekcentrum Track.<br>More info about release date coming soon.
