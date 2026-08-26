@@ -17,10 +17,12 @@ layout: project.html
 tags: projects
 lang: de
 ---
-Das ÉRMA Ensemble ist ein junges Kölner Ensemble, das sich zusammengefunden hat, um die Musik der zweiten Hälfte des 20. und des 21. Jahrhunderts in all ihrer Virtuosität und Klangvielfalt zu erkunden. Ein breites Instrumentarium — darunter Mandoline, Gitarre und Harfe — eröffnet ÉRMA einzigartige klangliche Möglichkeiten.
+Das ÉRMA Ensemble ist ein junges, in Köln ansässiges Ensemble, das sich zusammengeschlossen hat, um die Musik in der zweiten Hälfte des 20. Jahrhunderts sowie des 21. Jahrhunderts in all ihrer Virtuosität und all ihren Klangfarben zu erkunden. Ein vielfältiges Instrumentarium, u.A. mit Mandoline, Gitarre und Harfe, bietet ÉRMA ganz besondere klangliche Möglichkeiten.
 
-Ziel des Ensembles ist es, zeitgenössische Musik ihrem Publikum näherzubringen — wobei „Publikum" hier heißt: „alle, die bereit sind zuzuhören". Deshalb hat ÉRMA erfolgreich mit alternativen Konzertformaten experimentiert, etwa der gefeierten Eröffnung der Konzertreihe Panorama, zu der das Ensemble sein Publikum im März 2026 ins Kabinett der Sinne einlud — ein immersives Erlebnis zwischen Konzert und Kunstausstellung.
+Ziel des Ensembles ist es, dem Publikum zeitgenössische Musik näherzubringen wobei Publikum in diesem Zusammenhang heißt “jede*r, die/der bereit ist, zuzuhören“. Aus diesem Grund experimentiert ÉRMA erfolgreich mit alternativen Konzertformaten, wie beispielsweise im umjubelten Auftakt der Konzertreihe Panorama, bei dem das Ensemble im März 2026 sein Publikum in Kabinett der Sinne zu einem immersiven Erlebnis zwischen Konzert und Kunstausstellung einlud.
 
-Darüber hinaus engagiert sich das Ensemble für Projekte mit gesellschaftlicher Relevanz. Kooperationen mit anderen Kunstformen und Kulturen spielen dabei eine große Rolle — so entstand die Zusammenarbeit mit Derya Yildirim, einer Hamburger Bağlama-Spielerin türkischer Herkunft, für die Produktion *Crossing the Abyss* im November 2024.<br>Das Ensemble trat mehrfach beim Achtbrücken Festival in Köln auf, etwa 2023, als der Kompositionswettbewerb ÉRMA gewidmet war (Konzert im WDR Funkhaus). Im Mai 2026 spielte ÉRMA ein Kinderkonzert in der Kölner Philharmonie.
+Des Weiteren ist es ein Anliegen des Ensembles, Projekte mit gesellschaftlicher Relevanz zu erdenken. Dabei spielen Kollaborationen mit anderen Ausdrucksformen und Kulturen eine große Rolle, was im November 2024 in Crossing the Abyss zur Zusammenarbeit mit der türkischstämmigen Hamburgerin Bağlama-Spielerin Derya Yildrim geführt hat.
 
-Von 2023 bis 2025 war ÉRMA Teil des Förderprogramms InSzene des Podium Gegenwart im Deutschen Musikrat.
+Das Ensemble war mehrfach zu Gast beim Achtbrücken Festival in Köln, beispielsweise im Jahr 2023, als ÉRMA der Kompositionswettbewerb gewidmet war (Konzert im WDR Funkhaus).
+
+Von 2023 bis 2025 war ÉRMA Teil der InSzene-Förderung vom Podium Gegenwart des Deutschen Musikrats.
