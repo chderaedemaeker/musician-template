@@ -1,5 +1,5 @@
 ---
-title: Festival Musiq3
+title: Flagey Festival Musiq3
 date: "2026-06-28T19:00"
 date_end: ""
 month_only: false
