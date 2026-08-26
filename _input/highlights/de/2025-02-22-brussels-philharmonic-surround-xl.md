@@ -1,12 +1,14 @@
 ---
-title: "Brussels Philharmonic — Surround XL"
-slug: "brussels-philharmonic-surround-xl"
-date: 2025-02-22T00:00:00
-type: "Solistin"
-image: "/images/brussels-philharmonic_54354354978_o.jpeg"
+title: Brussels Philharmonic — Bartók Rhapsody 2
+date: "2025-02-22T00:00"
+type: Solistin
+image: /images/brussels-philharmonic_54354354978_o.jpeg
+hide_image: false
 link: ""
-place: "Kortrijk, Leuven & Brüssel, Belgien"
-collaborators: "Brussels Philharmonic, Roeland Henkens"
+place: Kortrijk, Leuven & Brüssel, Belgien
+collaborators: Brussels Philharmonic, Roeland Henkens
+featured: false
+slug: brussels-philharmonic-surround-xl
 layout: highlight.html
 tags: highlights
 lang: de
