@@ -5,11 +5,11 @@ type: solo
 image: /images/DSC_1089.jpg
 hide_image: false
 link: ""
-place: Cologne
+place: Cologne Kunststation Sankt Peter
 collaborators: ÉRMA Ensemble
 featured: false
 layout: highlight.html
 tags: highlights
 lang: nl
 ---
-![DSC_1163.jpg](/images/DSC_1163.jpg)Images by Jay Raissis
+![DSC_1163.jpg](/images/DSC_1163.jpg)
