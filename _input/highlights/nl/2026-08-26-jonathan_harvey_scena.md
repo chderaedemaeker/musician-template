@@ -1,5 +1,5 @@
 ---
-title: Jonathan Harvey
+title: Jonathan Harvey - Scena
 date: "2026-03-18T00:00"
 type: solo
 image: /images/DSC_1089.jpg
