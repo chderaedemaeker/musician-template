@@ -791,7 +791,12 @@ class App {
       this.el.innerHTML = '<div class="loading-state"><span class="spinner"></span> Loading...</div>';
       await this.loadConfig();
       if (this.collections.length) return this.renderDashboard();
-      this.el.innerHTML = '<div class="empty-state">Could not load collections.</div>';
+      // A stale login (e.g. after the site moved) fails every request —
+      // always leave a way to start a fresh session
+      this.el.innerHTML = `<div class="empty-state">Could not load the content.<br/>
+        <span style="font-size:.85rem;color:var(--dark-grey);">This usually means the login session is stale.</span><br/><br/>
+        <button class="btn btn-primary" id="relogin-btn">Log out and sign in again</button></div>`;
+      document.getElementById('relogin-btn').addEventListener('click', () => this.logout());
       return;
     }
     this.el.innerHTML = `
