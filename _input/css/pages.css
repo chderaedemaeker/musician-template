@@ -763,7 +763,8 @@ li:last-child > .upcoming-item {
 .note-drift-text {
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: var(--text-lede);
+  /* 0.6 of the lede size — quieter, more intimate */
+  font-size: calc(var(--text-lede) * 0.6);
   font-weight: 300;
   line-height: 1.5;
   color: var(--charcoal);
