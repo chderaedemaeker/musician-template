@@ -1258,3 +1258,43 @@ li:last-child > .upcoming-item {
   .note-media .note-media-sway,
   .note-link-float { animation: none; }
 }
+
+/* ── Hero scroll hint — a quiet white chevron: fades in after a second,
+   nudges down twice, rests, nudges twice more, then fades away for good ── */
+.hero-scroll-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 2.2rem;
+  z-index: 2;
+  color: rgba(246, 246, 244, 0.9);
+  filter: drop-shadow(0 1px 4px rgba(13, 13, 12, 0.35));
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-50%);
+  animation: hero-scroll-hint 8s ease-in-out 1s 1 forwards;
+}
+
+.hero-scroll-hint svg { display: block; }
+
+@keyframes hero-scroll-hint {
+  0%   { opacity: 0; transform: translateX(-50%) translateY(0); }
+  9%   { opacity: 1; transform: translateX(-50%) translateY(0); }
+  /* first pair of nudges */
+  13%  { transform: translateX(-50%) translateY(9px); }
+  17%  { transform: translateX(-50%) translateY(0); }
+  21%  { transform: translateX(-50%) translateY(9px); }
+  25%  { transform: translateX(-50%) translateY(0); }
+  /* rest */
+  55%  { opacity: 1; transform: translateX(-50%) translateY(0); }
+  /* second pair */
+  59%  { transform: translateX(-50%) translateY(9px); }
+  63%  { transform: translateX(-50%) translateY(0); }
+  67%  { transform: translateX(-50%) translateY(9px); }
+  71%  { opacity: 1; transform: translateX(-50%) translateY(0); }
+  /* gone */
+  100% { opacity: 0; transform: translateX(-50%) translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-scroll-hint { display: none; }
+}
