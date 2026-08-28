@@ -281,6 +281,7 @@
   grid-column: 1 / 7;
   background: var(--accent);
   padding: var(--space-lg) var(--space-md);
+  margin-top: var(--space-lg);
 }
 
 .bento-contact .label {
@@ -741,7 +742,8 @@ li:last-child > .upcoming-item {
    then recedes a little once it has been said. ── */
 .note-drift {
   max-width: var(--width-prose);
-  margin: var(--space-xl) auto calc(-1 * var(--space-sm));
+  /* generous air around the thought — three times the old breathing room */
+  margin: calc(var(--space-xl) * 3) auto calc(var(--space-xl) * 1.5);
   padding: 0 var(--gutter);
   text-align: center;
   position: relative;
