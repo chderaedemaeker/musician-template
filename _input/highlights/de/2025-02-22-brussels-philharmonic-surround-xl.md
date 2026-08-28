@@ -1,7 +1,7 @@
 ---
 title: Brussels Philharmonic — Bartók Rhapsody 2
 date: "2025-02-22T00:00"
-type: Solistin
+type: "Concert"
 image: /images/brussels-philharmonic_54354354978_o.jpeg
 hide_image: false
 link: ""

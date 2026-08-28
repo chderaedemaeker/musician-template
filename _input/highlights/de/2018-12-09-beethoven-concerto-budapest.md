@@ -2,7 +2,7 @@
 title: "Beethoven Violinkonzert"
 slug: "beethoven-concerto-budapest"
 date: 2018-12-09T00:00:00
-type: "Konzert"
+type: "Video, Concert"
 image: "/images/buda.webp"
 link: "yhEuEVZcuW0"
 place: "Budapest, Ungarn"

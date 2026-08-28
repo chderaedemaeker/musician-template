@@ -1286,3 +1286,43 @@ li:last-child > .upcoming-item {
 @media (prefers-reduced-motion: reduce) {
   .hero-scroll-hint { display: none; }
 }
+
+/* ── Highlights filters — quiet pills under the page title ── */
+.hl-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: calc(-1 * var(--space-md)) 0 var(--space-md);
+}
+
+.hl-filter {
+  font-family: var(--font-sans);
+  font-size: var(--text-label);
+  color: var(--dark-grey);
+  background: none;
+  border: 1px solid var(--warm-grey);
+  border-radius: 999px;
+  padding: 0.45em 1.1em;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease);
+}
+
+.hl-filter:hover {
+  color: var(--near-black);
+  border-color: var(--near-black);
+}
+
+.hl-filter.active {
+  background: var(--near-black);
+  border-color: var(--near-black);
+  color: var(--off-white);
+}
+
+/* Mobile: the first highlight card is visible without scrolling */
+@media (max-width: 768px) {
+  .highlights-section .page-header {
+    padding-top: var(--space-lg);
+    padding-bottom: var(--space-sm);
+  }
+  .hl-filters { margin-top: 0; }
+}

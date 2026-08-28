@@ -106,7 +106,7 @@
         });
         groupIo.unobserve(entry.target);
       });
-    }, { threshold: 0.08 });
+    }, { threshold: 0, rootMargin: '0px 0px 30% 0px' });
     document.querySelectorAll('.reveal-group').forEach(function (group) {
       groupIo.observe(group);
     });

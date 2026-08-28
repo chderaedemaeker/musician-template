@@ -48,7 +48,6 @@ img.prog-img.prog-loaded {
   font-family: var(--font-inter);
   font-size: 0.65rem;
   font-weight: 400;
-  letter-spacing: 0.05em;
   color: var(--mid-grey);
   text-align: right;
   margin-top: 0.35rem;

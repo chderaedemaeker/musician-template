@@ -2244,3 +2244,6 @@ body { letter-spacing: -0.01em; }
   width: 2.4rem; height: 1.8rem; padding: 0; border: 1px solid var(--warm-grey);
   background: none; cursor: pointer;
 }
+
+.cats-editor { display: flex; gap: 1.1rem; flex-wrap: wrap; }
+.cat-row { display: flex; align-items: center; gap: .4rem; font-size: .85rem; }

@@ -2,7 +2,7 @@
 title: "Orpheus Falling — Sarah Nemtsov"
 slug: "orpheus-falling"
 date: 2022-06-01T00:00:00
-type: "Music Video"
+type: "Video"
 image: "/images/erma.png"
 link: "JuXdkXQqavo"
 place: "Cologne, Germany"

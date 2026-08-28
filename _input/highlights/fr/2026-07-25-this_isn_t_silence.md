@@ -1,7 +1,7 @@
 ---
 title: This isn't Silence
 date: "2021-07-16T00:00"
-type: Enregistrement live
+type: "Recording, Concert"
 image: /images/img2.jpg
 hide_image: true
 link: ""

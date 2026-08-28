@@ -2225,6 +2225,14 @@ class App {
         </div>`;
       }
 
+      case 'categories': {
+        const CATS = ['Discography', 'Video', 'Recording', 'Concert'];
+        const chosen = new Set(String(value || '').split(',').map(x => x.trim()).filter(Boolean));
+        return `<div class="cats-editor" data-cats-field="${field.name}" data-locale="${locale}">
+          ${CATS.map(c => `<label class="checkbox-row cat-row"><input type="checkbox" class="cat-toggle" value="${c}"${chosen.has(c) ? ' checked' : ''} /> <span>${c}</span></label>`).join('')}
+        </div>`;
+      }
+
       case 'audiofile':
       case 'videofile': {
         const kind = field.widget === 'audiofile' ? 'audio' : 'video';
@@ -3242,6 +3250,13 @@ class App {
         url: row.querySelector('.link-url').value.trim(),
       })).filter(l => l.label || l.url);
     });
+    // Category checkboxes serialize to a comma-joined string
+    formEl.querySelectorAll('.cats-editor').forEach(ed => {
+      const loc = ed.dataset.locale;
+      if (!state.data[loc]) return;
+      state.data[loc][ed.dataset.catsField] = Array.from(ed.querySelectorAll('.cat-toggle:checked')).map(cb => cb.value).join(', ');
+    });
+
     // Images editors serialize to arrays of {image}
     formEl.querySelectorAll('.images-editor').forEach(editor => {
       const loc = editor.dataset.locale;

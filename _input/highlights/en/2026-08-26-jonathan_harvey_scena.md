@@ -1,7 +1,7 @@
 ---
 title: Jonathan Harvey - Scena
 date: "2026-03-18T00:00"
-type: Solo
+type: "Concert"
 image: /images/DSC_1089.jpg
 hide_image: false
 link: ""

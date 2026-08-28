@@ -1,7 +1,7 @@
 ---
 title: Duo Altiler at Studio Toots
 date: "2024-06-01T00:00"
-type: Studio recording
+type: "Recording"
 image: /images/De twintigers-13 (2).jpeg
 hide_image: false
 link: woFVpDa_csI

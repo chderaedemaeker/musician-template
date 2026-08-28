@@ -48,7 +48,12 @@
     "print": "Print",
     "link_copied": "Link copied",
     "newsletter_hint": "Stay up to date with the latest concerts, recordings and highlights.",
-    "no_projects": "No projects found."
+    "no_projects": "No projects found.",
+    "filter_all": "All",
+    "cat_discography": "Discography",
+    "cat_video": "Video",
+    "cat_recording": "Recording",
+    "cat_concert": "Concert"
   },
   "nl": {
     "native_name": "Nederlands",
@@ -99,7 +104,12 @@
     "print": "Afdrukken",
     "link_copied": "Link gekopieerd",
     "newsletter_hint": "Blijf op de hoogte van de nieuwste concerten, opnames en hoogtepunten.",
-    "no_projects": "Geen projecten gevonden."
+    "no_projects": "Geen projecten gevonden.",
+    "filter_all": "Alles",
+    "cat_discography": "Discografie",
+    "cat_video": "Video",
+    "cat_recording": "Opname",
+    "cat_concert": "Concert"
   },
   "fr": {
     "native_name": "Français",
@@ -150,7 +160,12 @@
     "print": "Imprimer",
     "link_copied": "Lien copié",
     "newsletter_hint": "Restez au courant des derniers concerts, enregistrements et moments forts.",
-    "no_projects": "Aucun projet trouvé."
+    "no_projects": "Aucun projet trouvé.",
+    "filter_all": "Tout",
+    "cat_discography": "Discographie",
+    "cat_video": "Vidéo",
+    "cat_recording": "Enregistrement",
+    "cat_concert": "Concert"
   },
   "de": {
     "native_name": "Deutsch",
@@ -201,6 +216,11 @@
     "print": "Drucken",
     "link_copied": "Link kopiert",
     "newsletter_hint": "Bleiben Sie auf dem Laufenden über die neuesten Konzerte, Aufnahmen und Highlights.",
-    "no_projects": "Keine Projekte gefunden."
+    "no_projects": "Keine Projekte gefunden.",
+    "filter_all": "Alle",
+    "cat_discography": "Diskografie",
+    "cat_video": "Video",
+    "cat_recording": "Aufnahme",
+    "cat_concert": "Konzert"
   }
 }
