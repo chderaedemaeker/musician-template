@@ -1,5 +1,5 @@
 ---
-title: De Bijloke 1 2 3
+title: De Bijloke
 date: "2026-12-05T20:00"
 date_end: ""
 month_only: false
