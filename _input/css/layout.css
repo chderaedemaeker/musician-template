@@ -593,6 +593,13 @@ main {
   gap: var(--space-xs);
 }
 
+/* On small screens the field takes the full row — unmistakably an input */
+@media (max-width: 600px) {
+  .footer-news-row input {
+    flex: 1 1 100%;
+  }
+}
+
 .footer-news-row input {
   flex: 1;
   min-width: 0;
