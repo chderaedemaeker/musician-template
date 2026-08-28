@@ -1,7 +1,7 @@
 ---
 title: CD recording
 date: "2025-10-21T00:00"
-type: Discography, Recording
+type: Discography
 image: /images/duo-altiler_54354350188_o.JPEG
 hide_image: false
 link: kZ6C1GMgPV0
