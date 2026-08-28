@@ -181,7 +181,7 @@
   flex-direction: column;
   justify-content: flex-end;
   padding: var(--space-md);
-  background: linear-gradient(rgba(26, 26, 25, 0.02) 45%, rgba(26, 26, 25, 0.55));
+  background: linear-gradient(var(--card-shade-soft, rgba(26, 26, 25, 0.02)) 45%, var(--card-shade, rgba(26, 26, 25, 0.55)));
 }
 
 .bento-highlight-label {

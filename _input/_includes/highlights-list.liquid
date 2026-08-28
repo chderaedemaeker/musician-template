@@ -21,7 +21,7 @@
   <div class="highlights-grid highlights-grid--large reveal-group">
     {% if sortedHighlights.size > 0 %}
       {% for highlight in sortedHighlights %}
-        <a href="/highlights/{{ lang }}/{{ highlight.inputPath | split: '/' | last | replace: '.md', '' }}/" class="highlight-card reveal{% if highlight.data.featured %} highlight-card--featured{% endif %}{% unless highlight.data.image and highlight.data.image != '' %} highlight-card--noimg{% endunless %}" data-cats="{{ highlight.data.type }}" {% unless highlight.data.image and highlight.data.image != '' %}data-initial="{{ highlight.data.title | strip | slice: 0, 1 | upcase }}"{% endunless %}>
+        <a href="/highlights/{{ lang }}/{{ highlight.inputPath | split: '/' | last | replace: '.md', '' }}/" class="highlight-card reveal{% if highlight.data.featured %} highlight-card--featured{% endif %}{% unless highlight.data.image and highlight.data.image != '' %} highlight-card--noimg{% endunless %}" data-cats="{{ highlight.data.type }}"{% if highlight.data.image and highlight.data.image != '' %} style="--card-shade: rgba({{ highlight.data.image | imageShade }}, 0.62); --card-shade-soft: rgba({{ highlight.data.image | imageShade }}, 0.04);"{% endif %} {% unless highlight.data.image and highlight.data.image != '' %}data-initial="{{ highlight.data.title | strip | slice: 0, 1 | upcase }}"{% endunless %}>
           {% if highlight.data.image and highlight.data.image != '' %}
             {% progressiveImage highlight.data.image, highlight.data.title %}
           {% endif %}

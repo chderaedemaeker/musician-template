@@ -488,8 +488,9 @@
 .highlight-card-overlay {
   position: absolute;
   inset: 0;
-  /* tonal near-black scrim, strong enough at the base for white text */
-  background: linear-gradient(rgba(26, 26, 25, 0.02) 45%, rgba(26, 26, 25, 0.55));
+  /* scrim in a darker, calmer take on the photo's own colour — each
+     cover glows in its own hue; near-black where no shade is known */
+  background: linear-gradient(var(--card-shade-soft, rgba(26, 26, 25, 0.02)) 45%, var(--card-shade, rgba(26, 26, 25, 0.55)));
   display: flex;
   flex-direction: column;
   justify-content: flex-end;

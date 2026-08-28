@@ -64,6 +64,39 @@ function imageInfo(inputPath) {
     return imageInfoCache[inputPath];
 }
 
+// A darker, desaturated shade of an image's vibrant colour — used as the
+// card overlay tint so each cover glows in its own hue while text stays
+// readable on it.
+function shadeOfColor({ r, g, b }) {
+    // rgb → hsl
+    const rn = r / 255, gn = g / 255, bn = b / 255;
+    const max = Math.max(rn, gn, bn), min = Math.min(rn, gn, bn);
+    let h = 0, sat = 0;
+    const l = (max + min) / 2;
+    if (max !== min) {
+        const d = max - min;
+        sat = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        if (max === rn) h = ((gn - bn) / d + (gn < bn ? 6 : 0)) / 6;
+        else if (max === gn) h = ((bn - rn) / d + 2) / 6;
+        else h = ((rn - gn) / d + 4) / 6;
+    }
+    // darker and calmer, dark enough for white text
+    sat *= 0.5;
+    const ln = Math.min(l * 0.5, 0.26);
+    // hsl → rgb
+    const q = ln < 0.5 ? ln * (1 + sat) : ln + sat - ln * sat;
+    const pp = 2 * ln - q;
+    const hue = t => {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1 / 6) return pp + (q - pp) * 6 * t;
+        if (t < 1 / 2) return q;
+        if (t < 2 / 3) return pp + (q - pp) * (2 / 3 - t) * 6;
+        return pp;
+    };
+    return [hue(h + 1 / 3), hue(h), hue(h - 1 / 3)].map(x => Math.round(x * 255)).join(',');
+}
+
 // Sources at or below this size are already light enough — recompressing
 // them only costs visible quality. Serve them untouched.
 const OPTIMIZE_ABOVE_BYTES = 400 * 1024;
@@ -186,6 +219,16 @@ module.exports = function (eleventyConfig) {
     // (e.g. the about-page gallery's background-image slides)
     eleventyConfig.addShortcode("imageCredit", function(src) {
         return src ? creditHtml(`_input${src}`) : '';
+    });
+
+    // "r,g,b" of a darker, desaturated take on the image's vibrant colour
+    eleventyConfig.addFilter("imageShade", async function(src) {
+        if (!src) return "";
+        try {
+            const info = await imageInfo(src.startsWith("/") ? `_input${src}` : src);
+            const m = info.color.match(/rgb\((\d+),(\d+),(\d+)\)/);
+            return shadeOfColor({ r: +m[1], g: +m[2], b: +m[3] });
+        } catch (e) { return ""; }
     });
 
     // Filter for optimized image URL (for background-image etc.)

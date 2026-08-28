@@ -46,7 +46,7 @@
     {% endfor %}
     {% if latestFound == false %}{% assign latestHighlight = sortedHighlightsHome | first %}{% endif %}
     {% if latestHighlight %}
-    <a href="/highlights/{{ lang }}/{{ latestHighlight.inputPath | split: '/' | last | replace: '.md', '' }}/" class="bento-cell bento-highlight reveal{% unless latestHighlight.data.image and latestHighlight.data.image != '' %} bento-highlight--noimg{% endunless %}" {% unless latestHighlight.data.image and latestHighlight.data.image != '' %}data-initial="{{ latestHighlight.data.title | strip | slice: 0, 1 | upcase }}"{% endunless %}>
+    <a href="/highlights/{{ lang }}/{{ latestHighlight.inputPath | split: '/' | last | replace: '.md', '' }}/" class="bento-cell bento-highlight reveal{% unless latestHighlight.data.image and latestHighlight.data.image != '' %} bento-highlight--noimg{% endunless %}" {% if latestHighlight.data.image and latestHighlight.data.image != '' %}style="--card-shade: rgba({{ latestHighlight.data.image | imageShade }}, 0.62); --card-shade-soft: rgba({{ latestHighlight.data.image | imageShade }}, 0.04);"{% endif %} {% unless latestHighlight.data.image and latestHighlight.data.image != '' %}data-initial="{{ latestHighlight.data.title | strip | slice: 0, 1 | upcase }}"{% endunless %}>
       {% if latestHighlight.data.image and latestHighlight.data.image != '' %}
         {% progressiveImage latestHighlight.data.image, latestHighlight.data.title %}
       {% endif %}
