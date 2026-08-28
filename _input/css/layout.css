@@ -543,11 +543,18 @@ main {
 }
 
 .footer-news {
-  /* the newsletter spans the footer's full width, beneath the columns */
-  grid-column: 1 / -1;
-  justify-self: stretch;
-  width: 100%;
-  margin-top: var(--space-md);
+  justify-self: end;
+  width: min(24rem, 100%);
+}
+
+/* On small screens the newsletter takes the full width */
+@media (max-width: 900px) {
+  .footer-news {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+    width: 100%;
+    margin-top: var(--space-md);
+  }
 }
 
 .footer-heading {
