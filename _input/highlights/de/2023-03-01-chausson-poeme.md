@@ -1,12 +1,14 @@
 ---
-title: "Ernest Chausson — Poème"
-slug: "chausson-poeme"
-date: 2023-03-01T00:00:00
-type: "Video"
-image: "/images/img_1852.jpeg"
-link: "XSOi7_MJnqI"
+title: Ernest Chausson — Poème
+date: "2023-03-01T00:00"
+type: Video
+image: /images/img_1852.jpeg
+hide_image: false
+link: XSOi7_MJnqI
 place: ""
 collaborators: ""
+featured: false
+slug: chausson-poeme
 layout: highlight.html
 tags: highlights
 lang: de
