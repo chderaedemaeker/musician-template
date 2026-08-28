@@ -665,6 +665,7 @@ class App {
     if (hash === '#/login') { if (this.api) { location.hash = '#/'; return; } return this.renderLogin(); }
     if (hash === '#/settings') return this.renderSettings();
     if (hash === '#/site' || hash === '#/hero') return this.renderSiteSettings();
+    if (hash === '#/newsletter') return this.renderNewsletterBuilder();
     if (hash === '#/' || hash === '#') return this.renderDashboard();
     if (hash === '#/media') return this.renderMedia();
     const colMatch = hash.match(/^#\/([a-z]+)$/);
@@ -804,6 +805,10 @@ class App {
           <div class="card-label">Site settings</div>
           <div class="card-count">Hero photo, social links, languages</div>
         </div>
+        <div class="card" id="newsletter-card">
+          <div class="card-label">Newsletter</div>
+          <div class="card-count">Compose an email from the site's content</div>
+        </div>
       </div>
       <div class="publish-banner" id="publish-banner"></div>
       <div class="recent-edits">
@@ -816,6 +821,7 @@ class App {
     }));
     document.getElementById('media-card').addEventListener('click', () => { location.hash = '#/media'; });
     document.getElementById('site-card').addEventListener('click', () => { location.hash = '#/site'; });
+    document.getElementById('newsletter-card').addEventListener('click', () => { location.hash = '#/newsletter'; });
     this._bindTopbar();
     for (const col of this.collections) this._fetchEntryCount(col);
     this._loadRecentEdits();
@@ -3585,6 +3591,278 @@ class App {
     });
   }
 
+
+  // ---- Newsletter builder ----
+  // Compose an email from the site's own content: pick concerts, notes,
+  // highlights and ensembles, order the sections, write a title and intro,
+  // then copy the formatted result straight into any mail program.
+  async _loadNewsletterData() {
+    if (this._nlData) return this._nlData;
+    const site = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+      ? 'https://vdr-staging.netlify.app' : location.origin;
+    const loadFolder = async (folder, urlFor) => {
+      try {
+        const contents = await this.api.getContents(folder);
+        const files = contents.filter(f => f.name.endsWith('.md'));
+        const entries = await pMap(files, async f => {
+          try {
+            const fd = await this.api.getFile(f.path);
+            const parsed = FrontMatter.parse(fd.content);
+            return { name: f.name, data: parsed.data, body: parsed.body, url: site + urlFor(f.name.replace(/\.md$/, '')) };
+          } catch { return null; }
+        });
+        return entries.filter(Boolean);
+      } catch { return []; }
+    };
+    const concertsRaw = await this._ensureConcertEntries();
+    const concerts = concertsRaw
+      .filter(e => e.data && e.data.date && e.data.status !== 'draft' && e.data.status !== 'archived')
+      .map(e => ({ name: e.name, data: e.data, url: site + '/en/concerts/' + e.name.replace(/\.md$/, '') + '/' }));
+    const [notes, highlights, ensembles] = await Promise.all([
+      loadFolder('_input/en/notes', slug => `/en/notes/${slug}/`),
+      loadFolder('_input/highlights/en', slug => `/highlights/en/${slug}/`),
+      loadFolder('_input/ensembles/en', slug => `/ensembles/en/${slug}/`),
+    ]);
+    const byDateAsc = (a, b) => String(a.data.date || '').localeCompare(String(b.data.date || ''));
+    const byDateDesc = (a, b) => byDateAsc(b, a);
+    concerts.sort(byDateAsc);
+    notes.sort(byDateDesc);
+    highlights.sort(byDateDesc);
+    this._nlData = { site, concerts, notes, highlights, ensembles };
+    return this._nlData;
+  }
+
+  async renderNewsletterBuilder() {
+    this.el.innerHTML = `
+      ${this._topbar()}
+      <nav class="breadcrumb"><a href="#/">Dashboard</a><span class="sep">/</span><span>Newsletter</span></nav>
+      <div class="editor-header">
+        <h2>Newsletter</h2>
+        <div class="editor-actions">
+          <button class="btn btn-primary" id="nl-copy-btn" title="Copies the formatted email — paste it straight into your mail program">Copy email</button>
+        </div>
+      </div>
+      <div class="editor-split">
+        <div id="nl-form"><div class="loading-state"><span class="spinner"></span> Loading the site's content...</div></div>
+        <div class="live-preview-panel">
+          <div class="live-preview-header">Preview</div>
+          <div class="live-preview-content" style="padding:0;">
+            <iframe id="nl-preview" title="Newsletter preview" style="width:100%;height:100%;min-height:480px;border:none;background:#f5f4f2;"></iframe>
+          </div>
+        </div>
+      </div>`;
+    this._bindTopbar();
+
+    const data = await this._loadNewsletterData();
+    const state = {
+      title: '', intro: '',
+      order: ['concerts', 'notes', 'highlights', 'ensembles'],
+      picked: { concerts: new Set(), notes: new Set(), highlights: new Set(), ensembles: new Set() },
+      showPastConcerts: false,
+    };
+
+    const SECTION_LABELS = { concerts: 'Concerts', notes: 'Notes', highlights: 'Highlights', ensembles: 'Ensembles' };
+    const today = new Date().toISOString().substring(0, 10);
+
+    const itemLabel = (kind, e) => {
+      const d = e.data.date ? String(e.data.date).substring(0, 10) : '';
+      if (kind === 'concerts') return `${d} — ${e.data.title || e.name}${e.data.place ? ' · ' + e.data.place : ''}`;
+      if (kind === 'notes') return `${d} — ${e.data.title || e.name}`;
+      return `${e.data.title || e.name}`;
+    };
+
+    const renderForm = () => {
+      const formEl = document.getElementById('nl-form');
+      formEl.innerHTML = `
+        <div class="form-group">
+          <label class="form-label">Title</label>
+          <input type="text" class="form-input" id="nl-title" value="${esc(state.title)}" placeholder="e.g. Autumn concerts" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Short text on top <span class="optional">(optional)</span></label>
+          <textarea class="form-input" id="nl-intro" rows="3" placeholder="A few personal lines to open the email\u2026">${esc(state.intro)}</textarea>
+        </div>
+        ${state.order.map((kind, oi) => {
+          let items = data[kind];
+          if (kind === 'concerts' && !state.showPastConcerts) {
+            items = items.filter(e => String(e.data.date).substring(0, 10) >= today);
+          }
+          const rows = items.map(e => `<label class="nl-item">
+            <input type="checkbox" class="entry-checkbox nl-pick" data-kind="${kind}" data-name="${esc(e.name)}" ${state.picked[kind].has(e.name) ? 'checked' : ''} />
+            <span>${esc(itemLabel(kind, e))}</span>
+          </label>`).join('');
+          return `<div class="nl-section">
+            <div class="nl-section-head">
+              <span class="nl-section-title">${SECTION_LABELS[kind]}${state.picked[kind].size ? ` (${state.picked[kind].size})` : ''}</span>
+              <span class="nl-section-move">
+                <button type="button" class="nl-move" data-kind="${kind}" data-dir="-1" ${oi === 0 ? 'disabled' : ''} title="Move this section up">&#8593;</button>
+                <button type="button" class="nl-move" data-kind="${kind}" data-dir="1" ${oi === state.order.length - 1 ? 'disabled' : ''} title="Move this section down">&#8595;</button>
+              </span>
+            </div>
+            <div class="nl-items">${rows || '<p class="nl-empty">Nothing here yet.</p>'}
+            ${kind === 'concerts' && !state.showPastConcerts ? '<button type="button" class="btn btn-ghost btn-sm" id="nl-past-btn">Show past concerts</button>' : ''}</div>
+          </div>`;
+        }).join('')}`;
+
+      formEl.querySelectorAll('.nl-pick').forEach(cb => cb.addEventListener('change', () => {
+        const set = state.picked[cb.dataset.kind];
+        if (cb.checked) set.add(cb.dataset.name); else set.delete(cb.dataset.name);
+        updatePreview();
+        const head = cb.closest('.nl-section').querySelector('.nl-section-title');
+        const kind = cb.dataset.kind;
+        head.innerHTML = `${SECTION_LABELS[kind]}${state.picked[kind].size ? ` (${state.picked[kind].size})` : ''}`;
+      }));
+      formEl.querySelectorAll('.nl-move').forEach(btn => btn.addEventListener('click', () => {
+        const i = state.order.indexOf(btn.dataset.kind);
+        const j = i + parseInt(btn.dataset.dir, 10);
+        if (j < 0 || j >= state.order.length) return;
+        [state.order[i], state.order[j]] = [state.order[j], state.order[i]];
+        renderForm(); updatePreview();
+      }));
+      const pastBtn = document.getElementById('nl-past-btn');
+      if (pastBtn) pastBtn.addEventListener('click', () => { state.showPastConcerts = true; renderForm(); });
+      document.getElementById('nl-title').addEventListener('input', e => { state.title = e.target.value; updatePreview(); });
+      document.getElementById('nl-intro').addEventListener('input', e => { state.intro = e.target.value; updatePreview(); });
+    };
+
+    let previewTimer;
+    const updatePreview = () => {
+      clearTimeout(previewTimer);
+      previewTimer = setTimeout(() => {
+        document.getElementById('nl-preview').srcdoc =
+          `<!doctype html><html><body style="margin:0;background:#f5f4f2;">${this._buildNewsletterHtml(state, data)}</body></html>`;
+      }, 250);
+    };
+
+    document.getElementById('nl-copy-btn').addEventListener('click', async () => {
+      const anyPicked = state.order.some(k => state.picked[k].size);
+      if (!state.title && !state.intro && !anyPicked) { showStatus('error', 'Pick some content first.'); return; }
+      const html = this._buildNewsletterHtml(state, data);
+      const plain = this._buildNewsletterText(state, data);
+      try {
+        await navigator.clipboard.write([new ClipboardItem({
+          'text/html': new Blob([html], { type: 'text/html' }),
+          'text/plain': new Blob([plain], { type: 'text/plain' }),
+        })]);
+        showStatus('saved', 'Copied — paste it straight into a new email');
+      } catch (e) {
+        // Older browsers: select a hidden rendered copy and use execCommand
+        const holder = document.createElement('div');
+        holder.contentEditable = 'true';
+        holder.style.cssText = 'position:fixed;left:-9999px;top:0;';
+        holder.innerHTML = html;
+        document.body.appendChild(holder);
+        const range = document.createRange();
+        range.selectNodeContents(holder);
+        const sel = window.getSelection();
+        sel.removeAllRanges(); sel.addRange(range);
+        const ok = document.execCommand('copy');
+        holder.remove();
+        showStatus(ok ? 'saved' : 'error', ok ? 'Copied — paste it straight into a new email' : 'Could not copy: ' + e.message);
+      }
+    });
+
+    renderForm();
+    updatePreview();
+  }
+
+  _nlPicked(state, data, kind) {
+    return data[kind].filter(e => state.picked[kind].has(e.name));
+  }
+
+  _nlDateLine(d) {
+    if (!d) return '';
+    const dt = new Date(d);
+    if (isNaN(dt)) return '';
+    let out = dt.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' });
+    if (/T(?!00:00)\d\d:\d\d/.test(String(d))) {
+      out += ' \u00b7 ' + dt.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    }
+    return out;
+  }
+
+  // The email mirrors the site: warm off-white ground, serif headings,
+  // quiet sans meta, hairline rules. Inline styles only (mail programs
+  // strip stylesheets); one 560px column that shrinks with the screen.
+  _buildNewsletterHtml(state, data) {
+    const site = data.site;
+    const S = {
+      meta: 'font-family:Helvetica,Arial,sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#8a847a;',
+      serif: "font-family:Georgia,'Times New Roman',serif;color:#33322f;",
+      link: 'color:#33322f;text-decoration:none;',
+      hairline: 'border-top:1px solid #e8e6e1;',
+    };
+    const heading = label => `<tr><td style="${S.meta}padding:30px 0 12px;">${esc(label)}</td></tr>`;
+
+    let sections = '';
+    for (const kind of state.order) {
+      const items = this._nlPicked(state, data, kind);
+      if (!items.length) continue;
+      if (kind === 'concerts') {
+        sections += heading('Concerts');
+        sections += items.map(e => `<tr><td style="${S.hairline}padding:14px 0;">
+          <div style="${S.meta}margin-bottom:4px;">${esc(this._nlDateLine(e.data.date))}${e.data.place ? ' \u2014 ' + esc(e.data.place) : ''}</div>
+          <div style="${S.serif}font-size:19px;line-height:1.3;"><a href="${e.url}" style="${S.link}">${esc(e.data.title || '')}</a></div>
+          ${e.data.collaborators ? `<div style="font-family:Helvetica,Arial,sans-serif;font-size:13px;color:#8a847a;margin-top:3px;">${esc(e.data.collaborators)}</div>` : ''}
+          ${e.data.link ? `<div style="margin-top:6px;"><a href="${esc(e.data.link)}" style="font-family:Helvetica,Arial,sans-serif;font-size:12px;color:#5c8ca3;">Tickets &amp; info</a></div>` : ''}
+        </td></tr>`).join('');
+      } else if (kind === 'notes') {
+        sections += heading('Notes');
+        sections += items.map(e => {
+          const text = (e.body || '').replace(/<[^>]+>/g, '').replace(/[#*_>\[\]()`]/g, '').replace(/\s+/g, ' ').trim().substring(0, 220);
+          return `<tr><td style="${S.hairline}padding:16px 0;" align="center">
+            <div style="${S.serif}font-style:italic;font-size:17px;line-height:1.6;color:#4d4841;">\u201C${esc(text)}\u201D</div>
+            <div style="${S.meta}margin-top:8px;"><a href="${e.url}" style="color:#8a847a;text-decoration:none;">${esc(String(e.data.date || '').substring(0, 10))} \u00b7 ${esc(e.data.title || '')}</a></div>
+          </td></tr>`;
+        }).join('');
+      } else {
+        sections += heading(kind === 'highlights' ? 'Highlights' : 'Ensembles');
+        sections += items.map(e => {
+          const img = e.data.image ? `${site}${String(e.data.image).startsWith('/') ? e.data.image : '/images/' + e.data.image}` : '';
+          return `<tr><td style="${S.hairline}padding:16px 0;">
+            ${img ? `<a href="${e.url}"><img src="${img}" width="560" style="width:100%;max-width:560px;height:auto;border:1px solid #33322f;display:block;margin-bottom:10px;" alt="${esc(e.data.title || '')}" /></a>` : ''}
+            <div style="${S.serif}font-size:19px;"><a href="${e.url}" style="${S.link}">${esc(e.data.title || '')}</a></div>
+            ${(e.data.type || e.data.collaborators) ? `<div style="font-family:Helvetica,Arial,sans-serif;font-size:13px;color:#8a847a;margin-top:3px;">${esc(e.data.type || e.data.collaborators)}</div>` : ''}
+          </td></tr>`;
+        }).join('');
+      }
+    }
+
+    const introHtml = state.intro
+      ? `<tr><td style="${S.serif}font-size:16px;line-height:1.7;color:#4d4841;padding:0 0 8px;" align="center">${esc(state.intro).replace(/\n/g, '<br/>')}</td></tr>`
+      : '';
+
+    return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f5f4f2;padding:36px 12px;"><tr><td align="center">
+      <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
+        <tr><td style="${S.meta}padding-bottom:16px;" align="center"><a href="${site}/en/" style="color:#8a847a;text-decoration:none;">Veronique De Raedemaeker</a></td></tr>
+        ${state.title ? `<tr><td style="${S.serif}font-size:28px;font-weight:normal;line-height:1.25;padding:0 0 14px;" align="center">${esc(state.title)}</td></tr>` : ''}
+        ${introHtml}
+        ${sections}
+        <tr><td style="${S.hairline}margin-top:10px;padding:22px 0 0;" align="center">
+          <a href="${site}/en/" style="font-family:Helvetica,Arial,sans-serif;font-size:13px;color:#f5f4f2;background:#33322f;text-decoration:none;padding:11px 24px;border-radius:999px;display:inline-block;">Visit the website</a>
+        </td></tr>
+      </table>
+    </td></tr></table>`;
+  }
+
+  _buildNewsletterText(state, data) {
+    const lines = [];
+    if (state.title) lines.push(state.title, '');
+    if (state.intro) lines.push(state.intro, '');
+    const LABELS = { concerts: 'CONCERTS', notes: 'NOTES', highlights: 'HIGHLIGHTS', ensembles: 'ENSEMBLES' };
+    for (const kind of state.order) {
+      const items = this._nlPicked(state, data, kind);
+      if (!items.length) continue;
+      lines.push(LABELS[kind]);
+      for (const e of items) {
+        const d = e.data.date ? String(e.data.date).substring(0, 10) + ' — ' : '';
+        lines.push(`${d}${e.data.title || ''}${e.data.place ? ' · ' + e.data.place : ''}`);
+        lines.push(e.url, '');
+      }
+    }
+    lines.push(data.site + '/en/');
+    return lines.join('\n');
+  }
 
   // ---- Media Library ----
   async renderMedia() {
