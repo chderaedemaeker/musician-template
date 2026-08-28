@@ -488,9 +488,20 @@
 .highlight-card-overlay {
   position: absolute;
   inset: 0;
-  /* scrim in a darker, calmer take on the photo's own colour — each
-     cover glows in its own hue; near-black where no shade is known */
-  background: linear-gradient(var(--card-shade-soft, rgba(26, 26, 25, 0.02)) 45%, var(--card-shade, rgba(26, 26, 25, 0.55)));
+  /* scrim in a darker, calmer take on the photo's own colour — an eased
+     multi-stop ramp, so the density builds without a visible band;
+     near-black where no shade is known */
+  background: linear-gradient(to bottom,
+    rgba(var(--shade-rgb, 26, 26, 25), 0.02) 0%,
+    rgba(var(--shade-rgb, 26, 26, 25), 0.03) 22%,
+    rgba(var(--shade-rgb, 26, 26, 25), 0.05) 34%,
+    rgba(var(--shade-rgb, 26, 26, 25), 0.08) 44%,
+    rgba(var(--shade-rgb, 26, 26, 25), 0.13) 54%,
+    rgba(var(--shade-rgb, 26, 26, 25), 0.20) 64%,
+    rgba(var(--shade-rgb, 26, 26, 25), 0.30) 74%,
+    rgba(var(--shade-rgb, 26, 26, 25), 0.42) 84%,
+    rgba(var(--shade-rgb, 26, 26, 25), 0.53) 93%,
+    rgba(var(--shade-rgb, 26, 26, 25), 0.62) 100%);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
