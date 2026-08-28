@@ -13,7 +13,7 @@
   {% if sortedProjects.size > 0 %}
     <div class="highlights-grid highlights-grid--compact reveal-group">
       {% for project in sortedProjects %}
-        <a href="/ensembles/{{ lang }}/{{ project.inputPath | split: '/' | last | replace: '.md', '' }}/" class="highlight-card reveal{% if project.data.featured %} highlight-card--featured{% endif %}{% unless project.data.image and project.data.image != '' %} highlight-card--noimg{% endunless %}" {% unless project.data.image and project.data.image != '' %}data-initial="{{ project.data.title | strip | slice: 0, 1 | upcase }}"{% endunless %}>
+        <a href="/ensembles/{{ lang }}/{{ project.inputPath | split: '/' | last | replace: '.md', '' }}/" class="highlight-card reveal{% if project.data.featured %} highlight-card--featured{% endif %}{% unless project.data.image and project.data.image != '' %} highlight-card--noimg{% endunless %}" {% unless project.data.image and project.data.image != '' %}data-initial="{{ project.data.title | strip | slice: 0, 1 | upcase }}"{% endunless %}{% if project.data.image and project.data.image != '' %} style="--shade-rgb: {{ project.data.image | imageShade }};"{% endif %}>
           {% if project.data.image and project.data.image != '' %}
             {% progressiveImage project.data.image, project.data.title %}
           {% endif %}
