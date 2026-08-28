@@ -3658,6 +3658,7 @@ class App {
       title: '', intro: '',
       order: ['concerts', 'notes', 'highlights', 'ensembles'],
       picked: { concerts: new Set(), notes: new Set(), highlights: new Set(), ensembles: new Set() },
+      itemText: { concerts: {}, notes: {}, highlights: {}, ensembles: {} },
       showPastConcerts: false,
     };
 
@@ -3687,10 +3688,17 @@ class App {
           if (kind === 'concerts' && !state.showPastConcerts) {
             items = items.filter(e => String(e.data.date).substring(0, 10) >= today);
           }
-          const rows = items.map(e => `<label class="nl-item">
-            <input type="checkbox" class="entry-checkbox nl-pick" data-kind="${kind}" data-name="${esc(e.name)}" ${state.picked[kind].has(e.name) ? 'checked' : ''} />
-            <span>${esc(itemLabel(kind, e))}</span>
-          </label>`).join('');
+          const rows = items.map(e => {
+            const on = state.picked[kind].has(e.name);
+            const txt = state.itemText[kind][e.name] || '';
+            return `<div class="nl-item-wrap">
+              <label class="nl-item">
+                <input type="checkbox" class="entry-checkbox nl-pick" data-kind="${kind}" data-name="${esc(e.name)}" ${on ? 'checked' : ''} />
+                <span>${esc(itemLabel(kind, e))}</span>
+              </label>
+              <textarea class="form-input nl-item-note" data-kind="${kind}" data-name="${esc(e.name)}" rows="2" placeholder="Write something about this — optional"${on ? '' : ' hidden'}>${esc(txt)}</textarea>
+            </div>`;
+          }).join('');
           return `<div class="nl-section">
             <div class="nl-section-head">
               <span class="nl-section-title">${SECTION_LABELS[kind]}${state.picked[kind].size ? ` (${state.picked[kind].size})` : ''}</span>
@@ -3707,6 +3715,8 @@ class App {
       formEl.querySelectorAll('.nl-pick').forEach(cb => cb.addEventListener('change', () => {
         const set = state.picked[cb.dataset.kind];
         if (cb.checked) set.add(cb.dataset.name); else set.delete(cb.dataset.name);
+        const note = cb.closest('.nl-item-wrap').querySelector('.nl-item-note');
+        if (note) note.hidden = !cb.checked;
         updatePreview();
         const head = cb.closest('.nl-section').querySelector('.nl-section-title');
         const kind = cb.dataset.kind;
@@ -3718,6 +3728,10 @@ class App {
         if (j < 0 || j >= state.order.length) return;
         [state.order[i], state.order[j]] = [state.order[j], state.order[i]];
         renderForm(); updatePreview();
+      }));
+      formEl.querySelectorAll('.nl-item-note').forEach(ta => ta.addEventListener('input', () => {
+        state.itemText[ta.dataset.kind][ta.dataset.name] = ta.value;
+        updatePreview();
       }));
       const pastBtn = document.getElementById('nl-past-btn');
       if (pastBtn) pastBtn.addEventListener('click', () => { state.showPastConcerts = true; renderForm(); });
@@ -3788,7 +3802,7 @@ class App {
   // that shrinks with the screen.
   _buildNewsletterHtml(state, data) {
     const site = data.site;
-    const SERIF = "font-family:Georgia,'Times New Roman',serif;";
+    const SERIF = "font-family:'AGL','Apple Garamond',Garamond,'Iowan Old Style',Georgia,'Times New Roman',serif;";
     const SANS = "font-family:Helvetica,Arial,sans-serif;";
     const S = {
       meta: `${SANS}font-size:12px;letter-spacing:.02em;color:#8a847a;`,
@@ -3796,6 +3810,10 @@ class App {
       hairline: 'border-top:1px solid #e8e6e1;',
     };
     const heading = label => `<tr><td style="${SERIF}font-size:26px;font-weight:normal;color:#33322f;padding:46px 0 18px;">${esc(label)}</td></tr>`;
+    const personal = (kind, e) => {
+      const t = ((state.itemText[kind] || {})[e.name] || '').trim();
+      return t ? `<div style="${SERIF}font-style:italic;font-size:15px;line-height:1.65;color:#4d4841;margin-top:9px;">${esc(t).replace(/\n/g, '<br/>')}</div>` : '';
+    };
 
     let sections = '';
     for (const kind of state.order) {
@@ -3823,6 +3841,7 @@ class App {
                 <div style="${SERIF}font-size:22px;line-height:1.3;"><a href="${e.url}" style="${S.link}">${esc(e.data.title || '')}</a></div>
                 ${where ? `<div style="${S.meta}margin-top:6px;">${esc(where)}</div>` : ''}
                 ${e.data.collaborators ? `<div style="${SANS}font-size:13px;color:#4d4841;margin-top:5px;">${esc(e.data.collaborators)}</div>` : ''}
+                ${personal('concerts', e)}
                 ${e.data.link ? `<div style="margin-top:9px;"><a href="${esc(e.data.link)}" style="${SANS}font-size:13px;color:#5c8ca3;text-decoration:none;">Tickets &amp; info &#8594;</a></div>` : ''}
               </td>
             </tr></table>
@@ -3835,6 +3854,7 @@ class App {
           return `<tr><td style="${S.hairline}padding:26px 0;" align="center">
             <div style="${SERIF}font-style:italic;font-size:19px;line-height:1.7;color:#4d4841;">\u201C${esc(text)}\u201D</div>
             <div style="${S.meta}margin-top:10px;"><a href="${e.url}" style="color:#8a847a;text-decoration:none;">${esc(String(e.data.date || '').substring(0, 10))} \u00b7 ${esc(e.data.title || '')}</a></div>
+            ${personal('notes', e)}
           </td></tr>`;
         }).join('');
       } else {
@@ -3845,6 +3865,7 @@ class App {
             ${img ? `<a href="${e.url}"><img src="${img}" width="600" style="width:100%;max-width:600px;height:auto;border:1px solid #33322f;display:block;margin-bottom:14px;" alt="${esc(e.data.title || '')}" /></a>` : ''}
             <div style="${SERIF}font-size:22px;line-height:1.3;"><a href="${e.url}" style="${S.link}">${esc(e.data.title || '')}</a></div>
             ${(e.data.type || e.data.collaborators) ? `<div style="${S.meta}margin-top:5px;">${esc(e.data.type || e.data.collaborators)}</div>` : ''}
+            ${personal(kind, e)}
           </td></tr>`;
         }).join('');
       }
@@ -3854,7 +3875,8 @@ class App {
       ? `<tr><td style="${SERIF}font-size:17px;line-height:1.75;color:#4d4841;padding:0 0 14px;" align="center">${esc(state.intro).replace(/\n/g, '<br/>')}</td></tr>`
       : '';
 
-    return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f5f4f2;padding:52px 16px 44px;"><tr><td align="center">
+    return `<style>@font-face{font-family:'AGL';src:url('${site}/images/AppleGaramond-Light.ttf') format('truetype');font-weight:normal;font-style:normal;}</style>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f5f4f2;padding:52px 16px 44px;"><tr><td align="center">
       <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
         <tr><td style="${SERIF}font-size:24px;letter-spacing:.01em;color:#33322f;padding-bottom:40px;" align="center"><a href="${site}/en/" style="${S.link}">Veronique De Raedemaeker</a></td></tr>
         ${state.title ? `<tr><td style="${SERIF}font-size:38px;font-weight:normal;line-height:1.2;color:#33322f;padding:0 0 20px;" align="center">${esc(state.title)}</td></tr>` : ''}
@@ -3871,7 +3893,7 @@ class App {
     const lines = [];
     if (state.title) lines.push(state.title, '');
     if (state.intro) lines.push(state.intro, '');
-    const LABELS = { concerts: 'CONCERTS', notes: 'NOTES', highlights: 'HIGHLIGHTS', ensembles: 'ENSEMBLES' };
+    const LABELS = { concerts: 'Concerts', notes: 'Notes', highlights: 'Highlights', ensembles: 'Ensembles' };
     for (const kind of state.order) {
       const items = this._nlPicked(state, data, kind);
       if (!items.length) continue;
@@ -3879,6 +3901,8 @@ class App {
       for (const e of items) {
         const d = e.data.date ? String(e.data.date).substring(0, 10) + ' — ' : '';
         lines.push(`${d}${e.data.title || ''}${e.data.place ? ' · ' + e.data.place : ''}`);
+        const t = ((state.itemText[kind] || {})[e.name] || '').trim();
+        if (t) lines.push(t);
         lines.push(e.url, '');
       }
     }
