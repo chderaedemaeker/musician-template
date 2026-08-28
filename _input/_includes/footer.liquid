@@ -22,14 +22,16 @@
           {% endfor %}
         </ul>
       </div>
+      {% if site.social and site.social.size > 0 %}
       <div class="footer-col">
         <p class="footer-heading">{{ languages[lang].footer_follow }}</p>
         <ul>
-          <li><a href="https://www.facebook.com/veronique.deraedemaeker" target="_blank" rel="noopener">Facebook</a></li>
-          <li><a href="https://www.instagram.com/veronique.deraedemaeker/" target="_blank" rel="noopener">Instagram</a></li>
-          <li><a href="https://www.youtube.com/@veroniquederaedemaeker" target="_blank" rel="noopener">YouTube</a></li>
+          {% for soc in site.social %}
+          <li><a href="{{ soc.url }}" target="_blank" rel="noopener">{{ soc.label }}</a></li>
+          {% endfor %}
         </ul>
       </div>
+      {% endif %}
       <div class="footer-col">
         <p class="footer-heading">{{ languages[lang].contact_title }}</p>
         <ul>
@@ -39,7 +41,7 @@
       <div class="footer-col">
         <p class="footer-heading">{{ languages[lang].footer_language }}</p>
         <ul>
-          {% assign langCodes = "en|nl|fr|de" | split: "|" %}
+          {% assign langCodes = site.languages %}{% if langCodes == nil or langCodes.size == 0 %}{% assign langCodes = "en|nl|fr|de" | split: "|" %}{% endif %}
           {% for code in langCodes %}
           <li><a href="/{{ code }}/"{% if lang == code %} class="active" aria-current="true"{% endif %} onclick="switchLanguage('{{ code }}'); return false;">{{ languages[code].native_name }}</a></li>
           {% endfor %}

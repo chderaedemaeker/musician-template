@@ -42,11 +42,13 @@
       </form>
     </div>
 
+    {% if site.social and site.social.size > 0 %}
     <div class="socials-list">
-      <a href="https://www.facebook.com/veronique.deraedemaeker" target="_blank" rel="noopener">Facebook</a>
-      <a href="https://www.instagram.com/veronique.deraedemaeker/" target="_blank" rel="noopener">Instagram</a>
-      <a href="https://www.youtube.com/@veroniquederaedemaeker" target="_blank" rel="noopener">YouTube</a>
+      {% for soc in site.social %}
+      <a href="{{ soc.url }}" target="_blank" rel="noopener">{{ soc.label }}</a>
+      {% endfor %}
     </div>
+    {% endif %}
   </div>
 
 </div>

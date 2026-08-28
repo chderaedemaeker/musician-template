@@ -26,7 +26,7 @@
     <div class="lang-picker">
       <button type="button" class="lang-picker-btn" aria-haspopup="true" aria-expanded="false" aria-label="Language">{{ lang }} <span class="lang-caret" aria-hidden="true">&#9662;</span></button>
       <div class="lang-picker-menu" hidden>
-        {% assign langCodes = "en|nl|fr|de" | split: "|" %}
+        {% assign langCodes = site.languages %}{% if langCodes == nil or langCodes.size == 0 %}{% assign langCodes = "en|nl|fr|de" | split: "|" %}{% endif %}
         {% for code in langCodes %}
           <a href="/{{ code }}/" {% if lang == code %}class="active" aria-current="true"{% endif %} onclick="switchLanguage('{{ code }}'); return false;">{{ languages[code].native_name }}</a>
         {% endfor %}
@@ -54,7 +54,7 @@
     </div>
   </form>
   <nav class="lang-switcher" aria-label="Language" style="--i: 6">
-    {% assign langCodes = "en|nl|fr|de" | split: "|" %}
+    {% assign langCodes = site.languages %}{% if langCodes == nil or langCodes.size == 0 %}{% assign langCodes = "en|nl|fr|de" | split: "|" %}{% endif %}
     {% for code in langCodes %}
       <a href="/{{ code }}/" {% if lang == code %}class="active" aria-current="true"{% endif %} onclick="switchLanguage('{{ code }}'); return false;">{{ code }}</a>
     {% endfor %}

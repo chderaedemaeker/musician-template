@@ -1,0 +1,9 @@
+---
+permalink: /_redirects
+eleventyExcludeFromCollections: true
+---
+{% assign enabled = site.languages %}{% if enabled == nil or enabled.size == 0 %}{% assign enabled = "en|nl|fr|de" | split: "|" %}{% endif %}
+{%- for code in enabled %}{% unless code == "en" %}
+/  /{{ code }}  302!  Language={{ code }}
+{%- endunless %}{% endfor %}
+/  /en  302!

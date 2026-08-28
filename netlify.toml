@@ -37,33 +37,8 @@
   [headers.values]
     Cache-Control = "public, max-age=604800"
 
-# Language redirects — detect browser language, English is the default
-[[redirects]]
-  from = "/"
-  to = "/nl"
-  status = 302
-  force = true
-  conditions = {Language = ["nl"]}
-
-[[redirects]]
-  from = "/"
-  to = "/fr"
-  status = 302
-  force = true
-  conditions = {Language = ["fr"]}
-
-[[redirects]]
-  from = "/"
-  to = "/de"
-  status = 302
-  force = true
-  conditions = {Language = ["de"]}
-
-[[redirects]]
-  from = "/"
-  to = "/en"
-  status = 302
-  force = true
+# Language redirects are generated at build time into _site/_redirects
+# from the enabled languages in _input/_data/site.json (admin Site settings).
 
 # Projects was renamed to Ensembles
 [[redirects]]

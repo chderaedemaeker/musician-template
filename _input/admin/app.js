@@ -664,7 +664,7 @@ class App {
     if (!this.api && !hash.startsWith('#/login')) { location.hash = '#/login'; return; }
     if (hash === '#/login') { if (this.api) { location.hash = '#/'; return; } return this.renderLogin(); }
     if (hash === '#/settings') return this.renderSettings();
-    if (hash === '#/hero') return this.renderHero();
+    if (hash === '#/site' || hash === '#/hero') return this.renderSiteSettings();
     if (hash === '#/' || hash === '#') return this.renderDashboard();
     if (hash === '#/media') return this.renderMedia();
     const colMatch = hash.match(/^#\/([a-z]+)$/);
@@ -800,9 +800,9 @@ class App {
           <div class="card-label">Media</div>
           <div class="card-count">Images & files</div>
         </div>
-        <div class="card" id="hero-card">
-          <div class="card-label">Hero Image</div>
-          <div class="card-count">Homepage photo</div>
+        <div class="card" id="site-card">
+          <div class="card-label">Site settings</div>
+          <div class="card-count">Hero photo, social links, languages</div>
         </div>
       </div>
       <div class="publish-banner" id="publish-banner"></div>
@@ -815,7 +815,7 @@ class App {
       location.hash = card.dataset.col === 'about' ? '#/about/edit/about.md' : `#/${card.dataset.col}`;
     }));
     document.getElementById('media-card').addEventListener('click', () => { location.hash = '#/media'; });
-    document.getElementById('hero-card').addEventListener('click', () => { location.hash = '#/hero'; });
+    document.getElementById('site-card').addEventListener('click', () => { location.hash = '#/site'; });
     this._bindTopbar();
     for (const col of this.collections) this._fetchEntryCount(col);
     this._loadRecentEdits();
@@ -1027,7 +1027,7 @@ class App {
     this._bindTopbar();
 
     const savedLimit = parseInt(localStorage.getItem('concertTableLimit') || '30', 10);
-    this._concertTableState = { entries: [], files: [], loadedCount: 0, limit: savedLimit, col, columns, gridCols, sortKey: 'date', sortDir: 'desc', saveTimers: {}, scope: 'upcoming', filterNoHour: false, filterNoLink: false };
+    this._concertTableState = { entries: [], files: [], loadedCount: 0, limit: savedLimit, col, columns, gridCols, sortKey: 'date', sortDir: 'asc', saveTimers: {}, scope: 'upcoming', filterNoHour: false, filterNoLink: false };
     const limitSel = document.getElementById('table-limit');
     limitSel.value = String(savedLimit);
     limitSel.addEventListener('change', () => {
@@ -1041,26 +1041,19 @@ class App {
       // One tree request gives every file's path AND blob sha — the sha must
       // always be known, or saving a row fails with "sha wasn't supplied".
       const tree = await this.api.getTree(col.folder);
-      // Filenames start with the date, so this is newest-first
-      this._concertTableState.files = tree.filter(f => f.name.endsWith('.md')).sort((a, b) => b.name.localeCompare(a.name));
+      // Filenames start with the date. Order files so the NEXT concerts come
+      // first (upcoming, soonest first), then the past, most recent first —
+      // the default 30-row slice is then exactly the next 30 concerts.
+      const mdFiles = tree.filter(f => f.name.endsWith('.md'));
+      const todayKey = new Date().toISOString().substring(0, 10);
+      const future = mdFiles.filter(f => f.name >= todayKey).sort((a, b) => a.name.localeCompare(b.name));
+      const past = mdFiles.filter(f => f.name < todayKey).sort((a, b) => b.name.localeCompare(a.name));
+      this._concertTableState.files = future.concat(past);
       const bodyEl = document.getElementById('notion-body');
       if (!this._concertTableState.files.length) { bodyEl.innerHTML = '<div class="empty-state">No concerts yet.</div>'; return; }
 
       await this._loadConcertRows();
       this._bindTableEvents();
-      // The table opens on Upcoming — quietly fetch the rest so the view
-      // is complete even when many concerts lie ahead
-      const st = this._concertTableState;
-      if (st.scope !== 'all' && st.loadedCount < st.files.length && !st._loadingAll) {
-        st._loadingAll = true;
-        const prevLimit = st.limit;
-        st.limit = 0;
-        this._loadConcertRows().then(() => {
-          st.limit = prevLimit;
-          st._loadingAll = false;
-          this._applyConcertFilters();
-        });
-      }
     } catch (e) {
       document.getElementById('notion-body').innerHTML = `<div class="empty-state" style="color:var(--danger);">${esc(e.message)}</div>`;
     }
@@ -3476,130 +3469,122 @@ class App {
   }
 
   // ---- Hero Image ----
-  async renderHero() {
+  // ---- Site settings: hero photo, social links, languages ----
+  async renderSiteSettings() {
     this.el.innerHTML = `
       ${this._topbar()}
-      <nav class="breadcrumb"><a href="#/">Dashboard</a><span class="sep">/</span><span>Hero Image</span></nav>
+      <nav class="breadcrumb"><a href="#/">Dashboard</a><span class="sep">/</span><span>Site settings</span></nav>
       <div class="editor-header">
-        <h2>Hero Image</h2>
+        <h2>Site settings</h2>
         <div class="editor-actions">
-          <button class="btn btn-primary" id="hero-save-btn">Save</button>
+          <button class="btn btn-primary" id="site-save-btn">Save</button>
         </div>
       </div>
-      <div id="hero-form"><div class="loading-state"><span class="spinner"></span> Loading...</div></div>`;
+      <div id="site-form"><div class="loading-state"><span class="spinner"></span> Loading...</div></div>`;
     this._bindTopbar();
 
     const siteDataPath = '_input/_data/site.json';
     let siteData = { hero_image: '/images/veronique20d.jpg' };
     let siteSha = null;
-
     try {
       const file = await this.api.getFile(siteDataPath);
       siteSha = file.sha;
       try { siteData = JSON.parse(file.content); } catch (e) {}
-    } catch (e) { /* file doesn't exist yet, will be created on save */ }
+    } catch (e) { /* created on save */ }
 
-    const currentImage = siteData.hero_image || '/images/veronique20d.jpg';
+    const currentImage = siteData.hero_image || '';
+    const social = Array.isArray(siteData.social) ? siteData.social : [];
+    const enabledLangs = Array.isArray(siteData.languages) && siteData.languages.length ? siteData.languages : ['en', 'nl', 'fr', 'de'];
+    const LANGS = [
+      { code: 'en', name: 'English' },
+      { code: 'nl', name: 'Nederlands' },
+      { code: 'fr', name: 'Fran\u00e7ais' },
+      { code: 'de', name: 'Deutsch' },
+    ];
 
-    document.getElementById('hero-form').innerHTML = `
+    document.getElementById('site-form').innerHTML = `
       <div class="settings-section">
         <h3>Homepage hero photo</h3>
-        <p style="font-size:.9rem;color:var(--dark-grey);margin-bottom:1.5rem;">This image appears full-screen at the top of every language version of the homepage.</p>
-        <div class="image-field">
-          <img id="hero-preview" class="image-preview" src="${esc(currentImage)}" style="max-height:320px;width:100%;object-fit:cover;border-radius:8px;margin-bottom:1rem;" onerror="this.style.display='none'" />
-          <div class="image-controls">
+        <div class="site-hero-row">
+          <img id="hero-preview" class="site-hero-thumb" src="${esc(currentImage)}" onerror="this.style.visibility='hidden'" alt="" />
+          <div class="site-hero-controls">
             <input type="text" class="form-input" id="hero-image-path" value="${esc(currentImage)}" placeholder="/images/photo.jpg" />
-            <div style="display:flex;gap:.25rem;margin-top:.5rem;">
+            <div style="display:flex;gap:.25rem;margin-top:.4rem;">
               <button type="button" class="btn btn-ghost btn-sm" id="hero-browse-btn">Browse</button>
               <button type="button" class="btn btn-ghost btn-sm" id="hero-upload-btn">Upload</button>
             </div>
           </div>
         </div>
+      </div>
+      <div class="settings-section">
+        <h3>Social links</h3>
+        <p class="settings-hint">Shown in the footer and on the contact page. Remove one with &#215;, or add as many as you like.</p>
+        <div class="links-editor" id="social-editor">
+          <div class="links-rows">
+            ${social.map(soc => `<div class="links-row">
+              <input type="text" class="form-input link-label" value="${esc(soc.label || '')}" placeholder="Name, e.g. Instagram" />
+              <input type="url" class="form-input link-url" value="${esc(soc.url || '')}" placeholder="https://\u2026" />
+              <button type="button" class="btn btn-ghost btn-sm links-remove" aria-label="Remove link">&#215;</button>
+            </div>`).join('')}
+          </div>
+          <button type="button" class="btn btn-ghost btn-sm links-add">+ Add a link</button>
+        </div>
+      </div>
+      <div class="settings-section">
+        <h3>Languages</h3>
+        <p class="settings-hint">Which languages visitors can choose, and which their browser is auto-detected into. English is always on. Content in switched-off languages is kept, just not offered.</p>
+        ${LANGS.map(l => `<label class="checkbox-row lang-toggle-row">
+          <input type="checkbox" class="lang-toggle" value="${l.code}" ${enabledLangs.includes(l.code) ? 'checked' : ''} ${l.code === 'en' ? 'checked disabled' : ''} />
+          <span>${l.name}</span>
+        </label>`).join('')}
       </div>`;
 
     const pathInput = document.getElementById('hero-image-path');
     const preview = document.getElementById('hero-preview');
-
-    pathInput.addEventListener('input', () => {
-      preview.src = pathInput.value;
-      preview.style.display = '';
+    pathInput.addEventListener('input', () => { preview.src = pathInput.value; preview.style.visibility = ''; });
+    document.getElementById('hero-browse-btn').addEventListener('click', () => {
+      this._pickImage(path => { pathInput.value = path; preview.src = path; preview.style.visibility = ''; });
     });
-
-    document.getElementById('hero-browse-btn').addEventListener('click', async () => {
-      await this._loadImageCache();
-      const overlay = document.createElement('div');
-      overlay.className = 'image-picker-overlay visible';
-      overlay.innerHTML = `<div class="image-picker">
-        <h3>Choose hero image</h3>
-        <div class="media-filter" style="margin-bottom:1rem;"><input type="text" id="hero-picker-search" placeholder="Search..." style="width:100%;padding:.5rem 0;border:none;border-bottom:1px solid var(--warm-grey);font-family:var(--font-serif);font-size:.9rem;color:var(--near-black);background:transparent;" /></div>
-        <div class="image-picker-grid">
-          ${this._imageCache.map(img => `<div class="image-picker-item" data-name="${esc(img.name)}">
-            <img src="/images/${esc(img.name)}" alt="${esc(img.name)}" loading="lazy" />
-            <div class="image-picker-item-name">${esc(img.name)}</div>
-          </div>`).join('')}
-        </div>
-        <div class="image-picker-actions">
-          <button class="btn btn-ghost btn-sm" id="hero-picker-cancel">Cancel</button>
-        </div>
-      </div>`;
-      document.body.appendChild(overlay);
-
-      overlay.querySelector('#hero-picker-search').addEventListener('input', function() {
-        const q = this.value.toLowerCase().trim();
-        overlay.querySelectorAll('.image-picker-item').forEach(item => {
-          item.style.display = (!q || item.dataset.name.toLowerCase().includes(q)) ? '' : 'none';
-        });
-      });
-
-      overlay.querySelectorAll('.image-picker-item').forEach(item => {
-        item.addEventListener('click', () => {
-          const path = `/images/${item.dataset.name}`;
-          pathInput.value = path;
-          preview.src = path;
-          preview.style.display = '';
-          overlay.remove();
-        });
-      });
-
-      overlay.querySelector('#hero-picker-cancel').addEventListener('click', () => overlay.remove());
-      overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
-    });
-
     document.getElementById('hero-upload-btn').addEventListener('click', () => {
-      const input = document.createElement('input');
-      input.type = 'file'; input.accept = 'image/*';
-      input.addEventListener('change', async () => {
-        if (!input.files[0]) return;
-        const file = input.files[0];
-        showStatus('saving', 'Uploading...');
-        try {
-          const reader = new FileReader();
-          const b64 = await new Promise((res, rej) => { reader.onload = () => res(reader.result.split(',')[1]); reader.onerror = rej; reader.readAsDataURL(file); });
-          await this.api.uploadImage(`${this.config.getMediaFolder()}/${file.name}`, b64, `Upload ${file.name}`);
-          this._imageCache = null;
-          const path = `/images/${file.name}`;
-          pathInput.value = path;
-          preview.src = URL.createObjectURL(file);
-          preview.style.display = '';
-          showStatus('saved', 'Uploaded');
-        } catch (e) { showStatus('error', e.message); }
-      });
-      input.click();
+      this._uploadPickedImage(path => { pathInput.value = path; preview.src = path; preview.style.visibility = ''; });
     });
 
-    document.getElementById('hero-save-btn').addEventListener('click', async () => {
+    const socialEditor = document.getElementById('social-editor');
+    socialEditor.querySelector('.links-add').addEventListener('click', () => {
+      const row = document.createElement('div');
+      row.className = 'links-row';
+      row.innerHTML = '<input type="text" class="form-input link-label" placeholder="Name, e.g. Instagram" />' +
+        '<input type="url" class="form-input link-url" placeholder="https://\u2026" />' +
+        '<button type="button" class="btn btn-ghost btn-sm links-remove" aria-label="Remove link">&#215;</button>';
+      socialEditor.querySelector('.links-rows').appendChild(row);
+      row.querySelector('.link-label').focus();
+    });
+    socialEditor.addEventListener('click', e => {
+      const rm = e.target.closest('.links-remove');
+      if (rm) rm.closest('.links-row').remove();
+    });
+
+    document.getElementById('site-save-btn').addEventListener('click', async () => {
       const newPath = pathInput.value.trim();
-      if (!newPath) { showStatus('error', 'Image path cannot be empty'); return; }
+      if (!newPath) { showStatus('error', 'The hero photo cannot be empty'); return; }
       siteData.hero_image = newPath;
+      siteData.social = Array.from(socialEditor.querySelectorAll('.links-row')).map(row => ({
+        label: row.querySelector('.link-label').value.trim(),
+        url: row.querySelector('.link-url').value.trim(),
+      })).filter(l => l.label && l.url);
+      const langs = ['en'];
+      document.querySelectorAll('.lang-toggle:checked').forEach(cb => { if (cb.value !== 'en') langs.push(cb.value); });
+      siteData.languages = langs;
       const content = JSON.stringify(siteData, null, 2) + '\n';
       showStatus('saving', 'Saving...');
       try {
-        const result = await this.api.saveFile(siteDataPath, content, 'Update hero image', siteSha || undefined);
+        const result = await this.api.saveFile(siteDataPath, content, 'Update site settings', siteSha || undefined);
         siteSha = result.content.sha;
-        showStatus('saved', 'Saved — site will rebuild');
+        showStatus('saved', 'Saved \u2014 reaches the site when you press Publish site');
       } catch (e) { showStatus('error', e.message); }
     });
   }
+
 
   // ---- Media Library ----
   async renderMedia() {

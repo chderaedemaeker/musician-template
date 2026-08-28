@@ -439,7 +439,7 @@
       var outer = document.createElement('span');
       outer.className = 'nw';
       /* stagger caps at six seconds so long notes don't take forever */
-      outer.style.transitionDelay = Math.min(gi * 0.15, 6).toFixed(2) + 's';
+      outer.style.transitionDelay = Math.min(gi * 0.075, 3).toFixed(2) + 's';
       var inner = document.createElement('span');
       inner.className = 'nw-i';
       inner.style.animationDuration = (3.4 + (gi % 5) * 0.5) + 's';
@@ -460,7 +460,7 @@
         if (/^\n+$/.test(seg)) { p.appendChild(document.createElement('br')); return; }
         seg.split(/\s+/).filter(Boolean).forEach(function (w) { appendWord(p, w); });
       });
-      if (isQuote) p.appendChild(makeQuoteMark(' \u201D', Math.min(gi * 0.15, 6) + 0.2));
+      if (isQuote) p.appendChild(makeQuoteMark(' \u201D', Math.min(gi * 0.075, 3) + 0.2));
     });
     return gi;
   }
@@ -483,9 +483,9 @@
       if (reduced) { box.classList.add('is-live'); showPhotos(); return; }
       function start() {
         box.classList.add('is-live');
-        setTimeout(showPhotos, Math.min(count * 150, 6000) / 2 + 500);
+        setTimeout(showPhotos, Math.min(count * 75, 3000) / 2 + 400);
         if (box.hasAttribute('data-settle')) {
-          setTimeout(function () { box.classList.add('is-settled'); }, Math.min(count * 150, 6000) + 2300);
+          setTimeout(function () { box.classList.add('is-settled'); }, Math.min(count * 75, 3000) + 2300);
         }
       }
       if ('IntersectionObserver' in window) {

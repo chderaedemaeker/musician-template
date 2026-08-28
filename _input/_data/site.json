@@ -1,3 +1,17 @@
 {
-  "hero_image": "/images/veronique-20.jpeg"
+  "hero_image": "/images/veronique-20.jpeg",
+  "social": [
+    {
+      "label": "Instagram",
+      "url": "https://www.instagram.com/veronique.deraedemaeker/"
+    },
+    {
+      "label": "YouTube",
+      "url": "https://www.youtube.com/@veroniquederaedemaeker"
+    }
+  ],
+  "languages": [
+    "en",
+    "nl"
+  ]
 }
