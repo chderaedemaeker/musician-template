@@ -43,5 +43,19 @@
 <link rel="stylesheet" href="/css/components.css?v={{ cssv }}">
 <link rel="stylesheet" href="/css/pages.css?v={{ cssv }}">
 <link rel="stylesheet" href="/css/theme.css?v={{ cssv }}">
+{% if site.footer_colors %}
+<style>
+  /* Footer colours — managed in the admin's Site settings */
+  .footer { background-color: {{ site.footer_colors.background | default: '#5c8ca3' }}; }
+  .footer-heading, .footer-col a, .footer-bottom p, .footer-news-title,
+  .footer-news-row input, .bento-contact .label, .footer-col a.active {
+    color: {{ site.footer_colors.text | default: '#1d2440' }};
+  }
+  .footer-news-row input { border-bottom-color: {{ site.footer_colors.text | default: '#1d2440' }}; }
+  .footer-news-row input::placeholder { color: {{ site.footer_colors.text | default: '#1d2440' }}; opacity: .55; }
+  .footer-col a:hover, .footer-col a.active { text-decoration-color: {{ site.footer_colors.text | default: '#1d2440' }}; }
+  .footer-watermark { color: {{ site.footer_colors.logo | default: '#2a4b5a' }}; }
+</style>
+{% endif %}
 <link rel="stylesheet" href="/css/progressive.css?v={{ cssv }}">
 <script defer src="/js/main.js?v={{ cssv }}"></script>

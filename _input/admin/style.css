@@ -2236,3 +2236,11 @@ body { letter-spacing: -0.01em; }
 .texts-row .form-label { display: block; margin-bottom: .25rem; }
 .texts-row textarea { resize: vertical; }
 .texts-ref { font-size: .72rem; color: var(--mid-grey); margin: .25rem 0 0; }
+
+/* ===== Footer colour pickers ===== */
+.fc-rows { display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap; }
+.fc-row { display: flex; align-items: center; gap: .5rem; font-size: .85rem; color: var(--near-black); }
+.fc-row input[type="color"] {
+  width: 2.4rem; height: 1.8rem; padding: 0; border: 1px solid var(--warm-grey);
+  background: none; cursor: pointer;
+}

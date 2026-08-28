@@ -13,5 +13,10 @@
   "languages": [
     "en",
     "nl"
-  ]
+  ],
+  "footer_colors": {
+    "background": "#5c8ca3",
+    "text": "#1d2440",
+    "logo": "#2a4b5a"
+  }
 }

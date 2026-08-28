@@ -3544,6 +3544,16 @@ class App {
         </div>
       </div>
       <div class="settings-section">
+        <h3>Footer colours</h3>
+        <p class="settings-hint">The footer's background, text and the large name at the bottom.</p>
+        <div class="fc-rows">
+          <label class="fc-row"><span>Background</span><input type="color" class="fc-input" data-fc="background" value="${esc((siteData.footer_colors && siteData.footer_colors.background) || '#5c8ca3')}" /></label>
+          <label class="fc-row"><span>Text</span><input type="color" class="fc-input" data-fc="text" value="${esc((siteData.footer_colors && siteData.footer_colors.text) || '#1d2440')}" /></label>
+          <label class="fc-row"><span>Logo</span><input type="color" class="fc-input" data-fc="logo" value="${esc((siteData.footer_colors && siteData.footer_colors.logo) || '#2a4b5a')}" /></label>
+          <button type="button" class="btn btn-ghost btn-sm" id="fc-reset">Back to the standard colours</button>
+        </div>
+      </div>
+      <div class="settings-section">
         <h3>Languages</h3>
         <p class="settings-hint">Which languages visitors can choose, and which their browser is auto-detected into. English is always on. Content in switched-off languages is kept, just not offered.</p>
         ${LANGS.map(l => `<label class="checkbox-row lang-toggle-row">
@@ -3558,6 +3568,10 @@ class App {
       </div>`;
 
     document.getElementById('site-texts-btn').addEventListener('click', () => { location.hash = '#/texts'; });
+    document.getElementById('fc-reset').addEventListener('click', () => {
+      const defs = { background: '#5c8ca3', text: '#1d2440', logo: '#2a4b5a' };
+      document.querySelectorAll('.fc-input').forEach(inp => { inp.value = defs[inp.dataset.fc]; });
+    });
     const pathInput = document.getElementById('hero-image-path');
     const preview = document.getElementById('hero-preview');
     pathInput.addEventListener('input', () => { preview.src = pathInput.value; preview.style.visibility = ''; });
@@ -3594,6 +3608,8 @@ class App {
       const langs = ['en'];
       document.querySelectorAll('.lang-toggle:checked').forEach(cb => { if (cb.value !== 'en') langs.push(cb.value); });
       siteData.languages = langs;
+      siteData.footer_colors = {};
+      document.querySelectorAll('.fc-input').forEach(inp => { siteData.footer_colors[inp.dataset.fc] = inp.value; });
       const content = JSON.stringify(siteData, null, 2) + '\n';
       showStatus('saving', 'Saving...');
       try {
