@@ -543,8 +543,11 @@ main {
 }
 
 .footer-news {
-  justify-self: end;
-  width: min(24rem, 100%);
+  /* the newsletter spans the footer's full width, beneath the columns */
+  grid-column: 1 / -1;
+  justify-self: stretch;
+  width: 100%;
+  margin-top: var(--space-md);
 }
 
 .footer-heading {
