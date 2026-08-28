@@ -8,7 +8,7 @@ class GitGatewayAPI {
     this._tokenFn = tokenFn; // async function; pass true to force a refresh
     // On localhost the Netlify services live on the deployed site
     this.base = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-      ? 'https://vdr-staging.netlify.app/.netlify/git/github'
+      ? 'https://veroniquederaedemaeker.com/.netlify/git/github'
       : '/.netlify/git/github';
     this.branch = 'master';
     this._refreshing = null; // single-flight token refresh
@@ -715,7 +715,7 @@ class App {
     try {
       const jwt = await this._identityUser.jwt();
       const base = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-        ? 'https://vdr-staging.netlify.app' : '';
+        ? 'https://veroniquederaedemaeker.com' : '';
       const res = await fetch(base + '/.netlify/functions/publish', {
         method: 'POST',
         headers: { Authorization: 'Bearer ' + jwt },
@@ -738,7 +738,7 @@ class App {
     try {
       const jwt = await this._identityUser.jwt();
       const base = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-        ? 'https://vdr-staging.netlify.app' : '';
+        ? 'https://veroniquederaedemaeker.com' : '';
       const res = await fetch(base + '/.netlify/functions/publish', { headers: { Authorization: 'Bearer ' + jwt } });
       const st = await res.json().catch(() => ({}));
       if (!st.commit_ref) { if (banner) banner.remove(); return; }
@@ -3340,7 +3340,7 @@ class App {
     const data = state.data[state.activeLocale];
     const body = state.body[state.activeLocale] || '';
     const siteBase = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-      ? 'https://vdr-staging.netlify.app' : location.origin;
+      ? 'https://veroniquederaedemaeker.com' : location.origin;
     const noteUrl = siteBase + (this._siteUrlFor(state.col, state.filename) || '/en/notes/');
     const subject = data.title ? `${data.title} \u2014 a note from Veronique` : 'A note from Veronique';
     const html = this._newsletterHtml(data, body, noteUrl, siteBase);
@@ -3689,7 +3689,7 @@ class App {
   async _loadNewsletterData() {
     if (this._nlData) return this._nlData;
     const site = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-      ? 'https://vdr-staging.netlify.app' : location.origin;
+      ? 'https://veroniquederaedemaeker.com' : location.origin;
     const loadFolder = async (folder, urlFor) => {
       try {
         const contents = await this.api.getContents(folder);
@@ -3884,7 +3884,7 @@ class App {
     try {
       const jwt = await this._identityUser.jwt();
       const base = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-        ? 'https://vdr-staging.netlify.app' : '';
+        ? 'https://veroniquederaedemaeker.com' : '';
       const res = await fetch(base + '/.netlify/functions/newsletter', { headers: { Authorization: 'Bearer ' + jwt } });
       const out = await res.json().catch(() => ({}));
       if (!res.ok || !Array.isArray(out.emails)) return;
