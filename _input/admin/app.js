@@ -3781,18 +3781,21 @@ class App {
     return out;
   }
 
-  // The email mirrors the site: warm off-white ground, serif headings,
-  // quiet sans meta, hairline rules. Inline styles only (mail programs
-  // strip stylesheets); one 560px column that shrinks with the screen.
+  // The email mirrors the site: the serif wordmark, big light serif
+  // headings against small quiet meta, the concert rows with their large
+  // day number, generous air, hairline rules — and no uppercase anywhere.
+  // Inline styles only (mail programs strip stylesheets); one 600px column
+  // that shrinks with the screen.
   _buildNewsletterHtml(state, data) {
     const site = data.site;
+    const SERIF = "font-family:Georgia,'Times New Roman',serif;";
+    const SANS = "font-family:Helvetica,Arial,sans-serif;";
     const S = {
-      meta: 'font-family:Helvetica,Arial,sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#8a847a;',
-      serif: "font-family:Georgia,'Times New Roman',serif;color:#33322f;",
+      meta: `${SANS}font-size:12px;letter-spacing:.02em;color:#8a847a;`,
       link: 'color:#33322f;text-decoration:none;',
       hairline: 'border-top:1px solid #e8e6e1;',
     };
-    const heading = label => `<tr><td style="${S.meta}padding:30px 0 12px;">${esc(label)}</td></tr>`;
+    const heading = label => `<tr><td style="${SERIF}font-size:26px;font-weight:normal;color:#33322f;padding:46px 0 18px;">${esc(label)}</td></tr>`;
 
     let sections = '';
     for (const kind of state.order) {
@@ -3800,46 +3803,65 @@ class App {
       if (!items.length) continue;
       if (kind === 'concerts') {
         sections += heading('Concerts');
-        sections += items.map(e => `<tr><td style="${S.hairline}padding:14px 0;">
-          <div style="${S.meta}margin-bottom:4px;">${esc(this._nlDateLine(e.data.date))}${e.data.place ? ' \u2014 ' + esc(e.data.place) : ''}</div>
-          <div style="${S.serif}font-size:19px;line-height:1.3;"><a href="${e.url}" style="${S.link}">${esc(e.data.title || '')}</a></div>
-          ${e.data.collaborators ? `<div style="font-family:Helvetica,Arial,sans-serif;font-size:13px;color:#8a847a;margin-top:3px;">${esc(e.data.collaborators)}</div>` : ''}
-          ${e.data.link ? `<div style="margin-top:6px;"><a href="${esc(e.data.link)}" style="font-family:Helvetica,Arial,sans-serif;font-size:12px;color:#5c8ca3;">Tickets &amp; info</a></div>` : ''}
-        </td></tr>`).join('');
+        sections += items.map(e => {
+          const dt = e.data.date ? new Date(e.data.date) : null;
+          const valid = dt && !isNaN(dt);
+          const weekday = valid ? dt.toLocaleDateString('en-GB', { weekday: 'long' }) : '';
+          const dayNum = valid ? dt.getDate() : '';
+          const monthYear = valid ? dt.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }) : '';
+          const hasTime = valid && /T(?!00:00)\d\d:\d\d/.test(String(e.data.date));
+          const time = hasTime ? dt.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) : '';
+          const where = [time, e.data.place].filter(Boolean).join(' \u2014 ');
+          return `<tr><td style="${S.hairline}padding:22px 0;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+              <td width="92" valign="top" style="padding-right:20px;">
+                <div style="${S.meta}margin-bottom:2px;">${esc(weekday)}</div>
+                <div style="${SERIF}font-size:40px;line-height:1;color:#33322f;">${dayNum}</div>
+                <div style="${S.meta}margin-top:4px;">${esc(monthYear)}</div>
+              </td>
+              <td valign="top" style="padding-top:2px;">
+                <div style="${SERIF}font-size:22px;line-height:1.3;"><a href="${e.url}" style="${S.link}">${esc(e.data.title || '')}</a></div>
+                ${where ? `<div style="${S.meta}margin-top:6px;">${esc(where)}</div>` : ''}
+                ${e.data.collaborators ? `<div style="${SANS}font-size:13px;color:#4d4841;margin-top:5px;">${esc(e.data.collaborators)}</div>` : ''}
+                ${e.data.link ? `<div style="margin-top:9px;"><a href="${esc(e.data.link)}" style="${SANS}font-size:13px;color:#5c8ca3;text-decoration:none;">Tickets &amp; info &#8594;</a></div>` : ''}
+              </td>
+            </tr></table>
+          </td></tr>`;
+        }).join('');
       } else if (kind === 'notes') {
         sections += heading('Notes');
         sections += items.map(e => {
           const text = (e.body || '').replace(/<[^>]+>/g, '').replace(/[#*_>\[\]()`]/g, '').replace(/\s+/g, ' ').trim().substring(0, 220);
-          return `<tr><td style="${S.hairline}padding:16px 0;" align="center">
-            <div style="${S.serif}font-style:italic;font-size:17px;line-height:1.6;color:#4d4841;">\u201C${esc(text)}\u201D</div>
-            <div style="${S.meta}margin-top:8px;"><a href="${e.url}" style="color:#8a847a;text-decoration:none;">${esc(String(e.data.date || '').substring(0, 10))} \u00b7 ${esc(e.data.title || '')}</a></div>
+          return `<tr><td style="${S.hairline}padding:26px 0;" align="center">
+            <div style="${SERIF}font-style:italic;font-size:19px;line-height:1.7;color:#4d4841;">\u201C${esc(text)}\u201D</div>
+            <div style="${S.meta}margin-top:10px;"><a href="${e.url}" style="color:#8a847a;text-decoration:none;">${esc(String(e.data.date || '').substring(0, 10))} \u00b7 ${esc(e.data.title || '')}</a></div>
           </td></tr>`;
         }).join('');
       } else {
         sections += heading(kind === 'highlights' ? 'Highlights' : 'Ensembles');
         sections += items.map(e => {
           const img = e.data.image ? `${site}${String(e.data.image).startsWith('/') ? e.data.image : '/images/' + e.data.image}` : '';
-          return `<tr><td style="${S.hairline}padding:16px 0;">
-            ${img ? `<a href="${e.url}"><img src="${img}" width="560" style="width:100%;max-width:560px;height:auto;border:1px solid #33322f;display:block;margin-bottom:10px;" alt="${esc(e.data.title || '')}" /></a>` : ''}
-            <div style="${S.serif}font-size:19px;"><a href="${e.url}" style="${S.link}">${esc(e.data.title || '')}</a></div>
-            ${(e.data.type || e.data.collaborators) ? `<div style="font-family:Helvetica,Arial,sans-serif;font-size:13px;color:#8a847a;margin-top:3px;">${esc(e.data.type || e.data.collaborators)}</div>` : ''}
+          return `<tr><td style="${S.hairline}padding:26px 0;">
+            ${img ? `<a href="${e.url}"><img src="${img}" width="600" style="width:100%;max-width:600px;height:auto;border:1px solid #33322f;display:block;margin-bottom:14px;" alt="${esc(e.data.title || '')}" /></a>` : ''}
+            <div style="${SERIF}font-size:22px;line-height:1.3;"><a href="${e.url}" style="${S.link}">${esc(e.data.title || '')}</a></div>
+            ${(e.data.type || e.data.collaborators) ? `<div style="${S.meta}margin-top:5px;">${esc(e.data.type || e.data.collaborators)}</div>` : ''}
           </td></tr>`;
         }).join('');
       }
     }
 
     const introHtml = state.intro
-      ? `<tr><td style="${S.serif}font-size:16px;line-height:1.7;color:#4d4841;padding:0 0 8px;" align="center">${esc(state.intro).replace(/\n/g, '<br/>')}</td></tr>`
+      ? `<tr><td style="${SERIF}font-size:17px;line-height:1.75;color:#4d4841;padding:0 0 14px;" align="center">${esc(state.intro).replace(/\n/g, '<br/>')}</td></tr>`
       : '';
 
-    return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f5f4f2;padding:36px 12px;"><tr><td align="center">
-      <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
-        <tr><td style="${S.meta}padding-bottom:16px;" align="center"><a href="${site}/en/" style="color:#8a847a;text-decoration:none;">Veronique De Raedemaeker</a></td></tr>
-        ${state.title ? `<tr><td style="${S.serif}font-size:28px;font-weight:normal;line-height:1.25;padding:0 0 14px;" align="center">${esc(state.title)}</td></tr>` : ''}
+    return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f5f4f2;padding:52px 16px 44px;"><tr><td align="center">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+        <tr><td style="${SERIF}font-size:24px;letter-spacing:.01em;color:#33322f;padding-bottom:40px;" align="center"><a href="${site}/en/" style="${S.link}">Veronique De Raedemaeker</a></td></tr>
+        ${state.title ? `<tr><td style="${SERIF}font-size:38px;font-weight:normal;line-height:1.2;color:#33322f;padding:0 0 20px;" align="center">${esc(state.title)}</td></tr>` : ''}
         ${introHtml}
         ${sections}
-        <tr><td style="${S.hairline}margin-top:10px;padding:22px 0 0;" align="center">
-          <a href="${site}/en/" style="font-family:Helvetica,Arial,sans-serif;font-size:13px;color:#f5f4f2;background:#33322f;text-decoration:none;padding:11px 24px;border-radius:999px;display:inline-block;">Visit the website</a>
+        <tr><td style="padding:52px 0 0;" align="center">
+          <a href="${site}/en/" style="${SANS}font-size:14px;color:#f5f4f2;background:#33322f;text-decoration:none;padding:13px 28px;border-radius:999px;display:inline-block;">Visit the website</a>
         </td></tr>
       </table>
     </td></tr></table>`;
