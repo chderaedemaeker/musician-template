@@ -1048,24 +1048,13 @@ li:last-child > .upcoming-item {
   transform: scale(1.03);
 }
 
-/* Index: the latest note's photos stay tucked away until the quote is
-   hovered — then they drift up beneath it */
-.note-photos--peek {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  width: min(90vw, 34rem);
-  transform: translateX(-50%) translateY(10px) scale(0.97);
-  margin: var(--space-sm) 0 0;
-  opacity: 0;
-  pointer-events: none;
-  z-index: 6;
-  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
-}
-
-.note-drift-link:hover + .note-photos--peek {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0) scale(1);
+/* Index: the latest note's photos sit right beneath the quote — always
+   visible, a quieter size than the big overview stacks */
+.note-photos--index,
+.note-photos.note-photos--index:not(.note-photos--peek) {
+  width: min(90vw, 36rem);
+  max-width: none;
+  margin: var(--space-sm) auto 0;
 }
 
 @media (max-width: 600px) {
@@ -1098,9 +1087,7 @@ li:last-child > .upcoming-item {
   cursor: zoom-in;
 }
 
-.note-photos--peek .note-photo {
-  cursor: inherit;
-}
+
 
 /* ── Photo lightbox — click to expand; the frame keeps the picture's
    dominant colour while the large version loads ── */

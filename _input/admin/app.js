@@ -3999,7 +3999,7 @@ class App {
           const imgPath = e.data.image ? (String(e.data.image).startsWith('/') ? e.data.image : '/images/' + e.data.image) : '';
           const img = imgPath ? `${site}/.netlify/images?url=${encodeURIComponent(imgPath)}&w=1200` : '';
           return `<tr><td style="${S.hairline}padding:26px 0;">
-            ${img ? `<a href="${e.url}"><img src="${img}" width="600" style="width:100%;max-width:600px;height:auto;border:1px solid #33322f;display:block;margin-bottom:14px;" alt="${esc(e.data.title || '')}" /></a>` : ''}
+            ${img ? `<a href="${e.url}"><img src="${img}" width="680" style="width:100%;max-width:680px;height:auto;border:1px solid #33322f;display:block;margin-bottom:14px;" alt="${esc(e.data.title || '')}" /></a>` : ''}
             <div style="${SERIF}font-size:22px;line-height:1.3;"><a href="${e.url}" style="${S.link}">${esc(e.data.title || '')}</a></div>
             ${(e.data.type || e.data.collaborators) ? `<div style="${S.meta}margin-top:5px;">${esc(e.data.type || e.data.collaborators)}</div>` : ''}
             ${personal(kind, e)}
@@ -4014,7 +4014,7 @@ class App {
 
     return `<style>@font-face{font-family:'AGL';src:url('${site}/images/AppleGaramond-Light.ttf') format('truetype');font-weight:normal;font-style:normal;}</style>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f5f4f2;padding:52px 16px 44px;"><tr><td align="center">
-      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+      <table role="presentation" width="680" cellpadding="0" cellspacing="0" style="max-width:680px;width:100%;">
         <tr><td style="${SERIF}font-size:24px;letter-spacing:.01em;color:#33322f;padding-bottom:40px;" align="center"><a href="${site}/en/" style="${S.link}">Veronique De Raedemaeker</a></td></tr>
         ${state.title ? `<tr><td style="${SERIF}font-size:38px;font-weight:normal;line-height:1.2;color:#33322f;padding:0 0 20px;" align="center">${esc(state.title)}</td></tr>` : ''}
         ${introHtml}
