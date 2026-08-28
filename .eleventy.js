@@ -80,9 +80,10 @@ function shadeOfColor({ r, g, b }) {
         else if (max === gn) h = ((bn - rn) / d + 2) / 6;
         else h = ((rn - gn) / d + 4) / 6;
     }
-    // darker and calmer, dark enough for white text
-    sat *= 0.5;
-    const ln = Math.min(l * 0.5, 0.26);
+    // close to the photo's own shade — only gently darkened and calmed,
+    // capped so white text at the base stays readable
+    sat *= 0.85;
+    const ln = Math.min(l * 0.8, 0.38);
     // hsl → rgb
     const q = ln < 0.5 ? ln * (1 + sat) : ln + sat - ln * sat;
     const pp = 2 * ln - q;
