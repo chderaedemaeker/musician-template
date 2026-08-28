@@ -1,7 +1,7 @@
 ---
 title: Bach and Berio — a diptych
 date: "2023-01-01T00:00"
-type: "Recording"
+type: Discography, Video, Recording
 image: /images/12.jpeg
 hide_image: false
 link: AbZxSocrvvs?si=XHgzOasBtHxfpcS2
