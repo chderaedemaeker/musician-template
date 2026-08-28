@@ -680,6 +680,7 @@ class App {
     return `<div class="topbar">
       <a href="#/" class="topbar-brand">Content Manager</a>
       <div class="topbar-actions">
+        <button class="btn btn-sm topbar-publish${this._pendingPublish ? ' btn-primary' : ' btn-ghost'}" title="Saved changes reach the site only when you publish">Publish site${this._pendingPublish ? ` (${this._pendingPublish})` : ''}</button>
         <button class="btn btn-ghost btn-sm topbar-settings">Settings</button>
         <button class="btn btn-ghost btn-sm topbar-logout">Logout</button>
       </div>
@@ -688,8 +689,73 @@ class App {
   _bindTopbar() {
     const s = this.el.querySelector('.topbar-settings');
     const l = this.el.querySelector('.topbar-logout');
+    const pub = this.el.querySelector('.topbar-publish');
     if (s) s.addEventListener('click', () => { location.hash = '#/settings'; });
     if (l) l.addEventListener('click', () => this.logout());
+    if (pub) pub.addEventListener('click', () => this._publishSite());
+  }
+
+  // ---- Publish the site: one build with every change saved since last time ----
+  async _publishSite() {
+    const n = this._pendingPublish;
+    const ok = await showModal('Publish site',
+      n ? `Make all saved changes live? ${n} change${n > 1 ? 's are' : ' is'} waiting.`
+        : 'Make all saved changes live? The site rebuilds once with everything saved so far.',
+      { okLabel: 'Publish', okClass: 'btn-primary' });
+    if (!ok) return;
+    showStatus('saving', 'Starting the publish…');
+    try {
+      const jwt = await this._identityUser.jwt();
+      const base = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ? 'https://vdr-staging.netlify.app' : '';
+      const res = await fetch(base + '/.netlify/functions/publish', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + jwt },
+      });
+      const out = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(out.error || `Publishing failed (${res.status})`);
+      showStatus('saved', 'Publishing — the site rebuilds now and is live in a few minutes');
+      this._pendingPublish = 0;
+      const btn = this.el.querySelector('.topbar-publish');
+      if (btn) { btn.classList.remove('btn-primary'); btn.classList.add('btn-ghost'); btn.textContent = 'Publish site'; }
+      const banner = document.getElementById('publish-banner');
+      if (banner) banner.innerHTML = '<span class="publish-banner-ok">Publishing now — live in a few minutes.</span>';
+    } catch (e) { showStatus('error', e.message); }
+  }
+
+  // How many commits sit on master beyond the last published deploy.
+  // Best-effort: needs NETLIFY_AUTH_TOKEN on the server for deploy info.
+  async _loadPublishStatus() {
+    const banner = document.getElementById('publish-banner');
+    try {
+      const jwt = await this._identityUser.jwt();
+      const base = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ? 'https://vdr-staging.netlify.app' : '';
+      const res = await fetch(base + '/.netlify/functions/publish', { headers: { Authorization: 'Bearer ' + jwt } });
+      const st = await res.json().catch(() => ({}));
+      if (!st.commit_ref) { if (banner) banner.remove(); return; }
+      const commits = await this.api._request('GET', `/commits?per_page=40&sha=${this.api.branch}`);
+      let waiting = 0;
+      for (const c of commits) { if (c.sha === st.commit_ref) break; waiting++; }
+      if (waiting >= 40) waiting = '40+';
+      this._pendingPublish = waiting === '40+' ? '40+' : waiting;
+      const btn = this.el.querySelector('.topbar-publish');
+      if (waiting && btn) {
+        btn.classList.add('btn-primary'); btn.classList.remove('btn-ghost');
+        btn.textContent = `Publish site (${waiting})`;
+      }
+      if (!banner) return;
+      if (st.building) {
+        banner.innerHTML = '<span class="publish-banner-ok">The site is rebuilding right now.</span>';
+      } else if (waiting) {
+        const when = st.published_at ? new Date(st.published_at).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
+        banner.innerHTML = `<span>${waiting} saved change${waiting === 1 ? '' : 's'} not yet on the site${when ? ` (last published ${when})` : ''}.</span>
+          <button type="button" class="btn btn-primary btn-sm" id="publish-banner-btn">Publish site</button>`;
+        document.getElementById('publish-banner-btn').addEventListener('click', () => this._publishSite());
+      } else {
+        banner.innerHTML = '<span class="publish-banner-ok">Everything on the site is up to date.</span>';
+      }
+    } catch (e) { if (banner) banner.remove(); }
   }
 
   // ---- Login ----
@@ -739,6 +805,7 @@ class App {
           <div class="card-count">Homepage photo</div>
         </div>
       </div>
+      <div class="publish-banner" id="publish-banner"></div>
       <div class="recent-edits">
         <h3>Latest changes</h3>
         <div id="recent-edits-list"><div class="loading-state"><span class="spinner"></span> Loading...</div></div>
@@ -752,6 +819,7 @@ class App {
     this._bindTopbar();
     for (const col of this.collections) this._fetchEntryCount(col);
     this._loadRecentEdits();
+    this._loadPublishStatus();
   }
 
   // Who changed what, straight from the branch history — paged,

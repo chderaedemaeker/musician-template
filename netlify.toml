@@ -1,6 +1,10 @@
 [build]
   command = "npm install && npx @11ty/eleventy"
   publish = "_site"
+  # Builds run only on demand: triggered from the admin's "Publish site"
+  # button (a build hook, which sets INCOMING_HOOK_TITLE) or by a commit
+  # whose message contains [publish]. Ordinary pushes are skipped (exit 0).
+  ignore = "test -z \"$INCOMING_HOOK_TITLE\" && ! git log -1 --pretty=%B | grep -q '\\[publish\\]'"
 
 [functions]
   directory = "netlify/functions"

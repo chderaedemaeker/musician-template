@@ -2159,3 +2159,13 @@ body { letter-spacing: -0.01em; }
 @media (max-width: 700px) {
   .notion-table { min-width: 0; }
 }
+
+/* ===== Publish banner on the dashboard ===== */
+.publish-banner {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  margin-top: 2rem; padding: .7rem 1rem;
+  border: 1px solid var(--warm-grey); background: var(--off-white);
+  font-size: .85rem; color: var(--near-black);
+}
+.publish-banner:empty { display: none; }
+.publish-banner-ok { color: var(--dark-grey); }
