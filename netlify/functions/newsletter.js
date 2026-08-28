@@ -11,12 +11,43 @@
 // Only signed-in Netlify Identity users (i.e. the admin) can call this.
 
 exports.handler = async (event, context) => {
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: JSON.stringify({ error: 'Method not allowed' }) };
-  }
   const user = context.clientContext && context.clientContext.user;
   if (!user) {
     return { statusCode: 401, body: JSON.stringify({ error: 'Sign in required' }) };
+  }
+
+  // GET — the subscriber list, for the admin's newsletter builder
+  if (event.httpMethod === 'GET') {
+    const token = process.env.NETLIFY_AUTH_TOKEN;
+    if (!token) {
+      return { statusCode: 500, body: JSON.stringify({ error: 'Set NETLIFY_AUTH_TOKEN in the environment variables to read the subscriber list.' }) };
+    }
+    try {
+      const formsRes = await fetch(`https://api.netlify.com/api/v1/sites/${process.env.SITE_ID}/forms`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!formsRes.ok) throw new Error(`Could not list forms (${formsRes.status})`);
+      const forms = await formsRes.json();
+      const form = forms.find(f => f.name === 'newsletter');
+      if (!form) return { statusCode: 200, body: JSON.stringify({ emails: [] }) };
+      const subsRes = await fetch(`https://api.netlify.com/api/v1/forms/${form.id}/submissions?per_page=1000`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!subsRes.ok) throw new Error(`Could not read submissions (${subsRes.status})`);
+      const submissions = await subsRes.json();
+      const emails = [...new Set(
+        submissions
+          .map(s => (s.data && s.data.email ? String(s.data.email).trim().toLowerCase() : ''))
+          .filter(e => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e))
+      )];
+      return { statusCode: 200, body: JSON.stringify({ emails }) };
+    } catch (e) {
+      return { statusCode: 502, body: JSON.stringify({ error: e.message }) };
+    }
+  }
+
+  if (event.httpMethod !== 'POST') {
+    return { statusCode: 405, body: JSON.stringify({ error: 'Method not allowed' }) };
   }
 
   const token = process.env.NETLIFY_AUTH_TOKEN;

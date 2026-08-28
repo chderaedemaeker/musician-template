@@ -314,6 +314,12 @@ function titleFromFilename(name) {
   return name.replace(/\.[a-z0-9]+$/i, '').replace(/[-_]+/g, ' ').trim();
 }
 
+// Small on-the-fly thumbnail via the Netlify image CDN. Falls back to the
+// original file where the CDN isn't available (markup adds onerror).
+function thumbUrl(publicPath, w) {
+  return '/.netlify/images?url=' + encodeURIComponent(publicPath) + '&w=' + w;
+}
+
 // Map over items with at most `limit` calls in flight — firing hundreds of
 // requests at once gets rate-limited by git-gateway.
 async function pMap(items, fn, limit = 8) {
@@ -666,6 +672,7 @@ class App {
     if (hash === '#/settings') return this.renderSettings();
     if (hash === '#/site' || hash === '#/hero') return this.renderSiteSettings();
     if (hash === '#/newsletter') return this.renderNewsletterBuilder();
+    if (hash === '#/texts') return this.renderSiteTexts();
     if (hash === '#/' || hash === '#') return this.renderDashboard();
     if (hash === '#/media') return this.renderMedia();
     const colMatch = hash.match(/^#\/([a-z]+)$/);
@@ -944,7 +951,7 @@ class App {
           const thumbSrc = e.data.image ? (String(e.data.image).startsWith('/') ? e.data.image : '/images/' + e.data.image) : '';
           const thumbHtml = showThumb
             ? (thumbSrc
-              ? `<img class="entry-thumb" src="${esc(thumbSrc)}" alt="" loading="lazy" onerror="this.classList.add('entry-thumb--empty');this.removeAttribute('src');" />`
+              ? `<img class="entry-thumb" src="${thumbUrl(thumbSrc, 96)}" alt="" loading="lazy" onerror="if(!this.dataset.f){this.dataset.f=1;this.src='${esc(thumbSrc)}'}else{this.classList.add('entry-thumb--empty');this.removeAttribute('src');}" />`
               : '<span class="entry-thumb entry-thumb--empty"></span>')
             : '';
           return `<div class="entry-row" data-file="${esc(e.name)}" data-title="${esc(title)}" data-sha="${esc(e.sha||'')}" data-path="${esc(e.path)}">
@@ -2237,7 +2244,7 @@ class App {
         const rows = items.map(ph => {
           const p = ph.image || '';
           return `<div class="images-row">
-            <img class="images-thumb" src="${p.startsWith('/') ? esc(p) : '/images/' + esc(p)}" onerror="this.style.visibility='hidden'" alt="" />
+            <img class="images-thumb" src="${thumbUrl(p.startsWith('/') ? p : '/images/' + p, 96)}" onerror="if(!this.dataset.f){this.dataset.f=1;this.src='${p.startsWith('/') ? esc(p) : '/images/' + esc(p)}'}else{this.style.visibility='hidden'}" alt="" />
             <input type="text" class="form-input images-path" value="${esc(p)}" placeholder="/images/photo.jpg" />
             <button type="button" class="btn btn-ghost btn-sm images-pick">Pick</button>
             <button type="button" class="btn btn-ghost btn-sm images-remove" aria-label="Remove photo">&#215;</button>
@@ -2556,7 +2563,7 @@ class App {
       const addRow = (path) => {
         const row = document.createElement('div');
         row.className = 'images-row';
-        row.innerHTML = `<img class="images-thumb" src="${path.startsWith('/') ? esc(path) : '/images/' + esc(path)}" onerror="this.style.visibility='hidden'" alt="" />
+        row.innerHTML = `<img class="images-thumb" src="${thumbUrl(path.startsWith('/') ? path : '/images/' + path, 96)}" onerror="if(!this.dataset.f){this.dataset.f=1;this.src='${path.startsWith('/') ? esc(path) : '/images/' + esc(path)}'}else{this.style.visibility='hidden'}" alt="" />
           <input type="text" class="form-input images-path" value="${esc(path)}" placeholder="/images/photo.jpg" />
           <button type="button" class="btn btn-ghost btn-sm images-pick">Pick</button>
           <button type="button" class="btn btn-ghost btn-sm images-remove" aria-label="Remove photo">&#215;</button>`;
@@ -2958,7 +2965,7 @@ class App {
       <div class="media-filter" style="margin-bottom:1rem;"><input type="text" id="picker-search" placeholder="Search..." style="width:100%;padding:.5rem 0;border:none;border-bottom:1px solid var(--warm-grey);font-family:var(--font-serif);font-size:.9rem;color:var(--near-black);background:transparent;" /></div>
       <div class="image-picker-grid">
         ${this._imageCache.map(img => `<div class="image-picker-item" data-name="${esc(img.name)}">
-          <img src="/images/${img.name}" alt="${esc(img.name)}" loading="lazy" />
+          <img src="${thumbUrl('/images/' + img.name, 240)}" onerror="this.onerror=null;this.src='/images/${esc(img.name)}'" alt="${esc(img.name)}" loading="lazy" />
           <div class="image-picker-item-name">${esc(img.name)}</div>
         </div>`).join('')}
       </div>
@@ -3010,7 +3017,7 @@ class App {
       <div class="media-filter" style="margin-bottom:1rem;"><input type="text" id="picker-search" placeholder="Search..." style="width:100%;padding:.5rem 0;border:none;border-bottom:1px solid var(--warm-grey);font-family:var(--font-serif);font-size:.9rem;color:var(--near-black);background:transparent;" /></div>
       <div class="image-picker-grid" id="picker-grid">
         ${this._imageCache.map(img => `<div class="image-picker-item" data-name="${esc(img.name)}" data-path="${esc(img.path)}">
-          <img src="/images/${img.name}" alt="${esc(img.name)}" loading="lazy" />
+          <img src="${thumbUrl('/images/' + img.name, 240)}" onerror="this.onerror=null;this.src='/images/${esc(img.name)}'" alt="${esc(img.name)}" loading="lazy" />
           <div class="image-picker-item-name">${esc(img.name)}</div>
         </div>`).join('')}
       </div>
@@ -3092,7 +3099,7 @@ class App {
           <audio controls preload="none" src="/audio/${esc(f.name)}"></audio>
         </div>`).join('') : '<div class="empty-state">No audio files yet — upload one below.</div>')
       : files.map(img => `<div class="image-picker-item" data-name="${esc(img.name)}" data-path="${esc(img.path)}">
-          <img src="/images/${img.name}" alt="${esc(img.name)}" loading="lazy" />
+          <img src="${thumbUrl('/images/' + img.name, 240)}" onerror="this.onerror=null;this.src='/images/${esc(img.name)}'" alt="${esc(img.name)}" loading="lazy" />
           <div class="image-picker-item-name">${esc(img.name)}</div>
         </div>`).join('');
     overlay.innerHTML = `<div class="image-picker">
@@ -3543,8 +3550,14 @@ class App {
           <input type="checkbox" class="lang-toggle" value="${l.code}" ${enabledLangs.includes(l.code) ? 'checked' : ''} ${l.code === 'en' ? 'checked disabled' : ''} />
           <span>${l.name}</span>
         </label>`).join('')}
+      </div>
+      <div class="settings-section">
+        <h3>Website texts</h3>
+        <p class="settings-hint">All the small wordings across the site — the contact invitation, footer lines, button labels — in every language.</p>
+        <button type="button" class="btn btn-ghost" id="site-texts-btn">Edit website texts</button>
       </div>`;
 
+    document.getElementById('site-texts-btn').addEventListener('click', () => { location.hash = '#/texts'; });
     const pathInput = document.getElementById('hero-image-path');
     const preview = document.getElementById('hero-preview');
     pathInput.addEventListener('input', () => { preview.src = pathInput.value; preview.style.visibility = ''; });
@@ -3591,6 +3604,67 @@ class App {
     });
   }
 
+
+  // ---- Website texts: every site wording, per language ----
+  async renderSiteTexts() {
+    this.el.innerHTML = `
+      ${this._topbar()}
+      <nav class="breadcrumb"><a href="#/">Dashboard</a><span class="sep">/</span><a href="#/site">Site settings</a><span class="sep">/</span><span>Website texts</span></nav>
+      <div class="editor-header">
+        <h2>Website texts</h2>
+        <div class="editor-actions">
+          <button class="btn btn-primary" id="texts-save-btn">Save</button>
+        </div>
+      </div>
+      <div id="texts-form"><div class="loading-state"><span class="spinner"></span> Loading...</div></div>`;
+    this._bindTopbar();
+
+    const path = '_input/_data/languages.json';
+    let sha = null, texts = null;
+    try {
+      const file = await this.api.getFile(path);
+      sha = file.sha;
+      texts = JSON.parse(file.content);
+    } catch (e) {
+      document.getElementById('texts-form').innerHTML = `<div class="empty-state" style="color:var(--danger);">${esc(e.message)}</div>`;
+      return;
+    }
+
+    const langs = Object.keys(texts);
+    let active = langs[0];
+    const human = k => k.replace(/_/g, ' ').replace(/^./, c => c.toUpperCase());
+
+    const renderRows = () => {
+      const formEl = document.getElementById('texts-form');
+      formEl.innerHTML = `
+        <div class="texts-langbar">${langs.map(l => `<button type="button" class="table-pill${l === active ? ' active' : ''}" data-lang="${l}">${l.toUpperCase()}</button>`).join('')}</div>
+        ${Object.keys(texts.en).filter(k => typeof texts.en[k] === 'string').map(k => `
+          <div class="texts-row">
+            <label class="form-label">${esc(human(k))}</label>
+            <textarea class="form-input texts-input" data-key="${esc(k)}" rows="${(String(texts[active][k] || '').length > 90) ? 3 : 1}">${esc(texts[active][k] || '')}</textarea>
+            ${active !== 'en' ? `<p class="texts-ref">English: ${esc(texts.en[k] || '')}</p>` : ''}
+          </div>`).join('')}`;
+      formEl.querySelectorAll('.texts-langbar .table-pill').forEach(pill => pill.addEventListener('click', () => {
+        active = pill.dataset.lang;
+        renderRows();
+      }));
+      formEl.querySelectorAll('.texts-input').forEach(ta => ta.addEventListener('input', () => {
+        texts[active][ta.dataset.key] = ta.value;
+        this._markDirty();
+      }));
+    };
+    renderRows();
+
+    document.getElementById('texts-save-btn').addEventListener('click', async () => {
+      showStatus('saving', 'Saving...');
+      try {
+        const result = await this.api.saveFile(path, JSON.stringify(texts, null, 2) + '\n', 'Update website texts', sha || undefined);
+        sha = result.content.sha;
+        this._markClean();
+        showStatus('saved', 'Saved \u2014 reaches the site when you press Publish site');
+      } catch (e) { showStatus('error', e.message); }
+    });
+  }
 
   // ---- Newsletter builder ----
   // Compose an email from the site's own content: pick concerts, notes,
@@ -3642,6 +3716,14 @@ class App {
           <button class="btn btn-primary" id="nl-copy-btn" title="Copies the formatted email — paste it straight into your mail program">Copy email</button>
         </div>
       </div>
+      <div class="nl-subs" id="nl-subs" hidden>
+        <span id="nl-subs-info"></span>
+        <span class="nl-subs-actions">
+          <button type="button" class="btn btn-ghost btn-sm" id="nl-subs-copy">Copy addresses</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="nl-subs-show">Show</button>
+        </span>
+      </div>
+      <div class="nl-subs-list" id="nl-subs-list" hidden></div>
       <div class="editor-split">
         <div id="nl-form"><div class="loading-state"><span class="spinner"></span> Loading the site's content...</div></div>
         <div class="live-preview-panel">
@@ -3778,6 +3860,39 @@ class App {
 
     renderForm();
     updatePreview();
+    this._loadNewsletterSubscribers();
+  }
+
+  // Subscriber addresses from the footer form — count, copy for BCC, show
+  async _loadNewsletterSubscribers() {
+    try {
+      const jwt = await this._identityUser.jwt();
+      const base = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ? 'https://vdr-staging.netlify.app' : '';
+      const res = await fetch(base + '/.netlify/functions/newsletter', { headers: { Authorization: 'Bearer ' + jwt } });
+      const out = await res.json().catch(() => ({}));
+      if (!res.ok || !Array.isArray(out.emails)) return;
+      const bar = document.getElementById('nl-subs');
+      if (!bar) return;
+      bar.hidden = false;
+      document.getElementById('nl-subs-info').textContent =
+        out.emails.length === 0 ? 'No newsletter subscribers yet.'
+        : `${out.emails.length} newsletter subscriber${out.emails.length === 1 ? '' : 's'} — copy the addresses into your email's BCC field.`;
+      const copyBtn = document.getElementById('nl-subs-copy');
+      const showBtn = document.getElementById('nl-subs-show');
+      const listEl = document.getElementById('nl-subs-list');
+      if (!out.emails.length) { copyBtn.hidden = true; showBtn.hidden = true; return; }
+      copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(out.emails.join(', '))
+          .then(() => showStatus('saved', `Copied ${out.emails.length} address${out.emails.length === 1 ? '' : 'es'}`))
+          .catch(e => showStatus('error', e.message));
+      });
+      showBtn.addEventListener('click', () => {
+        listEl.hidden = !listEl.hidden;
+        showBtn.textContent = listEl.hidden ? 'Show' : 'Hide';
+        if (!listEl.hidden) listEl.textContent = out.emails.join('\n');
+      });
+    } catch (e) { /* the bar simply stays hidden */ }
   }
 
   _nlPicked(state, data, kind) {
@@ -3850,7 +3965,7 @@ class App {
       } else if (kind === 'notes') {
         sections += heading('Notes');
         sections += items.map(e => {
-          const text = (e.body || '').replace(/<[^>]+>/g, '').replace(/[#*_>\[\]()`]/g, '').replace(/\s+/g, ' ').trim().substring(0, 220);
+          const text = (e.body || '').replace(/<[^>]+>/g, '').replace(/[#*_>\[\]()`]/g, '').replace(/\s+/g, ' ').trim();
           return `<tr><td style="${S.hairline}padding:26px 0;" align="center">
             <div style="${SERIF}font-style:italic;font-size:19px;line-height:1.7;color:#4d4841;">\u201C${esc(text)}\u201D</div>
             <div style="${S.meta}margin-top:10px;"><a href="${e.url}" style="color:#8a847a;text-decoration:none;">${esc(String(e.data.date || '').substring(0, 10))} \u00b7 ${esc(e.data.title || '')}</a></div>
@@ -3860,7 +3975,8 @@ class App {
       } else {
         sections += heading(kind === 'highlights' ? 'Highlights' : 'Ensembles');
         sections += items.map(e => {
-          const img = e.data.image ? `${site}${String(e.data.image).startsWith('/') ? e.data.image : '/images/' + e.data.image}` : '';
+          const imgPath = e.data.image ? (String(e.data.image).startsWith('/') ? e.data.image : '/images/' + e.data.image) : '';
+          const img = imgPath ? `${site}/.netlify/images?url=${encodeURIComponent(imgPath)}&w=1200` : '';
           return `<tr><td style="${S.hairline}padding:26px 0;">
             ${img ? `<a href="${e.url}"><img src="${img}" width="600" style="width:100%;max-width:600px;height:auto;border:1px solid #33322f;display:block;margin-bottom:14px;" alt="${esc(e.data.title || '')}" /></a>` : ''}
             <div style="${SERIF}font-size:22px;line-height:1.3;"><a href="${e.url}" style="${S.link}">${esc(e.data.title || '')}</a></div>
@@ -3969,7 +4085,7 @@ class App {
           ? `<div class="media-audio-thumb"><span class="media-audio-icon">&#9835;</span><audio controls preload="none" src="/audio/${esc(item.name)}"></audio></div>`
           : item.kind === 'video'
           ? `<video controls preload="metadata" src="/video/${esc(item.name)}"></video>`
-          : `<img src="/images/${item.name}" alt="${esc(item.name)}" loading="lazy" />`}</div>
+          : `<img src="${thumbUrl('/images/' + item.name, 360)}" onerror="this.onerror=null;this.src='/images/${esc(item.name)}'" alt="${esc(item.name)}" loading="lazy" />`}</div>
         <div class="media-item-info">
           <div class="media-item-name" title="${esc(item.name)}">${esc(item.name)}</div>
           ${item.size ? `<div class="media-item-size">${formatFileSize(item.size)}</div>` : ''}
@@ -4074,6 +4190,14 @@ class App {
       const tile = gridEl.querySelector(`.media-item[data-path="${CSS.escape(item.path)}"] .media-item-date`);
       if (tile) tile.textContent = new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
     }, 6);
+    // All dates known — order the grid newest upload first
+    if (!gridEl.isConnected) return;
+    const sorted = [...items].sort((a, b) =>
+      String(this._mediaDateCache[b.path] || '').localeCompare(String(this._mediaDateCache[a.path] || '')));
+    for (const item of sorted) {
+      const tile = gridEl.querySelector(`.media-item[data-path="${CSS.escape(item.path)}"]`);
+      if (tile) gridEl.appendChild(tile);
+    }
   }
 
   // ---- Photographer credits ----

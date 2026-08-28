@@ -19,7 +19,7 @@
 {% if latestNote %}
 <section class="note-drift" aria-label="{{ languages[lang].notes_title }}">
   <a class="note-drift-link" href="/en/notes/" aria-label="{{ languages[lang].notes_title }}">
-    <p class="note-drift-text">{{ latestNote.templateContent | strip_html | truncate: 180 }}</p>
+    <p class="note-drift-text">{{ latestNote.templateContent | strip_html }}</p>
     <span class="note-drift-meta"><span class="note-drift-date">{{ latestNote.date | shortDate }} &middot; {{ latestNote.data.title }}</span></span>
   </a>
   {% assign photos = latestNote.data.photos %}
