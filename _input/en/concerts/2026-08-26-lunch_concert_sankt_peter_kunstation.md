@@ -4,7 +4,7 @@ date: "2026-11-14T13:00"
 date_end: ""
 month_only: false
 place: Sankt Peter Kunststation Cologne, Germany
-composers: Berio, Saariaho, Kurtág
+composers: Berio, Saariaho, Kurtág, Lachenmann, Cage
 collaborators: solo
 link: ""
 featured: false
