@@ -12,5 +12,4 @@ links:
   - label: Website
     url: "https://www.arsmusica.be/en/event/nordic-short-films-curated-luc-dardenne"
 layout: concert.html
-status: draft
 ---
